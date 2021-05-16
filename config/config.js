@@ -338,8 +338,8 @@ export default defineConfig({
                   name: 'hetong',
                   icon: 'smile',
                   path: '/laorendangan/hetong/index',
-                  component: '/laorendangan/heton/indexg',
-                  // component: './editor/mind',
+                  // component: '/laorendangan/hetong/index',
+                  component: './editor/mind',
                 }
               ],
             },
