@@ -1,11 +1,6 @@
-import React, { useEffect } from 'react';
-import { Button, Card, Col, Form, List, Row, Select, Tag } from 'antd';
 
+import React from 'react';
 
-const A = (props) => {
-    return (
-        <div>合同</div>
-    )
-};
-
-export default A
+export default () => (
+  <div>体检档案</div>
+);
