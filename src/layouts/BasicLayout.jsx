@@ -136,9 +136,9 @@ const BasicLayout = (props) => {
           );
         }}
         footerRender={() => {
-          if (settings.footerRender || settings.footerRender === undefined) {
-            return defaultFooterDom;
-          }
+          // if (settings.footerRender || settings.footerRender === undefined) {
+          //   return defaultFooterDom;
+          // }
 
           return null;
         }}
