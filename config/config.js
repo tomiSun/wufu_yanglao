@@ -337,13 +337,52 @@ export default defineConfig({
                   icon: 'smile',
                   path: '/laorendangan/hetong/index',
                   component: './laorendangan/hetong/index',
-                }
+                },
               ],
             },
+            //评估管理
+            // {
+            //   name: 'pingguguanli',
+            //   icon: 'highlight',
+            //   path: '/pingguguanli',
+            //   routes: [
+            //     {
+            //       name: 'pinggubiao',
+            //       icon: 'smile',
+            //       path: '/pingguguanli/ruzhulaoren/index',
+            //       component: './pingguguanli/ruzhulaoren',
+            //     },
+            //     {
+            //       name: 'shizhuqi',
+            //       icon: 'smile',
+            //       path: '/pingguguanli/shizhuqi/index',
+            //       component: './pingguguanli/shizhuqi',
+            //     },
+            //   ],
+            // },
+            //护理管理
+            // {
+            //   name: 'huliguanli',
+            //   icon: 'highlight',
+            //   path: '/huliguanli',
+            //   routes: [
+            //     {
+            //       name: 'fengxiangaozhishu',
+            //       icon: 'smile',
+            //       path: '/huliguanli/fengxiangaozhishu/index',
+            //       component: './huliguanli/fengxiangaozhishu',
+            //     },
+            //     {
+            //       name: 'shizhuqi',
+            //       icon: 'smile',
+            //       path: '/pingguguanli/shizhuqi/index',
+            //       component: './pingguguanli/shizhuqi',
+            //     },
+            //   ],
+            // },
             {
               component: '404',
             },
-
           ],
         },
       ],
