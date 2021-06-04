@@ -12,7 +12,7 @@ function getCity(req, res) {
 
 export default {
   // 支持值为 Object 和 Array
-  'GET  /api/currentUser': {
+  'GET  /currentUser': {
     name: 'Serati Ma',
     avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
     userid: '00000001',
