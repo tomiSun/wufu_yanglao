@@ -369,6 +369,12 @@ export default [
                 path: '/basicSetting/staffInfo',
                 component: './basicSetting/staffInfo',
               },
+              {
+                name: '护工信息',
+                icon: 'smile',
+                path: '/basicSetting/nursingInfo',
+                component: './basicSetting/nursingInfo',
+              },
             ],
           },
           {

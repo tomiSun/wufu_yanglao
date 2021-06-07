@@ -28,8 +28,6 @@ request.interceptors.request.use(async (url, options) => {
   if (options.method === 'get') {
     url = url.replace(/undefined|null/g, '');
   }
-  console.log('url: ', url);
-  console.log('envConfig[process.env.API_ENV]: ', envConfig[process.env.API_ENV]);
   if (envConfig[process.env.API_ENV]) {
     url = envConfig[process.env.API_ENV].BASE_API + url;
   } else {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Button,
   Checkbox,
@@ -34,46 +34,58 @@ import {
 } from '@/services/deployment/dictionary';
 import { SearchForm, YTable, Seltopt } from 'yunyi-component';
 import styles from './index.less';
-
 const { confirm } = Modal;
 const { TextArea } = Input;
 const { DirectoryTree } = Tree;
-
+import { useTableHeight } from '@/utils/tableHeight';
 const Dictionary = (props) => {
+  // 获取表格高度
+  const tableRef = useRef(null);
+  const tableHeight = useTableHeight(tableRef);
   const [zdlxSel, setZdlxSel] = useState([]); // 下拉列表-字典类型
-  const [treeData, setTreeData] = useState([]); // 树数据
+  const [treeData, setTreeData] = useState([
+    {
+      title: '字典类别1',
+      key: '0-0-0-0',
+      disableCheckbox: true,
+    },
+    {
+      title: '字典类别2',
+      key: '0-0-0-1',
+    },
+  ]); // 树数据
   const [treeSel, setTreeSel] = useState({}); // 树选择的内容
   const [zdxxData, setZdxxData] = useState({}); // 字典信息
   const zdxxColumn = [
-    {
-      title: '分类名称',
-      content: zdxxData?.name || '--',
-    },
+    // {
+    //   title: '分类名称',
+    //   content: zdxxData?.name || '--',
+    // },
     {
       title: '类别编码',
       content: zdxxData?.code || '--',
     },
     {
-      title: '系统内置',
+      title: '类别名称',
       content: zdxxData?.isSystem === undefined ? '--' : zdxxData.isSystem === 0 ? '否' : '是',
     },
-    {
-      title: '支持多层',
-      content:
-        zdxxData?.isAllowChild === undefined ? '--' : zdxxData.isAllowChild === 0 ? '否' : '是',
-    },
-    {
-      title: '机构私有',
-      content: zdxxData?.isOrgUse === undefined ? '--' : zdxxData.isOrgUse === 0 ? '否' : '是',
-    },
-    {
-      title: '允许机构增加',
-      content: zdxxData?.isCustom === undefined ? '--' : zdxxData.isCustom === 0 ? '否' : '是',
-    },
-    {
-      title: '停用',
-      content: zdxxData?.status === undefined ? '--' : zdxxData.status === 0 ? '否' : '是',
-    },
+    // {
+    //   title: '支持多层',
+    //   content:
+    //     zdxxData?.isAllowChild === undefined ? '--' : zdxxData.isAllowChild === 0 ? '否' : '是',
+    // },
+    // {
+    //   title: '机构私有',
+    //   content: zdxxData?.isOrgUse === undefined ? '--' : zdxxData.isOrgUse === 0 ? '否' : '是',
+    // },
+    // {
+    //   title: '允许机构增加',
+    //   content: zdxxData?.isCustom === undefined ? '--' : zdxxData.isCustom === 0 ? '否' : '是',
+    // },
+    // {
+    //   title: '停用',
+    //   content: zdxxData?.status === undefined ? '--' : zdxxData.status === 0 ? '否' : '是',
+    // },
     {
       span: 20,
       title: '备注',
@@ -84,9 +96,10 @@ const Dictionary = (props) => {
   // yTable - 字典
   const [yTable, setYTable] = useState({
     table: {
-      className: styles.yTable,
+      // className: styles.yTable,
       bordered: true,
       loading: false,
+      scroll: { y: '100%' },
       pagination: {
         current: 1,
         pageSize: 10,
@@ -102,39 +115,18 @@ const Dictionary = (props) => {
           queryTypeDetailsListServices();
         },
       },
-      dataSource: [],
+      dataSource: [{}],
       dataRow: {},
       selectedNodes: {},
       zdxxData: {},
       columns: [
-        // {
-        //   title: '序号',
-        //   dataIndex: 'sort',
-        //   key: 'sort',
-        //   align: 'center',
-        //   width: 45,
-        //   render: (text, record, index) => index + 1,
-        // },
         {
-          title: '字典名称',
-          dataIndex: 'dictName',
-          key: 'dictName',
-          ellipsis: true,
-          width: 200,
-        },
-        {
-          title: '字典编码',
-          dataIndex: 'dictCode',
-          key: 'dictCode',
-          ellipsis: true,
-          // width: 100,
-        },
-        {
-          title: '自定义码',
-          dataIndex: 'customCode',
-          key: 'customCode',
-          ellipsis: true,
-          // width: 100,
+          title: '排序号',
+          dataIndex: 'sort',
+          key: 'sort',
+          align: 'center',
+          width: 60,
+          render: (text, record, index) => index + 1,
         },
         {
           title: '类别编码',
@@ -151,45 +143,32 @@ const Dictionary = (props) => {
           // width: 100,
         },
         {
-          title: '上级节点',
-          dataIndex: 'parentName',
-          key: 'parentName',
+          title: '字典名称',
+          dataIndex: 'dictName',
+          key: 'dictName',
+          ellipsis: true,
+          width: 200,
+        },
+        {
+          title: '字典编码',
+          dataIndex: 'dictCode',
+          key: 'dictCode',
           ellipsis: true,
           // width: 100,
         },
         {
-          title: '门诊使用',
-          dataIndex: 'isOutpatient',
-          key: 'isOutpatient',
-          align: 'center',
-          width: 70,
-          // render: (text, record) => <Checkbox defaultChecked={record.isOutpatient} disabled/>,
-          render: (text, record) => (record.isOutpatient ? '是' : '否'),
+          title: '五笔码',
+          dataIndex: 'customCode',
+          key: 'customCode',
+          ellipsis: true,
+          // width: 100,
         },
         {
-          title: '急诊使用',
-          dataIndex: 'isEmergency',
-          key: 'isEmergency',
-          align: 'center',
-          width: 70,
-          // render: (text, record) => <Checkbox defaultChecked={record.isEmergency} disabled/>,
-          render: (text, record) => (record.isEmergency ? '是' : '否'),
-        },
-        {
-          title: '住院使用',
-          dataIndex: 'isHospitalized',
-          key: 'isHospitalized',
-          align: 'center',
-          width: 70,
-          // render: (text, record) => <Checkbox defaultChecked={record.isHospitalized} disabled/>,
-          render: (text, record) => (record.isHospitalized ? '是' : '否'),
-        },
-        {
-          title: '显示序号',
-          dataIndex: 'sort',
-          key: 'sort',
-          align: 'center',
-          width: 70,
+          title: '拼音码',
+          dataIndex: 'customCode',
+          key: 'customCode',
+          ellipsis: true,
+          // width: 100,
         },
         {
           title: '状态',
@@ -198,7 +177,7 @@ const Dictionary = (props) => {
           width: 50,
           align: 'center',
           // render: (text, record) => <Switch checked={record.status} size="small" disabled/>,
-          render: (text, record) => (record.status ? '停用' : '有效'),
+          render: (text, record) => (record.status ? '启用' : '停用'),
         },
         {
           title: '操作',
@@ -207,7 +186,7 @@ const Dictionary = (props) => {
           width: 100,
           render: (text, record) => (
             <div className={styles.opera}>
-              {record.status === 1 ||
+              {/* {record.status === 1 ||
               yTable.table.selectedNodes.status === '1' ||
               yTable.table.zdxxData?.isAllowChild === 0 ? (
                 <span style={{ color: '#d9d9d9' }}>新增</span>
@@ -221,7 +200,7 @@ const Dictionary = (props) => {
                   新增
                 </a>
               )}
-              <Divider type="vertical" />
+              <Divider type="vertical" /> */}
               {/*<a onClick={() => editInfo(text, record)}>编辑</a>*/}
               {yTable.table.selectedNodes.status === '1' ? (
                 <span style={{ color: '#d9d9d9' }}>编辑</span>
@@ -235,8 +214,8 @@ const Dictionary = (props) => {
                 </a>
               )}
 
-              {/*<Divider type="vertical"/>*/}
-              {/*<a onClick={() => delInfo(text, record)}>删除</a>*/}
+              <Divider type="vertical" />
+              <a onClick={() => delInfo(text, record)}>删除</a>
             </div>
           ),
         },
@@ -245,37 +224,38 @@ const Dictionary = (props) => {
   });
   const [zdUseForm] = Form.useForm();
   const zdForm = {
-    // inputArr: [
-    //   {
-    //     label: '字典名称',
-    //     name: 'name',
-    //     placeholder: '请输入',
-    //     sort: 1,
-    //     style: {
-    //       width: 200,
-    //     },
-    //   },
-    // ],
+    inputArr: [
+      {
+        label: '',
+        name: 'name',
+        placeholder: '请输入',
+        sort: 1,
+        style: {
+          width: 200,
+        },
+      },
+    ],
     btnArr: [
       {
-        name: '刷新',
+        name: '查询',
         type: 'primary',
         htmlType: 'submit',
         bconfig: {
-          disabled: !treeSel.id,
+          // disabled: !treeSel.id,
         },
       },
       {
         name: '新增',
         type: 'primary',
         bconfig: {
-          disabled: treeSel.id && yTable.table.selectedNodes.status === '0' ? false : true,
+          // disabled: treeSel.id && yTable.table.selectedNodes.status === '0' ? false : true,
         },
         style: {
           marginLeft: 8,
         },
         callback: () => {
-          yTable.table.selectedNodes?.id && ((yTable.table.dataRow = {}), changeModal('add', true));
+          // yTable.table.selectedNodes?.id && ((yTable.table.dataRow = {}), changeModal('add', true));
+          changeModal('add', true);
         },
       },
     ],
@@ -644,10 +624,10 @@ const Dictionary = (props) => {
 
   return (
     <div>
-      <Row gutter="24" className="overflowXHidden margin0">
+      <Row className="overflowXHidden margin0">
         <Col span={4} className={styles.treeBox}>
           <Form form={treeSearchForm} layout="vertical">
-            <Form.Item label="字典类型" name="categoryId">
+            {/* <Form.Item label="字典类型" name="categoryId">
               <Seltopt
                 selectArr={zdlxSel}
                 sWidth="100%"
@@ -658,8 +638,8 @@ const Dictionary = (props) => {
                   queryTypeListServices();
                 }}
               />
-            </Form.Item>
-            <Form.Item label="查询" name="typeName">
+            </Form.Item> */}
+            <Form.Item label="" name="typeName" style={{ marginTop: '15px' }}>
               <Input onPressEnter={queryTypeListServices} />
             </Form.Item>
           </Form>
@@ -698,8 +678,9 @@ const Dictionary = (props) => {
             </Button>
           </div>
         </Col>
-        <Col span={20} style={{ paddingRight: 16 }}>
-          <Descriptions className={styles.dicMessage} title="字典信息" column={7}>
+        <Col span={20}>
+          {/* style={{ paddingRight: 16 }} */}
+          {/* <Descriptions className={styles.dicMessage} title="字典信息*？" column={7}>
             {zdxxColumn.map((item, index) => {
               return (
                 <Descriptions.Item key={index} label={item.title}>
@@ -708,13 +689,15 @@ const Dictionary = (props) => {
               );
             })}
           </Descriptions>
-          <Divider style={{ margin: '0 0 16px 0' }} />
+          <Divider style={{ margin: '0 0 16px 0' }} /> */}
 
-          <div>
+          <div className={styles.topForm}>
             <div className={styles.searchFormTips}>字典明细</div>
             <SearchForm searchForm={zdForm} />
           </div>
-          <YTable {...yTable} />
+          <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
+            <YTable {...yTable} />
+          </div>
         </Col>
       </Row>
 
@@ -740,11 +723,11 @@ const Dictionary = (props) => {
               <div />
             </Form.Item>
 
-            <Col span={12}>
+            {/* <Col span={12}>
               <Form.Item label="字典类型" name="categoryId">
                 <Seltopt selectArr={zdlxSel} sWidth="100%" disabled />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={12}>
               <Form.Item
                 label="类别编码"
@@ -793,7 +776,7 @@ const Dictionary = (props) => {
 
             <Col span={24}>
               <Row>
-                <Form.Item name="isSystem" valuePropName="checked">
+                {/* <Form.Item name="isSystem" valuePropName="checked">
                   <Checkbox>
                     <span className={styles.labeltext}>系统内置</span>
                   </Checkbox>
@@ -812,10 +795,10 @@ const Dictionary = (props) => {
                   <Checkbox>
                     <span className={styles.labeltext}>允许机构增加</span>
                   </Checkbox>
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item name="status" valuePropName="checked" style={{ marginLeft: 8 }}>
                   <Checkbox>
-                    <span className={styles.labeltext}>停用</span>
+                    <span className={styles.labeltext}>启用</span>
                   </Checkbox>
                 </Form.Item>
               </Row>
@@ -845,7 +828,7 @@ const Dictionary = (props) => {
             <Form.Item name="id" hidden>
               <div></div>
             </Form.Item>
-            <Form.Item name="orgId" hidden>
+            {/* <Form.Item name="orgId" hidden>
               <div></div>
             </Form.Item>
             <Form.Item name="typeId" hidden>
@@ -853,9 +836,9 @@ const Dictionary = (props) => {
             </Form.Item>
             <Form.Item name="parentId" hidden>
               <div></div>
-            </Form.Item>
+            </Form.Item> */}
 
-            <Col span={12}>
+            {/* <Col span={12}>
               <Form.Item label="字典分类" name="typeName">
                 <TreeSelect
                   style={{ width: '100%' }}
@@ -869,8 +852,18 @@ const Dictionary = (props) => {
               <Form.Item label="上级节点" name="parentName">
                 <Input disabled />
               </Form.Item>
-            </Col>
+            </Col> */}
 
+            <Col span={12}>
+              <Form.Item label="类别编码" name="dictCode" rules={[{ required: true }]}>
+                <Input placeholder="请输入" disabled />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="类别名称" name="dictCode" rules={[{ required: true }]}>
+                <Input placeholder="请输入" disabled />
+              </Form.Item>
+            </Col>
             <Col span={12}>
               <Form.Item label="字典编码" name="dictCode" rules={[{ required: true }]}>
                 <Input placeholder="请输入" />
@@ -900,14 +893,8 @@ const Dictionary = (props) => {
                 <Input />
               </Form.Item>
             </Col>
-
             <Col span={12}>
-              <Form.Item label="自定义码" name="customCode">
-                <Input placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="显示序号" name="sort">
+              <Form.Item label="排序号" name="sort">
                 <InputNumber min={0} precision={0} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
@@ -920,7 +907,7 @@ const Dictionary = (props) => {
 
             <Col span={24}>
               <Row>
-                <Form.Item name="isOutpatient" valuePropName="checked">
+                {/* <Form.Item name="isOutpatient" valuePropName="checked">
                   <Checkbox>
                     <span className={styles.labeltext}>门诊使用</span>
                   </Checkbox>
@@ -939,10 +926,10 @@ const Dictionary = (props) => {
                   <Checkbox>
                     <span className={styles.labeltext}>系统保留</span>
                   </Checkbox>
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item name="status" valuePropName="checked" style={{ marginLeft: 8 }}>
                   <Checkbox>
-                    <span className={styles.labeltext}>停用</span>
+                    <span className={styles.labeltext}>启用</span>
                   </Checkbox>
                 </Form.Item>
               </Row>

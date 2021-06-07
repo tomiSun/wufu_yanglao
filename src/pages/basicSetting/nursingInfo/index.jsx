@@ -110,7 +110,7 @@ export default () => {
       dataSource: [{ id: 1 }],
       columns: [
         {
-          title: '员工编号',
+          title: '护工编号',
           dataIndex: 'number',
           align: 'left',
           ellipsis: true,
@@ -135,7 +135,7 @@ export default () => {
           dataIndex: 'nameEn',
           ellipsis: true,
           align: 'left',
-          width: 80,
+          width: 150,
         },
         {
           title: '年龄',
@@ -152,7 +152,7 @@ export default () => {
           dataIndex: 'bloodLoad',
           ellipsis: true,
           align: 'left',
-          width: 60,
+          width: 160,
         },
         {
           title: '联系方式',
@@ -168,26 +168,19 @@ export default () => {
           align: 'left',
           width: 180,
         },
-        // {
-        //   title: '密码*？',
-        //   dataIndex: 'pinyinCode',
-        //   ellipsis: true,
-        //   align: 'left',
-        //   width: 90,
-        // },
         {
           title: '状态',
           dataIndex: 'isCross',
           align: 'left',
           ellipsis: true,
-          width: 50,
+          width: 80,
           render: (text, record, info) => (text === 1 ? '启用' : '停用'),
         },
         {
           title: '操作',
           key: 'opera',
           align: 'center',
-          width: 130,
+          width: 100,
           render: (text, record) => (
             <div className={styles.opera}>
               <a
@@ -205,14 +198,6 @@ export default () => {
                 }}
               >
                 删除
-              </a>
-              <Divider type="vertical" />
-              <a
-                onClick={() => {
-                  resetPassWord(record);
-                }}
-              >
-                重置密码
               </a>
             </div>
           ),
@@ -308,29 +293,6 @@ export default () => {
       message.error('请选中行数');
     }
   };
-  // 重置密码
-  const resetPassWord = (record) => {
-    if (!!Object.getOwnPropertyNames(record).length) {
-      Modal.confirm({
-        title: '您确定要重置密码为000000吗？',
-        okText: '确定',
-        okType: 'danger',
-        cancelText: '取消',
-        style: { padding: '30px' },
-        onOk() {
-          // delBloodTableData({ id: record.id }).then((response) => {
-          //   message.success('删除成功');
-          //   yTable.table.dataRow = {};
-          //   yTable.table.loading = true;
-          //   setYTable({ ...yTable });
-          //   getTableData();
-          // });
-        },
-      });
-    } else {
-      message.error('请选中行数');
-    }
-  };
 
   // 刷新
   const refreshData = () => {
@@ -404,7 +366,7 @@ export default () => {
     // getTableData();
   }, []);
   return (
-    <div>
+    <div className={styles.bloodComposition}>
       <SearchForm searchForm={searchTopForm} />
       <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
         <YTable {...yTable} />
@@ -431,7 +393,7 @@ export default () => {
         >
           <Row>
             <Col span={12}>
-              <Form.Item label="员工编号" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item label="护工编号" name="number" rules={[{ required: true, message: '' }]}>
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
