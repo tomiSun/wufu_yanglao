@@ -378,6 +378,25 @@ export default [
             ],
           },
           {
+            name: '综合模块',
+            icon: 'highlight',
+            path: '/syntheticModule',
+            routes: [
+              {
+                name: '食谱',
+                icon: 'smile',
+                path: '/syntheticModule/cookbook',
+                component: './syntheticModule/cookbook',
+              },
+              {
+                name: '满意度测评',
+                icon: 'smile',
+                path: '/syntheticModule/satisficing',
+                component: './syntheticModule/satisficing',
+              },
+            ],
+          },
+          {
             component: '404',
           },
         ],
