@@ -400,6 +400,12 @@ export default [
                 path: '/syntheticModule/satisficing',
                 component: './syntheticModule/satisficing',
               },
+              {
+                name: '兴趣小组活动记录',
+                icon: 'smile',
+                path: '/syntheticModule/amusement',
+                component: './syntheticModule/amusement',
+              },
             ],
           },
           {
