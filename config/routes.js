@@ -375,6 +375,12 @@ export default [
                 path: '/basicSetting/nursingInfo',
                 component: './basicSetting/nursingInfo',
               },
+              {
+                name: '床位信息',
+                icon: 'smile',
+                path: '/basicSetting/bedInfo',
+                component: './basicSetting/bedInfo',
+              },
             ],
           },
           {

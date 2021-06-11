@@ -8,41 +8,24 @@ import {
   Input,
   Modal,
   Row,
-  Table,
-  Tooltip,
   Tree,
-  TreeSelect,
-  Spin,
-  Descriptions,
   message,
   InputNumber,
 } from 'antd';
 import { makeWb, pinyin } from 'yunyi-convert';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import {
-  queryCateList,
-  healthCareCategory,
-  queryTypeList,
-  queryTypeDetails,
-  updateType,
-  insertType,
-  deleteType,
-  queryTypeDetailsList,
-  querySingleDictDetails,
-  updateTypeDetail,
-  insertTypeDetail,
-} from '@/services/deployment/dictionary';
-import { SearchForm, YTable, Seltopt } from 'yunyi-component';
+import { SearchForm, YTable } from 'yunyi-component';
 import styles from './index.less';
+import { useTableHeight } from '@/utils/tableHeight';
+
 const { confirm } = Modal;
 const { TextArea } = Input;
 const { DirectoryTree } = Tree;
-import { useTableHeight } from '@/utils/tableHeight';
-const Dictionary = (props) => {
+export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
   const tableHeight = useTableHeight(tableRef);
-  const [zdlxSel, setZdlxSel] = useState([]); // 下拉列表-字典类型
+  // 树数据
   const [treeData, setTreeData] = useState([
     {
       title: '字典类别1',
@@ -53,50 +36,14 @@ const Dictionary = (props) => {
       title: '字典类别2',
       key: '0-0-0-1',
     },
-  ]); // 树数据
-  const [treeSel, setTreeSel] = useState({}); // 树选择的内容
-  const [zdxxData, setZdxxData] = useState({}); // 字典信息
-  const zdxxColumn = [
-    // {
-    //   title: '分类名称',
-    //   content: zdxxData?.name || '--',
-    // },
-    {
-      title: '类别编码',
-      content: zdxxData?.code || '--',
-    },
-    {
-      title: '类别名称',
-      content: zdxxData?.isSystem === undefined ? '--' : zdxxData.isSystem === 0 ? '否' : '是',
-    },
-    // {
-    //   title: '支持多层',
-    //   content:
-    //     zdxxData?.isAllowChild === undefined ? '--' : zdxxData.isAllowChild === 0 ? '否' : '是',
-    // },
-    // {
-    //   title: '机构私有',
-    //   content: zdxxData?.isOrgUse === undefined ? '--' : zdxxData.isOrgUse === 0 ? '否' : '是',
-    // },
-    // {
-    //   title: '允许机构增加',
-    //   content: zdxxData?.isCustom === undefined ? '--' : zdxxData.isCustom === 0 ? '否' : '是',
-    // },
-    // {
-    //   title: '停用',
-    //   content: zdxxData?.status === undefined ? '--' : zdxxData.status === 0 ? '否' : '是',
-    // },
-    {
-      span: 20,
-      title: '备注',
-      content: zdxxData?.remarks || '--',
-    },
-  ]; // 字典信息
-  // form - 字典
-  // yTable - 字典
+  ]);
+  // 树形节点选中
+  const treeSelect = async (selectedKeys, info) => {
+    console.log('selectedKeys, info: ', selectedKeys, info);
+  };
+  // yTable
   const [yTable, setYTable] = useState({
     table: {
-      // className: styles.yTable,
       bordered: true,
       loading: false,
       scroll: { y: '100%' },
@@ -109,10 +56,9 @@ const Dictionary = (props) => {
           return `共 ${total} 条`;
         },
         onChange: (page, pageSize) => {
-          console.log('changePage----', page, pageSize);
           yTable.table.pagination.current = page;
           yTable.table.pagination.pageSize = pageSize;
-          queryTypeDetailsListServices();
+          getTableData();
         },
       },
       dataSource: [{}],
@@ -186,22 +132,6 @@ const Dictionary = (props) => {
           width: 100,
           render: (text, record) => (
             <div className={styles.opera}>
-              {/* {record.status === 1 ||
-              yTable.table.selectedNodes.status === '1' ||
-              yTable.table.zdxxData?.isAllowChild === 0 ? (
-                <span style={{ color: '#d9d9d9' }}>新增</span>
-              ) : (
-                <a
-                  onClick={() => {
-                    yTable.table.dataRow = record;
-                    changeModal('add', true);
-                  }}
-                >
-                  新增
-                </a>
-              )}
-              <Divider type="vertical" /> */}
-              {/*<a onClick={() => editInfo(text, record)}>编辑</a>*/}
               {yTable.table.selectedNodes.status === '1' ? (
                 <span style={{ color: '#d9d9d9' }}>编辑</span>
               ) : (
@@ -222,8 +152,8 @@ const Dictionary = (props) => {
       ],
     },
   });
-  const [zdUseForm] = Form.useForm();
-  const zdForm = {
+  const [formTopRight] = Form.useForm();
+  const topRightForm = {
     inputArr: [
       {
         label: '',
@@ -240,31 +170,25 @@ const Dictionary = (props) => {
         name: '查询',
         type: 'primary',
         htmlType: 'submit',
-        bconfig: {
-          // disabled: !treeSel.id,
-        },
+        bconfig: {},
       },
       {
         name: '新增',
         type: 'primary',
-        bconfig: {
-          // disabled: treeSel.id && yTable.table.selectedNodes.status === '0' ? false : true,
-        },
+        bconfig: {},
         style: {
           marginLeft: 8,
         },
         callback: () => {
-          // yTable.table.selectedNodes?.id && ((yTable.table.dataRow = {}), changeModal('add', true));
           changeModal('add', true);
         },
       },
     ],
     layout: 'inline',
-    form: zdUseForm,
-    cls: styles.zdForm,
+    form: formTopRight,
+    cls: styles.topRightForm,
     getInfoData: (value) => {
-      yTable.table.selectedNodes?.id &&
-        ((yTable.table.pagination.current = 1), queryTypeDetailsListServices());
+      yTable.table.selectedNodes?.id && ((yTable.table.pagination.current = 1), getTableData());
     },
   };
   // modalForm
@@ -287,50 +211,6 @@ const Dictionary = (props) => {
     continue: false,
   });
 
-  // 递归树数据-待优化
-  const mapTree = (data) => {
-    let treeArr = Object.assign([], data);
-    const getChildren = (resultarr) => {
-      resultarr.forEach((elemt) => {
-        elemt.title = elemt.name;
-        elemt.value = elemt.id;
-        elemt.key = elemt.id;
-        // delete elemt.code;
-        // delete elemt.id;
-        // delete elemt.name;
-        // if (elemt.setIncomeTypeDtoList && elemt.setIncomeTypeDtoList.length > 0) {
-        //   elemt.children = elemt.setIncomeTypeDtoList;
-        //   delete elemt.setIncomeTypeDtoList;
-        //   getChildren(elemt.children);
-        // }
-      });
-    };
-    getChildren(treeArr);
-  };
-
-  // 递归表格树数据-待优化
-  const mapTableTree = (data) => {
-    let treeArr = Object.assign([], data);
-    const getChildren = (resultarr) => {
-      resultarr.forEach((elemt) => {
-        elemt.key = elemt.dictId;
-        elemt.id = elemt.dictId;
-        elemt.isOutpatient = Number(elemt?.businessPermit?.isOutpatient);
-        elemt.isHospitalized = Number(elemt?.businessPermit?.isHospitalized);
-        elemt.isEmergency = Number(elemt?.businessPermit?.isEmergency);
-        elemt.isSystem = Number(elemt?.isSystem);
-        elemt.status = Number(elemt?.status);
-        // delete elemt.code;
-        // delete elemt.id;
-        // delete elemt.name;
-        if (elemt.children && elemt.children.length > 0) {
-          getChildren(elemt.children);
-        }
-      });
-    };
-    getChildren(treeArr);
-  };
-
   // 统一接口 获取类型下的分类列表
   const queryTypeListServices = () => {
     queryTypeList(treeSearchForm.getFieldsValue())
@@ -344,84 +224,7 @@ const Dictionary = (props) => {
       });
   };
   // 统一接口 获取右侧表格数据
-  const queryTypeDetailsListServices = (type) => {
-    yTable.table.loading = true;
-    yTable.table.dataSource = [];
-    let query = {
-      orgId: 0,
-      typeId: yTable.table.selectedNodes.id,
-      isOrgUse: yTable.table.selectedNodes.isOrgUse,
-      pageNum: yTable.table.pagination.current,
-      pageSize: yTable.table.pagination.pageSize,
-    };
-    console.log('获取右侧表格数据', query);
-    queryTypeDetailsList(query)
-      .then((res) => {
-        mapTableTree(res.data.list);
-        // res.data.list.map((item) => {
-        //   item.key = Math.random();
-        //   item.id = item?.dictId;
-        // });
-        console.log('res.data.list===', res.data.list);
-        yTable.table.loading = false;
-        yTable.table.pagination.total = res.data.total;
-        yTable.table.dataSource = res.data.list;
-        setYTable({ ...yTable });
-      })
-      .catch((err) => {
-        yTable.table.loading = false;
-        yTable.table.dataSource = [];
-        setYTable({ ...yTable });
-        console.log('queryTypeDetailsList---err', err);
-      });
-  };
-
-  const init = async () => {
-    // console.log('sessionStorage.getItem(\'crumbsList\')===',JSON.parse(sessionStorage.getItem('crumbsList').split(",")).length)
-    // 查询该路由的自定义参数
-    let hash1 = window.location.hash.replace('#', '');
-    let hashArr = window.location.hash.split('/');
-    // let hash = window.location.hash.split('/').slice(-2).join('/');
-    let hash = `/${hashArr[hashArr.length - 2]}/${hashArr[hashArr.length - 1]}`;
-    console.log('hash===', hash1, hash);
-    let crumbsList = JSON.parse(sessionStorage.getItem('crumbsList')?.split(',')) || [];
-    let isMedicare = crumbsList?.filter((item) => item.path === hash)[0]?.customParameterObject
-      ?.isMedicare;
-    console.log('isMedicare===', crumbsList, isMedicare);
-    if (isMedicare) {
-      // 接口请求-查询字典类型列表
-      let sel = [];
-      isMedicare === '0' &&
-        (await queryCateList()
-          .then((res) => {
-            sel = res.data;
-          })
-          .catch((err) => {
-            console.log('queryCateList---err' + err);
-          }));
-      await healthCareCategory()
-        .then((res) => {
-          sel.push(res.data);
-        })
-        .catch((err) => {
-          console.log('queryCateList---err' + err);
-        });
-      sel = await JSON.parse(JSON.stringify(sel).replace(/id/g, 'key'));
-      await setZdlxSel(sel);
-      await treeSearchForm.setFieldsValue({
-        categoryId: sel[0]?.key,
-      });
-
-      // console.log('sel.length长度===',sel.length)
-      sel.length && (await queryTypeListServices());
-    }
-  };
-  useEffect(() => {
-    setTimeout(() => {
-      init();
-    }, 0);
-    // console.log('init----props',props.route)
-  }, []);
+  const getTableData = () => {};
 
   // 编辑类别
   const detailSortInfo = () => {
@@ -502,6 +305,7 @@ const Dictionary = (props) => {
       parentName: yTable.table.dataRow?.dictName,
     });
   };
+  // 左侧弹窗设置修改
   const changeModalSort = (otype, changetype) => {
     modalFormSort.resetFields();
     setModalSortConfig({
@@ -515,130 +319,30 @@ const Dictionary = (props) => {
   // 编辑方法
   const editInfo = (text, record) => {
     changeModal('edit', true);
-    let query = {
-      dictId: record.dictId,
-    };
-    querySingleDictDetails(query)
-      .then((res) => {
-        setDetails({ ...res.data });
-        modalForm.setFieldsValue({
-          ...res.data,
-          isOutpatient: Number(res.data?.businessPermit?.isOutpatient),
-          isHospitalized: Number(res.data?.businessPermit?.isHospitalized),
-          isEmergency: Number(res.data?.businessPermit?.isEmergency),
-          isSystem: Number(res.data?.isSystem),
-          status: Number(res.data?.status),
-        });
-      })
-      .catch((err) => {
-        console.log('querySingleDictDetails---err', err);
-      });
-  };
-
-  // 树形节点选中
-  const treeSelect = async (selectedKeys, info) => {
-    if (selectedKeys.length) {
-      yTable.table.selectedNodes = info.selectedNodes[0];
-      setTreeSel(info.selectedNodes[0]);
-      await detailSortInfo();
-      yTable.table.pagination.current = 1;
-      await queryTypeDetailsListServices({ typeId: selectedKeys[0] }, 'first');
-    }
-    // else {
-    //   setTreeSel([]);
-    //   yTable.table.selectedNodes = {};
-    // }
   };
 
   // 保存分类数据
   const saveSortInfo = () => {
-    let query = {
-      ...modalFormSort.getFieldsValue(),
-      isSystem: ~~modalFormSort.getFieldValue('isSystem'),
-      isAllowChild: ~~modalFormSort.getFieldValue('isAllowChild'),
-      isOrgUse: ~~modalFormSort.getFieldValue('isOrgUse'),
-      isCustom: ~~modalFormSort.getFieldValue('isCustom'),
-      status: ~~modalFormSort.getFieldValue('status'),
-    };
+    console.log('.modalFormSort.getFieldsValue(): ', modalFormSort.getFieldsValue());
+
     if (modalSortConfig.type === 'add') {
-      insertType(query).then((res) => {
-        message.success(res?.message);
-        changeModalSort('', false);
-        queryTypeListServices();
-      });
     } else if (modalSortConfig.type === 'edit') {
-      query = {
-        ...zdxxData,
-        ...query,
-      };
-      updateType(query).then((res) => {
-        message.success(res?.message);
-        changeModalSort('', false);
-        yTable.table.selectedNodes.name = query.name;
-        detailSortInfo();
-        queryTypeListServices();
-      });
     }
   };
 
   // 保存信息数据
-  const saveInfoData = async (values) => {
-    let query = {
-      ...modalForm.getFieldsValue(),
-      orgId: 0,
-      isOrgOperation: 0, // 平台专用固定传参
-      businessPermit: {
-        isOutpatient: ~~modalForm.getFieldValue('isOutpatient'),
-        isHospitalized: ~~modalForm.getFieldValue('isHospitalized'),
-        isEmergency: ~~modalForm.getFieldValue('isEmergency'),
-      },
-      isSystem: ~~modalForm.getFieldValue('isSystem'),
-      status: ~~modalForm.getFieldValue('status'),
-    };
+  const saveInfoData = async () => {
+    console.log('modalForm.getFieldsValue(): ', modalForm.getFieldsValue());
     if (modalConfig.type === 'add') {
-      insertTypeDetail(query)
-        .then((res) => {
-          message.success(res?.message);
-          changeModal('', false);
-          queryTypeDetailsListServices();
-        })
-        .catch((err) => {
-          console.log('insertTypeDetail---err', err);
-        });
     } else if (modalConfig.type === 'edit') {
-      query = {
-        ...details,
-        ...query,
-      };
-      updateTypeDetail(query)
-        .then((res) => {
-          message.success(res?.message);
-          changeModal('', false);
-          queryTypeDetailsListServices();
-        })
-        .catch((err) => {
-          console.log('updateTypeDetail---err', err);
-        });
     }
   };
-
+  useEffect(() => {}, []);
   return (
     <div>
       <Row className="overflowXHidden margin0">
         <Col span={4} className={styles.treeBox}>
           <Form form={treeSearchForm} layout="vertical">
-            {/* <Form.Item label="字典类型" name="categoryId">
-              <Seltopt
-                selectArr={zdlxSel}
-                sWidth="100%"
-                callback={(cb) => {
-                  treeSearchForm.setFieldsValue({
-                    categoryId: cb,
-                  });
-                  queryTypeListServices();
-                }}
-              />
-            </Form.Item> */}
             <Form.Item label="" name="typeName" style={{ marginTop: '15px' }}>
               <Input onPressEnter={queryTypeListServices} />
             </Form.Item>
@@ -656,44 +360,25 @@ const Dictionary = (props) => {
               type="primary"
               onClick={() => {
                 changeModalSort('add', true);
-                modalFormSort.setFieldsValue({
-                  categoryId: treeSearchForm.getFieldValue('categoryId'),
-                });
               }}
             >
               新增
             </Button>
             <Button
               type="primary"
-              disabled={!treeSel.id}
               onClick={() => {
                 changeModalSort('edit', true);
-                detailSortInfo();
               }}
             >
               编辑
             </Button>
-            <Button disabled={!treeSel.id} onClick={() => delSortInfo()}>
-              删除
-            </Button>
+            <Button onClick={() => delSortInfo()}>删除</Button>
           </div>
         </Col>
         <Col span={20}>
-          {/* style={{ paddingRight: 16 }} */}
-          {/* <Descriptions className={styles.dicMessage} title="字典信息*？" column={7}>
-            {zdxxColumn.map((item, index) => {
-              return (
-                <Descriptions.Item key={index} label={item.title}>
-                  <Tooltip title={item.content}>{item.content}</Tooltip>
-                </Descriptions.Item>
-              );
-            })}
-          </Descriptions>
-          <Divider style={{ margin: '0 0 16px 0' }} /> */}
-
           <div className={styles.topForm}>
             <div className={styles.searchFormTips}>字典明细</div>
-            <SearchForm searchForm={zdForm} />
+            <SearchForm searchForm={topRightForm} />
           </div>
           <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
             <YTable {...yTable} />
@@ -940,4 +625,3 @@ const Dictionary = (props) => {
     </div>
   );
 };
-export default Dictionary;
