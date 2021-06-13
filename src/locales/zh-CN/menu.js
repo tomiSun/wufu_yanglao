@@ -50,8 +50,8 @@ export default {
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
   //我们的路由
-  'menu.laorendangan': '老人档案',
-  'menu.laorendangan.jichudangan': '基础档案',
-  'menu.laorendangan.tijiandangan': '体检档案',
-  'menu.laorendangan.hetong': '合同',
+  'menu.archivesManage': '老人档案',
+  'menu.archivesManage.archives': '基础档案',
+  'menu.archivesManage.physicalExamination': '体检档案',
+  'menu.archivesManage.agreement': '合同',
 };

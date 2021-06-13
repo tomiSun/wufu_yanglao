@@ -288,28 +288,28 @@ export default [
           },
           //从这里开始是我们的路由
           {
-            name: 'laorendangan',
+            name: 'archivesManage',
             icon: 'highlight',
-            path: '/laorendangan',
+            path: '/archivesManage',
             routes: [
               {
-                name: 'jichudangan',
+                name: 'archives',
                 icon: 'smile',
-                path: '/laorendangan/jichudangan/index',
-                component: './laorendangan/jichudangan',
+                path: '/archivesManage/archives/index',
+                component: './archivesManage/archives/index',
               },
-              {
-                name: 'tijiandangan',
-                icon: 'smile',
-                path: '/laorendangan/tijiandangan',
-                component: './laorendangan/tijiandangan',
-              },
-              {
-                name: 'hetong',
-                icon: 'smile',
-                path: '/laorendangan/hetong/index',
-                component: './laorendangan/hetong/index',
-              },
+              // {
+              //   name: 'physicalExamination',
+              //   icon: 'smile',
+              //   path: '/archivesManage/physicalExamination/index',
+              //   component: './archivesManage/physicalExamination/index',
+              // },
+              // {
+              //   name: 'agreement',
+              //   icon: 'smile',
+              //   path: '/archivesManage/agreement/index',
+              //   component: './archivesManage/agreement/index',
+              // },
             ],
           },
           //评估管理
