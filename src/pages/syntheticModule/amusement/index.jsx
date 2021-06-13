@@ -110,35 +110,35 @@ export default () => {
       dataSource: [{ id: 1 }],
       columns: [
         {
-          title: '员工编号',
+          title: '兴趣小组',
           dataIndex: 'number',
           align: 'left',
           ellipsis: true,
           width: 60,
         },
         {
-          title: '姓名',
+          title: '日期',
           dataIndex: 'typeName',
           ellipsis: true,
           align: 'left',
           width: 80,
         },
         {
-          title: '性别',
+          title: '活动时间',
           dataIndex: 'bloodName',
           ellipsis: true,
           align: 'left',
           width: 60,
         },
         {
-          title: '出生日期',
+          title: '活动地点',
           dataIndex: 'nameEn',
           ellipsis: true,
           align: 'left',
           width: 80,
         },
         {
-          title: '年龄',
+          title: '活动人数',
           dataIndex: 'unit',
           align: 'left',
           ellipsis: true,
@@ -148,40 +148,18 @@ export default () => {
           },
         },
         {
-          title: '身份证号',
+          title: '活动内容',
           dataIndex: 'bloodLoad',
           ellipsis: true,
           align: 'left',
           width: 60,
         },
         {
-          title: '联系方式',
+          title: '负责人签名？？？',
           dataIndex: 'effectiveDay',
           ellipsis: true,
           align: 'left',
           width: 80,
-        },
-        {
-          title: '联系地址',
-          dataIndex: 'alarmDay',
-          ellipsis: true,
-          align: 'left',
-          width: 180,
-        },
-        // {
-        //   title: '密码*？',
-        //   dataIndex: 'pinyinCode',
-        //   ellipsis: true,
-        //   align: 'left',
-        //   width: 90,
-        // },
-        {
-          title: '状态',
-          dataIndex: 'isCross',
-          align: 'left',
-          ellipsis: true,
-          width: 50,
-          render: (text, record, info) => (text === 1 ? '启用' : '停用'),
         },
         {
           title: '操作',
@@ -205,14 +183,6 @@ export default () => {
                 }}
               >
                 删除
-              </a>
-              <Divider type="vertical" />
-              <a
-                onClick={() => {
-                  resetPassWord(record);
-                }}
-              >
-                重置密码
               </a>
             </div>
           ),

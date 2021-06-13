@@ -369,6 +369,43 @@ export default [
                 path: '/basicSetting/staffInfo',
                 component: './basicSetting/staffInfo',
               },
+              {
+                name: '护工信息',
+                icon: 'smile',
+                path: '/basicSetting/nursingInfo',
+                component: './basicSetting/nursingInfo',
+              },
+              {
+                name: '床位信息',
+                icon: 'smile',
+                path: '/basicSetting/bedInfo',
+                component: './basicSetting/bedInfo',
+              },
+            ],
+          },
+          {
+            name: '综合模块',
+            icon: 'highlight',
+            path: '/syntheticModule',
+            routes: [
+              {
+                name: '食谱',
+                icon: 'smile',
+                path: '/syntheticModule/cookbook',
+                component: './syntheticModule/cookbook',
+              },
+              {
+                name: '满意度测评',
+                icon: 'smile',
+                path: '/syntheticModule/satisficing',
+                component: './syntheticModule/satisficing',
+              },
+              {
+                name: '兴趣小组活动记录',
+                icon: 'smile',
+                path: '/syntheticModule/amusement',
+                component: './syntheticModule/amusement',
+              },
             ],
           },
           {
