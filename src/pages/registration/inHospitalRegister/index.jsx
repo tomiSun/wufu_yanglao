@@ -23,30 +23,33 @@ const Archives = (props) => {
     // 搜索部分
     const renderSearch = () => {
         return (
-            <Form onFinish={() => { }}  {...layout}>
-                <Row gutter={24}>
-                    <Col span={6}>
-                        <Form.Item label="姓名" name={"name"}>
-                            <Input width="200" />
-                        </Form.Item>
-                    </Col>
-                    <Col span={6}>
-                        <Form.Item label="档案ID" name={"name"}>
-                            <Input width="200" />
-                        </Form.Item>
-                    </Col>
-                    <Col span={1}>
-                        <Button type="primary" size={'small'}>
-                            查询
-                        </Button>
-                    </Col>
-                    <Col span={1}>
-                        <Button type="primary" size={'small'} onClick={() => { setModalVisible(true) }}>
-                            新增
-                        </Button>
-                    </Col>
-                </Row>
-            </Form>
+            <div>
+                <Form onFinish={() => { }}  {...layout}
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: 'center',
+                        flexDirection: "row",
+                        width: 1200,
+                        marginTop: 15
+                    }}>
+                    <Form.Item label="姓名" name={"name"}>
+                        <Input width="200" />
+                    </Form.Item>
+                    <Form.Item label="身份证号" name={"name"}>
+                        <Input width="200" />
+                    </Form.Item>
+                    <Form.Item label="入院日期" name={"name"}>
+                        <DatePicker width="200" />
+                    </Form.Item>
+                    <Button type="primary" size={'small'}>
+                        查询
+                  </Button>
+                    <Button type="primary" size={'small'} onClick={() => { setModalVisible(true) }}>
+                        新增
+                  </Button>
+                </Form>
+            </div>
         )
     }
     //操作
