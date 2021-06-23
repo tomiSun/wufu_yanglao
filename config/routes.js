@@ -406,6 +406,18 @@ export default [
                 path: '/syntheticModule/amusement',
                 component: './syntheticModule/amusement',
               },
+              {
+                name: '捐款记录',
+                icon: 'smile',
+                path: '/syntheticModule/record',
+                component: './syntheticModule/record',
+              },
+              {
+                name: '民管委员会（投诉）记录',
+                icon: 'smile',
+                path: '/syntheticModule/complain',
+                component: './syntheticModule/complain',
+              },
             ],
           },
           {

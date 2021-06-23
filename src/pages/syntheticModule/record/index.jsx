@@ -110,52 +110,70 @@ export default () => {
       dataSource: [{ id: 1 }],
       columns: [
         {
-          title: '兴趣小组',
-          dataIndex: 'number',
-          align: 'left',
-          ellipsis: true,
-          width: 60,
-        },
-        {
           title: '日期',
           dataIndex: 'typeName',
           ellipsis: true,
           align: 'left',
-          width: 80,
+          width: 150,
         },
         {
-          title: '活动时间',
+          title: '捐款单位（个人）',
+          dataIndex: 'number',
+          align: 'left',
+          ellipsis: true,
+          width: 160,
+        },
+        
+        {
+          title: '捐款人意见',
           dataIndex: 'bloodName',
           ellipsis: true,
           align: 'left',
-          width: 60,
+          width: 160,
         },
         {
-          title: '活动地点',
+          title: '钱款（金额）',
           dataIndex: 'nameEn',
           ellipsis: true,
           align: 'left',
           width: 80,
         },
         {
-          title: '活动人数',
+          title: '物品',
           dataIndex: 'unit',
           align: 'left',
           ellipsis: true,
-          width: 60,
-          render: (text, record, index) => {
-            return findValByKey(yTable.table.basic['1043'], 'key', text, 'name');
-          },
+          width: 300,
+          children: [
+            {
+              title: '名称',
+              dataIndex: 'building',
+              key: 'building',
+              width: 100
+            },
+            {
+              title: '数量',
+              dataIndex: 'building',
+              key: 'building',
+              width: 100
+            },
+            {
+              title: '估价',
+              dataIndex: 'building',
+              key: 'building',
+              width: 100
+            },
+            ]
         },
         {
-          title: '活动内容',
+          title: '捐赠物处理',
           dataIndex: 'bloodLoad',
           ellipsis: true,
           align: 'left',
           width: 60,
         },
         {
-          title: '负责人',
+          title: '经办责任人',
           dataIndex: 'effectiveDay',
           ellipsis: true,
           align: 'left',
@@ -216,6 +234,72 @@ export default () => {
         yTable.table.dataRow = info;
         setYTable({ ...yTable });
         addOrEdit('edit', true);
+      },
+    },
+  });
+  const [yTableModal, setYTableModal] = useState({
+    table: {
+      bordered: true,
+      loading: false,
+      dataSource: [{ id: 1 }],
+      columns: [
+        {
+          title: '名称',
+          dataIndex: 'building',
+          key: 'building',
+          width: 100,
+          render:(text,record)=>{
+            return <Input />
+          }
+        },
+        {
+          title: '数量',
+          dataIndex: 'building',
+          key: 'building',
+          width: 100,
+          render:(text,record)=>{
+            return <Input />
+          }
+        },
+        {
+          title: '估价',
+          dataIndex: 'building',
+          key: 'building',
+          width: 100,
+          render:(text,record)=>{
+            return <Input />
+          }
+        },
+        {
+          title: '操作',
+          key: 'opera',
+          align: 'center',
+          width: 130,
+          render: (text, record) => (
+            <div className={styles.opera}>
+              <a
+                onClick={() => {
+                  del(record);
+                }}
+              >
+                删除
+              </a>
+            </div>
+          ),
+        },
+      ],
+      key: Math.random(),
+      scroll: {  y: '100%' },
+      dataRow: {},
+      rowKey: 'id',
+      pagination: false,
+      oClick: (count) => {
+        yTableModal.table.dataRow = count;
+        setYTableModal({ ...yTableModal });
+      },
+      selectInfo: (info) => {
+        yTable.table.dataRow = info;
+        setYTableModal({ ...yTable });
       },
     },
   });
@@ -378,6 +462,7 @@ export default () => {
       <SearchForm searchForm={searchTopForm} />
       <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
         <YTable {...yTable} />
+        
       </div>
       <Modal
         className={styles.bloodModal}
@@ -395,68 +480,48 @@ export default () => {
         <Form
           name="basic"
           form={modalForm}
-          labelCol={{ flex: '90px' }}
+          labelCol={{ flex: '150px' }}
           onFinish={saveModalInfo}
           initialValues={{ isCross: false, isMelt: false }}
         >
           <Row>
-            <Col span={12}>
-              <Form.Item label="员工编号" name="number" rules={[{ required: true, message: '' }]}>
-                <Input placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="姓名" name="number" rules={[{ required: true, message: '' }]}>
-                <Input placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="性别" name="typeName" rules={[{ required: false, message: '' }]}>
-                <Seltopt
-                  selectArr={[]}
-                  sWidth="100%"
-                  callback={(cb) => {
-                    modalForm.setFieldsValue({
-                      typeName: findValByKey(basic['1041'], 'key', cb, 'name'),
-                    });
-                  }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="生日" name="collectionTime">
-                <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="年龄" name="nameEn">
-                <Input placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="身份证号" name="nameEn">
-                <Input placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="联系方式" name="nameEn">
-                <Input placeholder="请输入" />
-              </Form.Item>
-            </Col>
             <Col span={24}>
-              <Form.Item label="联系地址" name="remark">
+              <Form.Item label="捐赠单位（个人）" name="number" rules={[{ required: true, message: '' }]}>
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item name="status" valuePropName="checked" style={{ marginLeft: 8 }}>
-                <Checkbox>
-                  <span className={styles.labeltext}>启用</span>
-                </Checkbox>
+              <Form.Item label="捐款人意见" name="remark">
+                <TextArea placeholder="请输入" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="日期" name="collectionTime">
+                <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="钱款（金额）" name="number" rules={[{ required: true, message: '' }]}>
+                <Input placeholder="请输入" />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item label="捐赠物处理" name="remark">
+                <TextArea placeholder="请输入" />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item label="经办责任人" name="number" rules={[{ required: true, message: '' }]}>
+                <Input placeholder="请输入" />
               </Form.Item>
             </Col>
           </Row>
         </Form>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'10px 0'}}>
+          <div>捐赠物品</div>
+            <Button type='primary'>新增</Button>
+          </div>
+        <YTable {...yTableModal} />
       </Modal>
     </div>
   );
