@@ -3,7 +3,6 @@ const dataSource = [
     {
         key: '1',
         name: '胡彦斌',
-        archivesId:"L000001",
         sex: "男",//字典
         age: 32,
         careLevel: "一级",//字典
@@ -15,17 +14,11 @@ const dataSource = [
         contacts: "周杰",
         relationship: "儿子",
         contactsPhone: "13745880987",
-        inTime: "2021-7-28",
-        occupancyStatus: "已入住"
+        inTime: "2021-7-28"
     }
 ];
 const columns = (edit) => {
     return [
-        {
-            title: '老人编号',
-            dataIndex: 'archivesId',
-            key: 'archivesId',
-        },
         {
             title: '姓名',
             dataIndex: 'name',
@@ -90,11 +83,6 @@ const columns = (edit) => {
             title: '联系电话',
             dataIndex: 'contactsPhone',
             key: 'contactsPhone',
-        },
-        {
-            title: '入住状态',
-            dataIndex: 'occupancyStatus',
-            key: 'occupancyStatus',
         },
         {
             title: '操作',
