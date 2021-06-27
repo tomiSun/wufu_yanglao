@@ -54,4 +54,6 @@ export default {
   'menu.archivesManage.archives': '基础档案',
   'menu.archivesManage.physicalExamination': '体检档案',
   'menu.archivesManage.agreement': '合同',
+  'menu.nursingManagement':'护理管理',
+  'menu.nursingManagement.riskNotification':'风险告知书'
 };
