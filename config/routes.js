@@ -333,25 +333,49 @@ export default [
           //   ],
           // },
           //护理管理
-          // {
-          //   name: 'huliguanli',
-          //   icon: 'highlight',
-          //   path: '/huliguanli',
-          //   routes: [
-          //     {
-          //       name: 'fengxiangaozhishu',
-          //       icon: 'smile',
-          //       path: '/huliguanli/fengxiangaozhishu/index',
-          //       component: './huliguanli/fengxiangaozhishu',
-          //     },
-          //     {
-          //       name: 'shizhuqi',
-          //       icon: 'smile',
-          //       path: '/pingguguanli/shizhuqi/index',
-          //       component: './pingguguanli/shizhuqi',
-          //     },
-          //   ],
-          // },
+          {
+            name: '护理管理',
+            icon: 'highlight',
+            path: '/nursingManagement',
+            routes: [
+              {
+                name: '风险告知书',//风险告知书
+                icon: 'smile',
+                path: '/nursingManagement/riskNotification/index',
+                component: './nursingManagement/riskNotification',
+              },
+              {
+                name: '血糖记录表',//血糖记录表
+                icon: 'smile',
+                path: '/nursingManagement/bloodGlucoseRecord/index',
+                component: './nursingManagement/bloodGlucoseRecord',
+              },
+              // {
+              //   name: 'nursingRecord',//护理记录
+              //   icon: 'smile',
+              //   path: '/nursingManagement/nursingRecord/index',
+              //   component: './nursingManagement/nursingRecord',
+              // },
+              // {
+              //   name: 'threeVolumeList',//三测单
+              //   icon: 'smile',
+              //   path: '/nursingManagement/threeVolumeList/index',
+              //   component: './nursingManagement/threeVolumeList',
+              // },
+              // {
+              //   name: 'specialNursingRecord',//特级护理
+              //   icon: 'smile',
+              //   path: '/nursingManagement/specialNursingRecord/index',
+              //   component: './nursingManagement/specialNursingRecord',
+              // },
+              // {
+              //   name: 'leaveManagement',//请假管理
+              //   icon: 'smile',
+              //   path: '/nursingManagement/leaveManagement/index',
+              //   component: './nursingManagement/leaveManagement',
+              // },
+            ],
+          },
           {
             name: '基础设置',
             icon: 'highlight',
