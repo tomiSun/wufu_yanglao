@@ -418,6 +418,24 @@ export default [
                 path: '/syntheticModule/complain',
                 component: './syntheticModule/complain',
               },
+              {
+                name: '交接班',
+                icon: 'smile',
+                path: '/syntheticModule/shiftchange',
+                component: './syntheticModule/shiftchange',
+              },
+              {
+                name: '行政查房记录',
+                icon: 'smile',
+                path: '/syntheticModule/wardround',
+                component: './syntheticModule/wardround',
+              },
+              {
+                name: '护工考核',
+                icon: 'smile',
+                path: '/syntheticModule/examine',
+                component: './syntheticModule/examine',
+              },
             ],
           },
           {

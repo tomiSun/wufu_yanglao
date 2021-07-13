@@ -15,6 +15,7 @@ import {
   DatePicker,
   Checkbox,
 } from 'antd';
+import moment from 'moment';
 import { DeleteOutlined } from '@ant-design/icons';
 // import {
 //   getBloodTableData,
@@ -39,9 +40,51 @@ export default () => {
     inputArr: [
       {
         name: 'keyWord',
-        placeholder: '请输入',
+        placeholder: '请输入护工姓名',
         sort: 1,
         // style: {  },
+      },
+    ],
+    dateArr: [
+      // {
+      //   label: '考核时间',
+      //   name: 'startDate',
+      //   config: {
+      //     time: moment().format('YYYY-MM-DD'),
+      //     showTime: false,
+      //     onChange: (e) => {
+      //       console.log('onChange-----startDate', e);
+      //     },
+      //   },
+      //   sort: 1,
+      // },
+      // {
+      //   // label: '时间范围',
+      //   name: 'endDate',
+      //   config: {
+      //     time: moment().format('YYYY-MM-DD'),
+      //   },
+      //   sort: 2,
+      // },
+      {
+        label: '考核时间',
+        name: 'timeRange',
+        config: {
+          dateType: 'range',
+          timeStart: moment().startOf('day'),
+          timeEnd: moment().endOf('day'),
+          showTime: false,
+          onChange: (e) => {
+            topRightFrom.setFieldsValue({ timeRange: e });
+          },
+          onChange: (e) => {
+            // topRightFrom.setFieldsValue({ timeRange: e });
+            // yRightTable.table.pagination.current = 1;
+            // getBloodMasterData();
+          },
+        },
+        style: { width: '220px' },
+        sort: 2,
       },
     ],
     btnArr: [
@@ -120,67 +163,53 @@ export default () => {
       dataSource: [{ id: 1 }],
       columns: [
         {
-          title: '会议（投诉）日期',
+          title: '序号',
           dataIndex: 'typeName',
           ellipsis: true,
           align: 'left',
-          width: 150,
+          width: 50,
         },
         {
-          title: '参加（投诉）人员',
+          title: '科室',
           dataIndex: 'number',
           align: 'left',
           ellipsis: true,
           width: 160,
         },
         {
-          title: '缺席人员',
+          title: '姓名',
           dataIndex: 'number',
           align: 'left',
           ellipsis: true,
           width: 160,
         },
         {
-          title: '会议（投诉）主题',
+          title: '分数',
           dataIndex: 'number',
           align: 'left',
           ellipsis: true,
           width: 160,
         },
         {
-          title: '主持人',
+          title: '备注（扣分原因，病事假）',
+          dataIndex: 'number',
+          align: 'left',
+          ellipsis: true,
+          width: 160,
+        },
+        {
+          title: '考核人',
           dataIndex: 'bloodName',
           ellipsis: true,
           align: 'left',
           width: 160,
         },
         {
-          title: '意见和建议',
-          dataIndex: 'nameEn',
-          ellipsis: true,
-          align: 'left',
-          width: 300,
-        },
-        {
-          title: '处理措施',
+          title: '考核时间',
           dataIndex: 'bloodLoad',
           ellipsis: true,
           align: 'left',
           width: 60,
-        },
-        {
-          title: '落实情况',
-          dataIndex: 'effectiveDay',
-          ellipsis: true,
-          align: 'left',
-          width: 80,
-        },
-        {
-          title: '责任人',
-          dataIndex: 'effectiveDay',
-          ellipsis: true,
-          align: 'left',
-          width: 80,
         },
         {
           title: '操作',
@@ -416,53 +445,48 @@ export default () => {
         <Form
           name="basic"
           form={modalForm}
-          labelCol={{ flex: '150px' }}
+          labelCol={{ flex: '70px' }}
           onFinish={saveModalInfo}
           initialValues={{ isCross: false, isMelt: false }}
         >
           <Row>
             <Col span={12}>
-              <Form.Item label="会议（投诉）日期" name="collectionTime">
-                <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
+              <Form.Item label="科室" name="number" rules={[{ required: true }]}>
+                <Seltopt
+                  selectArr={[]}
+                  sWidth="100%"
+                  callback={(cb) => {
+                    modalForm.setFieldsValue({
+                      typeName: findValByKey(basic['1041'], 'key', cb, 'name'),
+                    });
+                  }}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="主持人" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item label="姓名" name="number" rules={[{ required: true }]}>
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
-            <Col span={24}>
-              <Form.Item
-                label="参加（投诉）人员"
-                name="number"
-                rules={[{ required: true, message: '' }]}
-              >
-                <TextArea placeholder="请输入" />
+            <Col span={12}>
+              <Form.Item label="分数" name="number" rules={[{ required: true }]}>
+                <Input placeholder="请输入" />
               </Form.Item>
             </Col>
-            <Col span={24}>
-              <Form.Item label="缺席人员" name="remark">
-                <TextArea placeholder="请输入" />
+            <Col span={12}>
+              <Form.Item label="考核人" name="number" rules={[{ required: true }]}>
+                <Input placeholder="请输入" />
               </Form.Item>
             </Col>
-            <Col span={24}>
-              <Form.Item label="会议（投诉）主题" name="remark">
-                <TextArea placeholder="请输入" />
+            <Col span={12}>
+              <Form.Item label="考核时间" name="collectionTime">
+                <DatePicker format="YYYY-MM-DD" showTime={true} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
+
             <Col span={24}>
-              <Form.Item label="意见和建议" name="remark">
-                <TextArea placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item label="处理措施" name="remark">
-                <TextArea placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item label="落实情况" name="remark">
-                <TextArea placeholder="请输入" />
+              <Form.Item label="备注" name="remark">
+                <TextArea placeholder="扣分原因，病事假" />
               </Form.Item>
             </Col>
           </Row>
