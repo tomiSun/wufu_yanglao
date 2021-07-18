@@ -15,6 +15,7 @@ import {
   DatePicker,
   Checkbox,
 } from 'antd';
+import moment from 'moment';
 import { DeleteOutlined } from '@ant-design/icons';
 // import {
 //   getBloodTableData,
@@ -39,9 +40,52 @@ export default () => {
     inputArr: [
       {
         name: 'keyWord',
-        placeholder: '请输入',
+        placeholder: '请输入交班员名称',
         sort: 1,
         // style: {  },
+      },
+    ],
+    dateArr: [
+      // {
+      //   label: '时间',
+      //   name: 'startDate',
+      //   config: {
+      //     time: moment().format('YYYY-MM-DD'),
+      //     showTime: false,
+      //     onChange: (e) => {
+      //       console.log('onChange-----startDate', e);
+      //     },
+      //   },
+      //   sort: 1,
+      // },
+      // {
+      //   // label: '时间范围',
+      //   name: 'endDate',
+      //   config: {
+      //     time: moment().format('YYYY-MM-DD'),
+      //   },
+      //   sort: 2,
+      // },
+
+      {
+        label: '交班时间',
+        name: 'timeRange',
+        config: {
+          dateType: 'range',
+          timeStart: moment().startOf('day'),
+          timeEnd: moment().endOf('day'),
+          showTime: true,
+          onChange: (e) => {
+            topRightFrom.setFieldsValue({ timeRange: e });
+          },
+          onChange: (e) => {
+            topRightFrom.setFieldsValue({ timeRange: e });
+            yRightTable.table.pagination.current = 1;
+            getBloodMasterData();
+          },
+        },
+        style: { width: '220px' },
+        sort: 2,
       },
     ],
     btnArr: [
@@ -120,63 +164,63 @@ export default () => {
       dataSource: [{ id: 1 }],
       columns: [
         {
-          title: '会议（投诉）日期',
+          title: '提交时间',
           dataIndex: 'typeName',
           ellipsis: true,
           align: 'left',
           width: 150,
         },
         {
-          title: '参加（投诉）人员',
+          title: '交班员',
           dataIndex: 'number',
           align: 'left',
           ellipsis: true,
           width: 160,
         },
         {
-          title: '缺席人员',
+          title: '备注',
           dataIndex: 'number',
           align: 'left',
           ellipsis: true,
           width: 160,
         },
         {
-          title: '会议（投诉）主题',
+          title: '接收时间',
           dataIndex: 'number',
           align: 'left',
           ellipsis: true,
           width: 160,
         },
         {
-          title: '主持人',
+          title: '接班员',
           dataIndex: 'bloodName',
           ellipsis: true,
           align: 'left',
           width: 160,
         },
         {
-          title: '意见和建议',
+          title: '操作员',
           dataIndex: 'nameEn',
           ellipsis: true,
           align: 'left',
           width: 300,
         },
         {
-          title: '处理措施',
+          title: '操作日期',
           dataIndex: 'bloodLoad',
           ellipsis: true,
           align: 'left',
           width: 60,
         },
         {
-          title: '落实情况',
+          title: '交班开始时间',
           dataIndex: 'effectiveDay',
           ellipsis: true,
           align: 'left',
           width: 80,
         },
         {
-          title: '责任人',
+          title: '交班结束时间',
           dataIndex: 'effectiveDay',
           ellipsis: true,
           align: 'left',
@@ -194,17 +238,26 @@ export default () => {
                   addOrEdit('edit', true, record);
                 }}
               >
-                编辑
+                查看
               </a>
 
               <Divider type="vertical" />
+              <a
+                onClick={() => {
+                  addOrEdit('edit', true, record);
+                }}
+              >
+                编辑
+              </a>
+
+              {/* <Divider type="vertical" />
               <a
                 onClick={() => {
                   del(record);
                 }}
               >
                 删除
-              </a>
+              </a> */}
             </div>
           ),
         },
@@ -422,46 +475,33 @@ export default () => {
         >
           <Row>
             <Col span={12}>
-              <Form.Item label="会议（投诉）日期" name="collectionTime">
-                <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="主持人" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item label="交班员" name="number" rules={[{ required: true }]}>
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
+            <Col span={12}>
+              <Form.Item label="接班员" name="number" rules={[{ required: true }]}>
+                <Input placeholder="请输入" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="交班开始时间" name="collectionTime">
+                <DatePicker format="YYYY-MM-DD" showTime={true} style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="交班结束时间" name="collectionTime">
+                <DatePicker format="YYYY-MM-DD" showTime={true} style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+
             <Col span={24}>
-              <Form.Item
-                label="参加（投诉）人员"
-                name="number"
-                rules={[{ required: true, message: '' }]}
-              >
+              <Form.Item label="交班事宜" name="number" rules={[{ required: true, message: '' }]}>
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="缺席人员" name="remark">
-                <TextArea placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item label="会议（投诉）主题" name="remark">
-                <TextArea placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item label="意见和建议" name="remark">
-                <TextArea placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item label="处理措施" name="remark">
-                <TextArea placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item label="落实情况" name="remark">
+              <Form.Item label="备注" name="remark">
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>

@@ -15,6 +15,7 @@ import {
   DatePicker,
   Checkbox,
 } from 'antd';
+import moment from 'moment';
 import { DeleteOutlined } from '@ant-design/icons';
 // import {
 //   getBloodTableData,
@@ -39,10 +40,52 @@ export default () => {
     inputArr: [
       {
         name: 'keyWord',
-        placeholder: '请输入',
+        placeholder: '请输入查房人',
         sort: 1,
         // style: {  },
       },
+    ],
+    dateArr: [
+      {
+        label: '时间',
+        name: 'startDate',
+        config: {
+          time: moment().format('YYYY-MM-DD'),
+          showTime: false,
+          onChange: (e) => {
+            console.log('onChange-----startDate', e);
+          },
+        },
+        sort: 1,
+      },
+      // {
+      //   // label: '时间范围',
+      //   name: 'endDate',
+      //   config: {
+      //     time: moment().format('YYYY-MM-DD'),
+      //   },
+      //   sort: 2,
+      // },
+      // {
+      //   label: '交班时间',
+      //   name: 'timeRange',
+      //   config: {
+      //     dateType: 'range',
+      //     timeStart: moment().startOf('day'),
+      //     timeEnd: moment().endOf('day'),
+      //     showTime: true,
+      //     onChange: (e) => {
+      //       topRightFrom.setFieldsValue({ timeRange: e });
+      //     },
+      //     onChange: (e) => {
+      //       topRightFrom.setFieldsValue({ timeRange: e });
+      //       yRightTable.table.pagination.current = 1;
+      //       getBloodMasterData();
+      //     },
+      //   },
+      //   style: { width: '220px' },
+      //   sort: 2,
+      // },
     ],
     btnArr: [
       {
@@ -120,67 +163,147 @@ export default () => {
       dataSource: [{ id: 1 }],
       columns: [
         {
-          title: '会议（投诉）日期',
+          title: '查房时间',
           dataIndex: 'typeName',
           ellipsis: true,
-          align: 'left',
+          align: 'center',
           width: 150,
         },
         {
-          title: '参加（投诉）人员',
+          title: '查房人',
           dataIndex: 'number',
-          align: 'left',
+          align: 'center',
           ellipsis: true,
           width: 160,
         },
         {
-          title: '缺席人员',
+          title: '项目',
           dataIndex: 'number',
-          align: 'left',
+          align: 'center',
           ellipsis: true,
           width: 160,
-        },
-        {
-          title: '会议（投诉）主题',
-          dataIndex: 'number',
-          align: 'left',
-          ellipsis: true,
-          width: 160,
-        },
-        {
-          title: '主持人',
-          dataIndex: 'bloodName',
-          ellipsis: true,
-          align: 'left',
-          width: 160,
-        },
-        {
-          title: '意见和建议',
-          dataIndex: 'nameEn',
-          ellipsis: true,
-          align: 'left',
-          width: 300,
-        },
-        {
-          title: '处理措施',
-          dataIndex: 'bloodLoad',
-          ellipsis: true,
-          align: 'left',
-          width: 60,
-        },
-        {
-          title: '落实情况',
-          dataIndex: 'effectiveDay',
-          ellipsis: true,
-          align: 'left',
-          width: 80,
-        },
-        {
-          title: '责任人',
-          dataIndex: 'effectiveDay',
-          ellipsis: true,
-          align: 'left',
-          width: 80,
+          children: [
+            {
+              title: '生活照料',
+              dataIndex: 'building',
+              key: 'building',
+              width: 200,
+              children: [
+                {
+                  title: '发现情况摘要',
+                  dataIndex: 'building',
+                  key: 'building',
+                  width: 100,
+                },
+                {
+                  title: '处理意见',
+                  dataIndex: 'number',
+                  key: 'number',
+                  width: 100,
+                },
+              ],
+            },
+            {
+              title: '心理护理',
+              dataIndex: 'number',
+              key: 'number',
+              width: 100,
+              children: [
+                {
+                  title: '发现情况摘要',
+                  dataIndex: 'building',
+                  key: 'building',
+                  width: 100,
+                },
+                {
+                  title: '处理意见',
+                  dataIndex: 'number',
+                  key: 'number',
+                  width: 100,
+                },
+              ],
+            },
+            {
+              title: '后勤保障',
+              dataIndex: 'number',
+              key: 'number',
+              width: 100,
+              children: [
+                {
+                  title: '发现情况摘要',
+                  dataIndex: 'building',
+                  key: 'building',
+                  width: 100,
+                },
+                {
+                  title: '处理意见',
+                  dataIndex: 'number',
+                  key: 'number',
+                  width: 100,
+                },
+              ],
+            },
+            {
+              title: '安全隐患',
+              dataIndex: 'number',
+              key: 'number',
+              width: 100,
+              children: [
+                {
+                  title: '发现情况摘要',
+                  dataIndex: 'building',
+                  key: 'building',
+                  width: 100,
+                },
+                {
+                  title: '处理意见',
+                  dataIndex: 'number',
+                  key: 'number',
+                  width: 100,
+                },
+              ],
+            },
+            {
+              title: '环境卫生及其他',
+              dataIndex: 'number',
+              key: 'number',
+              width: 100,
+              children: [
+                {
+                  title: '发现情况摘要',
+                  dataIndex: 'building',
+                  key: 'building',
+                  width: 100,
+                },
+                {
+                  title: '处理意见',
+                  dataIndex: 'number',
+                  key: 'number',
+                  width: 100,
+                },
+              ],
+            },
+            {
+              title: '意见或建议',
+              dataIndex: 'number',
+              key: 'number',
+              width: 100,
+              children: [
+                {
+                  title: '发现情况摘要',
+                  dataIndex: 'building',
+                  key: 'building',
+                  width: 100,
+                },
+                {
+                  title: '处理意见',
+                  dataIndex: 'number',
+                  key: 'number',
+                  width: 100,
+                },
+              ],
+            },
+          ],
         },
         {
           title: '操作',
@@ -194,17 +317,26 @@ export default () => {
                   addOrEdit('edit', true, record);
                 }}
               >
-                编辑
+                查看
               </a>
 
               <Divider type="vertical" />
+              <a
+                onClick={() => {
+                  addOrEdit('edit', true, record);
+                }}
+              >
+                编辑
+              </a>
+
+              {/* <Divider type="vertical" />
               <a
                 onClick={() => {
                   del(record);
                 }}
               >
                 删除
-              </a>
+              </a> */}
             </div>
           ),
         },
@@ -380,7 +512,62 @@ export default () => {
     //   setYTable({ ...yTable });
     // });
   };
-
+  const [yTableModal, setYTableModal] = useState({
+    table: {
+      bordered: true,
+      loading: false,
+      dataSource: [
+        { id: 1, week: '生活照料' },
+        { id: 2, week: '心理护理' },
+        { id: 3, week: '后勤保障' },
+        { id: 4, week: '安全隐患' },
+        { id: 5, week: '环境卫生及其他' },
+        { id: 6, week: '意见或建议' },
+      ],
+      columns: [
+        {
+          title: '项目',
+          dataIndex: 'week',
+          align: 'left',
+          ellipsis: true,
+          width: 150,
+        },
+        {
+          title: '发现情况摘要',
+          dataIndex: 'typeName',
+          ellipsis: true,
+          align: 'left',
+          // width: 200,
+          render: (text, record, index) => {
+            return <TextArea autoSize={true} bordered={false} placeholder="请输入" />;
+          },
+        },
+        {
+          title: '处置意见',
+          dataIndex: 'bloodName',
+          ellipsis: true,
+          align: 'left',
+          // width: 200,
+          render: (text, record, index) => {
+            return <TextArea autoSize={true} bordered={false} placeholder="请输入" />;
+          },
+        },
+      ],
+      key: Math.random(),
+      scroll: { y: '100%' },
+      dataRow: {},
+      rowKey: 'id',
+      pagination: false,
+      oClick: (count) => {
+        yTableModal.table.dataRow = count;
+        setYTableModal({ ...yTableModal });
+      },
+      selectInfo: (info) => {
+        yTable.table.dataRow = info;
+        setYTableModal({ ...yTable });
+      },
+    },
+  });
   useEffect(() => {
     modalForm.validateFields(['crossMethod']);
   }, [isCross]);
@@ -416,57 +603,24 @@ export default () => {
         <Form
           name="basic"
           form={modalForm}
-          labelCol={{ flex: '150px' }}
+          labelCol={{ flex: '80px' }}
           onFinish={saveModalInfo}
           initialValues={{ isCross: false, isMelt: false }}
         >
           <Row>
             <Col span={12}>
-              <Form.Item label="会议（投诉）日期" name="collectionTime">
+              <Form.Item label="查房时间" name="collectionTime">
                 <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="主持人" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item label="查房人" name="number" rules={[{ required: true }]}>
                 <Input placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                label="参加（投诉）人员"
-                name="number"
-                rules={[{ required: true, message: '' }]}
-              >
-                <TextArea placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item label="缺席人员" name="remark">
-                <TextArea placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item label="会议（投诉）主题" name="remark">
-                <TextArea placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item label="意见和建议" name="remark">
-                <TextArea placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item label="处理措施" name="remark">
-                <TextArea placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item label="落实情况" name="remark">
-                <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
           </Row>
         </Form>
+        <YTable {...yTableModal} />
       </Modal>
     </div>
   );

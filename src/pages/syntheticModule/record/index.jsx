@@ -123,7 +123,7 @@ export default () => {
           ellipsis: true,
           width: 160,
         },
-        
+
         {
           title: '捐款人意见',
           dataIndex: 'bloodName',
@@ -149,21 +149,21 @@ export default () => {
               title: '名称',
               dataIndex: 'building',
               key: 'building',
-              width: 100
+              width: 100,
             },
             {
               title: '数量',
               dataIndex: 'building',
               key: 'building',
-              width: 100
+              width: 100,
             },
             {
               title: '估价',
               dataIndex: 'building',
               key: 'building',
-              width: 100
+              width: 100,
             },
-            ]
+          ],
         },
         {
           title: '捐赠物处理',
@@ -248,27 +248,27 @@ export default () => {
           dataIndex: 'building',
           key: 'building',
           width: 100,
-          render:(text,record)=>{
-            return <Input />
-          }
+          render: (text, record) => {
+            return <Input />;
+          },
         },
         {
           title: '数量',
           dataIndex: 'building',
           key: 'building',
           width: 100,
-          render:(text,record)=>{
-            return <Input />
-          }
+          render: (text, record) => {
+            return <Input />;
+          },
         },
         {
           title: '估价',
           dataIndex: 'building',
           key: 'building',
           width: 100,
-          render:(text,record)=>{
-            return <Input />
-          }
+          render: (text, record) => {
+            return <Input />;
+          },
         },
         {
           title: '操作',
@@ -289,7 +289,7 @@ export default () => {
         },
       ],
       key: Math.random(),
-      scroll: {  y: '100%' },
+      scroll: { y: '100%' },
       dataRow: {},
       rowKey: 'id',
       pagination: false,
@@ -462,7 +462,6 @@ export default () => {
       <SearchForm searchForm={searchTopForm} />
       <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
         <YTable {...yTable} />
-        
       </div>
       <Modal
         className={styles.bloodModal}
@@ -486,7 +485,11 @@ export default () => {
         >
           <Row>
             <Col span={24}>
-              <Form.Item label="捐赠单位（个人）" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item
+                label="捐赠单位（个人）"
+                name="number"
+                rules={[{ required: true, message: '' }]}
+              >
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
@@ -501,7 +504,26 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="钱款（金额）" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item
+                label="钱款（金额）"
+                name="number"
+                rules={[{ required: true, message: '' }]}
+              >
+                <Input placeholder="请输入" />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item label="捐赠物名称" name="remark">
+                <TextArea placeholder="请输入" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="捐赠物数量" name="number" rules={[{ required: true, message: '' }]}>
+                <InputNumber placeholder="请输入" min="1" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="捐赠物估价" name="number" rules={[{ required: true, message: '' }]}>
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
@@ -517,11 +539,18 @@ export default () => {
             </Col>
           </Row>
         </Form>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'10px 0'}}>
+        {/* <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '10px 0',
+          }}
+        >
           <div>捐赠物品</div>
-            <Button type='primary'>新增</Button>
-          </div>
-        <YTable {...yTableModal} />
+          <Button type="primary">新增</Button>
+        </div>
+        <YTable {...yTableModal} /> */}
       </Modal>
     </div>
   );
