@@ -65,16 +65,6 @@ const columns = (edit) => {
             key: 'careLevel',
         },
         {
-            title: '入院诊断',
-            dataIndex: 'diagnosis',
-            key: 'diagnosis',
-        },
-        {
-            title: '入院时间',
-            dataIndex: 'inTime',
-            key: 'inTime',
-        },
-        {
             title: '过敏史',
             dataIndex: 'allergy',
             key: 'allergy',
@@ -116,7 +106,6 @@ const columns = (edit) => {
         },
         {
             title: '操作',
-            width: 500,
             render: edit
         }
     ];
