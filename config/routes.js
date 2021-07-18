@@ -41,12 +41,12 @@ export default [
         routes: [
           //从这里开始是我们的路由
           {
-            name: 'archivesManage',
+            name: '基础档案',
             icon: 'highlight',
             path: '/archivesManage',
             routes: [
               {
-                name: 'archives',
+                name: '老人档案',
                 icon: 'smile',
                 path: '/archivesManage/archives/index',
                 component: './archivesManage/archives/index',
@@ -143,6 +143,25 @@ export default [
             ],
           },
           {
+            name: '流程管理',
+            icon: 'highlight',
+            path: '/registration',
+            routes: [
+              {
+                name: '入院办理',
+                icon: 'smile',
+                path: '/registration/inHospitalRegister/index',
+                component: './registration/inHospitalRegister/index',
+              },
+              {
+                name: '出院办理',
+                icon: 'smile',
+                path: '/registration/outHospitalRegister/index',
+                component: './registration/outHospitalRegister/index',
+              },
+            ],
+          },
+          {
             name: '基础设置',
             icon: 'highlight',
             path: '/basicSetting',
@@ -226,6 +245,19 @@ export default [
                 path: '/syntheticModule/examine',
                 component: './syntheticModule/examine',
               },
+            ],
+          },
+          {
+            name: '统计管理',
+            icon: 'highlight',
+            path: '/countPage',
+            routes: [
+              {
+                name: '统计信息',
+                icon: 'smile',
+                path: 'countPage/countChart/index',
+                component: './countPage/countChart/index',
+              }
             ],
           },
           {

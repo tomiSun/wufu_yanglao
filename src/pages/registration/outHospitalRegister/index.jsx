@@ -7,7 +7,6 @@ import {
     Modal, InputNumber, Tabs
 } from 'antd';
 import { dataSource, columns } from './data';
-import PhysicalExamination from '../physicalExamination'
 import './index.less';
 const { TabPane } = Tabs;
 const layout = {
