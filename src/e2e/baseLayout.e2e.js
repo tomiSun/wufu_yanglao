@@ -26,7 +26,7 @@ beforeEach(async () => {
   });
 });
 
-describe('Ant Design Pro E2E test', () => {
+describe('颐乐养老中心 E2E test', () => {
   const testPage = (path) => async () => {
     await page.goto(`${BASE_URL}${path}`);
     await page.waitForSelector('footer', {
