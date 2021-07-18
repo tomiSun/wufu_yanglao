@@ -7,11 +7,12 @@ import ProLayout, { DefaultFooter, SettingDrawer } from '@ant-design/pro-layout'
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Link, useIntl, connect, history } from 'umi';
 import { GithubOutlined } from '@ant-design/icons';
-import { Result, Button } from 'antd';
+import { Result, Button, ConfigProvider } from 'antd';
 import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { getMatchMenu } from '@umijs/route-utils';
 import logo from '../assets/logo.svg';
+import styles from './BasicLayout.less';
 const noMatch = (
   <Result
     status={403}
@@ -135,9 +136,9 @@ const BasicLayout = (props) => {
           );
         }}
         footerRender={() => {
-          if (settings.footerRender || settings.footerRender === undefined) {
-            return defaultFooterDom;
-          }
+          // if (settings.footerRender || settings.footerRender === undefined) {
+          //   return defaultFooterDom;
+          // }
 
           return null;
         }}
@@ -149,7 +150,9 @@ const BasicLayout = (props) => {
         }}
       >
         <Authorized authority={authorized.authority} noMatch={noMatch}>
-          {children}
+          <ConfigProvider componentSize="middle">
+            <div className={styles.globalContent}>{children}</div>
+          </ConfigProvider>
         </Authorized>
       </ProLayout>
       <SettingDrawer

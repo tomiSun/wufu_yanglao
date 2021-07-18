@@ -1,0 +1,125 @@
+@import '~antd/es/style/themes/default.less';
+
+// 设置全局content样式
+.globalContent {
+  height: calc(100vh - 88px);
+  padding: 0 8px;
+  background-color: #fff;
+  overflow: auto;
+  // overflow-x: auto;
+}
+
+:global {
+  .ant-layout-has-sider {
+    // min-width: 1366px;
+    // min-height: 768px !important;
+  }
+
+  // 路由菜单
+  .ant-pro-sider-menu-logo {
+    padding: 0 16px;
+  }
+  .ant-pro-sider-menu {
+    height: calc(100vh - 64px);
+    overflow: hidden auto;
+  }
+  .ant-pro-sider-menu::-webkit-scrollbar {
+    width: 0 !important;
+  }
+  // .ant-menu-inline .ant-menu-submenu-title {
+  //   padding: 0 16px !important;
+  // }
+  // .ant-menu-item-only-child{
+  //   padding-left: 40px !important;
+  // }
+  .ant-pro-basicLayout-content {
+    //! 全局基础框架样式代码，防止滚动条出现
+    margin: 0px;
+    .ant-pro-basicLayout-children-content-wrap {
+      // margin: 16px 16px 0;
+    }
+  }
+
+  // 头部
+  .ant-layout-header,
+  .ant-pro-global-header {
+    height: 50px;
+    .ant-pro-global-header-trigger {
+      height: 50px;
+      line-height: 50px;
+    }
+  }
+
+  //drawer表格样式
+  .ant-drawer {
+    .ant-table-container {
+      min-height: calc(100vh - 380px) !important;
+      border: 1px solid #f0f0f0 !important;
+    }
+    .ant-table-content {
+      min-height: calc(100vh - 380px) !important;
+    }
+    .ant-table-empty .ant-table-tbody > tr.ant-table-placeholder {
+      height: calc(100vh - 380px);
+    }
+  }
+
+  // 表格
+  // .ant-tabs {
+  //   .ant-tabs-nav {
+  //     margin: 0;
+  //   }
+  // }
+  // .ant-table-container {
+  //   min-height: calc(100vh - 260px) !important;
+  //   border: 1px solid #f0f0f0 !important;
+  // }
+  // .ant-table-content {
+  //   min-height: calc(100vh - 260px) !important;
+  // }
+  // .ant-table-empty .ant-table-tbody > tr.ant-table-placeholder {
+  //   height: calc(100vh - 260px);
+  // }
+  .ant-table-cell {
+    padding: 2px 5px !important;
+  }
+
+  .ant-form-item {
+    margin-bottom: 10px !important;
+  }
+
+  // disabled颜色修改
+  .ant-input[disabled],
+  .ant-select-selection-item,
+  .ant-checkbox-disabled + span,
+  .ant-picker-input > input[disabled] {
+    color: #666 !important;
+  }
+  .ant-checkbox-disabled.ant-checkbox-checked .ant-checkbox-inner::after {
+    border-color: #666 !important;
+  }
+
+  // YTable公共样式
+  .selectRow {
+    td,
+    .ant-table-cell-fix-left,
+    .ant-table-cell-fix-right {
+      background-color: #bae7ff !important;
+    }
+  }
+
+  //tree选择样式
+  .ant-tree.ant-tree-directory
+    .ant-tree-treenode
+    .ant-tree-node-content-wrapper.ant-tree-node-selected {
+    color: #000 !important;
+  }
+  .ant-tree.ant-tree-directory .ant-tree-treenode-selected:hover::before,
+  .ant-tree.ant-tree-directory .ant-tree-treenode-selected::before {
+    background-color: #bae7ff !important;
+  }
+  .ant-tree-switcher .ant-tree-switcher-icon svg,
+  .ant-tree-switcher .ant-select-tree-switcher-icon svg {
+    color: #000;
+  }
+}

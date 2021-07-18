@@ -389,7 +389,7 @@ export default {
     salesTypeDataOffline,
     radarData,
   },
-  'GET  /api/currentUser': {
+  'GET  /currentUser': {
     name: 'Serati Ma',
     avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
     userid: '00000001',
