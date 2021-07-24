@@ -17,6 +17,24 @@ const dataSource = [
         contactsPhone: "13745880987",
         inTime: "2021-7-28",
         occupancyStatus: "已入住"
+    },
+    {
+        key: '2',
+        name: '李基民',
+        archivesId:"L000002",
+        sex: "女",//字典
+        age: 32,
+        careLevel: "一级",//字典
+        diagnosis: '高血压',//字典
+        allergy: "无",//字典？
+        pastHistory: "糖尿病",
+        address: '西湖区湖底公园1号',
+        idCard: "230402XXXX0726031X",
+        contacts: "周杰",
+        relationship: "儿子",
+        contactsPhone: "13745880987",
+        inTime: "2021-7-28",
+        occupancyStatus: "已入住"
     }
 ];
 const columns = (edit) => {
