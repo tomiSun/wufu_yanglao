@@ -77,9 +77,157 @@ export default () => {
   const treeSelect = async (selectedKeys, info) => {
     console.log('selectedKeys, info: ', selectedKeys, info);
     modalSortConfig.editType = info.node.type;
+    yTable.table.columns = columns(modalSortConfig);
+    setYTable({ ...yTable });
     setModalSortConfig({ ...modalSortConfig });
   };
+  const [modalSortConfig, setModalSortConfig] = useState({
+    visible: false,
+    title: '楼宇楼层房间',
+    type: '',
+    editType: 0,
+    continue: false,
+  });
   // yTable
+  const columns = (modalSortConfig) => {
+    const { editType } = modalSortConfig;
+    console.log('editType: ', editType);
+    console.log('editType: ', typeof editType);
+    let mergeArr = [];
+    let baseBefore = [
+      {
+        title: '排序号',
+        dataIndex: 'sort',
+        key: 'sort',
+        align: 'center',
+        width: 60,
+        render: (text, record, index) => index + 1,
+      },
+    ];
+    let bedInfo = [
+      {
+        title: '床位编号',
+        dataIndex: 'bed_code',
+        key: 'bed_code',
+        ellipsis: true,
+        width: 100,
+      },
+      {
+        title: '床位名称',
+        dataIndex: 'name',
+        key: 'name',
+        ellipsis: true,
+        width: 100,
+      },
+    ];
+    let roomInfo = [
+      {
+        title: '房间编号',
+        dataIndex: 'roomCode',
+        key: 'roomCode',
+        ellipsis: true,
+        width: 100,
+      },
+      {
+        title: '房间名称',
+        dataIndex: 'roomName',
+        key: 'roomName',
+        ellipsis: true,
+        width: 100,
+      },
+    ];
+    let floorInfo = [
+      {
+        title: '楼层编号',
+        dataIndex: 'floor_code',
+        key: 'floor_code',
+        ellipsis: true,
+        width: 100,
+      },
+      {
+        title: '楼层名称',
+        dataIndex: 'roomName',
+        key: 'roomName',
+        ellipsis: true,
+        width: 100,
+      },
+    ];
+    let buildingInfo = [
+      {
+        title: '楼宇编号',
+        dataIndex: 'building_code',
+        key: 'building_code',
+        ellipsis: true,
+        width: 100,
+      },
+      {
+        title: '楼宇名称',
+        dataIndex: 'roomName',
+        key: 'roomName',
+        ellipsis: true,
+        width: 100,
+      },
+    ];
+    let baseAfter = [
+      {
+        title: '状态',
+        dataIndex: 'is_del',
+        key: 'is_del',
+        width: 50,
+        align: 'center',
+        render: (text, record) => (record.is_del ? '启用' : '停用'),
+      },
+      {
+        title: '操作',
+        key: 'opera',
+        align: 'center',
+        width: 100,
+        render: (text, record) => (
+          <div className={styles.opera}>
+            {yTable.table.selectedNodes.status === '1' ? (
+              <span style={{ color: '#d9d9d9' }}>编辑</span>
+            ) : (
+              <a
+                onClick={() => {
+                  // editInfo(text, record);
+                  changeModalSort('edit', true);
+                }}
+              >
+                编辑
+              </a>
+            )}
+            <Divider type="vertical" />
+            <a onClick={() => delInfo(text, record)}>删除</a>
+          </div>
+        ),
+      },
+    ];
+    switch (editType) {
+      case 0:
+        mergeArr = [...baseBefore, ...buildingInfo, ...baseAfter];
+        break;
+      case 1:
+        mergeArr = [...baseBefore, ...floorInfo, ...buildingInfo, ...baseAfter];
+        break;
+      case 2:
+        mergeArr = [...baseBefore, ...roomInfo, ...floorInfo, ...buildingInfo, ...baseAfter];
+        break;
+      case 3:
+        mergeArr = [
+          ...baseBefore,
+          ...bedInfo,
+          ...roomInfo,
+          ...floorInfo,
+          ...buildingInfo,
+          ...baseAfter,
+        ];
+        break;
+
+      default:
+        break;
+    }
+    return mergeArr;
+  };
   const [yTable, setYTable] = useState({
     table: {
       bordered: true,
@@ -100,86 +248,10 @@ export default () => {
         },
       },
       dataSource: [{}],
+      columns: columns(modalSortConfig),
       dataRow: {},
       selectedNodes: {},
       zdxxData: {},
-      columns: [
-        {
-          title: '排序号',
-          dataIndex: 'sort',
-          key: 'sort',
-          align: 'center',
-          width: 60,
-          render: (text, record, index) => index + 1,
-        },
-        {
-          title: '床位编号',
-          dataIndex: 'bed_code',
-          key: 'bed_code',
-          ellipsis: true,
-          // width: 100,
-        },
-        {
-          title: '床位名称',
-          dataIndex: 'name',
-          key: 'name',
-          ellipsis: true,
-          // width: 100,
-        },
-        {
-          title: '房间编号',
-          dataIndex: 'room_code',
-          key: 'room_code',
-          ellipsis: true,
-          // width: 100,
-        },
-        {
-          title: '楼层编号',
-          dataIndex: 'floor_code',
-          key: 'floor_code',
-          ellipsis: true,
-          width: 200,
-        },
-        {
-          title: '楼宇编号',
-          dataIndex: 'building_code',
-          key: 'building_code',
-          ellipsis: true,
-          // width: 100,
-        },
-        {
-          title: '状态',
-          dataIndex: 'is_del',
-          key: 'is_del',
-          width: 50,
-          align: 'center',
-          render: (text, record) => (record.is_del ? '启用' : '停用'),
-        },
-        {
-          title: '操作',
-          key: 'opera',
-          align: 'center',
-          width: 100,
-          render: (text, record) => (
-            <div className={styles.opera}>
-              {yTable.table.selectedNodes.status === '1' ? (
-                <span style={{ color: '#d9d9d9' }}>编辑</span>
-              ) : (
-                <a
-                  onClick={() => {
-                    editInfo(text, record);
-                  }}
-                >
-                  编辑
-                </a>
-              )}
-
-              <Divider type="vertical" />
-              <a onClick={() => delInfo(text, record)}>删除</a>
-            </div>
-          ),
-        },
-      ],
     },
   });
   const [formTopRight] = Form.useForm();
@@ -210,7 +282,8 @@ export default () => {
           marginLeft: 8,
         },
         callback: () => {
-          changeModal('add', true);
+          // changeModal('add', true);
+          changeModalSort('add', true);
         },
       },
     ],
@@ -230,13 +303,6 @@ export default () => {
     visible: false,
     title: '床位信息',
     type: '',
-    continue: false,
-  });
-  const [modalSortConfig, setModalSortConfig] = useState({
-    visible: false,
-    title: '楼宇楼层房间',
-    type: '',
-    editType: 4,
     continue: false,
   });
 
@@ -334,7 +400,7 @@ export default () => {
       parentName: yTable.table.dataRow?.dictName,
     });
   };
-  const addOptions = ['楼宇', '楼层', '房间', ''];
+  const addOptions = ['楼宇', '楼层', '房间', '床位'];
   const editOptions = ['', '楼宇', '楼层', '房间'];
   // 左侧弹窗设置修改
   const changeModalSort = (otype, changetype) => {
@@ -376,7 +442,7 @@ export default () => {
   useEffect(() => {}, []);
   return (
     <div>
-      <Row className="flexNoWrap overflowXHidden margin0">
+      <Row className="flexNoWrap overflowXHidden margin0" type="flex">
         <Col flex="0 0 280px" className={styles.treeBox}>
           <Form form={treeSearchForm} layout="vertical">
             <Form.Item label="" name="typeName" style={{ marginTop: '15px' }}>
@@ -391,7 +457,7 @@ export default () => {
             className={styles.tree}
             onSelect={treeSelect}
           />
-          <div className={styles.treebtn}>
+          {/* <div className={styles.treebtn}>
             <Button
               disabled={modalSortConfig.editType === 3}
               type="primary"
@@ -413,15 +479,15 @@ export default () => {
             <Button onClick={() => delSortInfo()}>
               删除{editOptions[modalSortConfig.editType]}
             </Button>
-          </div>
+          </div> */}
         </Col>
-        <Col flex="1 1 auto">
+        <Col flex="1 1 auto" style={{ overflow: 'hidden' }}>
           <div className={styles.topForm}>
-            <div className={styles.searchFormTips}>床位信息</div>
+            <div className={styles.searchFormTips}>{addOptions[modalSortConfig.editType]}信息</div>
             <SearchForm searchForm={topRightForm} />
           </div>
           <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
-            <YTable {...yTable} />
+            <YTable table={{ ...yTable.table }} />
           </div>
         </Col>
       </Row>
@@ -448,8 +514,7 @@ export default () => {
           style={{ padding: '0 150px' }}
         >
           {/* 楼宇 */}
-          {(modalSortConfig?.editType === 0 && modalSortConfig?.type === 'add') ||
-          (modalSortConfig?.editType === 1 && modalSortConfig?.type === 'edit') ? (
+          {modalSortConfig?.editType === 0 ? (
             <Row>
               <Form.Item name="id" hidden></Form.Item>
               <Col span={24}>
@@ -487,8 +552,7 @@ export default () => {
             </Row>
           ) : null}
           {/* 楼层 */}
-          {(modalSortConfig?.editType === 1 && modalSortConfig?.type === 'add') ||
-          (modalSortConfig?.editType === 2 && modalSortConfig?.type === 'edit') ? (
+          {modalSortConfig?.editType === 1 ? (
             <Row>
               <Form.Item name="id" hidden></Form.Item>
               <Col span={24}>
@@ -550,8 +614,7 @@ export default () => {
             </Row>
           ) : null}
           {/* 房间 */}
-          {(modalSortConfig?.editType === 2 && modalSortConfig?.type === 'add') ||
-          (modalSortConfig?.editType === 3 && modalSortConfig?.type === 'edit') ? (
+          {modalSortConfig?.editType === 2 ? (
             <Row>
               <Form.Item name="id" hidden></Form.Item>
               <Col span={24}>
@@ -635,11 +698,107 @@ export default () => {
               </Col>
             </Row>
           ) : null}
+          {/* 床位 */}
+          {modalSortConfig?.editType === 3 ? (
+            <Row>
+              <Form.Item name="id" hidden></Form.Item>
+              <Col span={24}>
+                <Form.Item
+                  label="楼宇编码"
+                  name="building_code"
+                  rules={modalSortConfig.type === 'edit' ? [] : [{ required: true }]}
+                >
+                  <Input disabled placeholder="请输入" />
+                </Form.Item>
+              </Col>
+
+              <Col span={24}>
+                <Form.Item label="楼宇名称" name="name" rules={[{ required: true }]}>
+                  <Input
+                    disabled
+                    placeholder="请输入"
+                    onBlur={(e) => {
+                      modalFormSort.setFieldsValue({
+                        pinyinCode: pinyin.getCamelChars(e.target.value),
+                        wubiCode: makeWb(e.target.value),
+                      });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  label="楼层编码"
+                  name="floor_code"
+                  rules={modalSortConfig.type === 'edit' ? [] : [{ required: true }]}
+                >
+                  <Input disabled placeholder="请输入" />
+                </Form.Item>
+              </Col>
+
+              <Col span={24}>
+                <Form.Item label="楼层名称" name="name" rules={[{ required: true }]}>
+                  <Input
+                    disabled
+                    placeholder="请输入"
+                    onBlur={(e) => {
+                      modalFormSort.setFieldsValue({
+                        pinyinCode: pinyin.getCamelChars(e.target.value),
+                        wubiCode: makeWb(e.target.value),
+                      });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  label="房间编码"
+                  name="room_code"
+                  rules={modalSortConfig.type === 'edit' ? [] : [{ required: true }]}
+                >
+                  <Input disabled={modalSortConfig.type === 'edit'} placeholder="请输入" />
+                </Form.Item>
+              </Col>
+
+              <Col span={24}>
+                <Form.Item label="房间名称" name="name" rules={[{ required: true }]}>
+                  <Input
+                    placeholder="请输入"
+                    onBlur={(e) => {
+                      modalFormSort.setFieldsValue({
+                        pinyinCode: pinyin.getCamelChars(e.target.value),
+                        wubiCode: makeWb(e.target.value),
+                      });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item label="床位编号" name="bed_code" rules={[{ required: true }]}>
+                  <Input placeholder="请输入" disabled />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item label="床位名称" name="name" rules={[{ required: true }]}>
+                  <Input placeholder="请输入" disabled />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Row>
+                  <Form.Item name="status" valuePropName="checked" style={{ marginLeft: 8 }}>
+                    <Checkbox>
+                      <span className={styles.labeltext}>启用</span>
+                    </Checkbox>
+                  </Form.Item>
+                </Row>
+              </Col>
+            </Row>
+          ) : null}
         </Form>
       </Modal>
 
       {/*新增床位信息*/}
-      <Modal
+      {/* <Modal
         width={690}
         maskClosable={false}
         title={modalConfig.title}
@@ -753,7 +912,7 @@ export default () => {
             </Col>
           </Row>
         </Form>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };
