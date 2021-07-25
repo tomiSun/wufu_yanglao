@@ -8,8 +8,8 @@ request.interceptors.request.use(async (url, options) => {
   // if (!options.headers['Authorization']) {
   //   options.headers['Authorization'] = sessionStorage.getItem('Authorization');
   // }
-  options.headers['Authorization'] =
-    'AUTH_TOKEN:eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJUZXN0NCIsInVzZXJJZCI6IjM4OTUxMjE0NTAzMDYxMDk0NCIsIm5hbWUiOiLmi4nmi4kiLCJleHAiOjE2MjI1MzAwODF9.C20kygbSlsN57JOYkETgwKt6ybLxqKiwhDLi4pPFHFT3VQuRuOwRlauVPYz9-1hJ2QoO-XD0jiO8jKBwSK-TmSGOjFGZIEkR7vqHNIYjaNM1EIO7u439k4Oq25pRJJpioVFQxi-DbXJjH50N2AOfg3TdZryBk2RBToQIsqYravU';
+  // options.headers['Authorization'] =
+  //   'AUTH_TOKEN:eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJUZXN0NCIsInVzZXJJZCI6IjM4OTUxMjE0NTAzMDYxMDk0NCIsIm5hbWUiOiLmi4nmi4kiLCJleHAiOjE2MjI1MzAwODF9.C20kygbSlsN57JOYkETgwKt6ybLxqKiwhDLi4pPFHFT3VQuRuOwRlauVPYz9-1hJ2QoO-XD0jiO8jKBwSK-TmSGOjFGZIEkR7vqHNIYjaNM1EIO7u439k4Oq25pRJJpioVFQxi-DbXJjH50N2AOfg3TdZryBk2RBToQIsqYravU';
   !!options.data &&
     Object.keys(options.data).map((item) => {
       typeof options.data[item] == 'string' && (options.data[item] = options.data[item].trim());

@@ -1,0 +1,81 @@
+@import '~antd/es/style/themes/default.less';
+
+.main {
+  width: 368px;
+  margin: 0 auto;
+  @media screen and (max-width: @screen-sm) {
+    width: 95%;
+  }
+
+  .icon {
+    margin-left: 16px;
+    color: rgba(0, 0, 0, 0.2);
+    font-size: 24px;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: color 0.3s;
+
+    &:hover {
+      color: @primary-color;
+    }
+  }
+
+  .other {
+    margin-top: 24px;
+    line-height: 22px;
+    text-align: left;
+
+    .register {
+      float: right;
+    }
+  }
+
+  :global {
+    .ant-tabs {
+      .ant-tabs-nav {
+        margin-bottom: 16px;
+      }
+    }
+    .antd-pro-login-submit {
+      width: 100%;
+      margin-top: 24px;
+    }
+  }
+  .configs{
+    display: flex;
+    justify-content: space-between;
+    .configsRt{
+      span{
+        margin-right: 10px;
+      }
+    }
+  }
+}
+
+// 钉钉
+.dingBox{
+  height: 210px;
+  margin: 24px 0;
+  img{
+    display: block;
+    width: 210px;
+    height: 210px;
+    margin: 0 auto;
+  }
+}
+.dingLoadBox{
+  position: relative;
+  top: -210px;
+  width: 210px;
+  height: 210px;
+  margin: 0 auto;
+  background: rgba(255,255,255,0.9);
+  cursor: pointer;
+  .dingLoad{
+    margin: 95px;
+  }
+}
+.dingContent{
+  display: flex;
+  justify-content: space-between;
+}

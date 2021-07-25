@@ -8,12 +8,12 @@
 export default {
   dev: {
     '/api/': {
-      target: 'https://10.0.0.50',
+      target: 'http://118.31.54.70:8081/',
       // target: 'https://10.0.0.48',
       changeOrigin: true,
       secure: false,
       pathRewrite: {
-        '': '',
+        '/api': '',
       },
     },
   },
