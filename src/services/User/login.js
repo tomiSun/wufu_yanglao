@@ -6,10 +6,13 @@ export async function logining(params) {
     method: 'POST',
     data: params,
   });
-  // return request('/auth/sysUser/login', {
-  //   method: 'POST',
-  //   data: params,
-  // });
+}
+// 退出
+export async function loginout(params) {
+  return request('/validation/loginOut', {
+    method: 'POST',
+    data: params,
+  });
 }
 // 手机号登录接口
 export async function verificationCodeLogin(params) {
@@ -82,18 +85,6 @@ export async function checkRole(params) {
   // });
   return request(`/platform/sysUser/checkRole/${params.roleid}`, {
     method: 'GET',
-  });
-}
-
-// 退出
-export async function loginout(params) {
-  // return request('/auth/sysUser/loginout', {
-  //   method: 'POST',
-  //   data: params,
-  // });
-  return request('/platform/sysUser/loginout', {
-    method: 'POST',
-    data: params,
   });
 }
 

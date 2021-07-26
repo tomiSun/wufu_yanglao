@@ -42,14 +42,14 @@ request.interceptors.response.use(async (response, options) => {
   // 账户密码登陆 10013-10014-10017
   // 钉钉 11021
   if (
-    data.status == 1005 ||
-    data.status === 10013 ||
-    data.status === 10014 ||
-    data.status === 10017 ||
-    data.status === 11021
+    data.code == 1005 ||
+    data.code === 10013 ||
+    data.code === 10014 ||
+    data.code === 10017 ||
+    data.code === 11021
   ) {
     return data;
-  } else if (data.status != 200) {
+  } else if (data.code != 200) {
     message.error(data.message || data.Message);
     // Modal.confirm({
     //   title: '提示',

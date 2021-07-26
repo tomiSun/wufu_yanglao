@@ -86,14 +86,17 @@ const Login = (props) => {
 
   // 点击登录函数
   const handleSubmit = async (values) => {
-    console.log('values: ', values);
-    values = {
-      ...values,
-      secretKey: authKey.key, // 传入证书
-    };
-    logining(values).then((res) => {
-      console.log('res: ', res);
-    });
+    logining(values)
+      .then((res) => {
+        sessionStorage.setItem('Authorization', get(res, 'data.token', ''));
+        sessionStorage.setItem('employeeCode', get(res, 'data.employeeCode', ''));
+        sessionStorage.setItem('name', get(res, 'data.name', ''));
+        sessionStorage.setItem('userId', get(res, 'data.userId', ''));
+        history.push('/basicSetting/dictionary');
+      })
+      .catch((err) => {
+        console.log('err-logining: ', err);
+      });
     // if (type === 'account') {
     //   logining(values)
     //     .then(async (res) => {
@@ -398,7 +401,7 @@ const Login = (props) => {
             {/* <Upload {...upProps}>
               <Button>上传证书</Button>
             </Upload> */}
-            {type === 'account' && <a onClick={() => setForgetPassModal(true)}>忘记密码</a>}
+            {/* {type === 'account' && <a onClick={() => setForgetPassModal(true)}>忘记密码</a>} */}
           </div>
 
           {type !== 'dingding' && <Submit loading={submitting}>登录</Submit>}
