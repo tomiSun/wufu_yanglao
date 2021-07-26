@@ -4,34 +4,41 @@ import React from 'react';
 import { history, connect } from 'umi';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
-
+import {
+  loginout,
+} from '@/services/User/login';
 class AvatarDropdown extends React.Component {
+  
   onMenuClick = (event) => {
     const { key } = event;
 
     if (key === 'logout') {
-      const { dispatch } = this.props;
-
-      if (dispatch) {
-        dispatch({
-          type: 'login/logout',
-        });
-      }
-
-      return;
+      loginout()
+      .then((res) => {
+        sessionStorage.setItem('Authorization', '');
+        sessionStorage.setItem('employeeCode', '');
+        sessionStorage.setItem('name', '');
+        sessionStorage.setItem('userId', '');
+        history.push('/user/login');
+      })
+      .catch((err) => {
+        console.log('err-logining: ', err);
+      });
     }
-
-    history.push(`/account/${key}`);
   };
 
   render() {
     const {
-      currentUser = {
-        avatar: '',
-        name: '',
-      },
+      // currentUser = {
+      //   avatar: '',
+      //   name: sessionStorage.getItem('name'),
+      // },
       menu,
     } = this.props;
+    const currentUser = {
+      avatar: '',
+      name: sessionStorage.getItem('name'),
+    }
     const menuHeaderDropdown = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
         {menu && (
@@ -75,6 +82,7 @@ class AvatarDropdown extends React.Component {
   }
 }
 
-export default connect(({ user }) => ({
-  currentUser: user.currentUser,
-}))(AvatarDropdown);
+export default AvatarDropdown;
+// export default connect(({ user }) => ({
+//   currentUser: user.currentUser,
+// }))(AvatarDropdown);
