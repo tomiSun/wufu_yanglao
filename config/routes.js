@@ -98,6 +98,12 @@ export default [
                 component: './nursingManagement/riskNotification',
               },
               {
+                name: '护理批量录入',//护理记录
+                icon: 'smile',
+                path: '/nursingManagement/nursingAddRecord/index',
+                component: './nursingManagement/nursingAddRecord/index',
+              },
+              {
                 name: '血糖记录表',//血糖记录表
                 icon: 'smile',
                 path: '/nursingManagement/bloodGlucoseRecord/index',
@@ -133,7 +139,6 @@ export default [
                 path: '/nursingManagement/drugRecord/index',
                 component: './nursingManagement/drugRecord',
               },
-
               {
                 name: '请假管理',//请假管理
                 icon: 'smile',

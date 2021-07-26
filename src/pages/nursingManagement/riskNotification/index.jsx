@@ -40,7 +40,7 @@ const RiskNotification = (props) => {
   // 搜索部分
   const renderSearch = () => {
     return (
-      <Form onFinish={() => {}} {...layout(8, 16)}>
+      <Form onFinish={() => { }} {...layout(8, 16)}>
         <Form.Item label="姓名" name={'name'}>
           <Input size={'small'} />
         </Form.Item>
@@ -100,6 +100,18 @@ const RiskNotification = (props) => {
         onCancel={() => {
           setModalVisible(false);
         }}
+        style={{marginTop:-50,marginRight:120}}
+        footer={[<div>
+          <Button type={"primary"}
+            onClick={() => {
+              setModalVisible(false);
+            }}>保存</Button>
+          <Button
+            onClick={() => {
+              setModalVisible(false);
+            }}
+          >取消</Button>
+        </div>]}
       >
         <div style={{ padding: 30 }}>
           <h2 style={{ textAlign: 'center' }}>
@@ -142,7 +154,7 @@ const RiskNotification = (props) => {
           <div class="text" style={{ fontWeight: 'bold', textIndent: '2em' }}>
             本院工作人员已将上述入住老人潜在意外风险明确告知入住老人的委托人，在非服务不当的情況下，此意外情况出现，我养老机构不承担赔偿责任，特此告知
           </div>
-          <Form onFinish={() => {}} {...layout2} style={{ marginTop: 20 }}>
+          <Form onFinish={() => { }} {...layout2} style={{ marginTop: 20 }}>
             <Row gutter={24}>
               <Col span={14}>
                 <Form.Item label="杭州富阳乐老年护理中心告知人签名:" name={'a'}>

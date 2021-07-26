@@ -19,12 +19,12 @@ import {
 import { dataSource, columns } from './data';
 import './index.less';
 const { TabPane } = Tabs;
-const layout = (x, y) => {
+const layout = (x, y, labelAlign, layout) => {
   return {
     labelCol: { span: x },
     wrapperCol: { span: y },
-    labelAlign: 'left',
-    layout: 'inline',
+    labelAlign,
+    layout,
   };
 };
 const layout2 = {
@@ -40,7 +40,7 @@ const RloodGlucoseRecord = (props) => {
   // 搜索部分
   const renderSearch = () => {
     return (
-      <Form onFinish={() => {}} {...layout(8, 16)}>
+      <Form onFinish={() => { }} {...layout(8, 16, 'left', 'inline')}>
         <Form.Item label="姓名" name={'name'}>
           <Input size={'small'} />
         </Form.Item>
@@ -61,7 +61,7 @@ const RloodGlucoseRecord = (props) => {
             <Option value="7">随机血糖</Option>
           </Select>
         </Form.Item>
-        <Form.Item style={{marginLeft:20}}>
+        <Form.Item style={{ marginLeft: 20 }}>
           <Button type="primary" size={'small'} style={{ marginTop: 4 }}>
             查询
           </Button>
@@ -112,7 +112,7 @@ const RloodGlucoseRecord = (props) => {
     return (
       <Modal
         title="血糖检测"
-        width={500}
+        width={600}
         visible={modalVisible}
         onOk={() => {
           setModalVisible(false);
@@ -120,37 +120,46 @@ const RloodGlucoseRecord = (props) => {
         onCancel={() => {
           setModalVisible(false);
         }}
+        footer={[<div>
+          <Button type={"primary"}
+            onClick={() => {
+              setModalVisible(false);
+            }}>保存</Button>
+          <Button
+            onClick={() => {
+              setModalVisible(false);
+            }}
+          >取消</Button>
+        </div>]}
       >
-        <div style={{ paddingTop: 20, paddingLeft: 40, paddingRight: 40 }}>
-          <Form onFinish={() => {}} {...layout} style={{ marginTop: 20 }}>
-            <Form.Item label="姓名:" name={'a'}>
-              <Input size="small" style={{ width: 200 }} />
-            </Form.Item>
-            <Form.Item label="是否空腹" name={'b'}>
-              <Radio.Group>
-                <Radio value="a">是</Radio>
-                <Radio value="b">否</Radio>
-              </Radio.Group>
-            </Form.Item>
-            <Form.Item label="采样时间段" name={'d'}>
-              <Select style={{ width: 200 }} defaultValue="1">
-                <Option value="1">早餐后2h</Option>
-                <Option value="2">午睡前</Option>
-                <Option value="3">午餐后2h</Option>
-                <Option value="4">晚餐前</Option>
-                <Option value="5">晚餐后2h</Option>
-                <Option value="6">睡前</Option>
-                <Option value="7">随机血糖</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="采样时间" name={'e'}>
-              <DatePicker style={{ width: 200 }} />
-            </Form.Item>
-            <Form.Item label="血糖值(单位：mmol)" name={'c'}>
-              <Input size="small" style={{ width: 200 }} />
-            </Form.Item>
-          </Form>
-        </div>
+        <Form onFinish={() => { }} {...layout(8, 16)} style={{ margin: '25px 10px 45px 0px' }}>
+          <Form.Item label="姓名:" name={'a'}>
+            <Input.Search size="small" style={{ width: 300 }} />
+          </Form.Item>
+          <Form.Item label="是否空腹" name={'b'}>
+            <Radio.Group>
+              <Radio value="a">是</Radio>
+              <Radio value="b">否</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item label="采样时间段" name={'d'}>
+            <Select style={{ width: 300 }} defaultValue="1">
+              <Option value="1">早餐后2h</Option>
+              <Option value="2">午睡前</Option>
+              <Option value="3">午餐后2h</Option>
+              <Option value="4">晚餐前</Option>
+              <Option value="5">晚餐后2h</Option>
+              <Option value="6">睡前</Option>
+              <Option value="7">随机血糖</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label="采样时间" name={'e'}>
+            <DatePicker style={{ width: 300 }} />
+          </Form.Item>
+          <Form.Item label="血糖值(单位：mmol)" name={'c'}>
+            <Input size="small" style={{ width: 300 }} />
+          </Form.Item>
+        </Form>
       </Modal>
     );
   };

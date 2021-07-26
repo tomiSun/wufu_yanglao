@@ -2,62 +2,68 @@ import { Button, Card, Col, Form, List, Row, Select, Tag, Table, Radio, Input, D
 const dataSource = [
     {
         key: '1',
-        name: '胡彦斌',
-        archivesId: "L000001",
-        careLevel: "一级",//字典
-        isFood:"是",
-        bloodGlucose:"100",
-        time:"2021-2-25",
-        tiemType:"午饭前",
-        takeTime:"2021-2-14 12:00:00"
+        a: 'Z001',
+        b: "9区",
+        c: "1-1",//字典
+        d:"张三",
+        e:"奥氮平片5mg^20s",
+        f:"25mg", 
+        g:"临睡前",
+        h:"每日2次"
     },
     {
-        key: '2',
-        name: '李佳敏',
-        archivesId: "L000002",
-        careLevel: "一级",//字典
-        isFood:"否",
-        bloodGlucose:"48",
-        time:"2021-2-26",
-        tiemType:"午饭前",
-        takeTime:"2021-2-14 16:20:10"
-    }
+        key: '1',
+        a: 'Z002',
+        b: "9区",
+        c: "1-2",//字典
+        d:"李四",
+        e:"奥氮平片5mg^20s",
+        f:"25mg", 
+        g:"早",
+        h:"每日1次"
+    },
+   
 ];
 const columns = (edit) => {
     return [
         {
-            title: '老人编号',
-            dataIndex: 'archivesId',
+            title: '住院编号',
+            dataIndex: 'a',
             key: 'archivesId',
         },
         {
-            title: '姓名',
-            dataIndex: 'name',
+            title: '病区',
+            dataIndex: 'b',
             key: 'name',
         },
         {
-            title: '级别护理',
-            dataIndex: 'careLevel',
-            key: 'careLevel',
-        },
-        {
-            title: '是否空腹',
-            dataIndex: 'isFood',
+            title: '床号',
+            dataIndex: 'c',
             key: 'isFood',
         },
         {
-            title: '血糖值(单位：mmol)',
-            dataIndex: 'bloodGlucose',
+            title: '姓名',
+            dataIndex: 'd',
             key: 'bloodGlucose',
         },
         {
-            title: '采样时间段',
-            dataIndex: 'tiemType',
+            title: '药品规格',
+            dataIndex: 'e',
             key: 'tiemType',
         },
         {
-            title: '采样时间',
-            dataIndex: 'takeTime',
+            title: '剂量',
+            dataIndex: 'f',
+            key: 'takeTime',
+        },
+        {
+            title: '频次',
+            dataIndex: 'g',
+            key: 'tiemType',
+        },
+        {
+            title: '服药时间段',
+            dataIndex: 'h',
             key: 'takeTime',
         },
         {

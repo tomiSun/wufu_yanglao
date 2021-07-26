@@ -5,20 +5,24 @@ const dataSource = [
         name: '胡彦斌',
         archivesId: "L000001",
         careLevel: "一级",//字典
-        bloodGlucose:"100",
-        time:"2021-2-25",
-        tiemType:"午饭前",
-        takeTime:"2021-2-14 12:00:00"
+        isFood: "是",
+        bloodGlucose: "100",
+        time: "2021-2-25",
+        tiemType: "午饭前",
+        takeTime: "2021-2-14 12:00:00",
+        a:"男"
     },
     {
         key: '2',
         name: '李佳敏',
         archivesId: "L000002",
-        careLevel: "一级",//字典
-        bloodGlucose:"48",
-        time:"2021-2-26",
-        tiemType:"午饭前",
-        takeTime:"2021-2-14 16:20:10"
+        careLevel: "特级",//字典
+        isFood: "否",
+        bloodGlucose: "48",
+        time: "2021-2-26",
+        tiemType: "午饭前",
+        takeTime: "2021-2-14 16:20:10",
+        a:"女"
     }
 ];
 const columns = (edit) => {
@@ -34,24 +38,15 @@ const columns = (edit) => {
             key: 'name',
         },
         {
-            title: '级别护理',
-            dataIndex: 'careLevel',
+            title: '性别',
+            dataIndex: 'a',
             key: 'careLevel',
         },
         {
-            title: '护理时间段',
-            dataIndex: 'tiemType',
-            key: 'tiemType',
+            title: '级别',
+            dataIndex: 'careLevel',
+            key: 'careLevel',
         },
-        {
-            title: '护理日期',
-            dataIndex: 'takeTime',
-            key: 'takeTime',
-        },
-        {
-            title: '操作',
-            render: edit
-        }
     ];
 }
 export { dataSource, columns }

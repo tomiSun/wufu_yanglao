@@ -17,6 +17,7 @@ import {
   Tabs,
 } from 'antd';
 import { dataSource, columns } from './data';
+import { history } from 'umi';
 import './index.less';
 const { TabPane } = Tabs;
 const layout = {
@@ -38,7 +39,7 @@ const RloodGlucoseRecord = (props) => {
   // 搜索部分
   const renderSearch = () => {
     return (
-      <Form onFinish={() => {}} {...layout}>
+      <Form onFinish={() => { }} {...layout}>
         <Form.Item label="姓名" name={'name'}>
           <Input AUTOCOMPLETE="OFF" size={'small'} />
         </Form.Item>
@@ -58,7 +59,9 @@ const RloodGlucoseRecord = (props) => {
             type="primary"
             size={'small'}
             onClick={() => {
-              setModalVisible(true);
+              history.push({
+                pathname: '/nursingManagement/nursingAddRecord/index',
+              });
             }}
           >
             新增记录
@@ -77,10 +80,12 @@ const RloodGlucoseRecord = (props) => {
               size={'small'}
               type="link"
               onClick={() => {
-                setModalVisible(true);
+                history.push({
+                  pathname: '/nursingManagement/nursingRecord/index',
+                });
               }}
             >
-              编辑
+              详情
             </Button>
             <Button
               size={'small'}
@@ -120,7 +125,7 @@ const RloodGlucoseRecord = (props) => {
         }}
       >
         <div style={{ paddingTop: 20, paddingLeft: 40, paddingRight: 40 }}>
-          <Form onFinish={() => {}} {...layout} style={{ marginTop: 20 }}>
+          <Form onFinish={() => { }} {...layout} style={{ marginTop: 20 }}>
             <Form.Item label="姓名:" name={'a'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
