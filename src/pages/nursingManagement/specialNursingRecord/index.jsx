@@ -16,6 +16,7 @@ import {
   InputNumber,
   Tabs,
 } from 'antd';
+import { history } from 'umi'
 import { dataSource, columns } from './data';
 import './index.less';
 const { TabPane } = Tabs;
@@ -38,7 +39,7 @@ const RloodGlucoseRecord = (props) => {
   // 搜索部分
   const renderSearch = () => {
     return (
-      <Form onFinish={() => {}} {...layout}>
+      <Form onFinish={() => { }} {...layout}>
         <Form.Item label="姓名" name={'name'}>
           <Input AUTOCOMPLETE="OFF" size={'small'} />
         </Form.Item>
@@ -57,8 +58,16 @@ const RloodGlucoseRecord = (props) => {
           <Button
             type="primary"
             size={'small'}
+            // onClick={() => {
+            //   setModalVisible(true);
+            // }}
             onClick={() => {
-              setModalVisible(true);
+              history.push({
+                pathname: '/nursingManagement/nursingAddRecord/index',
+                query: {
+                  selectKey: "3"
+                }
+              });
             }}
           >
             新增记录
@@ -120,7 +129,7 @@ const RloodGlucoseRecord = (props) => {
         }}
       >
         <div style={{ paddingTop: 20, paddingLeft: 40, paddingRight: 40 }}>
-          <Form onFinish={() => {}} {...layout} style={{ marginTop: 20 }}>
+          <Form onFinish={() => { }} {...layout} style={{ marginTop: 20 }}>
             <Form.Item label="姓名:" name={'a'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
