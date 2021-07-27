@@ -9,9 +9,13 @@ import {
 import { dataSource, columns } from './data';
 import './index.less';
 const { TabPane } = Tabs;
-const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 },
+const layout = (x, y, labelAlign, layout) => {
+    return {
+        labelCol: { span: x },
+        wrapperCol: { span: y },
+        labelAlign,
+        layout,
+    }
 };
 const validateMessages = {
     required: '${label} is required!',
@@ -23,30 +27,27 @@ const Archives = (props) => {
     const renderSearch = () => {
         return (
             <div>
-                <Form onFinish={() => { }}  {...layout}
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: 'center',
-                        flexDirection: "row",
-                        width: 1200,
-                        marginTop: 15
-                    }}>
+                <Form onFinish={() => { }}  {...layout(8, 16, "left", "inline")}
+                >
                     <Form.Item label="姓名" name={"name"}>
-                        <Input width="200" />
+                        <Input size={'small'} />
                     </Form.Item>
                     <Form.Item label="身份证号" name={"name"}>
-                        <Input width="200" />
+                        <Input size={'small'} />
                     </Form.Item>
                     <Form.Item label="入院日期" name={"name"}>
-                        <DatePicker width="200" />
+                        <DatePicker size={'small'} />
                     </Form.Item>
-                    <Button type="primary" size={'small'}>
-                        查询
-                  </Button>
-                    <Button type="primary" size={'small'} onClick={() => { setModalVisible(true) }}>
-                        新增
-                  </Button>
+                    <Form.Item >
+                        <Button type="primary" size={'small'}>
+                            查询
+                        </Button>
+                    </Form.Item>
+                    <Form.Item >
+                        <Button type="primary" size={'small'} onClick={() => { setModalVisible(true) }}>
+                            新增
+                        </Button>
+                    </Form.Item>
                 </Form>
             </div>
         )
@@ -54,12 +55,18 @@ const Archives = (props) => {
     //操作
     const editButton = () => {
         return (
-            <div style={{ display: "flex", justifyContent: "space-around" }}>
-                <Button size={'small'} type="primary" onClick={() => { setModalVisibleArchives(true) }}>体检报告</Button>
-                <Button size={'small'} type="primary">入住评估</Button>
-                <Button size={'small'} type="primary">试用期评估</Button>
-                <Button size={'small'} type="primary">合同</Button>
-                <Button size={'small'} type="primary">风险告知书</Button>
+            <div >
+                <Button
+                    style={{ marginRight: 10 }}
+                    size={'small'} type="link" onClick={() => { setModalVisibleArchives(true) }}>体检报告</Button>
+                <Button style={{ marginRight: 10 }}
+                    size={'small'} type="link">入住评估</Button>
+                <Button style={{ marginRight: 10 }}
+                    size={'small'} type="link">试用期评估</Button>
+                <Button style={{ marginRight: 10 }}
+                    size={'small'} type="link">合同</Button>
+                <Button style={{ marginRight: 10 }}
+                    size={'small'} type="link">风险告知书</Button>
             </div>
         )
     }

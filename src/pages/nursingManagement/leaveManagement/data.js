@@ -2,62 +2,56 @@ import { Button, Card, Col, Form, List, Row, Select, Tag, Table, Radio, Input, D
 const dataSource = [
     {
         key: '1',
-        name: '胡彦斌',
-        archivesId: "L000001",
-        careLevel: "一级",//字典
-        isFood:"是",
-        bloodGlucose:"100",
-        time:"2021-2-25",
-        tiemType:"午饭前",
-        takeTime:"2021-2-14 12:00:00"
+         a:"Z0001",
+         b:"张三",
+         c:"一级",
+         d:"2020-9-1",
+         e:"2020-9-2",
+         f:"外出就医",
+         g:"张川",
+         h:"李啵啵",
     },
-    {
-        key: '2',
-        name: '李佳敏',
-        archivesId: "L000002",
-        careLevel: "一级",//字典
-        isFood:"否",
-        bloodGlucose:"48",
-        time:"2021-2-26",
-        tiemType:"午饭前",
-        takeTime:"2021-2-14 16:20:10"
-    }
 ];
 const columns = (edit) => {
     return [
         {
             title: '住院编号',
-            dataIndex: 'archivesId',
+            dataIndex: 'a',
             key: 'archivesId',
         },
         {
             title: '姓名',
-            dataIndex: 'name',
+            dataIndex: 'b',
             key: 'name',
         },
         {
             title: '级别护理',
-            dataIndex: 'careLevel',
+            dataIndex: 'c',
             key: 'careLevel',
         },
         {
-            title: '是否空腹',
-            dataIndex: 'isFood',
+            title: '请假开始日期',
+            dataIndex: 'd',
             key: 'isFood',
         },
         {
-            title: '血糖值(单位：mmol)',
-            dataIndex: 'bloodGlucose',
+            title: '请假结束日期',
+            dataIndex: 'e',
             key: 'bloodGlucose',
         },
         {
-            title: '采样时间段',
-            dataIndex: 'tiemType',
+            title: '请假原因',
+            dataIndex: 'f',
             key: 'tiemType',
         },
         {
-            title: '采样时间',
-            dataIndex: 'takeTime',
+            title: '监护人',
+            dataIndex: 'g',
+            key: 'takeTime',
+        },
+        {
+            title: '医院负责人',
+            dataIndex: 'h',
             key: 'takeTime',
         },
         {

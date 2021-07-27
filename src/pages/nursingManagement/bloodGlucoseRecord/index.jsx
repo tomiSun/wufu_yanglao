@@ -79,7 +79,7 @@ const RloodGlucoseRecord = (props) => {
               history.push({
                 pathname: '/nursingManagement/nursingAddRecord/index',
                 query:{
-                  selectKey:"2"
+                  selectKey:"3"
                 }
               });
             }}

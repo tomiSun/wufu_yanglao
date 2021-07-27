@@ -86,7 +86,6 @@ const columns = (edit) => {
         },
         {
             title: '操作',
-            width: 500,
             render: edit
         }
     ];

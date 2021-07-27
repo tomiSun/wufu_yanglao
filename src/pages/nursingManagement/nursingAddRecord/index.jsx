@@ -21,6 +21,7 @@ import {
 import { BedTreeSelect } from '@/components/BedTreeSelect'
 import styles from './index.less';
 import { columns, dataSource } from './config';
+import { history, useLocation } from 'umi';
 const { TabPane } = Tabs;
 const layout = (x, y, labelAlign, layout) => {
     return {
@@ -35,6 +36,9 @@ const validateMessages = {
     required: '${label} 为必填项',
 };
 const NursingAddRecord = (props) => {
+    const { query } = useLocation();
+    const { selectKey } = query;
+    const [tabKey, setTabKey] = useState(selectKey || "1")
     // 搜索部分
     const renderSearch = () => {
         return (
@@ -304,7 +308,10 @@ const NursingAddRecord = (props) => {
                     {renderPeopleInfo()}
                 </div>
                 <div className={styles["content-right"]}>
-                    <Tabs defaultActiveKey="1" tabPosition={'left'}>
+                    <Tabs defaultActiveKey="1" tabPosition={'left'}
+                        activeKey={tabKey}
+                        onChange={(key) => { setTabKey(key) }}
+                    >
                         <TabPane tab="护理记录" key="1">
                             <div className={styles["addRecordBox"]}>
                                 {renderNursingItem()}
