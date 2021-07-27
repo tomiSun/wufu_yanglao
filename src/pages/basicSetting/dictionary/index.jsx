@@ -21,25 +21,27 @@ import { useTableHeight } from '@/utils/tableHeight';
 const { confirm } = Modal;
 const { TextArea } = Input;
 const { DirectoryTree } = Tree;
+import {
+  dictTypeAdd,
+  dictTypeDel,
+  dictTypeSelect,
+  dictTypeUpdate,
+  dictDateAdd,
+  dictDateDel,
+  dictDateSelect,
+  dictDateUpdate,
+} from '@/services/basicSetting/dictionary';
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
   const tableHeight = useTableHeight(tableRef);
   // 树数据
-  const [treeData, setTreeData] = useState([
-    {
-      title: '字典类别1',
-      key: '0-0-0-0',
-      disableCheckbox: true,
-    },
-    {
-      title: '字典类别2',
-      key: '0-0-0-1',
-    },
-  ]);
+  const [treeData, setTreeData] = useState([]);
   // 树形节点选中
   const treeSelect = async (selectedKeys, info) => {
-    console.log('selectedKeys, info: ', selectedKeys, info);
+    yTable.table.selectedNode = info.node.allParams;
+    getTableData()
+    setYTable({ ...yTable });
   };
   // yTable
   const [yTable, setYTable] = useState({
@@ -61,30 +63,30 @@ export default () => {
           getTableData();
         },
       },
-      dataSource: [{}],
+      dataSource: [],
       dataRow: {},
-      selectedNodes: {},
+      selectedNode: {},
       zdxxData: {},
       columns: [
         {
           title: '排序号',
-          dataIndex: 'sort',
-          key: 'sort',
+          dataIndex: 'sortNo',
+          key: 'sortNo',
           align: 'center',
           width: 60,
           render: (text, record, index) => index + 1,
         },
         {
           title: '类别编码',
-          dataIndex: 'typeCode',
-          key: 'typeCode',
+          dataIndex: 'dictCode',
+          key: 'dictCode',
           ellipsis: true,
           // width: 100,
         },
         {
-          title: '类别名称',
-          dataIndex: 'typeName',
-          key: 'typeName',
+          title: '字典编码',
+          dataIndex: 'dictCode',
+          key: 'dictCode',
           ellipsis: true,
           // width: 100,
         },
@@ -96,34 +98,27 @@ export default () => {
           width: 200,
         },
         {
-          title: '字典编码',
-          dataIndex: 'dictCode',
-          key: 'dictCode',
-          ellipsis: true,
-          // width: 100,
-        },
-        {
           title: '五笔码',
-          dataIndex: 'customCode',
-          key: 'customCode',
+          dataIndex: 'wubiCode',
+          key: 'wubiCode',
           ellipsis: true,
           // width: 100,
         },
         {
           title: '拼音码',
-          dataIndex: 'customCode',
-          key: 'customCode',
+          dataIndex: 'pinyinCode',
+          key: 'pinyinCode',
           ellipsis: true,
           // width: 100,
         },
         {
           title: '状态',
-          dataIndex: 'status',
-          key: 'status',
+          dataIndex: 'useFlag',
+          key: 'useFlag',
           width: 50,
           align: 'center',
           // render: (text, record) => <Switch checked={record.status} size="small" disabled/>,
-          render: (text, record) => (record.status ? '启用' : '停用'),
+          render: (text, record) => (text ? '停用' : '使用'),
         },
         {
           title: '操作',
@@ -132,12 +127,12 @@ export default () => {
           width: 100,
           render: (text, record) => (
             <div className={styles.opera}>
-              {yTable.table.selectedNodes.status === '1' ? (
+              {yTable.table.selectedNode.status === '1' ? (
                 <span style={{ color: '#d9d9d9' }}>编辑</span>
               ) : (
                 <a
                   onClick={() => {
-                    editInfo(text, record);
+                    changeModal('edit', true, record);
                   }}
                 >
                   编辑
@@ -145,19 +140,151 @@ export default () => {
               )}
 
               <Divider type="vertical" />
-              <a onClick={() => delInfo(text, record)}>删除</a>
+              <a onClick={() => delInfo(record)}>删除</a>
             </div>
           ),
         },
       ],
     },
   });
+
+  // modalForm
+  const [modalForm] = Form.useForm();
+  const [modalFormSort] = Form.useForm();
+  const [treeSearchForm] = Form.useForm();
+  const [details, setDetails] = useState({}); // 弹窗 - 字典明细详情
+
+  // modal配置项
+  const [modalSortConfig, setModalSortConfig] = useState({
+    visible: false,
+    title: '字典类别',
+    type: '',
+    continue: false,
+    loading: false,
+  });
+  // 保存分类数据
+  const saveSortInfo = async () => {
+    const formData = await modalFormSort.validateFields();
+    const params = { ...formData, useFlag: ~~formData?.useFlag };
+    modalSortConfig.loading = true;
+    setModalSortConfig({ ...modalSortConfig });
+    if (modalSortConfig.type === 'add') {
+      dictTypeAdd(params)
+        .then((res) => {
+          message.success('保存成功');
+          // 刷新字典类别数据
+          dictTypeSelectService();
+          modalSortConfig.loading = false;
+          setModalSortConfig({ ...modalSortConfig });
+          changeModalSort('', false);
+        })
+        .catch((err) => {
+          console.log('err-logining: ', err);
+          modalSortConfig.loading = false;
+          setModalSortConfig({ ...modalSortConfig });
+        });
+    } else if (modalSortConfig.type === 'edit') {
+      dictTypeUpdate(params)
+        .then((res) => {
+          message.success('保存成功');
+          // 刷新字典类别数据
+          dictTypeSelectService();
+          modalSortConfig.loading = false;
+          setModalSortConfig({ ...modalSortConfig });
+          changeModalSort('', false);
+        })
+        .catch((err) => {
+          console.log('err-logining: ', err);
+          modalSortConfig.loading = false;
+          setModalSortConfig({ ...modalSortConfig });
+        });
+    }
+  };
+  // 获取字典类别
+  const dictTypeSelectService = () => {
+    setTreeData([]);
+    let params = treeSearchForm.getFieldsValue();
+    dictTypeSelect(params)
+      .then((res) => {
+        let tree =
+          res?.data?.map((it) => {
+            return {
+              title: it.dictTypeName,
+              key: it.dictTypeCode,
+              allParams: it,
+            };
+          }) || [];
+        setTreeData(tree);
+      })
+      .catch((err) => {
+        setTreeData([]);
+        console.log('dictTypeSelect---err', err);
+      });
+  };
+  // 获取右侧表格数据
+  const getTableData = () => {
+    console.log('yTable.table.selectedNode: ', yTable.table.selectedNode);
+    if(!yTable.table.selectedNode?.dictTypeCode){
+      return
+    }
+    const { keyWord } = formTopRight.getFieldsValue();
+    let params = { search: keyWord, typeCode: yTable.table.selectedNode?.dictTypeCode };
+    yTable.table.loading = true;
+    yTable.table.dataSource = [];
+    setYTable({ ...yTable });
+    dictDateSelect(params)
+      .then((res) => {
+        yTable.table.dataSource = res?.data || [];
+        yTable.table.loading = false;
+        // yTable.table.pagination.current = res?.data?.pageNum;
+        setYTable({ ...yTable });
+      })
+      .catch((err) => {
+        yTable.table.loading = false;
+        setYTable({ ...yTable });
+        console.log('dictTypeSelect---err', err);
+      });
+  };
+
+
+  // 删除类别
+  const delSortInfo = () => {
+    if (!yTable.table.selectedNode?.id) {
+      message.error('请选择要删除的字典类别');
+      return;
+    }
+    confirm({
+      title: '删除字典类型',
+      okText: '删除',
+      okType: 'danger',
+      cancelText: '取消',
+      content: `您确定删除这个字典类型吗？`,
+      centered: true,
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        let query = [yTable.table.selectedNode.id];
+        dictTypeDel(query)
+          .then((res) => {
+            message.success(res?.message);
+            yTable.table.selectedNode = {};
+            dictTypeSelectService();
+          })
+          .catch((err) => {
+            console.log('deleteType---err', err);
+          });
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
+  
   const [formTopRight] = Form.useForm();
   const topRightForm = {
     inputArr: [
       {
         label: '',
-        name: 'name',
+        name: 'keyWord',
         placeholder: '请输入',
         sort: 1,
         style: {
@@ -175,7 +302,9 @@ export default () => {
       {
         name: '新增',
         type: 'primary',
-        bconfig: {},
+        bconfig: {
+          disabled: !yTable?.table?.selectedNode?.id,
+        },
         style: {
           marginLeft: 8,
         },
@@ -188,88 +317,112 @@ export default () => {
     form: formTopRight,
     cls: styles.topRightForm,
     getInfoData: (value) => {
-      yTable.table.selectedNodes?.id && ((yTable.table.pagination.current = 1), getTableData());
+      yTable.table.selectedNode?.id && ((yTable.table.pagination.current = 1), getTableData());
     },
   };
-  // modalForm
-  const [modalForm] = Form.useForm();
-  const [modalFormSort] = Form.useForm();
-  const [treeSearchForm] = Form.useForm();
-  const [details, setDetails] = useState({}); // 弹窗 - 字典明细详情
-
-  // modal配置项
   const [modalConfig, setModalConfig] = useState({
     visible: false,
     title: '字典明细',
     type: '',
     continue: false,
+    loading: false,
   });
-  const [modalSortConfig, setModalSortConfig] = useState({
-    visible: false,
-    title: '字典类别',
-    type: '',
-    continue: false,
-  });
-
-  // 统一接口 获取类型下的分类列表
-  const queryTypeListServices = () => {
-    queryTypeList(treeSearchForm.getFieldsValue())
-      .then((res) => {
-        mapTree(res.data);
-        setTreeData(res.data);
-      })
-      .catch((err) => {
-        setTreeData([]);
-        console.log('queryTypeList---err', err);
+  // 打开弹窗
+  const changeModal = (type, visible, record) => {
+    modalForm.resetFields();
+    setModalConfig({
+      ...modalConfig,
+      visible: visible,
+      title:
+        type === 'add'
+          ? '新增字典明细'
+          : type === 'edit'
+          ? '编辑字典明细'
+          : type === 'detail'
+          ? '查看字典明细'
+          : '字典明细',
+      type: type,
+    });
+    if (type === 'add') {
+      modalForm.setFieldsValue({
+        dictTypeCode: yTable.table.selectedNode?.dictTypeCode,
+        dictTypeName: yTable.table.selectedNode?.dictTypeName,
       });
+    }
+    if (type === 'edit') {
+      modalForm.setFieldsValue({
+        ...record,
+      });
+    }
   };
-  // 统一接口 获取右侧表格数据
-  const getTableData = () => {};
-
-  // 编辑类别
-  const detailSortInfo = () => {
-    let query = {
-      id: yTable.table.selectedNodes.id,
-    };
-    queryTypeDetails(query)
-      .then((res) => {
-        let value = {
-          ...res.data,
-          isAllowChild: Number(res.data?.isAllowChild),
-          isCustom: Number(res.data?.isCustom),
-          isOrgUse: Number(res.data?.isOrgUse),
-          isSystem: Number(res.data?.isSystem),
-          status: Number(res.data?.status),
-        };
-        setZdxxData(value);
-        yTable.table.zdxxData = value;
-        modalFormSort.setFieldsValue(value);
-        console.log('zdxxData===', zdxxData);
-      })
-      .catch((err) => {
-        console.log('getTreeDetail---err', err);
-      });
+  // 左侧弹窗设置修改
+  const changeModalSort = (type, visible) => {
+    modalFormSort.resetFields();
+    setModalSortConfig({
+      ...modalSortConfig,
+      visible: visible,
+      title: type === 'add' ? '新增字典类别' : type === 'edit' ? '编辑字典类别' : '字典类别',
+      type: type,
+    });
+    if (type === 'edit' && visible) {
+      modalFormSort.setFieldsValue({ ...yTable.table.selectedNode });
+    }
   };
 
-  // 删除类别
-  const delSortInfo = () => {
+  // 保存信息数据
+  const saveInfoData = async () => {
+    const formData = await modalForm.validateFields();
+    const params = { ...formData, useFlag: ~~formData?.useFlag };
+    modalConfig.loading = true;
+    setModalConfig({ ...modalConfig });
+    if (modalConfig.type === 'add') {
+      dictDateAdd(params)
+        .then((res) => {
+          message.success('保存成功');
+          // 刷新字典类别数据
+          getTableData();
+          modalConfig.loading = false;
+          setModalConfig({ ...modalConfig });
+          changeModalSort('', false);
+        })
+        .catch((err) => {
+          console.log('err-logining: ', err);
+          modalConfig.loading = false;
+          setModalConfig({ ...modalConfig });
+        });
+    } else if (modalConfig.type === 'edit') {
+      dictDateUpdate(params)
+        .then((res) => {
+          message.success('保存成功');
+          // 刷新字典类别数据
+          getTableData();
+          modalConfig.loading = false;
+          setModalConfig({ ...modalConfig });
+          changeModalSort('', false);
+        })
+        .catch((err) => {
+          console.log('err-logining: ', err);
+          modalConfig.loading = false;
+          setModalConfig({ ...modalConfig });
+        });
+    }
+  };
+  // 删除字典
+  const delInfo = (record) => {
     confirm({
-      title: '删除字典类型',
+      title: '删除字典',
       okText: '删除',
       okType: 'danger',
       cancelText: '取消',
-      content: `您确定删除这个字典类型吗？`,
+      content: `您确定删除这个字典吗？`,
       centered: true,
       icon: <ExclamationCircleOutlined />,
       onOk() {
-        let query = {
-          id: yTable.table.selectedNodes.id,
-        };
-        deleteType(query)
+        let query = [record.dictCode];
+        dictDateDel(query)
           .then((res) => {
             message.success(res?.message);
-            yTable.table.selectedNodes = {};
-            queryTypeListServices();
+            getTableData();
           })
           .catch((err) => {
             console.log('deleteType---err', err);
@@ -280,77 +433,28 @@ export default () => {
       },
     });
   };
-
-  // 打开弹窗
-  const changeModal = (otype, changetype, data) => {
-    modalForm.resetFields();
-    setModalConfig({
-      ...modalConfig,
-      visible: changetype,
-      title:
-        otype === 'add'
-          ? '新增字典明细'
-          : otype === 'edit'
-          ? '编辑字典明细'
-          : otype === 'detail'
-          ? '查看字典明细'
-          : '字典明细',
-      type: otype,
-    });
-    modalForm.setFieldsValue({
-      typeId: yTable.table.selectedNodes?.id,
-      // typeCode: yTable.table.selectedNodes?.code,
-      typeName: yTable.table.selectedNodes?.name,
-      parentId: yTable.table.dataRow?.dictId || 0,
-      parentName: yTable.table.dataRow?.dictName,
-    });
-  };
-  // 左侧弹窗设置修改
-  const changeModalSort = (otype, changetype) => {
-    modalFormSort.resetFields();
-    setModalSortConfig({
-      ...modalSortConfig,
-      visible: changetype,
-      title: otype === 'add' ? '新增字典类别' : otype === 'edit' ? '编辑字典类别' : '字典类别',
-      type: otype,
-    });
-  };
-
-  // 编辑方法
-  const editInfo = (text, record) => {
-    changeModal('edit', true);
-  };
-
-  // 保存分类数据
-  const saveSortInfo = () => {
-    console.log('.modalFormSort.getFieldsValue(): ', modalFormSort.getFieldsValue());
-
-    if (modalSortConfig.type === 'add') {
-    } else if (modalSortConfig.type === 'edit') {
-    }
-  };
-
-  // 保存信息数据
-  const saveInfoData = async () => {
-    console.log('modalForm.getFieldsValue(): ', modalForm.getFieldsValue());
-    if (modalConfig.type === 'add') {
-    } else if (modalConfig.type === 'edit') {
-    }
-  };
-  useEffect(() => {}, []);
+  useEffect(() => {
+    // 获取字典类别列表
+    dictTypeSelectService();
+  }, []);
   return (
     <div>
       <Row className="overflowXHidden margin0">
         <Col span={4} className={styles.treeBox}>
           <Form form={treeSearchForm} layout="vertical">
-            <Form.Item label="" name="typeName" style={{ marginTop: '15px' }}>
-              <Input onPressEnter={queryTypeListServices} />
+            <Form.Item label="" name="keyWord" style={{ marginTop: '15px' }}>
+              <Input onPressEnter={dictTypeSelectService} />
             </Form.Item>
           </Form>
           <Divider style={{ margin: 0 }} />
           <DirectoryTree
             showIcon={false}
             treeData={treeData}
+            selectedKeys={
+              yTable.table.selectedNode?.dictTypeCode
+                ? [yTable.table.selectedNode?.dictTypeCode]
+                : []
+            }
             defaultExpandAll
             className={styles.tree}
             onSelect={treeSelect}
@@ -397,6 +501,7 @@ export default () => {
         onOk={() => {
           modalFormSort.submit();
         }}
+        confirmLoading={modalSortConfig.loading}
         onCancel={() => changeModalSort('', false)}
         okButtonProps={{ disabled: modalSortConfig.type === 'detail' }}
         cancelButtonProps={{ disabled: modalSortConfig.type === 'detail' }}
@@ -404,27 +509,15 @@ export default () => {
         <Form form={modalFormSort} className={styles.modalform} onFinish={saveSortInfo}>
           <Row>
             {/*隐藏数据字段*/}
-            <Form.Item name="id" hidden>
-              <div />
-            </Form.Item>
-
-            {/* <Col span={12}>
-              <Form.Item label="字典类型" name="categoryId">
-                <Seltopt selectArr={zdlxSel} sWidth="100%" disabled />
-              </Form.Item>
-            </Col> */}
+            <Form.Item name="id" hidden></Form.Item>
             <Col span={12}>
-              <Form.Item
-                label="类别编码"
-                name="code"
-                rules={modalSortConfig.type === 'edit' ? [] : [{ required: true }]}
-              >
+              <Form.Item label="类别编码" name="dictTypeCode" rules={[{ required: true }]}>
                 <Input disabled={modalSortConfig.type === 'edit'} placeholder="请输入" />
               </Form.Item>
             </Col>
 
             <Col span={12}>
-              <Form.Item label="类别名称" name="name" rules={[{ required: true }]}>
+              <Form.Item label="类别名称" name="dictTypeName" rules={[{ required: true }]}>
                 <Input
                   placeholder="请输入"
                   onBlur={(e) => {
@@ -448,42 +541,22 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="排序号" name="sort">
+              <Form.Item label="排序号" name="sortNo">
                 <InputNumber min={0} precision={0} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
 
             <Col span={24}>
-              <Form.Item label="备注" name="remarks">
+              <Form.Item label="备注" name="remark">
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
 
             <Col span={24}>
               <Row>
-                {/* <Form.Item name="isSystem" valuePropName="checked">
+                <Form.Item name="useFlag" valuePropName="checked" style={{ marginLeft: 8 }}>
                   <Checkbox>
-                    <span className={styles.labeltext}>系统内置</span>
-                  </Checkbox>
-                </Form.Item>
-                <Form.Item name="isAllowChild" valuePropName="checked" style={{ marginLeft: 8 }}>
-                  <Checkbox>
-                    <span className={styles.labeltext}>支持多层</span>
-                  </Checkbox>
-                </Form.Item>
-                <Form.Item name="isOrgUse" valuePropName="checked" style={{ marginLeft: 8 }}>
-                  <Checkbox>
-                    <span className={styles.labeltext}>机构私有</span>
-                  </Checkbox>
-                </Form.Item>
-                <Form.Item name="isCustom" valuePropName="checked" style={{ marginLeft: 8 }}>
-                  <Checkbox>
-                    <span className={styles.labeltext}>允许机构增加</span>
-                  </Checkbox>
-                </Form.Item> */}
-                <Form.Item name="status" valuePropName="checked" style={{ marginLeft: 8 }}>
-                  <Checkbox>
-                    <span className={styles.labeltext}>启用</span>
+                    <span className={styles.labeltext}>停用</span>
                   </Checkbox>
                 </Form.Item>
               </Row>
@@ -510,45 +583,18 @@ export default () => {
         <Form form={modalForm} className={styles.modalform} onFinish={saveInfoData}>
           <Row>
             {/*隐藏数据字段*/}
-            <Form.Item name="id" hidden>
-              <div></div>
-            </Form.Item>
-            {/* <Form.Item name="orgId" hidden>
-              <div></div>
-            </Form.Item>
-            <Form.Item name="typeId" hidden>
-              <div></div>
-            </Form.Item>
-            <Form.Item name="parentId" hidden>
-              <div></div>
-            </Form.Item> */}
+            <Form.Item name="id" hidden></Form.Item>
 
-            {/* <Col span={12}>
-              <Form.Item label="字典分类" name="typeName">
-                <TreeSelect
-                  style={{ width: '100%' }}
-                  treeData={treeData}
-                  treeDefaultExpandAll
-                  disabled
-                />
+            <Col span={12}>
+              <Form.Item label="类别编码" name="dictTypeCode" rules={[{ required: true }]}>
+                <Input placeholder="请输入" disabled />
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item label="上级节点" name="parentName">
-                <Input disabled />
+            {/* <Col span={12}>
+              <Form.Item label="类别名称" name="dictTypeName" rules={[{ required: true }]}>
+                <Input placeholder="请输入" disabled />
               </Form.Item>
             </Col> */}
-
-            <Col span={12}>
-              <Form.Item label="类别编码" name="dictCode" rules={[{ required: true }]}>
-                <Input placeholder="请输入" disabled />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="类别名称" name="dictCode" rules={[{ required: true }]}>
-                <Input placeholder="请输入" disabled />
-              </Form.Item>
-            </Col>
             <Col span={12}>
               <Form.Item label="字典编码" name="dictCode" rules={[{ required: true }]}>
                 <Input placeholder="请输入" />
@@ -579,42 +625,22 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="排序号" name="sort">
+              <Form.Item label="排序号" name="sortNo">
                 <InputNumber min={0} precision={0} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
 
             <Col span={24}>
-              <Form.Item label="备注" name="remarks">
+              <Form.Item label="备注" name="remark">
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
 
             <Col span={24}>
               <Row>
-                {/* <Form.Item name="isOutpatient" valuePropName="checked">
+                <Form.Item name="useFlag" valuePropName="checked" style={{ marginLeft: 8 }}>
                   <Checkbox>
-                    <span className={styles.labeltext}>门诊使用</span>
-                  </Checkbox>
-                </Form.Item>
-                <Form.Item name="isEmergency" valuePropName="checked" style={{ marginLeft: 8 }}>
-                  <Checkbox>
-                    <span className={styles.labeltext}>急诊使用</span>
-                  </Checkbox>
-                </Form.Item>
-                <Form.Item name="isHospitalized" valuePropName="checked" style={{ marginLeft: 8 }}>
-                  <Checkbox>
-                    <span className={styles.labeltext}>住院使用</span>
-                  </Checkbox>
-                </Form.Item>
-                <Form.Item name="isSystem" valuePropName="checked" style={{ marginLeft: 8 }}>
-                  <Checkbox>
-                    <span className={styles.labeltext}>系统保留</span>
-                  </Checkbox>
-                </Form.Item> */}
-                <Form.Item name="status" valuePropName="checked" style={{ marginLeft: 8 }}>
-                  <Checkbox>
-                    <span className={styles.labeltext}>启用</span>
+                    <span className={styles.labeltext}>停用</span>
                   </Checkbox>
                 </Form.Item>
               </Row>
