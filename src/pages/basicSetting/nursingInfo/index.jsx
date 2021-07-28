@@ -16,13 +16,7 @@ import {
   Checkbox,
 } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
-// import {
-//   getBloodTableData,
-//   delBloodTableData,
-//   insertBloodType,
-//   updateBloodType,
-// } from '@/services/blood/bloodcomposition';
-// import { getBasicData } from '@/services/basicData/basic';
+import { careAdd, careDel, careSelect, careUpdate } from '@/services/basicSetting/nursingInfo';
 import { findValByKey, getDefaultOption } from '@/utils/common';
 import { makeWb, pinyin } from 'yunyi-convert';
 import { config } from '@/utils/const';
@@ -111,35 +105,35 @@ export default () => {
       columns: [
         {
           title: '护工编号',
-          dataIndex: 'number',
+          dataIndex: 'careCode',
           align: 'left',
           ellipsis: true,
           width: 60,
         },
         {
           title: '姓名',
-          dataIndex: 'typeName',
+          dataIndex: 'name',
           ellipsis: true,
           align: 'left',
           width: 80,
         },
         {
           title: '性别',
-          dataIndex: 'bloodName',
+          dataIndex: 'sex',
           ellipsis: true,
           align: 'left',
           width: 60,
         },
         {
           title: '出生日期',
-          dataIndex: 'nameEn',
+          dataIndex: 'birthday',
           ellipsis: true,
           align: 'left',
           width: 150,
         },
         {
           title: '年龄',
-          dataIndex: 'unit',
+          dataIndex: 'age',
           align: 'left',
           ellipsis: true,
           width: 60,
@@ -149,32 +143,33 @@ export default () => {
         },
         {
           title: '身份证号',
-          dataIndex: 'bloodLoad',
+          dataIndex: 'idCard',
           ellipsis: true,
           align: 'left',
           width: 160,
         },
         {
           title: '联系方式',
-          dataIndex: 'effectiveDay',
+          dataIndex: 'contactNumber',
           ellipsis: true,
           align: 'left',
           width: 80,
         },
         {
           title: '联系地址',
-          dataIndex: 'alarmDay',
+          dataIndex: 'address',
           ellipsis: true,
           align: 'left',
           width: 180,
         },
         {
           title: '状态',
-          dataIndex: 'isCross',
-          align: 'left',
-          ellipsis: true,
-          width: 80,
-          render: (text, record, info) => (text === 1 ? '启用' : '停用'),
+          dataIndex: 'useFlag',
+          key: 'useFlag',
+          width: 50,
+          align: 'center',
+          // render: (text, record) => <Switch checked={record.status} size="small" disabled/>,
+          render: (text, record) => (text ? '停用' : '使用'),
         },
         {
           title: '操作',
@@ -351,15 +346,6 @@ export default () => {
     //   setYTable({ ...yTable });
     // });
   };
-
-  useEffect(() => {
-    modalForm.validateFields(['crossMethod']);
-  }, [isCross]);
-
-  useEffect(() => {
-    modalForm.validateFields(['meltingTime']);
-  }, [isMelt]);
-
   // 初始化
   useEffect(() => {
     // getDictionaryData();
@@ -393,17 +379,17 @@ export default () => {
         >
           <Row>
             <Col span={12}>
-              <Form.Item label="护工编号" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item label="护工编号" name="careCode" rules={[{ required: true, message: '' }]}>
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="姓名" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item label="姓名" name="name" rules={[{ required: true, message: '' }]}>
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="性别" name="typeName" rules={[{ required: false, message: '' }]}>
+              <Form.Item label="性别" name="sex" rules={[{ required: false, message: '' }]}>
                 <Seltopt
                   selectArr={[]}
                   sWidth="100%"
@@ -416,27 +402,27 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="生日" name="collectionTime">
+              <Form.Item label="生日" name="birthday">
                 <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="年龄" name="nameEn">
+              <Form.Item label="年龄" name="age">
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="身份证号" name="nameEn">
+              <Form.Item label="身份证号" name="idCard">
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="联系方式" name="nameEn">
+              <Form.Item label="联系方式" name="contactNumber">
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="联系地址" name="remark">
+              <Form.Item label="联系地址" name="address">
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
