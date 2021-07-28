@@ -23,6 +23,9 @@ import { DeleteOutlined } from '@ant-design/icons';
 //   updateBloodType,
 // } from '@/services/blood/bloodcomposition';
 // import { getBasicData } from '@/services/basicData/basic';
+import {
+ employeeAdd,employeeDel,employeeSelect,employeeesetPassword,employeeUpdate
+} from '@/services/basicSetting/staffInfo';
 import { findValByKey, getDefaultOption } from '@/utils/common';
 import { makeWb, pinyin } from 'yunyi-convert';
 import { config } from '@/utils/const';
@@ -111,35 +114,35 @@ export default () => {
       columns: [
         {
           title: '员工编号',
-          dataIndex: 'number',
+          dataIndex: 'employeeCode',
           align: 'left',
           ellipsis: true,
           width: 60,
         },
         {
           title: '姓名',
-          dataIndex: 'typeName',
+          dataIndex: 'name',
           ellipsis: true,
           align: 'left',
           width: 80,
         },
         {
           title: '性别',
-          dataIndex: 'bloodName',
+          dataIndex: 'sex',
           ellipsis: true,
           align: 'left',
           width: 60,
         },
         {
           title: '出生日期',
-          dataIndex: 'nameEn',
+          dataIndex: 'birthday',
           ellipsis: true,
           align: 'left',
           width: 80,
         },
         {
           title: '年龄',
-          dataIndex: 'unit',
+          dataIndex: 'age',
           align: 'left',
           ellipsis: true,
           width: 60,
@@ -149,21 +152,21 @@ export default () => {
         },
         {
           title: '身份证号',
-          dataIndex: 'bloodLoad',
+          dataIndex: 'idCard',
           ellipsis: true,
           align: 'left',
           width: 60,
         },
         {
           title: '联系方式',
-          dataIndex: 'effectiveDay',
+          dataIndex: 'contactNumber',
           ellipsis: true,
           align: 'left',
           width: 80,
         },
         {
           title: '联系地址',
-          dataIndex: 'alarmDay',
+          dataIndex: 'address',
           ellipsis: true,
           align: 'left',
           width: 180,
@@ -177,7 +180,7 @@ export default () => {
         // },
         {
           title: '状态',
-          dataIndex: 'isCross',
+          dataIndex: 'useFlag',
           align: 'left',
           ellipsis: true,
           width: 50,
@@ -368,7 +371,7 @@ export default () => {
     setYTable({ ...yTable });
     if (modeType.type === 'add') {
       // insertBloodType(query).then((response) => {
-      //   message.success('新增成功');
+        message.success('新增成功');
       //   addOrEdit('', false);
       //   getTableData();
       // });
@@ -431,17 +434,17 @@ export default () => {
         >
           <Row>
             <Col span={12}>
-              <Form.Item label="员工编号" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item label="员工编号" name="employeeCode" rules={[{ required: true, message: '' }]}>
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="姓名" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item label="姓名" name="name" rules={[{ required: true, message: '' }]}>
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="性别" name="typeName" rules={[{ required: false, message: '' }]}>
+              <Form.Item label="性别" name="sex" rules={[{ required: false, message: '' }]}>
                 <Seltopt
                   selectArr={[]}
                   sWidth="100%"
@@ -454,32 +457,32 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="生日" name="collectionTime">
+              <Form.Item label="生日" name="birthday">
                 <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="年龄" name="nameEn">
+              <Form.Item label="年龄" name="age">
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="身份证号" name="nameEn">
+              <Form.Item label="身份证号" name="idCard">
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="联系方式" name="nameEn">
+              <Form.Item label="联系方式" name="contactNumber">
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="联系地址" name="remark">
+              <Form.Item label="联系地址" name="address">
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item name="status" valuePropName="checked" style={{ marginLeft: 8 }}>
+              <Form.Item name="useFlag" valuePropName="checked" style={{ marginLeft: 8 }}>
                 <Checkbox>
                   <span className={styles.labeltext}>启用</span>
                 </Checkbox>

@@ -155,15 +155,15 @@ export default () => {
     let buildingInfo = [
       {
         title: '楼宇编号',
-        dataIndex: 'building_code',
-        key: 'building_code',
+        dataIndex: 'buildingCode',
+        key: 'buildingCode',
         ellipsis: true,
         width: 100,
       },
       {
         title: '楼宇名称',
-        dataIndex: 'roomName',
-        key: 'roomName',
+        dataIndex: 'name',
+        key: 'name',
         ellipsis: true,
         width: 100,
       },
@@ -520,7 +520,7 @@ export default () => {
               <Col span={24}>
                 <Form.Item
                   label="楼宇编码"
-                  name="building_code"
+                  name="buildingCode"
                   rules={modalSortConfig.type === 'edit' ? [] : [{ required: true }]}
                 >
                   <Input disabled={modalSortConfig.type === 'edit'} placeholder="请输入" />
@@ -558,7 +558,7 @@ export default () => {
               <Col span={24}>
                 <Form.Item
                   label="楼宇编码"
-                  name="building_code"
+                  name="buildingCode"
                   rules={modalSortConfig.type === 'edit' ? [] : [{ required: true }]}
                 >
                   <Input disabled placeholder="请输入" />
@@ -582,7 +582,7 @@ export default () => {
               <Col span={24}>
                 <Form.Item
                   label="楼层编码"
-                  name="floor_code"
+                  name="floorCode"
                   rules={modalSortConfig.type === 'edit' ? [] : [{ required: true }]}
                 >
                   <Input disabled={modalSortConfig.type === 'edit'} placeholder="请输入" />
@@ -620,7 +620,7 @@ export default () => {
               <Col span={24}>
                 <Form.Item
                   label="楼宇编码"
-                  name="building_code"
+                  name="buildingCode"
                   rules={modalSortConfig.type === 'edit' ? [] : [{ required: true }]}
                 >
                   <Input disabled placeholder="请输入" />
@@ -644,7 +644,7 @@ export default () => {
               <Col span={24}>
                 <Form.Item
                   label="楼层编码"
-                  name="floor_code"
+                  name="floorCode"
                   rules={modalSortConfig.type === 'edit' ? [] : [{ required: true }]}
                 >
                   <Input disabled={modalSortConfig.type === 'edit'} placeholder="请输入" />
@@ -667,7 +667,7 @@ export default () => {
               <Col span={24}>
                 <Form.Item
                   label="房间编码"
-                  name="room_code"
+                  name="roomCode"
                   rules={modalSortConfig.type === 'edit' ? [] : [{ required: true }]}
                 >
                   <Input disabled={modalSortConfig.type === 'edit'} placeholder="请输入" />
@@ -705,7 +705,7 @@ export default () => {
               <Col span={24}>
                 <Form.Item
                   label="楼宇编码"
-                  name="building_code"
+                  name="buildingCode"
                   rules={modalSortConfig.type === 'edit' ? [] : [{ required: true }]}
                 >
                   <Input disabled placeholder="请输入" />
