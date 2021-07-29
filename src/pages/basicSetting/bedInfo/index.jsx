@@ -95,20 +95,20 @@ export default () => {
     console.log('editType: ', typeof editType);
     let mergeArr = [];
     let baseBefore = [
-      {
-        title: '排序号',
-        dataIndex: 'sort',
-        key: 'sort',
-        align: 'center',
-        width: 60,
-        render: (text, record, index) => index + 1,
-      },
+      // {
+      //   title: '排序号',
+      //   dataIndex: 'sort',
+      //   key: 'sort',
+      //   align: 'center',
+      //   width: 60,
+      //   render: (text, record, index) => index + 1,
+      // },
     ];
     let bedInfo = [
       {
         title: '床位编号',
-        dataIndex: 'bed_code',
-        key: 'bed_code',
+        dataIndex: 'bedCode',
+        key: 'bedCode',
         ellipsis: true,
         width: 100,
       },
@@ -139,15 +139,15 @@ export default () => {
     let floorInfo = [
       {
         title: '楼层编号',
-        dataIndex: 'floor_code',
-        key: 'floor_code',
+        dataIndex: 'floorCode',
+        key: 'floorCode',
         ellipsis: true,
         width: 100,
       },
       {
         title: '楼层名称',
-        dataIndex: 'roomName',
-        key: 'roomName',
+        dataIndex: 'floorName',
+        key: 'floorName',
         ellipsis: true,
         width: 100,
       },
@@ -162,8 +162,8 @@ export default () => {
       },
       {
         title: '楼宇名称',
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'buildingName',
+        key: 'buildingName',
         ellipsis: true,
         width: 100,
       },
@@ -171,11 +171,11 @@ export default () => {
     let baseAfter = [
       {
         title: '状态',
-        dataIndex: 'is_del',
-        key: 'is_del',
+        dataIndex: 'useFlag',
+        align: 'left',
+        ellipsis: true,
         width: 50,
-        align: 'center',
-        render: (text, record) => (record.is_del ? '启用' : '停用'),
+        render: (text, record, info) => (text === 1 ? '启用' : '停用'),
       },
       {
         title: '操作',

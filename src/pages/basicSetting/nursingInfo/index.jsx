@@ -15,7 +15,9 @@ import {
   DatePicker,
   Checkbox,
 } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+const { confirm } = Modal;
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
 import { careAdd, careDel, careSelect, careUpdate } from '@/services/basicSetting/nursingInfo';
 import { findValByKey, getDefaultOption } from '@/utils/common';
 import { makeWb, pinyin } from 'yunyi-convert';
@@ -23,10 +25,13 @@ import { config } from '@/utils/const';
 const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
 const { TextArea } = Input;
+import moment from 'moment';
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
   const tableHeight = useTableHeight(tableRef);
+  // 基础字典数据
+  const [basic, setBasic] = useState({ '0001': [{ key: '1', name: '男' }] });
   // 上部搜索searchForm模块
   const [topFrom] = Form.useForm();
   const searchTopForm = {
@@ -35,13 +40,17 @@ export default () => {
         name: 'keyWord',
         placeholder: '请输入',
         sort: 1,
-        // style: {  },
+        pressEnter: (enter) => {
+          getTableData();
+        },
       },
     ],
     btnArr: [
       {
         name: '查询',
-        callback: () => {},
+        callback: () => {
+          getTableData();
+        },
         sort: 2,
         style: { marginRight: '15px' },
       },
@@ -51,7 +60,7 @@ export default () => {
         // style: {  },
         sort: 2,
         callback: () => {
-          addOrEdit('add', true);
+          changeModal('add', true);
         },
       },
       // {
@@ -81,21 +90,7 @@ export default () => {
     form: topFrom,
     cls: 'opera',
     // styles: { marginTop: '10px' },
-    getInfoData: (value) => {
-      refreshData();
-    },
   };
-
-  // modal配置项
-  const [modalForm] = Form.useForm();
-
-  // 基础字典数据
-  const [basic, setBasic] = useState({});
-
-  // 动态更改form校验状态
-  const [isCross, setIsCross] = useState(false);
-  const [isMelt, setIsMelt] = useState(false);
-
   // table模块
   const [yTable, setYTable] = useState({
     table: {
@@ -123,6 +118,9 @@ export default () => {
           ellipsis: true,
           align: 'left',
           width: 60,
+          render: (text, record, index) => {
+            return findValByKey(yTable.table.basic['0001'], 'key', text, 'name');
+          },
         },
         {
           title: '出生日期',
@@ -180,7 +178,7 @@ export default () => {
             <div className={styles.opera}>
               <a
                 onClick={() => {
-                  addOrEdit('edit', true, record);
+                  changeModal('edit', true, record);
                 }}
               >
                 编辑
@@ -189,7 +187,7 @@ export default () => {
               <Divider type="vertical" />
               <a
                 onClick={() => {
-                  del(record);
+                  delInfo(record);
                 }}
               >
                 删除
@@ -204,7 +202,7 @@ export default () => {
       rowKey: 'id',
       pagination: {
         current: 1,
-        pageSize: 10,
+        pageSize: pageSize,
         showSizeChanger: true,
         showQuickJumper: true,
         showTotal: (total) => {
@@ -222,161 +220,183 @@ export default () => {
         yTable.table.dataRow = count;
         setYTable({ ...yTable });
       },
-      selectInfo: (info) => {
-        yTable.table.dataRow = info;
-        setYTable({ ...yTable });
-        addOrEdit('edit', true);
-      },
+      // selectInfo: (info) => {
+      //   yTable.table.dataRow = info;
+      //   setYTable({ ...yTable });
+      // },
     },
   });
-
-  // 判断新增 / 编辑
-  const [modeType, setModeType] = useState({
-    type: null,
-    show: false,
+  // modal配置项
+  const [modalForm] = Form.useForm();
+  const [modalConfig, setModalConfig] = useState({
+    visible: false,
+    title: '护工信息',
+    type: '',
+    continue: false,
+    loading: false,
   });
-
-  // 新增 / 编辑
-  const addOrEdit = (type, visible, record) => {
-    if (type === 'edit' && !Object.getOwnPropertyNames(record).length) {
-      return message.error('请选中行');
-    }
+  // 打开弹窗
+  const changeModal = (type, visible, record) => {
     modalForm.resetFields();
+    setModalConfig({
+      ...modalConfig,
+      visible: visible,
+      title:
+        type === 'add'
+          ? '新增护工信息'
+          : type === 'edit'
+          ? '编辑护工信息'
+          : type === 'detail'
+          ? '查看护工信息'
+          : '护工信息',
+      type: type,
+    });
+    if (type === 'add') {
+      modalForm.setFieldsValue({
+        dictTypeCode: yTable.table.selectedNode?.dictTypeCode,
+        dictTypeName: yTable.table.selectedNode?.dictTypeName,
+      });
+    }
     if (type === 'edit') {
       modalForm.setFieldsValue({
         ...record,
-        isCross: !!record.isCross ? true : false,
-        isMelt: !!record.isMelt ? true : false,
-      });
-    } else {
-      // 选择框默认值
-      modalForm.setFieldsValue({
-        typeName: getDefaultOption(basic['1041'])?.name,
-        typeCode: getDefaultOption(basic['1041'])?.key,
-        unit: getDefaultOption(basic['1043'])?.key,
+        birthday: record?.birthday && moment(record?.birthday),
       });
     }
-    changeModal(type, visible);
   };
-  // 修改弹窗配置
-  const changeModal = (type, visible) => {
-    modeType.type = type;
-    modeType.show = visible;
-    setModeType({ ...modeType });
-  };
-  // 删除
-  const del = (record) => {
-    if (!!Object.getOwnPropertyNames(record).length) {
-      Modal.confirm({
-        title: '是否要删除该条数据',
-        icon: <DeleteOutlined />,
-        okText: '删除',
-        okType: 'danger',
-        cancelText: '取消',
-        style: { padding: '30px' },
-        onOk() {
-          // delBloodTableData({ id: record.id }).then((response) => {
-          //   message.success('删除成功');
-          //   yTable.table.dataRow = {};
-          //   yTable.table.loading = true;
-          //   setYTable({ ...yTable });
-          //   getTableData();
-          // });
-        },
-      });
-    } else {
-      message.error('请选中行数');
-    }
-  };
-
-  // 刷新
-  const refreshData = () => {
-    yTable.table.loading = true;
-    setYTable({ ...yTable });
-    getTableData();
-  };
-
-  // 获取列表Table数据
-  const getTableData = () => {
-    // getBloodTableData({ keyWord: topFrom.getFieldsValue().keyWord })
-    //   .then((response) => {
-    //     response.data?.map((items) => (items.key = items.id));
-    //     yTable.table.key = Math.random();
-    //     yTable.table.loading = false;
-    //     yTable.table.dataRow = {};
-    //     yTable.table.dataSource = response.data;
-    //     setYTable({ ...yTable });
-    //   })
-    //   .catch(() => {
-    //     yTable.table.loading = false;
-    //     yTable.table.dataSource = [];
-    //     setYTable({ ...yTable });
-    //   });
-  };
-
-  // 新增 / 修改 提交时触发
-  const saveModalInfo = () => {
-    let query = {
-      ...modalForm.getFieldsValue(),
-      typeCode: findValByKey(basic['1041'], 'name', modalForm.getFieldsValue().typeName, 'key'),
+  // 保存信息数据
+  const saveInfoData = async () => {
+    const formData = await modalForm.validateFields();
+    const params = {
+      ...formData,
+      useFlag: ~~formData?.useFlag,
+      birthday: formData?.birthday && moment(formData?.birthday).format('YYYY-MM-DD'),
     };
-    console.log('query: ', query);
-    yTable.table.loading = true;
-    setYTable({ ...yTable });
-    if (modeType.type === 'add') {
-      // insertBloodType(query).then((response) => {
-      //   message.success('新增成功');
-      //   addOrEdit('', false);
-      //   getTableData();
-      // });
-    } else {
-      // updateBloodType({ ...query, id: yTable.table.dataRow.id }).then((response) => {
-      //   message.success('编辑成功');
-      //   addOrEdit('', false);
-      //   getTableData();
-      // });
+    modalConfig.loading = true;
+    setModalConfig({ ...modalConfig });
+    if (modalConfig.type === 'add') {
+      careAdd(params)
+        .then((res) => {
+          message.success(res?.msg);
+          // 刷新字典类别数据
+          getTableData();
+          modalConfig.visible = false;
+          modalConfig.loading = false;
+          setModalConfig({ ...modalConfig });
+        })
+        .catch((err) => {
+          console.log('err-logining: ', err);
+          modalConfig.loading = false;
+          setModalConfig({ ...modalConfig });
+        });
+    } else if (modalConfig.type === 'edit') {
+      careUpdate(params)
+        .then((res) => {
+          message.success(res?.msg);
+          // 刷新字典类别数据
+          getTableData();
+          modalConfig.visible = false;
+          modalConfig.loading = false;
+          setModalConfig({ ...modalConfig });
+        })
+        .catch((err) => {
+          console.log('err-logining: ', err);
+          modalConfig.loading = false;
+          setModalConfig({ ...modalConfig });
+        });
     }
   };
-
+  // 获取右侧表格数据
+  const getTableData = () => {
+    const { keyWord } = topFrom.getFieldsValue();
+    let params = {
+      keyWord: keyWord || '',
+      pageNum: yTable.table.pagination.current,
+      pageSize: yTable.table.pagination.pageSize,
+    };
+    yTable.table.loading = true;
+    yTable.table.dataSource = [];
+    setYTable({ ...yTable });
+    careSelect(params)
+      .then((res) => {
+        yTable.table.dataSource = res?.data?.list || [];
+        yTable.table.loading = false;
+        // yTable.table.pagination.current = res?.data?.pageNum;
+        setYTable({ ...yTable });
+      })
+      .catch((err) => {
+        yTable.table.loading = false;
+        setYTable({ ...yTable });
+        console.log('dictTypeSelect---err', err);
+      });
+  };
+  // 删除字典
+  const delInfo = (record) => {
+    confirm({
+      title: '删除',
+      okText: '删除',
+      okType: 'danger',
+      cancelText: '取消',
+      content: `您确定删除吗？`,
+      centered: true,
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        careDel({ ids: record?.id || '' })
+          .then((res) => {
+            message.success(res?.msg);
+            getTableData();
+          })
+          .catch((err) => {
+            console.log('deleteType---err', err);
+          });
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
   // 获取字典数据
   const getDictionaryData = () => {
-    // getBasicData(['1043', '1042', '1041']).then((response) => {
-    //   setBasic(response.data);
-    //   yTable.table.basic = response.data;
-    //   setYTable({ ...yTable });
-    // });
+    dictTypeSelectPullDown(['0001']).then((response) => {
+      setBasic(response.data);
+      yTable.table.basic = response.data;
+    });
   };
+
   // 初始化
   useEffect(() => {
-    // getDictionaryData();
-    // getTableData();
+    getDictionaryData();
+    getTableData();
   }, []);
   return (
-    <div className={styles.bloodComposition}>
+    <div>
       <SearchForm searchForm={searchTopForm} />
       <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
         <YTable {...yTable} />
       </div>
       <Modal
-        className={styles.bloodModal}
         width={720}
-        keyboard={false}
         maskClosable={false}
-        title={modeType.type === 'add' ? '新增' : '编辑'}
+        title={modalConfig.title}
+        visible={modalConfig.visible}
         centered
-        visible={modeType.show}
+        forceRender
         onOk={() => {
           modalForm.submit();
         }}
+        confirmLoading={modalConfig.loading}
         onCancel={() => changeModal('', false)}
+        okButtonProps={{ disabled: modalConfig.type === 'detail' }}
+        cancelButtonProps={{ disabled: modalConfig.type === 'detail' }}
       >
         <Form
-          name="basic"
           form={modalForm}
-          labelCol={{ flex: '90px' }}
-          onFinish={saveModalInfo}
-          initialValues={{ isCross: false, isMelt: false }}
+          className={styles.modalform}
+          onFinish={saveInfoData}
+          labelCol={{ flex: '100px' }}
+          initialValues={{ isAdministrator: 0 }}
         >
+          <Form.Item name="id" hidden></Form.Item>
           <Row>
             <Col span={12}>
               <Form.Item label="护工编号" name="careCode" rules={[{ required: true, message: '' }]}>
@@ -391,11 +411,12 @@ export default () => {
             <Col span={12}>
               <Form.Item label="性别" name="sex" rules={[{ required: false, message: '' }]}>
                 <Seltopt
-                  selectArr={[]}
+                  selectArr={basic['0001'] || []}
                   sWidth="100%"
                   callback={(cb) => {
                     modalForm.setFieldsValue({
-                      typeName: findValByKey(basic['1041'], 'key', cb, 'name'),
+                      sex: cb,
+                      // sexName: findValByKey(basic['1041'], 'key', cb, 'name'),
                     });
                   }}
                 />
@@ -427,9 +448,9 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item name="status" valuePropName="checked" style={{ marginLeft: 8 }}>
+              <Form.Item name="useFlag" valuePropName="checked" style={{ marginLeft: 8 }}>
                 <Checkbox>
-                  <span className={styles.labeltext}>启用</span>
+                  <span className={styles.labeltext}>停用</span>
                 </Checkbox>
               </Form.Item>
             </Col>

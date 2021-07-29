@@ -35,14 +35,129 @@ export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
   const tableHeight = useTableHeight(tableRef);
+  // modalForm
+  const [treeSearchForm] = Form.useForm();
   // 树数据
   const [treeData, setTreeData] = useState([]);
   // 树形节点选中
   const treeSelect = async (selectedKeys, info) => {
+    console.log(info);
     yTable.table.selectedNode = info.node.allParams;
-    getTableData()
+    getTableData();
     setYTable({ ...yTable });
   };
+  // modal配置项
+  const [modalFormSort] = Form.useForm();
+  const [modalSortConfig, setModalSortConfig] = useState({
+    visible: false,
+    title: '字典类别',
+    type: '',
+    continue: false,
+    loading: false,
+  });
+  // 左侧弹窗设置修改
+  const changeModalSort = (type, visible) => {
+    modalFormSort.resetFields();
+    setModalSortConfig({
+      ...modalSortConfig,
+      visible: visible,
+      title: type === 'add' ? '新增字典类别' : type === 'edit' ? '编辑字典类别' : '字典类别',
+      type: type,
+    });
+    if (type === 'edit' && visible) {
+      modalFormSort.setFieldsValue({ ...yTable.table.selectedNode });
+    }
+  };
+  // 保存分类数据
+  const saveSortInfo = async () => {
+    const formData = await modalFormSort.validateFields();
+    const params = { ...formData, useFlag: ~~formData?.useFlag };
+    modalSortConfig.loading = true;
+    setModalSortConfig({ ...modalSortConfig });
+    if (modalSortConfig.type === 'add') {
+      dictTypeAdd(params)
+        .then((res) => {
+          message.success(res?.msg);
+          // 刷新字典类别数据
+          getTreeData();
+          modalSortConfig.visible = false;
+          modalSortConfig.loading = false;
+          setModalSortConfig({ ...modalSortConfig });
+        })
+        .catch((err) => {
+          console.log('err-logining: ', err);
+          modalSortConfig.loading = false;
+          setModalSortConfig({ ...modalSortConfig });
+        });
+    } else if (modalSortConfig.type === 'edit') {
+      dictTypeUpdate(params)
+        .then((res) => {
+          message.success(res?.msg);
+          // 刷新字典类别数据
+          getTreeData();
+          modalSortConfig.visible = false;
+          modalSortConfig.loading = false;
+          setModalSortConfig({ ...modalSortConfig });
+        })
+        .catch((err) => {
+          console.log('err-logining: ', err);
+          modalSortConfig.loading = false;
+          setModalSortConfig({ ...modalSortConfig });
+        });
+    }
+  };
+  // 获取字典类别
+  const getTreeData = () => {
+    setTreeData([]);
+    let { keyWord } = treeSearchForm.getFieldsValue();
+    dictTypeSelect({ keyWord: keyWord || '' })
+      .then((res) => {
+        let tree =
+          res?.data?.map((it) => {
+            return {
+              title: it.dictTypeName,
+              key: it.dictTypeCode,
+              allParams: it,
+            };
+          }) || [];
+        setTreeData(tree);
+      })
+      .catch((err) => {
+        setTreeData([]);
+        console.log('dictTypeSelect---err', err);
+      });
+  };
+  // 删除类别
+  const delSortInfo = () => {
+    if (!yTable.table.selectedNode?.dictTypeCode) {
+      message.error('请选择要删除的字典类别');
+      return;
+    }
+    confirm({
+      title: '删除',
+      okText: '删除',
+      okType: 'danger',
+      cancelText: '取消',
+      content: `您确定删除吗？`,
+      centered: true,
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        dictTypeDel({ typeCodes: yTable.table.selectedNode?.dictTypeCode || '' })
+          .then((res) => {
+            message.success(res?.msg);
+            yTable.table.selectedNode = {};
+            getTreeData();
+          })
+          .catch((err) => {
+            console.log('deleteType---err', err);
+          });
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
+  // --------------------------------------------------------------------------
   // yTable
   const [yTable, setYTable] = useState({
     table: {
@@ -51,7 +166,7 @@ export default () => {
       scroll: { y: '100%' },
       pagination: {
         current: 1,
-        pageSize: 10,
+        pageSize: 20,
         showSizeChanger: true,
         showQuickJumper: true,
         showTotal: (total) => {
@@ -147,138 +262,7 @@ export default () => {
       ],
     },
   });
-
-  // modalForm
-  const [modalForm] = Form.useForm();
-  const [modalFormSort] = Form.useForm();
-  const [treeSearchForm] = Form.useForm();
-  const [details, setDetails] = useState({}); // 弹窗 - 字典明细详情
-
-  // modal配置项
-  const [modalSortConfig, setModalSortConfig] = useState({
-    visible: false,
-    title: '字典类别',
-    type: '',
-    continue: false,
-    loading: false,
-  });
-  // 保存分类数据
-  const saveSortInfo = async () => {
-    const formData = await modalFormSort.validateFields();
-    const params = { ...formData, useFlag: ~~formData?.useFlag };
-    modalSortConfig.loading = true;
-    setModalSortConfig({ ...modalSortConfig });
-    if (modalSortConfig.type === 'add') {
-      dictTypeAdd(params)
-        .then((res) => {
-          message.success('保存成功');
-          // 刷新字典类别数据
-          dictTypeSelectService();
-          modalSortConfig.loading = false;
-          setModalSortConfig({ ...modalSortConfig });
-          changeModalSort('', false);
-        })
-        .catch((err) => {
-          console.log('err-logining: ', err);
-          modalSortConfig.loading = false;
-          setModalSortConfig({ ...modalSortConfig });
-        });
-    } else if (modalSortConfig.type === 'edit') {
-      dictTypeUpdate(params)
-        .then((res) => {
-          message.success('保存成功');
-          // 刷新字典类别数据
-          dictTypeSelectService();
-          modalSortConfig.loading = false;
-          setModalSortConfig({ ...modalSortConfig });
-          changeModalSort('', false);
-        })
-        .catch((err) => {
-          console.log('err-logining: ', err);
-          modalSortConfig.loading = false;
-          setModalSortConfig({ ...modalSortConfig });
-        });
-    }
-  };
-  // 获取字典类别
-  const dictTypeSelectService = () => {
-    setTreeData([]);
-    let params = treeSearchForm.getFieldsValue();
-    dictTypeSelect(params)
-      .then((res) => {
-        let tree =
-          res?.data?.map((it) => {
-            return {
-              title: it.dictTypeName,
-              key: it.dictTypeCode,
-              allParams: it,
-            };
-          }) || [];
-        setTreeData(tree);
-      })
-      .catch((err) => {
-        setTreeData([]);
-        console.log('dictTypeSelect---err', err);
-      });
-  };
-  // 获取右侧表格数据
-  const getTableData = () => {
-    console.log('yTable.table.selectedNode: ', yTable.table.selectedNode);
-    if(!yTable.table.selectedNode?.dictTypeCode){
-      return
-    }
-    const { keyWord } = formTopRight.getFieldsValue();
-    let params = { search: keyWord, typeCode: yTable.table.selectedNode?.dictTypeCode };
-    yTable.table.loading = true;
-    yTable.table.dataSource = [];
-    setYTable({ ...yTable });
-    dictDateSelect(params)
-      .then((res) => {
-        yTable.table.dataSource = res?.data || [];
-        yTable.table.loading = false;
-        // yTable.table.pagination.current = res?.data?.pageNum;
-        setYTable({ ...yTable });
-      })
-      .catch((err) => {
-        yTable.table.loading = false;
-        setYTable({ ...yTable });
-        console.log('dictTypeSelect---err', err);
-      });
-  };
-
-
-  // 删除类别
-  const delSortInfo = () => {
-    if (!yTable.table.selectedNode?.id) {
-      message.error('请选择要删除的字典类别');
-      return;
-    }
-    confirm({
-      title: '删除字典类型',
-      okText: '删除',
-      okType: 'danger',
-      cancelText: '取消',
-      content: `您确定删除这个字典类型吗？`,
-      centered: true,
-      icon: <ExclamationCircleOutlined />,
-      onOk() {
-        let query = [yTable.table.selectedNode.id];
-        dictTypeDel(query)
-          .then((res) => {
-            message.success(res?.message);
-            yTable.table.selectedNode = {};
-            dictTypeSelectService();
-          })
-          .catch((err) => {
-            console.log('deleteType---err', err);
-          });
-      },
-      onCancel() {
-        console.log('Cancel');
-      },
-    });
-  };
-  
+  // 右侧searchForm
   const [formTopRight] = Form.useForm();
   const topRightForm = {
     inputArr: [
@@ -320,6 +304,9 @@ export default () => {
       yTable.table.selectedNode?.id && ((yTable.table.pagination.current = 1), getTableData());
     },
   };
+
+  // modal配置项
+  const [modalForm] = Form.useForm();
   const [modalConfig, setModalConfig] = useState({
     visible: false,
     title: '字典明细',
@@ -355,20 +342,6 @@ export default () => {
       });
     }
   };
-  // 左侧弹窗设置修改
-  const changeModalSort = (type, visible) => {
-    modalFormSort.resetFields();
-    setModalSortConfig({
-      ...modalSortConfig,
-      visible: visible,
-      title: type === 'add' ? '新增字典类别' : type === 'edit' ? '编辑字典类别' : '字典类别',
-      type: type,
-    });
-    if (type === 'edit' && visible) {
-      modalFormSort.setFieldsValue({ ...yTable.table.selectedNode });
-    }
-  };
-
   // 保存信息数据
   const saveInfoData = async () => {
     const formData = await modalForm.validateFields();
@@ -378,12 +351,12 @@ export default () => {
     if (modalConfig.type === 'add') {
       dictDateAdd(params)
         .then((res) => {
-          message.success('保存成功');
+          message.success(res?.msg);
           // 刷新字典类别数据
           getTableData();
           modalConfig.loading = false;
+          modalConfig.visible = false;
           setModalConfig({ ...modalConfig });
-          changeModalSort('', false);
         })
         .catch((err) => {
           console.log('err-logining: ', err);
@@ -393,12 +366,12 @@ export default () => {
     } else if (modalConfig.type === 'edit') {
       dictDateUpdate(params)
         .then((res) => {
-          message.success('保存成功');
+          message.success(res?.msg);
           // 刷新字典类别数据
           getTableData();
           modalConfig.loading = false;
+          modalConfig.visible = false;
           setModalConfig({ ...modalConfig });
-          changeModalSort('', false);
         })
         .catch((err) => {
           console.log('err-logining: ', err);
@@ -407,21 +380,49 @@ export default () => {
         });
     }
   };
+  // 获取右侧表格数据
+  const getTableData = () => {
+    if (!yTable.table.selectedNode?.dictTypeCode) {
+      return;
+    }
+    const { keyWord } = formTopRight.getFieldsValue();
+    let params = {
+      search: keyWord,
+      typeCode: yTable.table.selectedNode?.dictTypeCode,
+      pageNum: yTable.table.pagination.current,
+      pageSize: yTable.table.pagination.pageSize,
+    };
+    yTable.table.loading = true;
+    yTable.table.dataSource = [];
+    setYTable({ ...yTable });
+    dictDateSelect(params)
+      .then((res) => {
+        yTable.table.dataSource = res?.data?.list || [];
+        yTable.table.loading = false;
+        yTable.table.pagination.current = res?.data?.pageNum;
+        // yTable.table.pagination.pageSize = res?.data?.pageSize;
+        setYTable({ ...yTable });
+      })
+      .catch((err) => {
+        yTable.table.loading = false;
+        setYTable({ ...yTable });
+        console.log('dictTypeSelect---err', err);
+      });
+  };
   // 删除字典
   const delInfo = (record) => {
     confirm({
-      title: '删除字典',
+      title: '删除',
       okText: '删除',
       okType: 'danger',
       cancelText: '取消',
-      content: `您确定删除这个字典吗？`,
+      content: `您确定删除吗？`,
       centered: true,
       icon: <ExclamationCircleOutlined />,
       onOk() {
-        let query = [record.dictCode];
-        dictDateDel(query)
+        dictDateDel({ dictCodes: record?.dictCode || '' })
           .then((res) => {
-            message.success(res?.message);
+            message.success(res?.msg);
             getTableData();
           })
           .catch((err) => {
@@ -435,7 +436,7 @@ export default () => {
   };
   useEffect(() => {
     // 获取字典类别列表
-    dictTypeSelectService();
+    getTreeData();
   }, []);
   return (
     <div>
@@ -443,7 +444,7 @@ export default () => {
         <Col span={4} className={styles.treeBox}>
           <Form form={treeSearchForm} layout="vertical">
             <Form.Item label="" name="keyWord" style={{ marginTop: '15px' }}>
-              <Input onPressEnter={dictTypeSelectService} />
+              <Input onPressEnter={getTreeData} />
             </Form.Item>
           </Form>
           <Divider style={{ margin: 0 }} />
@@ -492,7 +493,7 @@ export default () => {
 
       {/*新增字典类别*/}
       <Modal
-        width={690}
+        width={720}
         maskClosable={false}
         title={modalSortConfig.title}
         visible={modalSortConfig.visible}
@@ -567,7 +568,7 @@ export default () => {
 
       {/*新增字典明细*/}
       <Modal
-        width={690}
+        width={720}
         maskClosable={false}
         title={modalConfig.title}
         visible={modalConfig.visible}
@@ -576,6 +577,7 @@ export default () => {
         onOk={() => {
           modalForm.submit();
         }}
+        confirmLoading={modalConfig.loading}
         onCancel={() => changeModal('', false)}
         okButtonProps={{ disabled: modalConfig.type === 'detail' }}
         cancelButtonProps={{ disabled: modalConfig.type === 'detail' }}

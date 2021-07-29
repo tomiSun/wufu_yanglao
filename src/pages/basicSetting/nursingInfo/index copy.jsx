@@ -15,29 +15,18 @@ import {
   DatePicker,
   Checkbox,
 } from 'antd';
-const { confirm } = Modal;
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
-import {
-  employeeAdd,
-  employeeDel,
-  employeeSelect,
-  employeeUpdate,
-  employeeesetPassword,
-} from '@/services/basicSetting/staffInfo';
+import { DeleteOutlined } from '@ant-design/icons';
+import { careAdd, careDel, careSelect, careUpdate } from '@/services/basicSetting/nursingInfo';
 import { findValByKey, getDefaultOption } from '@/utils/common';
 import { makeWb, pinyin } from 'yunyi-convert';
 import { config } from '@/utils/const';
 const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
-import moment from 'moment';
 const { TextArea } = Input;
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
   const tableHeight = useTableHeight(tableRef);
-  // 基础字典数据
-  const [basic, setBasic] = useState({});
   // 上部搜索searchForm模块
   const [topFrom] = Form.useForm();
   const searchTopForm = {
@@ -46,18 +35,13 @@ export default () => {
         name: 'keyWord',
         placeholder: '请输入',
         sort: 1,
-        pressEnter: (enter) => {
-          getTableData();
-        },
         // style: {  },
       },
     ],
     btnArr: [
       {
         name: '查询',
-        callback: () => {
-          getTableData();
-        },
+        callback: () => {},
         sort: 2,
         style: { marginRight: '15px' },
       },
@@ -67,7 +51,7 @@ export default () => {
         // style: {  },
         sort: 2,
         callback: () => {
-          changeModal('add', true);
+          addOrEdit('add', true);
         },
       },
       // {
@@ -97,7 +81,21 @@ export default () => {
     form: topFrom,
     cls: 'opera',
     // styles: { marginTop: '10px' },
+    getInfoData: (value) => {
+      refreshData();
+    },
   };
+
+  // modal配置项
+  const [modalForm] = Form.useForm();
+
+  // 基础字典数据
+  const [basic, setBasic] = useState({});
+
+  // 动态更改form校验状态
+  const [isCross, setIsCross] = useState(false);
+  const [isMelt, setIsMelt] = useState(false);
+
   // table模块
   const [yTable, setYTable] = useState({
     table: {
@@ -106,8 +104,8 @@ export default () => {
       dataSource: [{ id: 1 }],
       columns: [
         {
-          title: '员工编号',
-          dataIndex: 'employeeCode',
+          title: '护工编号',
+          dataIndex: 'careCode',
           align: 'left',
           ellipsis: true,
           width: 60,
@@ -125,16 +123,13 @@ export default () => {
           ellipsis: true,
           align: 'left',
           width: 60,
-          render: (text, record, index) => {
-            return findValByKey(yTable.table.basic['0001'], 'key', text, 'name');
-          },
         },
         {
           title: '出生日期',
           dataIndex: 'birthday',
           ellipsis: true,
           align: 'left',
-          width: 80,
+          width: 150,
         },
         {
           title: '年龄',
@@ -151,7 +146,7 @@ export default () => {
           dataIndex: 'idCard',
           ellipsis: true,
           align: 'left',
-          width: 60,
+          width: 160,
         },
         {
           title: '联系方式',
@@ -168,31 +163,24 @@ export default () => {
           width: 180,
         },
         {
-          title: '是否为管理员',
-          dataIndex: 'isAdministrator',
-          align: 'left',
-          ellipsis: true,
-          width: 100,
-          render: (text, record, info) => (text === 1 ? '是' : '否'),
-        },
-        {
           title: '状态',
           dataIndex: 'useFlag',
-          align: 'left',
-          ellipsis: true,
+          key: 'useFlag',
           width: 50,
-          render: (text, record, info) => (text === 1 ? '启用' : '停用'),
+          align: 'center',
+          // render: (text, record) => <Switch checked={record.status} size="small" disabled/>,
+          render: (text, record) => (text ? '停用' : '使用'),
         },
         {
           title: '操作',
           key: 'opera',
           align: 'center',
-          width: 130,
+          width: 100,
           render: (text, record) => (
             <div className={styles.opera}>
               <a
                 onClick={() => {
-                  changeModal('edit', true, record);
+                  addOrEdit('edit', true, record);
                 }}
               >
                 编辑
@@ -201,18 +189,10 @@ export default () => {
               <Divider type="vertical" />
               <a
                 onClick={() => {
-                  delInfo(record);
+                  del(record);
                 }}
               >
                 删除
-              </a>
-              <Divider type="vertical" />
-              <a
-                onClick={() => {
-                  resetPassWord(record);
-                }}
-              >
-                重置密码
               </a>
             </div>
           ),
@@ -224,7 +204,7 @@ export default () => {
       rowKey: 'id',
       pagination: {
         current: 1,
-        pageSize: pageSize,
+        pageSize: 10,
         showSizeChanger: true,
         showQuickJumper: true,
         showTotal: (total) => {
@@ -242,216 +222,164 @@ export default () => {
         yTable.table.dataRow = count;
         setYTable({ ...yTable });
       },
-      // selectInfo: (info) => {
-      //   yTable.table.dataRow = info;
-      //   setYTable({ ...yTable });
-      //   addOrEdit('edit', true);
-      // },
+      selectInfo: (info) => {
+        yTable.table.dataRow = info;
+        setYTable({ ...yTable });
+        addOrEdit('edit', true);
+      },
     },
   });
-  // modal配置项
-  const [modalForm] = Form.useForm();
-  const [modalConfig, setModalConfig] = useState({
-    visible: false,
-    title: '员工信息',
-    type: '',
-    continue: false,
-    loading: false,
+
+  // 判断新增 / 编辑
+  const [modeType, setModeType] = useState({
+    type: null,
+    show: false,
   });
-  // 打开弹窗
-  const changeModal = (type, visible, record) => {
-    modalForm.resetFields();
-    setModalConfig({
-      ...modalConfig,
-      visible: visible,
-      title:
-        type === 'add'
-          ? '新增员工信息'
-          : type === 'edit'
-          ? '编辑员工信息'
-          : type === 'detail'
-          ? '查看员工信息'
-          : '员工信息',
-      type: type,
-    });
-    if (type === 'add') {
-      modalForm.setFieldsValue({
-        dictTypeCode: yTable.table.selectedNode?.dictTypeCode,
-        dictTypeName: yTable.table.selectedNode?.dictTypeName,
-      });
+
+  // 新增 / 编辑
+  const addOrEdit = (type, visible, record) => {
+    if (type === 'edit' && !Object.getOwnPropertyNames(record).length) {
+      return message.error('请选中行');
     }
+    modalForm.resetFields();
     if (type === 'edit') {
       modalForm.setFieldsValue({
         ...record,
-        birthday: record?.birthday && moment(record?.birthday),
+        isCross: !!record.isCross ? true : false,
+        isMelt: !!record.isMelt ? true : false,
+      });
+    } else {
+      // 选择框默认值
+      modalForm.setFieldsValue({
+        typeName: getDefaultOption(basic['1041'])?.name,
+        typeCode: getDefaultOption(basic['1041'])?.key,
+        unit: getDefaultOption(basic['1043'])?.key,
       });
     }
+    changeModal(type, visible);
   };
-  // 保存信息数据
-  const saveInfoData = async () => {
-    const formData = await modalForm.validateFields();
-    const params = {
-      ...formData,
-      useFlag: ~~formData?.useFlag,
-      birthday: formData?.birthday && moment(formData?.birthday).format('YYYY-MM-DD'),
-    };
-    modalConfig.loading = true;
-    setModalConfig({ ...modalConfig });
-    if (modalConfig.type === 'add') {
-      employeeAdd(params)
-        .then((res) => {
-          message.success(res?.msg);
-          // 刷新字典类别数据
-          getTableData();
-          modalConfig.visible = false;
-          modalConfig.loading = false;
-          setModalConfig({ ...modalConfig });
-        })
-        .catch((err) => {
-          console.log('err-logining: ', err);
-          modalConfig.loading = false;
-          setModalConfig({ ...modalConfig });
-        });
-    } else if (modalConfig.type === 'edit') {
-      employeeUpdate(params)
-        .then((res) => {
-          message.success(res?.msg);
-          // 刷新字典类别数据
-          getTableData();
-          modalConfig.visible = false;
-          modalConfig.loading = false;
-          setModalConfig({ ...modalConfig });
-        })
-        .catch((err) => {
-          console.log('err-logining: ', err);
-          modalConfig.loading = false;
-          setModalConfig({ ...modalConfig });
-        });
-    }
+  // 修改弹窗配置
+  const changeModal = (type, visible) => {
+    modeType.type = type;
+    modeType.show = visible;
+    setModeType({ ...modeType });
   };
-  // 获取右侧表格数据
-  const getTableData = () => {
-    const { keyWord } = topFrom.getFieldsValue();
-    let params = {
-      keyWord: keyWord,
-      pageNum: yTable.table.pagination.current,
-      pageSize: yTable.table.pagination.pageSize,
-    };
-    yTable.table.loading = true;
-    yTable.table.dataSource = [];
-    setYTable({ ...yTable });
-    employeeSelect(params)
-      .then((res) => {
-        yTable.table.dataSource = res?.data?.list || [];
-        yTable.table.loading = false;
-        // yTable.table.pagination.current = res?.data?.pageNum;
-        setYTable({ ...yTable });
-      })
-      .catch((err) => {
-        yTable.table.loading = false;
-        setYTable({ ...yTable });
-        console.log('dictTypeSelect---err', err);
-      });
-  };
-  // 删除字典
-  const delInfo = (record) => {
-    confirm({
-      title: '删除',
-      okText: '删除',
-      okType: 'danger',
-      cancelText: '取消',
-      content: `您确定删除吗？`,
-      centered: true,
-      icon: <ExclamationCircleOutlined />,
-      onOk() {
-        employeeDel({ ids: record?.id || '' })
-          .then((res) => {
-            message.success(res?.msg);
-            getTableData();
-          })
-          .catch((err) => {
-            console.log('deleteType---err', err);
-          });
-      },
-      onCancel() {
-        console.log('Cancel');
-      },
-    });
-  };
-  // 重置密码
-  const resetPassWord = (record) => {
+  // 删除
+  const del = (record) => {
     if (!!Object.getOwnPropertyNames(record).length) {
       Modal.confirm({
-        title: '您确定要重置密码为000000吗？',
-        okText: '确定',
+        title: '是否要删除该条数据',
+        icon: <DeleteOutlined />,
+        okText: '删除',
         okType: 'danger',
         cancelText: '取消',
         style: { padding: '30px' },
         onOk() {
-          let query = { employeeCode: record.employeeCode };
-          employeeesetPassword(query)
-            .then((res) => {
-              message.success(res?.msg);
-              getTableData();
-            })
-            .catch((err) => {
-              console.log('deleteType---err', err);
-            });
+          // delBloodTableData({ id: record.id }).then((response) => {
+          //   message.success('删除成功');
+          //   yTable.table.dataRow = {};
+          //   yTable.table.loading = true;
+          //   setYTable({ ...yTable });
+          //   getTableData();
+          // });
         },
       });
     } else {
       message.error('请选中行数');
     }
   };
-  // 获取字典数据
-  const getDictionaryData = () => {
-    dictTypeSelectPullDown(['0001']).then((response) => {
-      setBasic(response.data);
-      yTable.table.basic = response.data;
-    });
+
+  // 刷新
+  const refreshData = () => {
+    yTable.table.loading = true;
+    setYTable({ ...yTable });
+    getTableData();
   };
 
+  // 获取列表Table数据
+  const getTableData = () => {
+    // getBloodTableData({ keyWord: topFrom.getFieldsValue().keyWord })
+    //   .then((response) => {
+    //     response.data?.map((items) => (items.key = items.id));
+    //     yTable.table.key = Math.random();
+    //     yTable.table.loading = false;
+    //     yTable.table.dataRow = {};
+    //     yTable.table.dataSource = response.data;
+    //     setYTable({ ...yTable });
+    //   })
+    //   .catch(() => {
+    //     yTable.table.loading = false;
+    //     yTable.table.dataSource = [];
+    //     setYTable({ ...yTable });
+    //   });
+  };
+
+  // 新增 / 修改 提交时触发
+  const saveModalInfo = () => {
+    let query = {
+      ...modalForm.getFieldsValue(),
+      typeCode: findValByKey(basic['1041'], 'name', modalForm.getFieldsValue().typeName, 'key'),
+    };
+    console.log('query: ', query);
+    yTable.table.loading = true;
+    setYTable({ ...yTable });
+    if (modeType.type === 'add') {
+      // insertBloodType(query).then((response) => {
+      //   message.success('新增成功');
+      //   addOrEdit('', false);
+      //   getTableData();
+      // });
+    } else {
+      // updateBloodType({ ...query, id: yTable.table.dataRow.id }).then((response) => {
+      //   message.success('编辑成功');
+      //   addOrEdit('', false);
+      //   getTableData();
+      // });
+    }
+  };
+
+  // 获取字典数据
+  const getDictionaryData = () => {
+    // getBasicData(['1043', '1042', '1041']).then((response) => {
+    //   setBasic(response.data);
+    //   yTable.table.basic = response.data;
+    //   setYTable({ ...yTable });
+    // });
+  };
   // 初始化
   useEffect(() => {
-    getDictionaryData();
-    getTableData();
+    // getDictionaryData();
+    // getTableData();
   }, []);
   return (
-    <div>
+    <div className={styles.bloodComposition}>
       <SearchForm searchForm={searchTopForm} />
       <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
         <YTable {...yTable} />
       </div>
       <Modal
+        className={styles.bloodModal}
         width={720}
+        keyboard={false}
         maskClosable={false}
-        title={modalConfig.title}
-        visible={modalConfig.visible}
+        title={modeType.type === 'add' ? '新增' : '编辑'}
         centered
-        forceRender
+        visible={modeType.show}
         onOk={() => {
           modalForm.submit();
         }}
-        confirmLoading={modalConfig.loading}
         onCancel={() => changeModal('', false)}
-        okButtonProps={{ disabled: modalConfig.type === 'detail' }}
-        cancelButtonProps={{ disabled: modalConfig.type === 'detail' }}
       >
         <Form
+          name="basic"
           form={modalForm}
-          className={styles.modalform}
-          onFinish={saveInfoData}
-          labelCol={{ flex: '100px' }}
-          initialValues={{ isAdministrator: 0 }}
+          labelCol={{ flex: '90px' }}
+          onFinish={saveModalInfo}
+          initialValues={{ isCross: false, isMelt: false }}
         >
-          <Form.Item name="id" hidden></Form.Item>
           <Row>
             <Col span={12}>
-              <Form.Item
-                label="员工编号"
-                name="employeeCode"
-                rules={[{ required: true, message: '' }]}
-              >
+              <Form.Item label="护工编号" name="careCode" rules={[{ required: true, message: '' }]}>
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
@@ -463,12 +391,11 @@ export default () => {
             <Col span={12}>
               <Form.Item label="性别" name="sex" rules={[{ required: false, message: '' }]}>
                 <Seltopt
-                  selectArr={basic['0001'] || []}
+                  selectArr={[]}
                   sWidth="100%"
                   callback={(cb) => {
                     modalForm.setFieldsValue({
-                      sex: cb,
-                      // sexName: findValByKey(basic['1041'], 'key', cb, 'name'),
+                      typeName: findValByKey(basic['1041'], 'key', cb, 'name'),
                     });
                   }}
                 />
@@ -500,17 +427,9 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="是否为管理员" name="isAdministrator">
-                <Radio.Group>
-                  <Radio value={0}>否</Radio>
-                  <Radio value={1}>是</Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item name="useFlag" valuePropName="checked" style={{ marginLeft: 8 }}>
+              <Form.Item name="status" valuePropName="checked" style={{ marginLeft: 8 }}>
                 <Checkbox>
-                  <span className={styles.labeltext}>停用</span>
+                  <span className={styles.labeltext}>启用</span>
                 </Checkbox>
               </Form.Item>
             </Col>

@@ -9,8 +9,8 @@ export async function careAdd(params) {
 // 删除字典
 export async function careDel(params) {
   return request('/care/del', {
-    method: 'POST',
-    data: params,
+    method: 'GET',
+    params,
   });
 }
 // 查询字典

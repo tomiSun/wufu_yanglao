@@ -9,7 +9,7 @@ export default {
   dev: {
     '/api/': {
       // target: 'http://118.31.54.70:8081/',
-      target: 'https://24ofni.39nat.com',
+      target: 'https://y9svt7.39nat.com',
       // target: 'https://10.0.0.48',
       changeOrigin: true,
       secure: false,
