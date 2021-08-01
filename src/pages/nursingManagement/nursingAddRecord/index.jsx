@@ -21,6 +21,7 @@ import {
 import { BedTreeSelect } from '@/components/BedTreeSelect'
 import styles from './index.less';
 import { columns, dataSource } from './config';
+import { history, useLocation } from 'umi';
 const { TabPane } = Tabs;
 const layout = (x, y, labelAlign, layout) => {
     return {
@@ -35,6 +36,9 @@ const validateMessages = {
     required: '${label} 为必填项',
 };
 const NursingAddRecord = (props) => {
+    const { query } = useLocation();
+    const { selectKey } = query;
+    const [tabKey, setTabKey] = useState(selectKey || "1")
     // 搜索部分
     const renderSearch = () => {
         return (
@@ -172,6 +176,9 @@ const NursingAddRecord = (props) => {
                 <Form.Item label="血糖值(单位：mmol)" name={'c'} >
                     <Input size="small" style={{ width: "100%" }} />
                 </Form.Item>
+                <Form.Item label="医院诊断" name={'h'}>
+                    <Input.TextArea AUTOCOMPLETE="OFF" size={'small'} rows={3} />
+                </Form.Item>
                 <Form.Item>
                     <div style={{ display: "flex", justifyContent: "flex-end" }}>
                         <Button type="primary" size={'small'} style={{ position: "relative", right: 0 }}>
@@ -201,17 +208,23 @@ const NursingAddRecord = (props) => {
                         <Radio value="b">否</Radio>
                     </Radio.Group>
                 </Form.Item>
-                <Form.Item label="出入量记录" name={'d'} >
+                <Form.Item label="出量记录" name={'d'} >
+                    <Input size="small" style={{ width: "100%" }} />
+                </Form.Item>
+                <Form.Item label="入量记录" name={'dd'} >
                     <Input size="small" style={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item label="预防压疮护理" name={'e'} >
                     <Input size="small" style={{ width: "100%" }} />
                 </Form.Item>
-                <Form.Item label="责任人" name={'h'}>
-                    <Input AUTOCOMPLETE="OFF" size={'small'} />
-                </Form.Item>
                 <Form.Item label="精神状态" name={'f'}>
                     <Input.TextArea AUTOCOMPLETE="OFF" size={'small'} rows={3} />
+                </Form.Item>
+                <Form.Item label="医院诊断" name={'h'}>
+                    <Input.TextArea AUTOCOMPLETE="OFF" size={'small'} rows={3} />
+                </Form.Item>
+                <Form.Item label="责任人" name={'h'}>
+                    <Input AUTOCOMPLETE="OFF" size={'small'} />
                 </Form.Item>
                 <Form.Item label="其他" name={'g'}>
                     <Input.TextArea AUTOCOMPLETE="OFF" size={'small'} rows={4} />
@@ -295,7 +308,10 @@ const NursingAddRecord = (props) => {
                     {renderPeopleInfo()}
                 </div>
                 <div className={styles["content-right"]}>
-                    <Tabs defaultActiveKey="1" tabPosition={'left'}>
+                    <Tabs defaultActiveKey="1" tabPosition={'left'}
+                        activeKey={tabKey}
+                        onChange={(key) => { setTabKey(key) }}
+                    >
                         <TabPane tab="护理记录" key="1">
                             <div className={styles["addRecordBox"]}>
                                 {renderNursingItem()}

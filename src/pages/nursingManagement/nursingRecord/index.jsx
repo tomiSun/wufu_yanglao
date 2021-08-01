@@ -81,7 +81,10 @@ const RloodGlucoseRecord = (props) => {
               type="link"
               onClick={() => {
                 history.push({
-                  pathname: '/nursingManagement/nursingRecord/index',
+                  pathname: '/nursingManagement/nursingAddRecord/index',
+                  query:{
+                    selectKey:"1"
+                  }
                 });
               }}
             >

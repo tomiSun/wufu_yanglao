@@ -17,6 +17,7 @@ import {
   Tabs,
 } from 'antd';
 import { dataSource, columns } from './data';
+import { history } from 'umi'
 import './index.less';
 const { TabPane } = Tabs;
 const layout = {
@@ -57,8 +58,16 @@ const RloodGlucoseRecord = (props) => {
           <Button
             type="primary"
             size={'small'}
+            // onClick={() => {
+            //   setModalVisible(true);
+            // }}
             onClick={() => {
-              setModalVisible(true);
+              history.push({
+                pathname: '/nursingManagement/nursingAddRecord/index',
+                query:{
+                  selectKey:"2"
+                }
+              });
             }}
           >
             新增记录

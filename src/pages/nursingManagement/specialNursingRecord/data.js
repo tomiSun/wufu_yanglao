@@ -2,62 +2,75 @@ import { Button, Card, Col, Form, List, Row, Select, Tag, Table, Radio, Input, D
 const dataSource = [
     {
         key: '1',
-        name: '胡彦斌',
-        archivesId: "L000001",
-        careLevel: "一级",//字典
-        isFood:"是",
-        bloodGlucose:"100",
-        time:"2021-2-25",
-        tiemType:"午饭前",
-        takeTime:"2021-2-14 12:00:00"
+       a:"Z0001",
+       b:"张三",
+       c:"2020-9-10",
+       d:"无",
+       e:"100ml",
+       f:"120ml",
+       g:"是",
+       h:"良好",
+       i:"糖尿病",
+       g:"李啵啵",
+       k:"无"
     },
-    {
-        key: '2',
-        name: '李佳敏',
-        archivesId: "L000002",
-        careLevel: "一级",//字典
-        isFood:"否",
-        bloodGlucose:"48",
-        time:"2021-2-26",
-        tiemType:"午饭前",
-        takeTime:"2021-2-14 16:20:10"
-    }
+    
 ];
 const columns = (edit) => {
     return [
         {
             title: '住院编号',
-            dataIndex: 'archivesId',
+            dataIndex: 'a',
             key: 'archivesId',
         },
         {
             title: '姓名',
-            dataIndex: 'name',
+            dataIndex: 'b',
             key: 'name',
         },
         {
-            title: '级别护理',
-            dataIndex: 'careLevel',
+            title: '护理日期',
+            dataIndex: 'c',
             key: 'careLevel',
         },
         {
-            title: '是否空腹',
-            dataIndex: 'isFood',
+            title: '是否有过敏史',
+            dataIndex: 'd',
             key: 'isFood',
         },
         {
-            title: '血糖值(单位：mmol)',
-            dataIndex: 'bloodGlucose',
+            title: '出量',
+            dataIndex: 'e',
             key: 'bloodGlucose',
         },
         {
-            title: '采样时间段',
-            dataIndex: 'tiemType',
+            title: '入量',
+            dataIndex: 'f',
             key: 'tiemType',
         },
         {
-            title: '采样时间',
-            dataIndex: 'takeTime',
+            title: '预防压疮护理',
+            dataIndex: 'g',
+            key: 'takeTime',
+        },
+        {
+            title: '精神状态',
+            dataIndex: 'h',
+            key: 'bloodGlucose',
+        },
+        {
+            title: '医院诊断',
+            dataIndex: 'i',
+            key: 'tiemType',
+        },
+        {
+            title: '责任人',
+            dataIndex: 'g',
+            key: 'takeTime',
+        },
+        {
+            title: '其他',
+            dataIndex: 'k',
             key: 'takeTime',
         },
         {
