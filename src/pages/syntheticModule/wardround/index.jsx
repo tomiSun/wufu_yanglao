@@ -42,7 +42,7 @@ export default () => {
         name: 'keyWord',
         placeholder: '请输入查房人',
         sort: 1,
-        // style: {  },
+        style: { width: '200px' },
       },
     ],
     dateArr: [

@@ -10,6 +10,8 @@ export default defineConfig({
   dva: {
     hmr: true,
   },
+  // mfsu: {},
+  // mfsu: { production: { output: '.mfsu-production' } },
   history: {
     type: 'browser',
   },

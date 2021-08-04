@@ -32,6 +32,7 @@ import { config } from '@/utils/const';
 const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
 const { TextArea } = Input;
+import moment from 'moment';
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
@@ -42,6 +43,7 @@ export default () => {
     inputArr: [
       {
         name: 'keyWord',
+        style: { width: '200px' },
         placeholder: '请输入',
         sort: 1,
         // style: {  },
@@ -110,7 +112,15 @@ export default () => {
     table: {
       bordered: true,
       loading: false,
-      dataSource: [{ id: 1,week:'一' },{ id: 2,week:'二' },{ id: 3,week:'三' },{ id: 4,week:'四' },{ id: 5,week:'五' },{ id: 6,week:'六' },{ id: 7,week:'日' }],
+      dataSource: [
+        { id: 1, week: '一' },
+        { id: 2, week: '二' },
+        { id: 3, week: '三' },
+        { id: 4, week: '四' },
+        { id: 5, week: '五' },
+        { id: 6, week: '六' },
+        { id: 7, week: '日' },
+      ],
       columns: [
         {
           title: '星期',
@@ -131,33 +141,37 @@ export default () => {
               dataIndex: 'building',
               key: 'building',
               width: 100,
-              render:(text,record,index)=>{
-                return (<Select 
-                  disabled
-                  mode="multiple"
-                  showArrow={false}
-                  tagRender={tagRender}
-                  defaultValue={['2']}
-                  style={{ width: '100%' }}
-                  options={options}
-                />)
-              }
+              render: (text, record, index) => {
+                return (
+                  <Select
+                    disabled
+                    mode="multiple"
+                    showArrow={false}
+                    tagRender={tagRender}
+                    defaultValue={['2']}
+                    style={{ width: '100%' }}
+                    options={options}
+                  />
+                );
+              },
             },
             {
               title: '菜谱',
               dataIndex: 'number',
               key: 'number',
               width: 100,
-              render:(text,record,index)=>{
-                return (<Select
-                  mode="multiple"
-                  showArrow={false}
-                  tagRender={tagRender}
-                  defaultValue={['4']}
-                  style={{ width: '100%' }}
-                  options={options}
-                />)
-              }
+              render: (text, record, index) => {
+                return (
+                  <Select
+                    mode="multiple"
+                    showArrow={false}
+                    tagRender={tagRender}
+                    defaultValue={['4']}
+                    style={{ width: '100%' }}
+                    options={options}
+                  />
+                );
+              },
             },
           ],
         },
@@ -173,32 +187,36 @@ export default () => {
               dataIndex: 'building',
               key: 'building',
               width: 100,
-              render:(text,record,index)=>{
-                return (<Select
-                  mode="multiple"
-                  showArrow={false}
-                  tagRender={tagRender}
-                  defaultValue={['1']}
-                  style={{ width: '100%' }}
-                  options={options}
-                />)
-              }
+              render: (text, record, index) => {
+                return (
+                  <Select
+                    mode="multiple"
+                    showArrow={false}
+                    tagRender={tagRender}
+                    defaultValue={['1']}
+                    style={{ width: '100%' }}
+                    options={options}
+                  />
+                );
+              },
             },
             {
               title: '菜谱',
               dataIndex: 'number',
               key: 'number',
               width: 100,
-              render:(text,record,index)=>{
-                return (<Select
-                  mode="multiple"
-                  showArrow={false}
-                  tagRender={tagRender}
-                  defaultValue={['3']}
-                  style={{ width: '100%' }}
-                  options={options}
-                />)
-              }
+              render: (text, record, index) => {
+                return (
+                  <Select
+                    mode="multiple"
+                    showArrow={false}
+                    tagRender={tagRender}
+                    defaultValue={['3']}
+                    style={{ width: '100%' }}
+                    options={options}
+                  />
+                );
+              },
             },
           ],
         },
@@ -214,32 +232,36 @@ export default () => {
               dataIndex: 'building',
               key: 'building',
               width: 100,
-              render:(text,record,index)=>{
-                return (<Select
-                  mode="multiple"
-                  showArrow={false}
-                  tagRender={tagRender}
-                  defaultValue={['1']}
-                  style={{ width: '100%' }}
-                  options={options}
-                />)
-              }
+              render: (text, record, index) => {
+                return (
+                  <Select
+                    mode="multiple"
+                    showArrow={false}
+                    tagRender={tagRender}
+                    defaultValue={['1']}
+                    style={{ width: '100%' }}
+                    options={options}
+                  />
+                );
+              },
             },
             {
               title: '菜谱',
               dataIndex: 'number',
               key: 'number',
               width: 100,
-              render:(text,record,index)=>{
-                return (<Select
-                  mode="multiple"
-                  showArrow={false}
-                  tagRender={tagRender}
-                  defaultValue={['3']}
-                  style={{ width: '100%' }}
-                  options={options}
-                />)
-              }
+              render: (text, record, index) => {
+                return (
+                  <Select
+                    mode="multiple"
+                    showArrow={false}
+                    tagRender={tagRender}
+                    defaultValue={['3']}
+                    style={{ width: '100%' }}
+                    options={options}
+                  />
+                );
+              },
             },
           ],
         },
@@ -393,32 +415,35 @@ export default () => {
     // });
   };
   // -------------------------
-  const options = [{ value: '1',label:'米饭' }, { value: '2',label:'面条' }, { value: '3',label:'佛跳墙' }, {value: '4',label:'回锅肉' }];
+  const options = [
+    { value: '1', label: '米饭' },
+    { value: '2', label: '面条' },
+    { value: '3', label: '佛跳墙' },
+    { value: '4', label: '回锅肉' },
+  ];
 
-const tagRender = (props)=> {
-  console.log('props: ', props);
-  const { label, value, closable, onClose } = props;
-  const onPreventMouseDown = event => {
-    event.preventDefault();
-    event.stopPropagation();
+  const tagRender = (props) => {
+    const { label, value, closable, onClose } = props;
+    const onPreventMouseDown = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    return (
+      <Tag
+        // color={value}
+        onMouseDown={onPreventMouseDown}
+        closable={closable}
+        onClose={onClose}
+        style={{ marginRight: 3 }}
+      >
+        {label}
+      </Tag>
+    );
   };
-  return (
-    <Tag
-      // color={value}
-      onMouseDown={onPreventMouseDown}
-      closable={closable}
-      onClose={onClose}
-      style={{ marginRight: 3 }}
-      
-    >
-      {label}
-    </Tag>
-  );
-}
-const [dates, setDates] = useState([]);
+  const [dates, setDates] = useState([]);
   const [hackValue, setHackValue] = useState();
   const [value, setValue] = useState();
-  const disabledDate = current => {
+  const disabledDate = (current) => {
     if (!dates || dates.length === 0) {
       return false;
     }
@@ -427,7 +452,7 @@ const [dates, setDates] = useState([]);
     return tooEarly || tooLate;
   };
 
-  const onOpenChange = open => {
+  const onOpenChange = (open) => {
     if (open) {
       setHackValue([]);
       setDates([]);
@@ -453,14 +478,35 @@ const [dates, setDates] = useState([]);
     <div className={styles.bloodComposition}>
       {/* <SearchForm searchForm={searchTopForm} />
        */}
-       <RangePicker
-      value={hackValue || value}
-      disabledDate={disabledDate}
-      onCalendarChange={val => setDates(val)}
-      onChange={val => setValue(val)}
-      onOpenChange={onOpenChange}
-      style={{margin:'15px 0'}}
-    />
+      {/* <RangePicker
+        value={hackValue || value}
+        disabledDate={disabledDate}
+        onCalendarChange={(val) => setDates(val)}
+        onChange={(val) => setValue(val)}
+        onOpenChange={onOpenChange}
+        style={{ margin: '15px 0' }}
+      /> */}
+      <DatePicker
+        onChange={(date, dateString) => {
+          console.log('date, dateString: ', date, dateString);
+          const Monday = moment(date).day(1).format('YYYY/MM/DD (dddd)'); // 周一日期
+          const Tuesday = moment(date).day(2).format('YYYY/MM/DD (dddd)'); // 周二日期
+          const Wednesday = moment(date).day(2).format('YYYY/MM/DD (dddd)'); // 周三日期
+          const Thursday = moment(date).day(2).format('YYYY/MM/DD (dddd)'); // 周四日期
+          const Friday = moment(date).day(2).format('YYYY/MM/DD (dddd)'); // 周五日期
+          const Saturday = moment(date).day(2).format('YYYY/MM/DD (dddd)'); // 周六日期
+          const Sunday = moment(date).day(7).format('YYYY/MM/DD (dddd)'); // 周日日期
+          console.log('Monday: ', Monday);
+          console.log('Tuesday: ', Tuesday);
+          console.log('Wednesday: ', Wednesday);
+          console.log('Thursday: ', Thursday);
+          console.log('Friday: ', Friday);
+          console.log('Saturday: ', Saturday);
+          console.log('Sunday: ', Sunday);
+        }}
+        picker="week"
+        style={{ margin: '15px 0' }}
+      />
       <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
         <YTable {...yTable} />
       </div>

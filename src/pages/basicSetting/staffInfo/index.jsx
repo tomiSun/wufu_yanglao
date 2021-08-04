@@ -14,6 +14,7 @@ import {
   Divider,
   DatePicker,
   Checkbox,
+  Select,
 } from 'antd';
 const { confirm } = Modal;
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -46,6 +47,7 @@ export default () => {
         name: 'keyWord',
         placeholder: '请输入',
         sort: 1,
+        style: { width: '200px' },
         pressEnter: (enter) => {
           getTableData();
         },
@@ -126,7 +128,7 @@ export default () => {
           align: 'left',
           width: 60,
           render: (text, record, index) => {
-            return findValByKey(yTable.table.basic['0001'], 'key', text, 'name');
+            return findValByKey(yTable.table.basic['0001'], 'value', text, 'label');
           },
         },
         {
@@ -142,9 +144,6 @@ export default () => {
           align: 'left',
           ellipsis: true,
           width: 60,
-          render: (text, record, index) => {
-            return findValByKey(yTable.table.basic['1043'], 'key', text, 'name');
-          },
         },
         {
           title: '身份证号',
@@ -442,7 +441,7 @@ export default () => {
           className={styles.modalform}
           onFinish={saveInfoData}
           labelCol={{ flex: '100px' }}
-          initialValues={{ isAdministrator: 0 }}
+          initialValues={{ isAdministrator: 0, useFlag: 1 }}
         >
           <Form.Item name="id" hidden></Form.Item>
           <Row>
@@ -462,7 +461,7 @@ export default () => {
             </Col>
             <Col span={12}>
               <Form.Item label="性别" name="sex" rules={[{ required: false, message: '' }]}>
-                <Seltopt
+                {/* <Seltopt
                   selectArr={basic['0001'] || []}
                   sWidth="100%"
                   callback={(cb) => {
@@ -471,7 +470,8 @@ export default () => {
                       // sexName: findValByKey(basic['1041'], 'key', cb, 'name'),
                     });
                   }}
-                />
+                /> */}
+                <Select placeholder="请选择" options={basic['0001'] || []}></Select>
               </Form.Item>
             </Col>
             <Col span={12}>

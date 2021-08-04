@@ -11,6 +11,7 @@ import { Result, Button, ConfigProvider } from 'antd';
 import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { getMatchMenu } from '@umijs/route-utils';
+import { getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logo.svg';
 import styles from './BasicLayout.less';
 const noMatch = (
@@ -90,13 +91,16 @@ const BasicLayout = (props) => {
     }
   }; // get children authority
 
-  const authorized = useMemo(
-    () =>
-      getMatchMenu(location.pathname || '/', menuDataRef.current).pop() || {
-        authority: undefined,
-      },
-    [location.pathname],
-  );
+  // const authorized = useMemo(
+  //   () =>
+  //     getMatchMenu(location.pathname || '/', menuDataRef.current).pop() || {
+  //       authority: undefined,
+  //     },
+  //   [location.pathname],
+  // );
+  const authorized = getAuthorityFromRouter(props.route.routes, location.pathname || '/') || {
+    authority: undefined,
+  };
   const { formatMessage } = useIntl();
   return (
     <>

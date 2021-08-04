@@ -14,21 +14,21 @@ import {
   Divider,
   DatePicker,
   Checkbox,
+  TimePicker,
 } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
-// import {
-//   getBloodTableData,
-//   delBloodTableData,
-//   insertBloodType,
-//   updateBloodType,
-// } from '@/services/blood/bloodcomposition';
-// import { getBasicData } from '@/services/basicData/basic';
+import {
+  amusementAdd,
+  amusementDel,
+  amusementSelect,
+  amusementUpdate,
+} from '@/services/syntheticModule/amusement';
 import { findValByKey, getDefaultOption } from '@/utils/common';
-import { makeWb, pinyin } from 'yunyi-convert';
 import { config } from '@/utils/const';
 const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
 const { TextArea } = Input;
+import moment from 'moment';
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
@@ -39,15 +39,56 @@ export default () => {
     inputArr: [
       {
         name: 'keyWord',
-        placeholder: '请输入',
-        sort: 1,
-        // style: {  },
+        placeholder: '请输入负责人',
+        sort: 2,
+        style: { width: '200px' },
+        pressEnter: (enter) => {
+          getTableData();
+        },
       },
+    ],
+    dateArr: [
+      {
+        label: '时间',
+        name: 'time',
+        config: {
+          time: moment(),
+          showTime: false,
+          onChange: (e) => {
+            topFrom.setFieldsValue({ time: moment(e) });
+            getTableData();
+          },
+        },
+        sort: 1,
+      },
+
+      // {
+      //   label: '日期',
+      //   name: 'timeRange',
+      //   config: {
+      //     dateType: 'range',
+      //     timeStart: moment().startOf('day'),
+      //     timeEnd: moment().endOf('day'),
+      //     showTime: false,
+      //     onChange: (e) => {
+      //       topRightFrom.setFieldsValue({ timeRange: e });
+      //     },
+      //     onChange: (e) => {
+      //       topRightFrom.setFieldsValue({ timeRange: e });
+      //       yRightTable.table.pagination.current = 1;
+      //       getGermMasterData();
+      //     },
+      //   },
+      //   style: { width: '220px' },
+      //   sort: 1,
+      // },
     ],
     btnArr: [
       {
         name: '查询',
-        callback: () => {},
+        callback: () => {
+          getTableData();
+        },
         sort: 2,
         style: { marginRight: '15px' },
       },
@@ -60,35 +101,12 @@ export default () => {
           addOrEdit('add', true);
         },
       },
-      // {
-      //   name: '编辑',
-      //   style: { position: 'absolute', left: '97px' },
-      //   callback: () => {
-      //     addOrEdit('edit', true);
-      //   },
-      // },
-      // {
-      //   name: '删除',
-      //   type: 'danger',
-      //   style: { position: 'absolute', left: '179px' },
-      //   callback: () => {
-      //     del();
-      //   },
-      // },
-      // {
-      //   name: '刷新',
-      //   style: { position: 'absolute', left: '257px' },
-      //   callback: () => {
-      //     refreshData();
-      //   },
-      // },
     ],
     layout: 'inline',
     form: topFrom,
     cls: 'opera',
-    // styles: { marginTop: '10px' },
-    getInfoData: (value) => {
-      refreshData();
+    initialValues: {
+      time: moment(),
     },
   };
 
@@ -98,10 +116,6 @@ export default () => {
   // 基础字典数据
   const [basic, setBasic] = useState({});
 
-  // 动态更改form校验状态
-  const [isCross, setIsCross] = useState(false);
-  const [isMelt, setIsMelt] = useState(false);
-
   // table模块
   const [yTable, setYTable] = useState({
     table: {
@@ -110,53 +124,65 @@ export default () => {
       dataSource: [{ id: 1 }],
       columns: [
         {
-          title: '兴趣小组',
-          dataIndex: 'number',
+          title: '小组活动',
+          dataIndex: 'groupActivity',
+          key: 'groupActivity',
           align: 'left',
           ellipsis: true,
           width: 60,
         },
         {
-          title: '日期',
-          dataIndex: 'typeName',
+          title: '活动日期',
+          dataIndex: 'activityDate',
+          key: 'activityDate',
           ellipsis: true,
           align: 'left',
           width: 80,
         },
         {
-          title: '活动时间',
-          dataIndex: 'bloodName',
+          title: '活动开始时间',
+          dataIndex: 'startTime',
+          key: 'startTime',
+          ellipsis: true,
+          align: 'left',
+          width: 60,
+        },
+        {
+          title: '活动结束时间',
+          dataIndex: 'endTime',
+          key: 'endTime',
           ellipsis: true,
           align: 'left',
           width: 60,
         },
         {
           title: '活动地点',
-          dataIndex: 'nameEn',
+          dataIndex: 'activitySite',
+          key: 'activitySite',
           ellipsis: true,
           align: 'left',
           width: 80,
         },
         {
           title: '活动人数',
-          dataIndex: 'unit',
+          dataIndex: 'number',
+          key: 'number',
           align: 'left',
           ellipsis: true,
           width: 60,
-          render: (text, record, index) => {
-            return findValByKey(yTable.table.basic['1043'], 'key', text, 'name');
-          },
         },
         {
           title: '活动内容',
-          dataIndex: 'bloodLoad',
+          dataIndex: 'activeContent',
+          key: 'activeContent',
           ellipsis: true,
           align: 'left',
           width: 60,
         },
         {
           title: '负责人',
-          dataIndex: 'effectiveDay',
+          dataIndex: 'signature',
+          key: 'signature',
           ellipsis: true,
           align: 'left',
           width: 80,
@@ -194,7 +220,7 @@ export default () => {
       rowKey: 'id',
       pagination: {
         current: 1,
-        pageSize: 10,
+        pageSize: pageSize,
         showSizeChanger: true,
         showQuickJumper: true,
         showTotal: (total) => {
@@ -212,18 +238,19 @@ export default () => {
         yTable.table.dataRow = count;
         setYTable({ ...yTable });
       },
-      selectInfo: (info) => {
-        yTable.table.dataRow = info;
-        setYTable({ ...yTable });
-        addOrEdit('edit', true);
-      },
+      // selectInfo: (info) => {
+      //   yTable.table.dataRow = info;
+      //   setYTable({ ...yTable });
+      //   addOrEdit('edit', true, info);
+      // },
     },
   });
 
   // 判断新增 / 编辑
   const [modeType, setModeType] = useState({
     type: null,
-    show: false,
+    visible: false,
+    loading: false,
   });
 
   // 新增 / 编辑
@@ -235,15 +262,9 @@ export default () => {
     if (type === 'edit') {
       modalForm.setFieldsValue({
         ...record,
-        isCross: !!record.isCross ? true : false,
-        isMelt: !!record.isMelt ? true : false,
-      });
-    } else {
-      // 选择框默认值
-      modalForm.setFieldsValue({
-        typeName: getDefaultOption(basic['1041'])?.name,
-        typeCode: getDefaultOption(basic['1041'])?.key,
-        unit: getDefaultOption(basic['1043'])?.key,
+        activityDate: record?.activityDate && moment(record?.activityDate),
+        startTime: record?.startTime && moment(record?.startTime, 'HH:mm'),
+        endTime: record?.endTime && moment(record?.endTime, 'HH:mm'),
       });
     }
     changeModal(type, visible);
@@ -251,7 +272,7 @@ export default () => {
   // 修改弹窗配置
   const changeModal = (type, visible) => {
     modeType.type = type;
-    modeType.show = visible;
+    modeType.visible = visible;
     setModeType({ ...modeType });
   };
   // 删除
@@ -265,113 +286,92 @@ export default () => {
         cancelText: '取消',
         style: { padding: '30px' },
         onOk() {
-          // delBloodTableData({ id: record.id }).then((response) => {
-          //   message.success('删除成功');
-          //   yTable.table.dataRow = {};
-          //   yTable.table.loading = true;
-          //   setYTable({ ...yTable });
-          //   getTableData();
-          // });
+          amusementDel({ ids: record.id })
+            .then((res) => {
+              message.success(res.msg);
+              yTable.table.dataRow = {};
+              getTableData();
+            })
+            .catch((err) => {
+              console.log('err-amusementDel: ', err);
+            });
         },
       });
     } else {
-      message.error('请选中行数');
+      message.error('请选中行');
     }
   };
-  // 重置密码
-  const resetPassWord = (record) => {
-    if (!!Object.getOwnPropertyNames(record).length) {
-      Modal.confirm({
-        title: '您确定要重置密码为000000吗？',
-        okText: '确定',
-        okType: 'danger',
-        cancelText: '取消',
-        style: { padding: '30px' },
-        onOk() {
-          // delBloodTableData({ id: record.id }).then((response) => {
-          //   message.success('删除成功');
-          //   yTable.table.dataRow = {};
-          //   yTable.table.loading = true;
-          //   setYTable({ ...yTable });
-          //   getTableData();
-          // });
-        },
-      });
-    } else {
-      message.error('请选中行数');
-    }
-  };
-
-  // 刷新
-  const refreshData = () => {
-    yTable.table.loading = true;
-    setYTable({ ...yTable });
-    getTableData();
-  };
-
   // 获取列表Table数据
   const getTableData = () => {
-    // getBloodTableData({ keyWord: topFrom.getFieldsValue().keyWord })
-    //   .then((response) => {
-    //     response.data?.map((items) => (items.key = items.id));
-    //     yTable.table.key = Math.random();
-    //     yTable.table.loading = false;
-    //     yTable.table.dataRow = {};
-    //     yTable.table.dataSource = response.data;
-    //     setYTable({ ...yTable });
-    //   })
-    //   .catch(() => {
-    //     yTable.table.loading = false;
-    //     yTable.table.dataSource = [];
-    //     setYTable({ ...yTable });
-    //   });
+    const { keyWord, time } = topFrom.getFieldsValue();
+    const params = {
+      search: keyWord,
+      groupActivityDate: time,
+      pageNum: yTable.table.pagination.current,
+      pageSize: yTable.table.pagination.pageSize,
+    };
+    yTable.table.loading = true;
+    yTable.table.dataSource = [];
+    setYTable({ ...yTable });
+    amusementSelect(params)
+      .then((res) => {
+        yTable.table.dataSource = res?.data?.list || [];
+        yTable.table.loading = false;
+        // yTable.table.pagination.current = res?.data?.pageNum;
+        setYTable({ ...yTable });
+      })
+      .catch((err) => {
+        yTable.table.loading = false;
+        setYTable({ ...yTable });
+        console.log('amusementSelect---err', err);
+      });
   };
 
   // 新增 / 修改 提交时触发
-  const saveModalInfo = () => {
+  const saveModalInfo = async () => {
+    const formData = await modalForm.validateFields();
+    const { activityDate, startTime, endTime } = formData;
     let query = {
       ...modalForm.getFieldsValue(),
-      typeCode: findValByKey(basic['1041'], 'name', modalForm.getFieldsValue().typeName, 'key'),
+      activityDate: activityDate && moment(activityDate).format('YYYY-MM-DD'),
+      startTime: startTime && moment(startTime).format('HH:mm'),
+      endTime: endTime && moment(endTime).format('HH:mm'),
     };
-    console.log('query: ', query);
-    yTable.table.loading = true;
-    setYTable({ ...yTable });
+    modeType.loading = true;
+    setModeType({ ...modeType });
     if (modeType.type === 'add') {
-      // insertBloodType(query).then((response) => {
-      //   message.success('新增成功');
-      //   addOrEdit('', false);
-      //   getTableData();
-      // });
+      amusementAdd(query)
+        .then((response) => {
+          message.success(response.msg);
+          modeType.visible = false;
+          modeType.loading = false;
+          setModeType({ ...modeType });
+          getTableData();
+        })
+        .catch((err) => {
+          console.log('err-amusementAdd: ', err);
+          modeType.loading = false;
+          setModeType({ ...modeType });
+        });
     } else {
-      // updateBloodType({ ...query, id: yTable.table.dataRow.id }).then((response) => {
-      //   message.success('编辑成功');
-      //   addOrEdit('', false);
-      //   getTableData();
-      // });
+      amusementUpdate(query)
+        .then((response) => {
+          message.success(response.msg);
+          modeType.visible = false;
+          modeType.loading = false;
+          setModeType({ ...modeType });
+          getTableData();
+        })
+        .catch((err) => {
+          console.log('err-amusementUpdate: ', err);
+          modeType.loading = false;
+          setModeType({ ...modeType });
+        });
     }
   };
-
-  // 获取字典数据
-  const getDictionaryData = () => {
-    // getBasicData(['1043', '1042', '1041']).then((response) => {
-    //   setBasic(response.data);
-    //   yTable.table.basic = response.data;
-    //   setYTable({ ...yTable });
-    // });
-  };
-
-  useEffect(() => {
-    modalForm.validateFields(['crossMethod']);
-  }, [isCross]);
-
-  useEffect(() => {
-    modalForm.validateFields(['meltingTime']);
-  }, [isMelt]);
-
   // 初始化
   useEffect(() => {
-    // getDictionaryData();
-    // getTableData();
+    getTableData();
   }, []);
   return (
     <div>
@@ -386,7 +386,8 @@ export default () => {
         maskClosable={false}
         title={modeType.type === 'add' ? '新增' : '编辑'}
         centered
-        visible={modeType.show}
+        visible={modeType.visible}
+        confirmLoading={modeType.loading}
         onOk={() => {
           modalForm.submit();
         }}
@@ -395,64 +396,66 @@ export default () => {
         <Form
           name="basic"
           form={modalForm}
-          labelCol={{ flex: '90px' }}
+          labelCol={{ flex: '110px' }}
           onFinish={saveModalInfo}
-          initialValues={{ isCross: false, isMelt: false }}
+          initialValues={{ activityDate: moment(), startTime: moment(), endTime: moment() }}
         >
+          <Form.Item name="id" hidden></Form.Item>
           <Row>
             <Col span={12}>
-              <Form.Item label="员工编号" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item
+                label="小组活动"
+                name="groupActivity"
+                rules={[{ required: true, message: '' }]}
+              >
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="姓名" name="number" rules={[{ required: true, message: '' }]}>
-                <Input placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="性别" name="typeName" rules={[{ required: false, message: '' }]}>
-                <Seltopt
-                  selectArr={[]}
-                  sWidth="100%"
-                  callback={(cb) => {
-                    modalForm.setFieldsValue({
-                      typeName: findValByKey(basic['1041'], 'key', cb, 'name'),
-                    });
-                  }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="生日" name="collectionTime">
+              <Form.Item label="活动日期" name="activityDate">
                 <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="年龄" name="nameEn">
+              <Form.Item label="活动开始时间" name="startTime">
+                <TimePicker
+                  format="HH:mm"
+                  showTime={{ format: 'HH:mm' }}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="活动结束时间" name="endTime">
+                <TimePicker
+                  format="HH:mm"
+                  showTime={{ format: 'HH:mm' }}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="活动地点"
+                name="activitySite"
+                rules={[{ required: true, message: '' }]}
+              >
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="身份证号" name="nameEn">
-                <Input placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="联系方式" name="nameEn">
+              <Form.Item label="活动人数" name="number" rules={[{ required: true, message: '' }]}>
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="联系地址" name="remark">
+              <Form.Item label="活动内容" name="activeContent">
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
-            <Col span={24}>
-              <Form.Item name="status" valuePropName="checked" style={{ marginLeft: 8 }}>
-                <Checkbox>
-                  <span className={styles.labeltext}>启用</span>
-                </Checkbox>
+            <Col span={12}>
+              <Form.Item label="负责人" name="signature" rules={[{ required: true, message: '' }]}>
+                <Input placeholder="请输入" />
               </Form.Item>
             </Col>
           </Row>

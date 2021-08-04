@@ -14,8 +14,8 @@ import {
   Divider,
   DatePicker,
   Checkbox,
+  Rate 
 } from 'antd';
-import moment from 'moment';
 import { DeleteOutlined } from '@ant-design/icons';
 // import {
 //   getBloodTableData,
@@ -32,60 +32,17 @@ import { useTableHeight } from '@/utils/tableHeight';
 const { TextArea } = Input;
 export default () => {
   // 获取表格高度
-  const tableRef = useRef(null);
-  const tableHeight = useTableHeight(tableRef);
+  // const tableRef = useRef(null);
+  // const tableHeight = useTableHeight(tableRef);
   // 上部搜索searchForm模块
   const [topFrom] = Form.useForm();
   const searchTopForm = {
     inputArr: [
       {
         name: 'keyWord',
-        placeholder: '请输入交班员名称',
+        placeholder: '请输入',
         sort: 1,
-        style: { width: '200px' },
-      },
-    ],
-    dateArr: [
-      // {
-      //   label: '时间',
-      //   name: 'startDate',
-      //   config: {
-      //     time: moment().format('YYYY-MM-DD'),
-      //     showTime: false,
-      //     onChange: (e) => {
-      //       console.log('onChange-----startDate', e);
-      //     },
-      //   },
-      //   sort: 1,
-      // },
-      // {
-      //   // label: '时间范围',
-      //   name: 'endDate',
-      //   config: {
-      //     time: moment().format('YYYY-MM-DD'),
-      //   },
-      //   sort: 2,
-      // },
-
-      {
-        label: '交班时间',
-        name: 'timeRange',
-        config: {
-          dateType: 'range',
-          timeStart: moment().startOf('day'),
-          timeEnd: moment().endOf('day'),
-          showTime: true,
-          onChange: (e) => {
-            topRightFrom.setFieldsValue({ timeRange: e });
-          },
-          onChange: (e) => {
-            topRightFrom.setFieldsValue({ timeRange: e });
-            yRightTable.table.pagination.current = 1;
-            getBloodMasterData();
-          },
-        },
-        style: { width: '220px' },
-        sort: 2,
+        // style: {  },
       },
     ],
     btnArr: [
@@ -135,17 +92,7 @@ export default () => {
       refreshData();
     },
   };
-  // {key:'1',value:'2'}
-  // [{key:'1',value:'2'},{key:'1',value:'2'}]
-  // [{key:'1',value:'2'},{key:'1',value:'2'}]
-  // ['1001','1003']
-  // let res = {
-  //   '1001':[
-  //     {key:'001',name:'男',value:'001',label:'男'},
-  //     {key:'002',name:'女',value:'001',label:'男'}
-  //   ],
-  //   '1002':[{key:'002',name:'男',value:'001',label:'男'}]
-  // }
+
   // modal配置项
   const [modalForm] = Form.useForm();
 
@@ -164,84 +111,79 @@ export default () => {
       dataSource: [{ id: 1 }],
       columns: [
         {
-          title: '提交时间',
+          title: '护工编号',
+          dataIndex: 'number',
+          align: 'left',
+          ellipsis: true,
+          width: 60,
+        },
+        {
+          title: '姓名',
           dataIndex: 'typeName',
           ellipsis: true,
           align: 'left',
-          width: 150,
+          width: 80,
         },
         {
-          title: '交班员',
-          dataIndex: 'number',
-          align: 'left',
-          ellipsis: true,
-          width: 160,
-        },
-        {
-          title: '备注',
-          dataIndex: 'number',
-          align: 'left',
-          ellipsis: true,
-          width: 160,
-        },
-        {
-          title: '接收时间',
-          dataIndex: 'number',
-          align: 'left',
-          ellipsis: true,
-          width: 160,
-        },
-        {
-          title: '接班员',
+          title: '性别',
           dataIndex: 'bloodName',
-          ellipsis: true,
-          align: 'left',
-          width: 160,
-        },
-        {
-          title: '操作员',
-          dataIndex: 'nameEn',
-          ellipsis: true,
-          align: 'left',
-          width: 300,
-        },
-        {
-          title: '操作日期',
-          dataIndex: 'bloodLoad',
           ellipsis: true,
           align: 'left',
           width: 60,
         },
         {
-          title: '交班开始时间',
+          title: '出生日期',
+          dataIndex: 'nameEn',
+          ellipsis: true,
+          align: 'left',
+          width: 150,
+        },
+        {
+          title: '年龄',
+          dataIndex: 'unit',
+          align: 'left',
+          ellipsis: true,
+          width: 60,
+          render: (text, record, index) => {
+            return findValByKey(yTable.table.basic['1043'], 'key', text, 'name');
+          },
+        },
+        {
+          title: '身份证号',
+          dataIndex: 'bloodLoad',
+          ellipsis: true,
+          align: 'left',
+          width: 160,
+        },
+        {
+          title: '联系方式',
           dataIndex: 'effectiveDay',
           ellipsis: true,
           align: 'left',
           width: 80,
         },
         {
-          title: '交班结束时间',
-          dataIndex: 'effectiveDay',
+          title: '联系地址',
+          dataIndex: 'alarmDay',
           ellipsis: true,
           align: 'left',
+          width: 180,
+        },
+        {
+          title: '状态',
+          dataIndex: 'isCross',
+          align: 'left',
+          ellipsis: true,
           width: 80,
+          render: (text, record, info) => (text === 1 ? '启用' : '停用'),
         },
         {
           title: '操作',
           key: 'opera',
           align: 'center',
-          width: 130,
+          width: 100,
           render: (text, record) => (
             <div className={styles.opera}>
-              <a
-                onClick={() => {
-                  addOrEdit('edit', true, record);
-                }}
-              >
-                查看
-              </a>
-
-              <Divider type="vertical" />
               <a
                 onClick={() => {
                   addOrEdit('edit', true, record);
@@ -250,14 +192,14 @@ export default () => {
                 编辑
               </a>
 
-              {/* <Divider type="vertical" />
+              <Divider type="vertical" />
               <a
                 onClick={() => {
                   del(record);
                 }}
               >
                 删除
-              </a> */}
+              </a>
             </div>
           ),
         },
@@ -352,29 +294,6 @@ export default () => {
       message.error('请选中行数');
     }
   };
-  // 重置密码
-  const resetPassWord = (record) => {
-    if (!!Object.getOwnPropertyNames(record).length) {
-      Modal.confirm({
-        title: '您确定要重置密码为000000吗？',
-        okText: '确定',
-        okType: 'danger',
-        cancelText: '取消',
-        style: { padding: '30px' },
-        onOk() {
-          // delBloodTableData({ id: record.id }).then((response) => {
-          //   message.success('删除成功');
-          //   yTable.table.dataRow = {};
-          //   yTable.table.loading = true;
-          //   setYTable({ ...yTable });
-          //   getTableData();
-          // });
-        },
-      });
-    } else {
-      message.error('请选中行数');
-    }
-  };
 
   // 刷新
   const refreshData = () => {
@@ -448,66 +367,154 @@ export default () => {
     // getTableData();
   }, []);
   return (
-    <div>
-      <SearchForm searchForm={searchTopForm} />
-      <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
-        <YTable {...yTable} />
+    <div className={styles.bloodComposition}>
+      <div style={{display:'flex',justifyContent:'center'}}>老人（家属）满意度测评表</div>
+      
+      <div style={{}}>
+        <p>尊敬的长辈（家属）：</p>
+        <p style={{textIndent:'2em'}}>您好！为了更好的为您提供更优质的服务，现向您征求意见，请根据您的实际感受作答，勾选相应的选项，或在意见和建议栏填写内容，感谢的您的支持和配合</p>
       </div>
-      <Modal
-        className={styles.bloodModal}
-        width={720}
-        keyboard={false}
-        maskClosable={false}
-        title={modeType.type === 'add' ? '新增' : '编辑'}
-        centered
-        visible={modeType.show}
-        onOk={() => {
-          modalForm.submit();
-        }}
-        onCancel={() => changeModal('', false)}
-      >
-        <Form
+      <Form
           name="basic"
+          layout='vertical'
           form={modalForm}
-          labelCol={{ flex: '150px' }}
+          // labelCol={{ flex: '90px' }}
           onFinish={saveModalInfo}
           initialValues={{ isCross: false, isMelt: false }}
         >
           <Row>
-            <Col span={12}>
-              <Form.Item label="交班员" name="number" rules={[{ required: true }]}>
-                <Input placeholder="请输入" />
+            {/* <Col span={24}>
+              <Form.Item name="rate" label="1,您对本院生活环境满意吗？（设备，卫生周边）">
+                <Rate />
               </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="接班员" name="number" rules={[{ required: true }]}>
-                <Input placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="交班开始时间" name="collectionTime">
-                <DatePicker format="YYYY-MM-DD" showTime={true} style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="交班结束时间" name="collectionTime">
-                <DatePicker format="YYYY-MM-DD" showTime={true} style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-
+            </Col> */}
             <Col span={24}>
-              <Form.Item label="交班事宜" name="number" rules={[{ required: true, message: '' }]}>
-                <TextArea placeholder="请输入" />
+              <Form.Item
+                name="radio1"
+                label="1,您对本院生活环境满意吗？（设备，卫生周边）"
+                rules={[{ required: true, message: 'Please pick an item!' }]}
+              >
+                <Radio.Group>
+                  <Radio value="3">满意（3）</Radio>
+                  <Radio value="2">较满意（2）</Radio>
+                  <Radio value="1">不满意（1）</Radio>
+                  <Radio value="0">说不出（0）</Radio>
+                </Radio.Group>
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="备注" name="remark">
+              <Form.Item
+                name="radio2"
+                label="2,您对护理质量满意吗？（态度，操作，个人卫生）"
+                rules={[{ required: true, message: 'Please pick an item!' }]}
+              >
+                <Radio.Group>
+                  <Radio value="3">满意（3）</Radio>
+                  <Radio value="2">较满意（2）</Radio>
+                  <Radio value="1">不满意（1）</Radio>
+                  <Radio value="0">说不出（0）</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name="radio3"
+                label="3,您对本院客服人员院管理人员满意吗？"
+                rules={[{ required: true, message: 'Please pick an item!' }]}
+              >
+                <Radio.Group>
+                  <Radio value="3">满意（3）</Radio>
+                  <Radio value="2">较满意（2）</Radio>
+                  <Radio value="1">不满意（1）</Radio>
+                  <Radio value="0">说不出（0）</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name="radio4"
+                label="4,您对医疗服务满意吗？"
+                rules={[{ required: true, message: 'Please pick an item!' }]}
+              >
+                <Radio.Group>
+                  <Radio value="3">满意（3）</Radio>
+                  <Radio value="2">较满意（2）</Radio>
+                  <Radio value="1">不满意（1）</Radio>
+                  <Radio value="0">说不出（0）</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name="radio5"
+                label="5,您对本院组织的各项日常文化娱乐活动满意吗？"
+                rules={[{ required: true, message: 'Please pick an item!' }]}
+              >
+                <Radio.Group>
+                  <Radio value="3">满意（3）</Radio>
+                  <Radio value="2">较满意（2）</Radio>
+                  <Radio value="1">不满意（1）</Radio>
+                  <Radio value="0">说不出（0）</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name="radio6"
+                label="6,您对现在的饮食满意吗？"
+                rules={[{ required: true, message: 'Please pick an item!' }]}
+              >
+                <Radio.Group>
+                  <Radio value="3">满意（3）</Radio>
+                  <Radio value="2">较满意（2）</Radio>
+                  <Radio value="1">不满意（1）</Radio>
+                  <Radio value="0">说不出（0）</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name="radio7"
+                label="7,您对本院日常事情处理时间，处理态度，处理结果满意吗？"
+                rules={[{ required: true, message: 'Please pick an item!' }]}
+              >
+                <Radio.Group>
+                  <Radio value="3">满意（3）</Radio>
+                  <Radio value="2">较满意（2）</Radio>
+                  <Radio value="1">不满意（1）</Radio>
+                  <Radio value="0">说不出（0）</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name="radio8"
+                label="8,您对本院各部门综合服务水平满意吗？"
+                rules={[{ required: true, message: 'Please pick an item!' }]}
+              >
+                <Radio.Group>
+                  <Radio value="3">满意（3）</Radio>
+                  <Radio value="2">较满意（2）</Radio>
+                  <Radio value="1">不满意（1）</Radio>
+                  <Radio value="0">说不出（0）</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              总计？？？
+              {/* <Form.Item label="总计" name="total">
+                <Input placeholder="请输入" />
+              </Form.Item> */}
+            </Col>
+            
+            <Col span={24}>
+              <Form.Item label="您的其他意见和建议" name="remark">
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
           </Row>
         </Form>
-      </Modal>
+        <div style={{display:'flex',justifyContent:'center'}}><Button type="primary">提交</Button></div>
     </div>
   );
 };

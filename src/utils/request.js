@@ -48,7 +48,7 @@ request.interceptors.response.use(async (response, options) => {
   ) {
     return data;
   } else if (data.code != 200) {
-    message.error(data.message || data.Message);
+    message.error(data.msg);
     // Modal.confirm({
     //   title: '提示',
     //   icon: <ExclamationCircleOutlined />,

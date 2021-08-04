@@ -16,19 +16,18 @@ import {
   Checkbox,
 } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
-// import {
-//   getBloodTableData,
-//   delBloodTableData,
-//   insertBloodType,
-//   updateBloodType,
-// } from '@/services/blood/bloodcomposition';
-// import { getBasicData } from '@/services/basicData/basic';
+import {
+  complainAdd,
+  complainDel,
+  complainSelect,
+  complainUpdate,
+} from '@/services/syntheticModule/complain';
 import { findValByKey, getDefaultOption } from '@/utils/common';
-import { makeWb, pinyin } from 'yunyi-convert';
 import { config } from '@/utils/const';
 const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
 const { TextArea } = Input;
+import moment from 'moment';
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
@@ -39,15 +38,20 @@ export default () => {
     inputArr: [
       {
         name: 'keyWord',
-        placeholder: '请输入',
+        placeholder: '请输入会议（投诉）主题',
         sort: 1,
-        // style: {  },
+        style: { width: '200px' },
+        pressEnter: (enter) => {
+          getTableData();
+        },
       },
     ],
     btnArr: [
       {
         name: '查询',
-        callback: () => {},
+        callback: () => {
+          getTableData();
+        },
         sort: 2,
         style: { marginRight: '15px' },
       },
@@ -60,28 +64,6 @@ export default () => {
           addOrEdit('add', true);
         },
       },
-      // {
-      //   name: '编辑',
-      //   style: { position: 'absolute', left: '97px' },
-      //   callback: () => {
-      //     addOrEdit('edit', true);
-      //   },
-      // },
-      // {
-      //   name: '删除',
-      //   type: 'danger',
-      //   style: { position: 'absolute', left: '179px' },
-      //   callback: () => {
-      //     del();
-      //   },
-      // },
-      // {
-      //   name: '刷新',
-      //   style: { position: 'absolute', left: '257px' },
-      //   callback: () => {
-      //     refreshData();
-      //   },
-      // },
     ],
     layout: 'inline',
     form: topFrom,
@@ -91,26 +73,12 @@ export default () => {
       refreshData();
     },
   };
-  // {key:'1',value:'2'}
-  // [{key:'1',value:'2'},{key:'1',value:'2'}]
-  // [{key:'1',value:'2'},{key:'1',value:'2'}]
-  // ['1001','1003']
-  // let res = {
-  //   '1001':[
-  //     {key:'001',name:'男',value:'001',label:'男'},
-  //     {key:'002',name:'女',value:'001',label:'男'}
-  //   ],
-  //   '1002':[{key:'002',name:'男',value:'001',label:'男'}]
-  // }
+
   // modal配置项
   const [modalForm] = Form.useForm();
 
   // 基础字典数据
   const [basic, setBasic] = useState({});
-
-  // 动态更改form校验状态
-  const [isCross, setIsCross] = useState(false);
-  const [isMelt, setIsMelt] = useState(false);
 
   // table模块
   const [yTable, setYTable] = useState({
@@ -121,63 +89,63 @@ export default () => {
       columns: [
         {
           title: '会议（投诉）日期',
-          dataIndex: 'typeName',
+          dataIndex: 'complaintDate',
           ellipsis: true,
           align: 'left',
           width: 150,
         },
         {
           title: '参加（投诉）人员',
-          dataIndex: 'number',
+          dataIndex: 'complaintPeople',
           align: 'left',
           ellipsis: true,
           width: 160,
         },
         {
           title: '缺席人员',
-          dataIndex: 'number',
+          dataIndex: 'absentee',
           align: 'left',
           ellipsis: true,
           width: 160,
         },
         {
           title: '会议（投诉）主题',
-          dataIndex: 'number',
+          dataIndex: 'theme',
           align: 'left',
           ellipsis: true,
           width: 160,
         },
         {
           title: '主持人',
-          dataIndex: 'bloodName',
+          dataIndex: 'host',
           ellipsis: true,
           align: 'left',
           width: 160,
         },
         {
           title: '意见和建议',
-          dataIndex: 'nameEn',
+          dataIndex: 'suggestion',
           ellipsis: true,
           align: 'left',
           width: 300,
         },
         {
           title: '处理措施',
-          dataIndex: 'bloodLoad',
+          dataIndex: 'treatment',
           ellipsis: true,
           align: 'left',
           width: 60,
         },
         {
           title: '落实情况',
-          dataIndex: 'effectiveDay',
+          dataIndex: 'workable',
           ellipsis: true,
           align: 'left',
           width: 80,
         },
         {
           title: '责任人',
-          dataIndex: 'effectiveDay',
+          dataIndex: 'person_in_charge',
           ellipsis: true,
           align: 'left',
           width: 80,
@@ -215,7 +183,7 @@ export default () => {
       rowKey: 'id',
       pagination: {
         current: 1,
-        pageSize: 10,
+        pageSize: pageSize,
         showSizeChanger: true,
         showQuickJumper: true,
         showTotal: (total) => {
@@ -233,18 +201,19 @@ export default () => {
         yTable.table.dataRow = count;
         setYTable({ ...yTable });
       },
-      selectInfo: (info) => {
-        yTable.table.dataRow = info;
-        setYTable({ ...yTable });
-        addOrEdit('edit', true);
-      },
+      // selectInfo: (info) => {
+      //   yTable.table.dataRow = info;
+      //   setYTable({ ...yTable });
+      //   addOrEdit('edit', true);
+      // },
     },
   });
 
   // 判断新增 / 编辑
   const [modeType, setModeType] = useState({
     type: null,
-    show: false,
+    visible: false,
+    loading: false,
   });
 
   // 新增 / 编辑
@@ -256,15 +225,7 @@ export default () => {
     if (type === 'edit') {
       modalForm.setFieldsValue({
         ...record,
-        isCross: !!record.isCross ? true : false,
-        isMelt: !!record.isMelt ? true : false,
-      });
-    } else {
-      // 选择框默认值
-      modalForm.setFieldsValue({
-        typeName: getDefaultOption(basic['1041'])?.name,
-        typeCode: getDefaultOption(basic['1041'])?.key,
-        unit: getDefaultOption(basic['1043'])?.key,
+        complaintDate: record?.complaintDate && moment(record?.complaintDate),
       });
     }
     changeModal(type, visible);
@@ -272,7 +233,7 @@ export default () => {
   // 修改弹窗配置
   const changeModal = (type, visible) => {
     modeType.type = type;
-    modeType.show = visible;
+    modeType.visible = visible;
     setModeType({ ...modeType });
   };
   // 删除
@@ -286,113 +247,89 @@ export default () => {
         cancelText: '取消',
         style: { padding: '30px' },
         onOk() {
-          // delBloodTableData({ id: record.id }).then((response) => {
-          //   message.success('删除成功');
-          //   yTable.table.dataRow = {};
-          //   yTable.table.loading = true;
-          //   setYTable({ ...yTable });
-          //   getTableData();
-          // });
+          complainDel({ ids: record.id })
+            .then((res) => {
+              message.success(res.msg);
+              yTable.table.dataRow = {};
+              getTableData();
+            })
+            .catch((err) => {
+              console.log('err-complainDel: ', err);
+            });
         },
       });
     } else {
-      message.error('请选中行数');
+      message.error('请选中行');
     }
   };
-  // 重置密码
-  const resetPassWord = (record) => {
-    if (!!Object.getOwnPropertyNames(record).length) {
-      Modal.confirm({
-        title: '您确定要重置密码为000000吗？',
-        okText: '确定',
-        okType: 'danger',
-        cancelText: '取消',
-        style: { padding: '30px' },
-        onOk() {
-          // delBloodTableData({ id: record.id }).then((response) => {
-          //   message.success('删除成功');
-          //   yTable.table.dataRow = {};
-          //   yTable.table.loading = true;
-          //   setYTable({ ...yTable });
-          //   getTableData();
-          // });
-        },
-      });
-    } else {
-      message.error('请选中行数');
-    }
-  };
-
-  // 刷新
-  const refreshData = () => {
-    yTable.table.loading = true;
-    setYTable({ ...yTable });
-    getTableData();
-  };
-
   // 获取列表Table数据
   const getTableData = () => {
-    // getBloodTableData({ keyWord: topFrom.getFieldsValue().keyWord })
-    //   .then((response) => {
-    //     response.data?.map((items) => (items.key = items.id));
-    //     yTable.table.key = Math.random();
-    //     yTable.table.loading = false;
-    //     yTable.table.dataRow = {};
-    //     yTable.table.dataSource = response.data;
-    //     setYTable({ ...yTable });
-    //   })
-    //   .catch(() => {
-    //     yTable.table.loading = false;
-    //     yTable.table.dataSource = [];
-    //     setYTable({ ...yTable });
-    //   });
+    const { keyWord } = topFrom.getFieldsValue();
+    let params = {
+      search: keyWord,
+      pageNum: yTable.table.pagination.current,
+      pageSize: yTable.table.pagination.pageSize,
+    };
+    yTable.table.loading = true;
+    yTable.table.dataSource = [];
+    setYTable({ ...yTable });
+    complainSelect(params)
+      .then((res) => {
+        yTable.table.dataSource = res?.data?.list || [];
+        yTable.table.loading = false;
+        // yTable.table.pagination.current = res?.data?.pageNum;
+        setYTable({ ...yTable });
+      })
+      .catch((err) => {
+        yTable.table.loading = false;
+        setYTable({ ...yTable });
+        console.log('complainSelect---err', err);
+      });
   };
 
   // 新增 / 修改 提交时触发
-  const saveModalInfo = () => {
+  const saveModalInfo = async () => {
+    const formData = await modalForm.validateFields();
+    const { complaintDate } = formData;
     let query = {
       ...modalForm.getFieldsValue(),
-      typeCode: findValByKey(basic['1041'], 'name', modalForm.getFieldsValue().typeName, 'key'),
+      complaintDate: complaintDate && moment(complaintDate).format('YYYY-MM-DD'),
     };
-    console.log('query: ', query);
-    yTable.table.loading = true;
-    setYTable({ ...yTable });
+    modeType.loading = true;
+    setModeType({ ...modeType });
     if (modeType.type === 'add') {
-      // insertBloodType(query).then((response) => {
-      //   message.success('新增成功');
-      //   addOrEdit('', false);
-      //   getTableData();
-      // });
+      complainAdd(query)
+        .then((response) => {
+          message.success(response.msg);
+          modeType.visible = false;
+          modeType.loading = false;
+          setModeType({ ...modeType });
+          getTableData();
+        })
+        .catch((err) => {
+          console.log('err-complainAdd: ', err);
+          modeType.loading = false;
+          setModeType({ ...modeType });
+        });
     } else {
-      // updateBloodType({ ...query, id: yTable.table.dataRow.id }).then((response) => {
-      //   message.success('编辑成功');
-      //   addOrEdit('', false);
-      //   getTableData();
-      // });
+      complainUpdate(query)
+        .then((response) => {
+          message.success(response.msg);
+          modeType.visible = false;
+          modeType.loading = false;
+          setModeType({ ...modeType });
+          getTableData();
+        })
+        .catch((err) => {
+          console.log('err-complainUpdate: ', err);
+          modeType.loading = false;
+          setModeType({ ...modeType });
+        });
     }
   };
-
-  // 获取字典数据
-  const getDictionaryData = () => {
-    // getBasicData(['1043', '1042', '1041']).then((response) => {
-    //   setBasic(response.data);
-    //   yTable.table.basic = response.data;
-    //   setYTable({ ...yTable });
-    // });
-  };
-
-  useEffect(() => {
-    modalForm.validateFields(['crossMethod']);
-  }, [isCross]);
-
-  useEffect(() => {
-    modalForm.validateFields(['meltingTime']);
-  }, [isMelt]);
-
   // 初始化
   useEffect(() => {
-    // getDictionaryData();
-    // getTableData();
+    getTableData();
   }, []);
   return (
     <div>
@@ -407,7 +344,8 @@ export default () => {
         maskClosable={false}
         title={modeType.type === 'add' ? '新增' : '编辑'}
         centered
-        visible={modeType.show}
+        visible={modeType.visible}
+        confirmLoading={modeType.loading}
         onOk={() => {
           modalForm.submit();
         }}
@@ -416,53 +354,63 @@ export default () => {
         <Form
           name="basic"
           form={modalForm}
-          labelCol={{ flex: '150px' }}
+          labelCol={{ flex: '160px' }}
           onFinish={saveModalInfo}
-          initialValues={{ isCross: false, isMelt: false }}
+          initialValues={{ complaintDate: moment() }}
         >
+          <Form.Item name="id" hidden></Form.Item>
           <Row>
             <Col span={12}>
-              <Form.Item label="会议（投诉）日期" name="collectionTime">
+              <Form.Item label="会议（投诉）日期" name="complaintDate">
                 <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="主持人" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item label="主持人" name="host" rules={[{ required: true, message: '' }]}>
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
               <Form.Item
                 label="参加（投诉）人员"
-                name="number"
+                name="complaintPeople"
                 rules={[{ required: true, message: '' }]}
               >
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="缺席人员" name="remark">
+              <Form.Item label="缺席人员" name="absentee">
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="会议（投诉）主题" name="remark">
+              <Form.Item label="会议（投诉）主题" name="theme">
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="意见和建议" name="remark">
+              <Form.Item label="意见和建议" name="suggestion">
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="处理措施" name="remark">
+              <Form.Item label="处理措施" name="treatment">
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="落实情况" name="remark">
+              <Form.Item label="落实情况" name="workable">
                 <TextArea placeholder="请输入" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="责任人"
+                name="person_in_charge"
+                rules={[{ required: true, message: '' }]}
+              >
+                <Input placeholder="请输入" />
               </Form.Item>
             </Col>
           </Row>

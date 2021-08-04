@@ -14,6 +14,7 @@ import {
   Divider,
   DatePicker,
   Checkbox,
+  Select,
 } from 'antd';
 const { confirm } = Modal;
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -31,7 +32,7 @@ export default () => {
   const tableRef = useRef(null);
   const tableHeight = useTableHeight(tableRef);
   // 基础字典数据
-  const [basic, setBasic] = useState({ '0001': [{ key: '1', name: '男' }] });
+  const [basic, setBasic] = useState({});
   // 上部搜索searchForm模块
   const [topFrom] = Form.useForm();
   const searchTopForm = {
@@ -40,6 +41,7 @@ export default () => {
         name: 'keyWord',
         placeholder: '请输入',
         sort: 1,
+        style: { width: '200px' },
         pressEnter: (enter) => {
           getTableData();
         },
@@ -119,7 +121,7 @@ export default () => {
           align: 'left',
           width: 60,
           render: (text, record, index) => {
-            return findValByKey(yTable.table.basic['0001'], 'key', text, 'name');
+            return findValByKey(yTable.table.basic['0001'], 'value', text, 'label');
           },
         },
         {
@@ -135,9 +137,6 @@ export default () => {
           align: 'left',
           ellipsis: true,
           width: 60,
-          render: (text, record, index) => {
-            return findValByKey(yTable.table.basic['1043'], 'key', text, 'name');
-          },
         },
         {
           title: '身份证号',
@@ -166,8 +165,7 @@ export default () => {
           key: 'useFlag',
           width: 50,
           align: 'center',
-          // render: (text, record) => <Switch checked={record.status} size="small" disabled/>,
-          render: (text, record) => (text ? '停用' : '使用'),
+          render: (text, record, info) => (text === 1 ? '启用' : '停用'),
         },
         {
           title: '操作',
@@ -394,7 +392,7 @@ export default () => {
           className={styles.modalform}
           onFinish={saveInfoData}
           labelCol={{ flex: '100px' }}
-          initialValues={{ isAdministrator: 0 }}
+          initialValues={{ useFlag: 1 }}
         >
           <Form.Item name="id" hidden></Form.Item>
           <Row>
@@ -410,7 +408,7 @@ export default () => {
             </Col>
             <Col span={12}>
               <Form.Item label="性别" name="sex" rules={[{ required: false, message: '' }]}>
-                <Seltopt
+                {/* <Seltopt
                   selectArr={basic['0001'] || []}
                   sWidth="100%"
                   callback={(cb) => {
@@ -419,7 +417,8 @@ export default () => {
                       // sexName: findValByKey(basic['1041'], 'key', cb, 'name'),
                     });
                   }}
-                />
+                /> */}
+                <Select placeholder="请选择" options={basic['0001'] || []}></Select>
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -450,7 +449,7 @@ export default () => {
             <Col span={24}>
               <Form.Item name="useFlag" valuePropName="checked" style={{ marginLeft: 8 }}>
                 <Checkbox>
-                  <span className={styles.labeltext}>停用</span>
+                  <span className={styles.labeltext}>启用</span>
                 </Checkbox>
               </Form.Item>
             </Col>

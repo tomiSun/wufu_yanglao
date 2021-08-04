@@ -1,0 +1,95 @@
+@import '~antd/es/style/themes/default.less';
+
+.treeBox {
+  padding: 0 !important;
+  border: 1px solid #f0f0f0;
+  :global {
+    .ant-form{
+      padding: 3px 16px;
+    }
+  }
+  .tree {
+    height:calc(100vh - 168px);
+    padding-top: 16px;
+    overflow-y: auto;
+    border-bottom: 1px solid #f0f0f0;
+    :global{
+      .ant-tree-title{
+        white-space: nowrap;
+      }
+    }
+  }
+  .treebtn {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 52px;
+    overflow: hidden;
+    border-top: 0;
+  }
+}
+
+// 字典信息
+.dicMessage{
+  :global{
+    .ant-descriptions-item-content{
+      display: table-cell;
+      overflow: hidden;
+      white-space: nowrap; //文本不换行，这样超出一行的部分被截取，显示...
+      text-overflow: ellipsis;
+      span{
+        width: 100%;
+        display: block;
+      }
+    }
+  }
+}
+
+//searchform - 字典
+
+.topForm{
+  margin-top: 10px;
+  padding: 0 0 0 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  // .searchFormTips{
+  //   display: inline-block;
+  //   margin-top: 7px;
+  //   font-weight: bold;
+  //   font-size: 16px;
+  // }
+  // .topRightForm{
+  //   float: right;
+  //   margin-bottom: 16px;
+  // }
+}
+// yTable - 字典
+.yTable{
+  :global {
+    .ant-table-container,
+    .ant-table-content{
+      min-height: calc(100vh - 410px) !important;
+    }
+    .ant-table-empty .ant-table-tbody > tr.ant-table-placeholder{
+      height: calc(100vh - 410px);
+    }
+  }
+}
+
+.modalform {
+  :global {
+    .ant-form-item {
+      margin-bottom: 16px;
+      .ant-form-item-label {
+        width: 85px;
+      }
+    }
+  }
+}
+
+//fieldset:disabled > * {
+//  pointer-events: none;
+//}
+
+

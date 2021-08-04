@@ -1,38 +1,59 @@
 export default [
   {
-    path: '/',
-    component: '../layouts/BlankLayout',
+    path: '/user',
+    component: '../layouts/UserLayout',
     routes: [
       {
-        path: '/user',
-        component: '../layouts/UserLayout',
-        routes: [
-          {
-            path: '/user/login',
-            name: 'login',
-            component: './User/login',
-          },
-          {
-            path: '/user',
-            redirect: '/user/login',
-          },
-          {
-            name: 'register-result',
-            icon: 'smile',
-            path: '/user/register-result',
-            component: './user/register-result',
-          },
-          {
-            name: 'register',
-            icon: 'smile',
-            path: '/user/register',
-            component: './user/register',
-          },
-          {
-            component: '404',
-          },
-        ],
+        path: '/user/login',
+        name: 'login',
+        component: './User/login',
       },
+      {
+        path: '/user',
+        redirect: '/user/login',
+      },
+      {
+        name: 'register-result',
+        icon: 'smile',
+        path: '/user/register-result',
+        component: './user/register-result',
+      },
+      {
+        name: 'register',
+        icon: 'smile',
+        path: '/user/register',
+        component: './user/register',
+      },
+      {
+        component: '404',
+      },
+    ],
+  },
+  {
+    path: '/directAccess',
+    component: '../layouts/EmptyLayout',
+    routes: [
+      {
+        name: '满意度测评',
+        icon: 'smile',
+        path: '/directAccess/satisficing',
+        component: './directAccess/satisficing',
+      },
+      {
+        name: '校验用户',
+        icon: 'smile',
+        path: '/directAccess/verifyUser',
+        component: './directAccess/verifyUser',
+      },
+      {
+        component: '404',
+      },
+    ],
+  },
+  {
+    path: '/',
+    component: '../layouts/SecurityLayout',
+    routes: [
       {
         path: '/',
         component: '../layouts/BasicLayout',
@@ -92,55 +113,55 @@ export default [
             path: '/nursingManagement',
             routes: [
               {
-                name: '风险告知书',//风险告知书
+                name: '风险告知书', //风险告知书
                 icon: 'smile',
                 path: '/nursingManagement/riskNotification/index',
                 component: './nursingManagement/riskNotification',
               },
               {
-                name: '护理批量录入',//护理记录
+                name: '护理批量录入', //护理记录
                 icon: 'smile',
                 path: '/nursingManagement/nursingAddRecord/index',
                 component: './nursingManagement/nursingAddRecord/index',
               },
               {
-                name: '血糖记录表',//血糖记录表
+                name: '血糖记录表', //血糖记录表
                 icon: 'smile',
                 path: '/nursingManagement/bloodGlucoseRecord/index',
                 component: './nursingManagement/bloodGlucoseRecord',
               },
               {
-                name: '护理记录',//护理记录
+                name: '护理记录', //护理记录
                 icon: 'smile',
                 path: '/nursingManagement/nursingRecord/index',
                 component: './nursingManagement/nursingRecord',
               },
               {
-                name: '特级护理',//特级护理
+                name: '特级护理', //特级护理
                 icon: 'smile',
                 path: '/nursingManagement/specialNursingRecord/index',
                 component: './nursingManagement/specialNursingRecord',
               },
               {
-                name: '三测单',//三测单
+                name: '三测单', //三测单
                 icon: 'smile',
                 path: '/nursingManagement/threeVolumeList/index',
                 component: './nursingManagement/threeVolumeList',
               },
               {
-                name: '药品管理',//药品管理
+                name: '药品管理', //药品管理
                 icon: 'smile',
                 path: '/nursingManagement/drugManage/index',
                 component: './nursingManagement/drugManage',
               },
               {
-                name: '服药记录',//服药记录
+                name: '服药记录', //服药记录
                 icon: 'smile',
                 path: '/nursingManagement/drugRecord/index',
                 component: './nursingManagement/drugRecord',
               },
               {
-                name: '请假管理',//请假管理
+                name: '请假管理', //请假管理
                 icon: 'smile',
                 path: '/nursingManagement/leaveManagement/index',
                 component: './nursingManagement/leaveManagement',
@@ -194,6 +215,7 @@ export default [
                 icon: 'smile',
                 path: '/basicSetting/bedInfo',
                 component: './basicSetting/bedInfo',
+                // component: './basicSetting/bedInfo/index-v1',
               },
             ],
           },
@@ -207,12 +229,6 @@ export default [
                 icon: 'smile',
                 path: '/syntheticModule/cookbook',
                 component: './syntheticModule/cookbook',
-              },
-              {
-                name: '满意度测评',
-                icon: 'smile',
-                path: '/syntheticModule/satisficing',
-                component: './syntheticModule/satisficing',
               },
               {
                 name: '兴趣小组活动记录',
@@ -262,7 +278,7 @@ export default [
                 icon: 'smile',
                 path: 'countPage/countChart/index',
                 component: './countPage/countChart/index',
-              }
+              },
             ],
           },
           {

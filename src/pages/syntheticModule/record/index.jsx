@@ -16,19 +16,18 @@ import {
   Checkbox,
 } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
-// import {
-//   getBloodTableData,
-//   delBloodTableData,
-//   insertBloodType,
-//   updateBloodType,
-// } from '@/services/blood/bloodcomposition';
-// import { getBasicData } from '@/services/basicData/basic';
+import {
+  recordAdd,
+  recordDel,
+  recordSelect,
+  recordUpdate,
+} from '@/services/syntheticModule/record';
 import { findValByKey, getDefaultOption } from '@/utils/common';
-import { makeWb, pinyin } from 'yunyi-convert';
 import { config } from '@/utils/const';
 const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
 const { TextArea } = Input;
+import moment from 'moment';
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
@@ -39,15 +38,20 @@ export default () => {
     inputArr: [
       {
         name: 'keyWord',
-        placeholder: '请输入',
+        placeholder: '请输入捐款单位（个人）',
         sort: 1,
-        // style: {  },
+        style: { width: '200px' },
+        pressEnter: (enter) => {
+          getTableData();
+        },
       },
     ],
     btnArr: [
       {
         name: '查询',
-        callback: () => {},
+        callback: () => {
+          getTableData();
+        },
         sort: 2,
         style: { marginRight: '15px' },
       },
@@ -60,28 +64,6 @@ export default () => {
           addOrEdit('add', true);
         },
       },
-      // {
-      //   name: '编辑',
-      //   style: { position: 'absolute', left: '97px' },
-      //   callback: () => {
-      //     addOrEdit('edit', true);
-      //   },
-      // },
-      // {
-      //   name: '删除',
-      //   type: 'danger',
-      //   style: { position: 'absolute', left: '179px' },
-      //   callback: () => {
-      //     del();
-      //   },
-      // },
-      // {
-      //   name: '刷新',
-      //   style: { position: 'absolute', left: '257px' },
-      //   callback: () => {
-      //     refreshData();
-      //   },
-      // },
     ],
     layout: 'inline',
     form: topFrom,
@@ -98,10 +80,6 @@ export default () => {
   // 基础字典数据
   const [basic, setBasic] = useState({});
 
-  // 动态更改form校验状态
-  const [isCross, setIsCross] = useState(false);
-  const [isMelt, setIsMelt] = useState(false);
-
   // table模块
   const [yTable, setYTable] = useState({
     table: {
@@ -111,14 +89,14 @@ export default () => {
       columns: [
         {
           title: '日期',
-          dataIndex: 'typeName',
+          dataIndex: 'donationDate',
           ellipsis: true,
           align: 'left',
           width: 150,
         },
         {
           title: '捐款单位（个人）',
-          dataIndex: 'number',
+          dataIndex: 'donor',
           align: 'left',
           ellipsis: true,
           width: 160,
@@ -126,55 +104,55 @@ export default () => {
 
         {
           title: '捐款人意见',
-          dataIndex: 'bloodName',
+          dataIndex: 'donorWillingness',
           ellipsis: true,
           align: 'left',
           width: 160,
         },
         {
           title: '钱款（金额）',
-          dataIndex: 'nameEn',
+          dataIndex: 'contributions',
           ellipsis: true,
           align: 'left',
           width: 80,
         },
         {
           title: '物品',
-          dataIndex: 'unit',
+          dataIndex: 'donationItem',
           align: 'left',
           ellipsis: true,
           width: 300,
           children: [
             {
               title: '名称',
-              dataIndex: 'building',
-              key: 'building',
+              dataIndex: 'donationItem',
+              key: 'donationItem',
               width: 100,
             },
             {
               title: '数量',
-              dataIndex: 'building',
-              key: 'building',
+              dataIndex: 'amount',
+              key: 'amount',
               width: 100,
             },
             {
               title: '估价',
-              dataIndex: 'building',
-              key: 'building',
+              dataIndex: 'valuation',
+              key: 'valuation',
               width: 100,
             },
           ],
         },
         {
           title: '捐赠物处理',
-          dataIndex: 'bloodLoad',
+          dataIndex: 'donationItemsDisposal',
           ellipsis: true,
           align: 'left',
-          width: 60,
+          width: 100,
         },
         {
           title: '经办责任人',
-          dataIndex: 'effectiveDay',
+          dataIndex: 'personInCharge',
           ellipsis: true,
           align: 'left',
           width: 80,
@@ -212,7 +190,7 @@ export default () => {
       rowKey: 'id',
       pagination: {
         current: 1,
-        pageSize: 10,
+        pageSize: pageSize,
         showSizeChanger: true,
         showQuickJumper: true,
         showTotal: (total) => {
@@ -230,84 +208,19 @@ export default () => {
         yTable.table.dataRow = count;
         setYTable({ ...yTable });
       },
-      selectInfo: (info) => {
-        yTable.table.dataRow = info;
-        setYTable({ ...yTable });
-        addOrEdit('edit', true);
-      },
-    },
-  });
-  const [yTableModal, setYTableModal] = useState({
-    table: {
-      bordered: true,
-      loading: false,
-      dataSource: [{ id: 1 }],
-      columns: [
-        {
-          title: '名称',
-          dataIndex: 'building',
-          key: 'building',
-          width: 100,
-          render: (text, record) => {
-            return <Input />;
-          },
-        },
-        {
-          title: '数量',
-          dataIndex: 'building',
-          key: 'building',
-          width: 100,
-          render: (text, record) => {
-            return <Input />;
-          },
-        },
-        {
-          title: '估价',
-          dataIndex: 'building',
-          key: 'building',
-          width: 100,
-          render: (text, record) => {
-            return <Input />;
-          },
-        },
-        {
-          title: '操作',
-          key: 'opera',
-          align: 'center',
-          width: 130,
-          render: (text, record) => (
-            <div className={styles.opera}>
-              <a
-                onClick={() => {
-                  del(record);
-                }}
-              >
-                删除
-              </a>
-            </div>
-          ),
-        },
-      ],
-      key: Math.random(),
-      scroll: { y: '100%' },
-      dataRow: {},
-      rowKey: 'id',
-      pagination: false,
-      oClick: (count) => {
-        yTableModal.table.dataRow = count;
-        setYTableModal({ ...yTableModal });
-      },
-      selectInfo: (info) => {
-        yTable.table.dataRow = info;
-        setYTableModal({ ...yTable });
-      },
+      // selectInfo: (info) => {
+      //   yTable.table.dataRow = info;
+      //   setYTable({ ...yTable });
+      //   addOrEdit('edit', true);
+      // },
     },
   });
 
   // 判断新增 / 编辑
   const [modeType, setModeType] = useState({
     type: null,
-    show: false,
+    visible: false,
+    loading: false,
   });
 
   // 新增 / 编辑
@@ -319,15 +232,7 @@ export default () => {
     if (type === 'edit') {
       modalForm.setFieldsValue({
         ...record,
-        isCross: !!record.isCross ? true : false,
-        isMelt: !!record.isMelt ? true : false,
-      });
-    } else {
-      // 选择框默认值
-      modalForm.setFieldsValue({
-        typeName: getDefaultOption(basic['1041'])?.name,
-        typeCode: getDefaultOption(basic['1041'])?.key,
-        unit: getDefaultOption(basic['1043'])?.key,
+        donationDate: record?.donationDate && moment(record?.donationDate),
       });
     }
     changeModal(type, visible);
@@ -335,7 +240,7 @@ export default () => {
   // 修改弹窗配置
   const changeModal = (type, visible) => {
     modeType.type = type;
-    modeType.show = visible;
+    modeType.visible = visible;
     setModeType({ ...modeType });
   };
   // 删除
@@ -349,113 +254,89 @@ export default () => {
         cancelText: '取消',
         style: { padding: '30px' },
         onOk() {
-          // delBloodTableData({ id: record.id }).then((response) => {
-          //   message.success('删除成功');
-          //   yTable.table.dataRow = {};
-          //   yTable.table.loading = true;
-          //   setYTable({ ...yTable });
-          //   getTableData();
-          // });
+          recordDel({ ids: record.id })
+            .then((res) => {
+              message.success(res.msg);
+              yTable.table.dataRow = {};
+              getTableData();
+            })
+            .catch((err) => {
+              console.log('err-recordDel: ', err);
+            });
         },
       });
     } else {
-      message.error('请选中行数');
+      message.error('请选中行');
     }
   };
-  // 重置密码
-  const resetPassWord = (record) => {
-    if (!!Object.getOwnPropertyNames(record).length) {
-      Modal.confirm({
-        title: '您确定要重置密码为000000吗？',
-        okText: '确定',
-        okType: 'danger',
-        cancelText: '取消',
-        style: { padding: '30px' },
-        onOk() {
-          // delBloodTableData({ id: record.id }).then((response) => {
-          //   message.success('删除成功');
-          //   yTable.table.dataRow = {};
-          //   yTable.table.loading = true;
-          //   setYTable({ ...yTable });
-          //   getTableData();
-          // });
-        },
-      });
-    } else {
-      message.error('请选中行数');
-    }
-  };
-
-  // 刷新
-  const refreshData = () => {
-    yTable.table.loading = true;
-    setYTable({ ...yTable });
-    getTableData();
-  };
-
   // 获取列表Table数据
   const getTableData = () => {
-    // getBloodTableData({ keyWord: topFrom.getFieldsValue().keyWord })
-    //   .then((response) => {
-    //     response.data?.map((items) => (items.key = items.id));
-    //     yTable.table.key = Math.random();
-    //     yTable.table.loading = false;
-    //     yTable.table.dataRow = {};
-    //     yTable.table.dataSource = response.data;
-    //     setYTable({ ...yTable });
-    //   })
-    //   .catch(() => {
-    //     yTable.table.loading = false;
-    //     yTable.table.dataSource = [];
-    //     setYTable({ ...yTable });
-    //   });
+    const { keyWord } = topFrom.getFieldsValue();
+    let params = {
+      search: keyWord,
+      pageNum: yTable.table.pagination.current,
+      pageSize: yTable.table.pagination.pageSize,
+    };
+    yTable.table.loading = true;
+    yTable.table.dataSource = [];
+    setYTable({ ...yTable });
+    recordSelect(params)
+      .then((res) => {
+        yTable.table.dataSource = res?.data?.list || [];
+        yTable.table.loading = false;
+        // yTable.table.pagination.current = res?.data?.pageNum;
+        setYTable({ ...yTable });
+      })
+      .catch((err) => {
+        yTable.table.loading = false;
+        setYTable({ ...yTable });
+        console.log('recordSelect---err', err);
+      });
   };
 
   // 新增 / 修改 提交时触发
-  const saveModalInfo = () => {
+  const saveModalInfo = async () => {
+    const formData = await modalForm.validateFields();
+    const { donationDate } = formData;
     let query = {
       ...modalForm.getFieldsValue(),
-      typeCode: findValByKey(basic['1041'], 'name', modalForm.getFieldsValue().typeName, 'key'),
+      donationDate: donationDate && moment(donationDate).format('YYYY-MM-DD'),
     };
-    console.log('query: ', query);
-    yTable.table.loading = true;
-    setYTable({ ...yTable });
+    modeType.loading = true;
+    setModeType({ ...modeType });
     if (modeType.type === 'add') {
-      // insertBloodType(query).then((response) => {
-      //   message.success('新增成功');
-      //   addOrEdit('', false);
-      //   getTableData();
-      // });
+      recordAdd(query)
+        .then((response) => {
+          message.success(response.msg);
+          modeType.visible = false;
+          modeType.loading = false;
+          setModeType({ ...modeType });
+          getTableData();
+        })
+        .catch((err) => {
+          console.log('err-recordAdd: ', err);
+          modeType.loading = false;
+          setModeType({ ...modeType });
+        });
     } else {
-      // updateBloodType({ ...query, id: yTable.table.dataRow.id }).then((response) => {
-      //   message.success('编辑成功');
-      //   addOrEdit('', false);
-      //   getTableData();
-      // });
+      recordUpdate(query)
+        .then((response) => {
+          message.success(response.msg);
+          modeType.visible = false;
+          modeType.loading = false;
+          setModeType({ ...modeType });
+          getTableData();
+        })
+        .catch((err) => {
+          console.log('err-recordUpdate: ', err);
+          modeType.loading = false;
+          setModeType({ ...modeType });
+        });
     }
   };
-
-  // 获取字典数据
-  const getDictionaryData = () => {
-    // getBasicData(['1043', '1042', '1041']).then((response) => {
-    //   setBasic(response.data);
-    //   yTable.table.basic = response.data;
-    //   setYTable({ ...yTable });
-    // });
-  };
-
-  useEffect(() => {
-    modalForm.validateFields(['crossMethod']);
-  }, [isCross]);
-
-  useEffect(() => {
-    modalForm.validateFields(['meltingTime']);
-  }, [isMelt]);
-
   // 初始化
   useEffect(() => {
-    // getDictionaryData();
-    // getTableData();
+    getTableData();
   }, []);
   return (
     <div>
@@ -470,7 +351,8 @@ export default () => {
         maskClosable={false}
         title={modeType.type === 'add' ? '新增' : '编辑'}
         centered
-        visible={modeType.show}
+        visible={modeType.visible}
+        confirmLoading={modeType.loading}
         onOk={() => {
           modalForm.submit();
         }}
@@ -479,78 +361,75 @@ export default () => {
         <Form
           name="basic"
           form={modalForm}
-          labelCol={{ flex: '150px' }}
+          labelCol={{ flex: '140px' }}
           onFinish={saveModalInfo}
-          initialValues={{ isCross: false, isMelt: false }}
+          initialValues={{ donationDate: moment() }}
         >
+          <Form.Item name="id" hidden></Form.Item>
           <Row>
             <Col span={24}>
               <Form.Item
                 label="捐赠单位（个人）"
-                name="number"
+                name="donor"
                 rules={[{ required: true, message: '' }]}
               >
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="捐款人意见" name="remark">
+              <Form.Item label="捐款人意见" name="donorWillingness">
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="日期" name="collectionTime">
+              <Form.Item label="日期" name="donationDate">
                 <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
                 label="钱款（金额）"
-                name="number"
+                name="contributions"
                 rules={[{ required: true, message: '' }]}
               >
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="捐赠物名称" name="remark">
+              <Form.Item label="捐赠物名称" name="donationItem">
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="捐赠物数量" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item label="捐赠物数量" name="amount" rules={[{ required: true, message: '' }]}>
                 <InputNumber placeholder="请输入" min="1" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="捐赠物估价" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item
+                label="捐赠物估价"
+                name="valuation"
+                rules={[{ required: true, message: '' }]}
+              >
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="捐赠物处理" name="remark">
+              <Form.Item label="捐赠物处理" name="donationItemsDisposal">
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="经办责任人" name="number" rules={[{ required: true, message: '' }]}>
+              <Form.Item
+                label="经办责任人"
+                name="personInCharge"
+                rules={[{ required: true, message: '' }]}
+              >
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
           </Row>
         </Form>
-        {/* <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '10px 0',
-          }}
-        >
-          <div>捐赠物品</div>
-          <Button type="primary">新增</Button>
-        </div>
-        <YTable {...yTableModal} /> */}
       </Modal>
     </div>
   );

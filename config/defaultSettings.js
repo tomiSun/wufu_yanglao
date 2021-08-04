@@ -10,5 +10,8 @@ const proSettings = {
   title: '颐乐养老中心',
   pwa: false,
   iconfontUrl: '',
+  menu: {
+    locale: false,
+  },
 };
 export default proSettings;

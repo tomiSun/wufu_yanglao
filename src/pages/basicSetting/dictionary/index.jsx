@@ -193,8 +193,8 @@ export default () => {
         },
         {
           title: '类别编码',
-          dataIndex: 'dictCode',
-          key: 'dictCode',
+          dataIndex: 'dictTypeCode',
+          key: 'dictTypeCode',
           ellipsis: true,
           // width: 100,
         },
@@ -232,8 +232,7 @@ export default () => {
           key: 'useFlag',
           width: 50,
           align: 'center',
-          // render: (text, record) => <Switch checked={record.status} size="small" disabled/>,
-          render: (text, record) => (text ? '停用' : '使用'),
+          render: (text, record, info) => (text === 1 ? '启用' : '停用'),
         },
         {
           title: '操作',
@@ -507,7 +506,12 @@ export default () => {
         okButtonProps={{ disabled: modalSortConfig.type === 'detail' }}
         cancelButtonProps={{ disabled: modalSortConfig.type === 'detail' }}
       >
-        <Form form={modalFormSort} className={styles.modalform} onFinish={saveSortInfo}>
+        <Form
+          form={modalFormSort}
+          className={styles.modalform}
+          onFinish={saveSortInfo}
+          initialValues={{ useFlag: 1 }}
+        >
           <Row>
             {/*隐藏数据字段*/}
             <Form.Item name="id" hidden></Form.Item>
@@ -521,7 +525,7 @@ export default () => {
               <Form.Item label="类别名称" name="dictTypeName" rules={[{ required: true }]}>
                 <Input
                   placeholder="请输入"
-                  onBlur={(e) => {
+                  onChange={(e) => {
                     modalFormSort.setFieldsValue({
                       pinyinCode: pinyin.getCamelChars(e.target.value),
                       wubiCode: makeWb(e.target.value),
@@ -557,7 +561,7 @@ export default () => {
               <Row>
                 <Form.Item name="useFlag" valuePropName="checked" style={{ marginLeft: 8 }}>
                   <Checkbox>
-                    <span className={styles.labeltext}>停用</span>
+                    <span className={styles.labeltext}>启用</span>
                   </Checkbox>
                 </Form.Item>
               </Row>
@@ -582,7 +586,12 @@ export default () => {
         okButtonProps={{ disabled: modalConfig.type === 'detail' }}
         cancelButtonProps={{ disabled: modalConfig.type === 'detail' }}
       >
-        <Form form={modalForm} className={styles.modalform} onFinish={saveInfoData}>
+        <Form
+          form={modalForm}
+          className={styles.modalform}
+          onFinish={saveInfoData}
+          initialValues={{ useFlag: 1 }}
+        >
           <Row>
             {/*隐藏数据字段*/}
             <Form.Item name="id" hidden></Form.Item>
@@ -606,7 +615,7 @@ export default () => {
               <Form.Item label="字典名称" name="dictName" rules={[{ required: true }]}>
                 <Input
                   placeholder="请输入"
-                  onBlur={(e) => {
+                  onChange={(e) => {
                     modalForm.setFieldsValue({
                       pinyinCode: pinyin.getCamelChars(e.target.value),
                       wubiCode: makeWb(e.target.value),
@@ -642,7 +651,7 @@ export default () => {
               <Row>
                 <Form.Item name="useFlag" valuePropName="checked" style={{ marginLeft: 8 }}>
                   <Checkbox>
-                    <span className={styles.labeltext}>停用</span>
+                    <span className={styles.labeltext}>启用</span>
                   </Checkbox>
                 </Form.Item>
               </Row>
