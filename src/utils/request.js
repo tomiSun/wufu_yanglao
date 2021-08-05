@@ -59,6 +59,7 @@ request.interceptors.response.use(async (response, options) => {
     // })
     return Promise.reject(data.message);
   } else {
+    console.log('data: ', data);
     return data;
   }
 });
