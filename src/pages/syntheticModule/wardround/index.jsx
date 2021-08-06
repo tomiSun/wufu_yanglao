@@ -278,11 +278,11 @@ export default () => {
           key: 'opera',
           align: 'center',
           width: 130,
-          render: (text, wardround) => (
+          render: (text, record) => (
             <div className={styles.opera}>
               <a
                 onClick={() => {
-                  addOrEdit('edit', true, wardround);
+                  addOrEdit('edit', true, record);
                 }}
               >
                 编辑
@@ -291,7 +291,7 @@ export default () => {
               <Divider type="vertical" />
               <a
                 onClick={() => {
-                  del(wardround);
+                  del(record);
                 }}
               >
                 删除
@@ -340,15 +340,15 @@ export default () => {
   });
 
   // 新增 / 编辑
-  const addOrEdit = (type, visible, wardround) => {
-    if (type === 'edit' && !Object.getOwnPropertyNames(wardround).length) {
+  const addOrEdit = (type, visible, record) => {
+    if (type === 'edit' && !Object.getOwnPropertyNames(record).length) {
       return message.error('请选中行');
     }
     modalForm.resetFields();
     if (type === 'edit') {
       modalForm.setFieldsValue({
-        ...wardround,
-        wardRoundTime: wardround?.wardRoundTime && moment(wardround?.wardRoundTime),
+        ...record,
+        wardRoundTime: record?.wardRoundTime && moment(record?.wardRoundTime),
       });
     }
     changeModal(type, visible);
@@ -360,8 +360,8 @@ export default () => {
     setModeType({ ...modeType });
   };
   // 删除
-  const del = (wardround) => {
-    if (!!Object.getOwnPropertyNames(wardround).length) {
+  const del = (record) => {
+    if (!!Object.getOwnPropertyNames(record).length) {
       Modal.confirm({
         title: '是否要删除该条数据',
         icon: <DeleteOutlined />,
@@ -370,7 +370,7 @@ export default () => {
         cancelText: '取消',
         style: { padding: '30px' },
         onOk() {
-          wardroundDel({ id: wardround.id })
+          wardroundDel({ id: record.id })
             .then((res) => {
               message.success(res.msg);
               yTable.table.dataRow = {};

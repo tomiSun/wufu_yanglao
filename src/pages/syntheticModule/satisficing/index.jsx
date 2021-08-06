@@ -14,7 +14,7 @@ import {
   Divider,
   DatePicker,
   Checkbox,
-  Rate 
+  Rate,
 } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 // import {
@@ -61,36 +61,10 @@ export default () => {
           addOrEdit('add', true);
         },
       },
-      // {
-      //   name: '编辑',
-      //   style: { position: 'absolute', left: '97px' },
-      //   callback: () => {
-      //     addOrEdit('edit', true);
-      //   },
-      // },
-      // {
-      //   name: '删除',
-      //   type: 'danger',
-      //   style: { position: 'absolute', left: '179px' },
-      //   callback: () => {
-      //     del();
-      //   },
-      // },
-      // {
-      //   name: '刷新',
-      //   style: { position: 'absolute', left: '257px' },
-      //   callback: () => {
-      //     refreshData();
-      //   },
-      // },
     ],
     layout: 'inline',
     form: topFrom,
     cls: 'opera',
-    // styles: { marginTop: '10px' },
-    getInfoData: (value) => {
-      refreshData();
-    },
   };
 
   // modal配置项
@@ -368,153 +342,157 @@ export default () => {
   }, []);
   return (
     <div className={styles.bloodComposition}>
-      <div style={{display:'flex',justifyContent:'center'}}>老人（家属）满意度测评表</div>
-      
+      <div style={{ display: 'flex', justifyContent: 'center' }}>老人（家属）满意度测评表</div>
+
       <div style={{}}>
         <p>尊敬的长辈（家属）：</p>
-        <p style={{textIndent:'2em'}}>您好！为了更好的为您提供更优质的服务，现向您征求意见，请根据您的实际感受作答，勾选相应的选项，或在意见和建议栏填写内容，感谢的您的支持和配合</p>
+        <p style={{ textIndent: '2em' }}>
+          您好！为了更好的为您提供更优质的服务，现向您征求意见，请根据您的实际感受作答，勾选相应的选项，或在意见和建议栏填写内容，感谢的您的支持和配合
+        </p>
       </div>
       <Form
-          name="basic"
-          layout='vertical'
-          form={modalForm}
-          // labelCol={{ flex: '90px' }}
-          onFinish={saveModalInfo}
-          initialValues={{ isCross: false, isMelt: false }}
-        >
-          <Row>
-            {/* <Col span={24}>
+        name="basic"
+        layout="vertical"
+        form={modalForm}
+        // labelCol={{ flex: '90px' }}
+        onFinish={saveModalInfo}
+        initialValues={{ isCross: false, isMelt: false }}
+      >
+        <Row>
+          {/* <Col span={24}>
               <Form.Item name="rate" label="1,您对本院生活环境满意吗？（设备，卫生周边）">
                 <Rate />
               </Form.Item>
             </Col> */}
-            <Col span={24}>
-              <Form.Item
-                name="radio1"
-                label="1,您对本院生活环境满意吗？（设备，卫生周边）"
-                rules={[{ required: true, message: 'Please pick an item!' }]}
-              >
-                <Radio.Group>
-                  <Radio value="3">满意（3）</Radio>
-                  <Radio value="2">较满意（2）</Radio>
-                  <Radio value="1">不满意（1）</Radio>
-                  <Radio value="0">说不出（0）</Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="radio2"
-                label="2,您对护理质量满意吗？（态度，操作，个人卫生）"
-                rules={[{ required: true, message: 'Please pick an item!' }]}
-              >
-                <Radio.Group>
-                  <Radio value="3">满意（3）</Radio>
-                  <Radio value="2">较满意（2）</Radio>
-                  <Radio value="1">不满意（1）</Radio>
-                  <Radio value="0">说不出（0）</Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="radio3"
-                label="3,您对本院客服人员院管理人员满意吗？"
-                rules={[{ required: true, message: 'Please pick an item!' }]}
-              >
-                <Radio.Group>
-                  <Radio value="3">满意（3）</Radio>
-                  <Radio value="2">较满意（2）</Radio>
-                  <Radio value="1">不满意（1）</Radio>
-                  <Radio value="0">说不出（0）</Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="radio4"
-                label="4,您对医疗服务满意吗？"
-                rules={[{ required: true, message: 'Please pick an item!' }]}
-              >
-                <Radio.Group>
-                  <Radio value="3">满意（3）</Radio>
-                  <Radio value="2">较满意（2）</Radio>
-                  <Radio value="1">不满意（1）</Radio>
-                  <Radio value="0">说不出（0）</Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="radio5"
-                label="5,您对本院组织的各项日常文化娱乐活动满意吗？"
-                rules={[{ required: true, message: 'Please pick an item!' }]}
-              >
-                <Radio.Group>
-                  <Radio value="3">满意（3）</Radio>
-                  <Radio value="2">较满意（2）</Radio>
-                  <Radio value="1">不满意（1）</Radio>
-                  <Radio value="0">说不出（0）</Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="radio6"
-                label="6,您对现在的饮食满意吗？"
-                rules={[{ required: true, message: 'Please pick an item!' }]}
-              >
-                <Radio.Group>
-                  <Radio value="3">满意（3）</Radio>
-                  <Radio value="2">较满意（2）</Radio>
-                  <Radio value="1">不满意（1）</Radio>
-                  <Radio value="0">说不出（0）</Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="radio7"
-                label="7,您对本院日常事情处理时间，处理态度，处理结果满意吗？"
-                rules={[{ required: true, message: 'Please pick an item!' }]}
-              >
-                <Radio.Group>
-                  <Radio value="3">满意（3）</Radio>
-                  <Radio value="2">较满意（2）</Radio>
-                  <Radio value="1">不满意（1）</Radio>
-                  <Radio value="0">说不出（0）</Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="radio8"
-                label="8,您对本院各部门综合服务水平满意吗？"
-                rules={[{ required: true, message: 'Please pick an item!' }]}
-              >
-                <Radio.Group>
-                  <Radio value="3">满意（3）</Radio>
-                  <Radio value="2">较满意（2）</Radio>
-                  <Radio value="1">不满意（1）</Radio>
-                  <Radio value="0">说不出（0）</Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              总计？？？
-              {/* <Form.Item label="总计" name="total">
+          <Col span={24}>
+            <Form.Item
+              name="radio1"
+              label="1,您对本院生活环境满意吗？（设备，卫生周边）"
+              rules={[{ required: true, message: 'Please pick an item!' }]}
+            >
+              <Radio.Group>
+                <Radio value="3">满意（3）</Radio>
+                <Radio value="2">较满意（2）</Radio>
+                <Radio value="1">不满意（1）</Radio>
+                <Radio value="0">说不出（0）</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item
+              name="radio2"
+              label="2,您对护理质量满意吗？（态度，操作，个人卫生）"
+              rules={[{ required: true, message: 'Please pick an item!' }]}
+            >
+              <Radio.Group>
+                <Radio value="3">满意（3）</Radio>
+                <Radio value="2">较满意（2）</Radio>
+                <Radio value="1">不满意（1）</Radio>
+                <Radio value="0">说不出（0）</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item
+              name="radio3"
+              label="3,您对本院客服人员院管理人员满意吗？"
+              rules={[{ required: true, message: 'Please pick an item!' }]}
+            >
+              <Radio.Group>
+                <Radio value="3">满意（3）</Radio>
+                <Radio value="2">较满意（2）</Radio>
+                <Radio value="1">不满意（1）</Radio>
+                <Radio value="0">说不出（0）</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item
+              name="radio4"
+              label="4,您对医疗服务满意吗？"
+              rules={[{ required: true, message: 'Please pick an item!' }]}
+            >
+              <Radio.Group>
+                <Radio value="3">满意（3）</Radio>
+                <Radio value="2">较满意（2）</Radio>
+                <Radio value="1">不满意（1）</Radio>
+                <Radio value="0">说不出（0）</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item
+              name="radio5"
+              label="5,您对本院组织的各项日常文化娱乐活动满意吗？"
+              rules={[{ required: true, message: 'Please pick an item!' }]}
+            >
+              <Radio.Group>
+                <Radio value="3">满意（3）</Radio>
+                <Radio value="2">较满意（2）</Radio>
+                <Radio value="1">不满意（1）</Radio>
+                <Radio value="0">说不出（0）</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item
+              name="radio6"
+              label="6,您对现在的饮食满意吗？"
+              rules={[{ required: true, message: 'Please pick an item!' }]}
+            >
+              <Radio.Group>
+                <Radio value="3">满意（3）</Radio>
+                <Radio value="2">较满意（2）</Radio>
+                <Radio value="1">不满意（1）</Radio>
+                <Radio value="0">说不出（0）</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item
+              name="radio7"
+              label="7,您对本院日常事情处理时间，处理态度，处理结果满意吗？"
+              rules={[{ required: true, message: 'Please pick an item!' }]}
+            >
+              <Radio.Group>
+                <Radio value="3">满意（3）</Radio>
+                <Radio value="2">较满意（2）</Radio>
+                <Radio value="1">不满意（1）</Radio>
+                <Radio value="0">说不出（0）</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item
+              name="radio8"
+              label="8,您对本院各部门综合服务水平满意吗？"
+              rules={[{ required: true, message: 'Please pick an item!' }]}
+            >
+              <Radio.Group>
+                <Radio value="3">满意（3）</Radio>
+                <Radio value="2">较满意（2）</Radio>
+                <Radio value="1">不满意（1）</Radio>
+                <Radio value="0">说不出（0）</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            总计？？？
+            {/* <Form.Item label="总计" name="total">
                 <Input placeholder="请输入" />
               </Form.Item> */}
-            </Col>
-            
-            <Col span={24}>
-              <Form.Item label="您的其他意见和建议" name="remark">
-                <TextArea placeholder="请输入" />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-        <div style={{display:'flex',justifyContent:'center'}}><Button type="primary">提交</Button></div>
+          </Col>
+
+          <Col span={24}>
+            <Form.Item label="您的其他意见和建议" name="remark">
+              <TextArea placeholder="请输入" />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <Button type="primary">提交</Button>
+      </div>
     </div>
   );
 };

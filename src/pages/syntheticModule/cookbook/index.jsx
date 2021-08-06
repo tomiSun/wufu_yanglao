@@ -65,28 +65,6 @@ export default () => {
           addOrEdit('add', true);
         },
       },
-      // {
-      //   name: '编辑',
-      //   style: { position: 'absolute', left: '97px' },
-      //   callback: () => {
-      //     addOrEdit('edit', true);
-      //   },
-      // },
-      // {
-      //   name: '删除',
-      //   type: 'danger',
-      //   style: { position: 'absolute', left: '179px' },
-      //   callback: () => {
-      //     del();
-      //   },
-      // },
-      // {
-      //   name: '刷新',
-      //   style: { position: 'absolute', left: '257px' },
-      //   callback: () => {
-      //     refreshData();
-      //   },
-      // },
     ],
     layout: 'inline',
     form: topFrom,
