@@ -14,17 +14,15 @@ export default (props) => {
     }
   }, [phone]);
   const verifySubmit = () => {
-    btnConfig.loading = true;
-    setBtnConfig({ ...btnConfig });
     satisficingSelect({ phone })
       .then((res) => {
-        btnConfig.loading = false;
         btnConfig.disabled = !!res?.data?.id;
+        if (res?.data?.id) {
+          modalForm.setFieldsValue({ ...res?.data });
+        }
         setBtnConfig({ ...btnConfig });
       })
       .catch((err) => {
-        btnConfig.loading = false;
-        setBtnConfig({ ...btnConfig });
         console.log('satisficingSelect---err', err);
       });
   };

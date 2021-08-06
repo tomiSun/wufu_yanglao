@@ -1,7 +1,6 @@
-/* eslint-disable no-console */
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.less';
-import { SearchForm, YTable } from 'yunyi-component';
+import { SearchForm, YTable, Seltopt } from 'yunyi-component';
 import {
   Form,
   Modal,
@@ -15,22 +14,22 @@ import {
   Divider,
   DatePicker,
   Checkbox,
-  Select,
 } from 'antd';
+import moment from 'moment';
 import { DeleteOutlined } from '@ant-design/icons';
-import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
-import {
-  shiftchangeAdd,
-  shiftchangeDel,
-  shiftchangeSelect,
-  shiftchangeUpdate,
-} from '@/services/syntheticModule/shiftchange';
+// import {
+//   getBloodTableData,
+//   delBloodTableData,
+//   insertBloodType,
+//   updateBloodType,
+// } from '@/services/blood/bloodcomposition';
+// import { getBasicData } from '@/services/basicData/basic';
 import { findValByKey, getDefaultOption } from '@/utils/common';
+import { makeWb, pinyin } from 'yunyi-convert';
 import { config } from '@/utils/const';
 const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
 const { TextArea } = Input;
-import moment from 'moment';
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
@@ -41,17 +40,14 @@ export default () => {
     inputArr: [
       {
         name: 'keyWord',
-        placeholder: '请输入交班员姓名',
-        sort: 2,
+        placeholder: '请输入交班员名称',
+        sort: 1,
         style: { width: '200px' },
-        pressEnter: (enter) => {
-          getTableData();
-        },
       },
     ],
     dateArr: [
       // {
-      //   label: '考核时间',
+      //   label: '时间',
       //   name: 'startDate',
       //   config: {
       //     time: moment().format('YYYY-MM-DD'),
@@ -70,6 +66,7 @@ export default () => {
       //   },
       //   sort: 2,
       // },
+
       {
         label: '交班时间',
         name: 'timeRange',
@@ -77,21 +74,24 @@ export default () => {
           dateType: 'range',
           timeStart: moment().startOf('day'),
           timeEnd: moment().endOf('day'),
-          showTime: false,
+          showTime: true,
           onChange: (e) => {
-            topFrom.setFieldsValue({ timeRange: e });
+            topRightFrom.setFieldsValue({ timeRange: e });
+          },
+          onChange: (e) => {
+            topRightFrom.setFieldsValue({ timeRange: e });
+            yRightTable.table.pagination.current = 1;
+            getBloodMasterData();
           },
         },
         style: { width: '220px' },
-        sort: 1,
+        sort: 2,
       },
     ],
     btnArr: [
       {
         name: '查询',
-        callback: () => {
-          getTableData();
-        },
+        callback: () => {},
         sort: 2,
         style: { marginRight: '15px' },
       },
@@ -104,31 +104,64 @@ export default () => {
           addOrEdit('add', true);
         },
       },
+      // {
+      //   name: '编辑',
+      //   style: { position: 'absolute', left: '97px' },
+      //   callback: () => {
+      //     addOrEdit('edit', true);
+      //   },
+      // },
+      // {
+      //   name: '删除',
+      //   type: 'danger',
+      //   style: { position: 'absolute', left: '179px' },
+      //   callback: () => {
+      //     del();
+      //   },
+      // },
+      // {
+      //   name: '刷新',
+      //   style: { position: 'absolute', left: '257px' },
+      //   callback: () => {
+      //     refreshData();
+      //   },
+      // },
     ],
     layout: 'inline',
     form: topFrom,
     cls: 'opera',
-    initialValues: {
-      timeRange: [
-        moment().startOf('day').format('YYYY-MM-DD'),
-        // moment().subtract(90, 'days').format('YYYY-MM-DD'),
-        moment().endOf('day').format('YYYY-MM-DD'),
-      ],
+    // styles: { marginTop: '10px' },
+    getInfoData: (value) => {
+      refreshData();
     },
   };
-
+  // {key:'1',value:'2'}
+  // [{key:'1',value:'2'},{key:'1',value:'2'}]
+  // [{key:'1',value:'2'},{key:'1',value:'2'}]
+  // ['1001','1003']
+  // let res = {
+  //   '1001':[
+  //     {key:'001',name:'男',value:'001',label:'男'},
+  //     {key:'002',name:'女',value:'001',label:'男'}
+  //   ],
+  //   '1002':[{key:'002',name:'男',value:'001',label:'男'}]
+  // }
   // modal配置项
   const [modalForm] = Form.useForm();
 
   // 基础字典数据
   const [basic, setBasic] = useState({});
 
+  // 动态更改form校验状态
+  const [isCross, setIsCross] = useState(false);
+  const [isMelt, setIsMelt] = useState(false);
+
   // table模块
   const [yTable, setYTable] = useState({
     table: {
       bordered: true,
       loading: false,
-      dataSource: [],
+      dataSource: [{ id: 1 }],
       columns: [
         {
           title: '提交时间',
@@ -191,49 +224,58 @@ export default () => {
           dataIndex: 'shiftHandoverStartTime',
           ellipsis: true,
           align: 'left',
-          width: 150,
+          width: 80,
         },
         {
           title: '交班结束时间',
           dataIndex: 'shiftHandoverEndTime',
           ellipsis: true,
           align: 'left',
-          width: 150,
+          width: 80,
         },
         {
           title: '操作',
           key: 'opera',
           align: 'center',
           width: 130,
-          render: (text, examine) => (
+          render: (text, record) => (
             <div className={styles.opera}>
               <a
                 onClick={() => {
-                  addOrEdit('edit', true, examine);
+                  addOrEdit('edit', true, record);
                 }}
               >
-                编辑
+                查看
               </a>
 
               <Divider type="vertical" />
               <a
                 onClick={() => {
-                  del(examine);
+                  addOrEdit('edit', true, record);
+                }}
+              >
+                编辑
+              </a>
+
+              {/* <Divider type="vertical" />
+              <a
+                onClick={() => {
+                  del(record);
                 }}
               >
                 删除
-              </a>
+              </a> */}
             </div>
           ),
         },
       ],
       key: Math.random(),
-      scroll: { x: 940, y: '100%' },
+      scroll: { x: 1360, y: '100%' },
       dataRow: {},
       rowKey: 'id',
       pagination: {
         current: 1,
-        pageSize: pageSize,
+        pageSize: 10,
         showSizeChanger: true,
         showQuickJumper: true,
         showTotal: (total) => {
@@ -251,34 +293,38 @@ export default () => {
         yTable.table.dataRow = count;
         setYTable({ ...yTable });
       },
-      // selectInfo: (info) => {
-      //   yTable.table.dataRow = info;
-      //   setYTable({ ...yTable });
-      //   addOrEdit('edit', true);
-      // },
+      selectInfo: (info) => {
+        yTable.table.dataRow = info;
+        setYTable({ ...yTable });
+        addOrEdit('edit', true);
+      },
     },
   });
 
   // 判断新增 / 编辑
   const [modeType, setModeType] = useState({
     type: null,
-    visible: false,
-    loading: false,
+    show: false,
   });
 
   // 新增 / 编辑
-  const addOrEdit = (type, visible, shiftchange) => {
-    if (type === 'edit' && !Object.getOwnPropertyNames(shiftchange).length) {
+  const addOrEdit = (type, visible, record) => {
+    if (type === 'edit' && !Object.getOwnPropertyNames(record).length) {
       return message.error('请选中行');
     }
     modalForm.resetFields();
     if (type === 'edit') {
       modalForm.setFieldsValue({
-        ...shiftchange,
-        shiftHandoverStartTime:
-          shiftchange?.shiftHandoverStartTime && moment(shiftchange?.shiftHandoverStartTime),
-        shiftHandoverEndTime:
-          shiftchange?.shiftHandoverEndTime && moment(shiftchange?.shiftHandoverEndTime),
+        ...record,
+        isCross: !!record.isCross ? true : false,
+        isMelt: !!record.isMelt ? true : false,
+      });
+    } else {
+      // 选择框默认值
+      modalForm.setFieldsValue({
+        typeName: getDefaultOption(basic['1041'])?.name,
+        typeCode: getDefaultOption(basic['1041'])?.key,
+        unit: getDefaultOption(basic['1043'])?.key,
       });
     }
     changeModal(type, visible);
@@ -286,12 +332,12 @@ export default () => {
   // 修改弹窗配置
   const changeModal = (type, visible) => {
     modeType.type = type;
-    modeType.visible = visible;
+    modeType.show = visible;
     setModeType({ ...modeType });
   };
   // 删除
-  const del = (shiftchange) => {
-    if (!!Object.getOwnPropertyNames(shiftchange).length) {
+  const del = (record) => {
+    if (!!Object.getOwnPropertyNames(record).length) {
       Modal.confirm({
         title: '是否要删除该条数据',
         icon: <DeleteOutlined />,
@@ -300,102 +346,113 @@ export default () => {
         cancelText: '取消',
         style: { padding: '30px' },
         onOk() {
-          shiftchangeDel({ id: shiftchange.id })
-            .then((res) => {
-              message.success(res.msg);
-              yTable.table.dataRow = {};
-              getTableData();
-            })
-            .catch((err) => {
-              console.log('err-shiftchangeDel: ', err);
-            });
+          // delBloodTableData({ id: record.id }).then((response) => {
+          //   message.success('删除成功');
+          //   yTable.table.dataRow = {};
+          //   yTable.table.loading = true;
+          //   setYTable({ ...yTable });
+          //   getTableData();
+          // });
         },
       });
     } else {
-      message.error('请选中行');
+      message.error('请选中行数');
     }
   };
+  // 重置密码
+  const resetPassWord = (record) => {
+    if (!!Object.getOwnPropertyNames(record).length) {
+      Modal.confirm({
+        title: '您确定要重置密码为000000吗？',
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+        style: { padding: '30px' },
+        onOk() {
+          // delBloodTableData({ id: record.id }).then((response) => {
+          //   message.success('删除成功');
+          //   yTable.table.dataRow = {};
+          //   yTable.table.loading = true;
+          //   setYTable({ ...yTable });
+          //   getTableData();
+          // });
+        },
+      });
+    } else {
+      message.error('请选中行数');
+    }
+  };
+
+  // 刷新
+  const refreshData = () => {
+    yTable.table.loading = true;
+    setYTable({ ...yTable });
+    getTableData();
+  };
+
   // 获取列表Table数据
   const getTableData = () => {
-    const { keyWord, timeRange } = topFrom.getFieldsValue();
-    const startTime = timeRange && timeRange[0] ? `${timeRange[0]} 00:00:00` : '';
-    const endTime = timeRange && timeRange[1] ? `${timeRange[1]} 23:59:59` : '';
-    const params = {
-      handoverOfficer: keyWord,
-      startTime,
-      endTime,
-      pageNum: yTable.table.pagination.current,
-      pageSize: yTable.table.pagination.pageSize,
-    };
-    yTable.table.loading = true;
-    yTable.table.dataSource = [];
-    setYTable({ ...yTable });
-    shiftchangeSelect(params)
-      .then((res) => {
-        yTable.table.dataSource = res?.data?.list || [];
-        yTable.table.loading = false;
-        yTable.table.pagination.current = res?.data?.pageNum;
-        setYTable({ ...yTable });
-      })
-      .catch((err) => {
-        yTable.table.loading = false;
-        setYTable({ ...yTable });
-        console.log('shiftchangeSelect---err', err);
-      });
+    // getBloodTableData({ keyWord: topFrom.getFieldsValue().keyWord })
+    //   .then((response) => {
+    //     response.data?.map((items) => (items.key = items.id));
+    //     yTable.table.key = Math.random();
+    //     yTable.table.loading = false;
+    //     yTable.table.dataRow = {};
+    //     yTable.table.dataSource = response.data;
+    //     setYTable({ ...yTable });
+    //   })
+    //   .catch(() => {
+    //     yTable.table.loading = false;
+    //     yTable.table.dataSource = [];
+    //     setYTable({ ...yTable });
+    //   });
   };
 
   // 新增 / 修改 提交时触发
-  const saveModalInfo = async () => {
-    const formData = await modalForm.validateFields();
-    const { shiftHandoverStartTime } = formData;
+  const saveModalInfo = () => {
     let query = {
       ...modalForm.getFieldsValue(),
-      shiftHandoverStartTime:
-        shiftHandoverStartTime && moment(shiftHandoverStartTime).format('YYYY-MM-DD HH:mm:ss'),
+      typeCode: findValByKey(basic['1041'], 'name', modalForm.getFieldsValue().typeName, 'key'),
     };
-    modeType.loading = true;
-    setModeType({ ...modeType });
+    console.log('query: ', query);
+    yTable.table.loading = true;
+    setYTable({ ...yTable });
     if (modeType.type === 'add') {
-      shiftchangeAdd(query)
-        .then((response) => {
-          message.success(response.msg);
-          modeType.visible = false;
-          modeType.loading = false;
-          setModeType({ ...modeType });
-          getTableData();
-        })
-        .catch((err) => {
-          console.log('err-shiftchangeAdd: ', err);
-          modeType.loading = false;
-          setModeType({ ...modeType });
-        });
+      // insertBloodType(query).then((response) => {
+      //   message.success('新增成功');
+      //   addOrEdit('', false);
+      //   getTableData();
+      // });
     } else {
-      shiftchangeUpdate(query)
-        .then((response) => {
-          message.success(response.msg);
-          modeType.visible = false;
-          modeType.loading = false;
-          setModeType({ ...modeType });
-          getTableData();
-        })
-        .catch((err) => {
-          console.log('err-shiftchangeUpdate: ', err);
-          modeType.loading = false;
-          setModeType({ ...modeType });
-        });
+      // updateBloodType({ ...query, id: yTable.table.dataRow.id }).then((response) => {
+      //   message.success('编辑成功');
+      //   addOrEdit('', false);
+      //   getTableData();
+      // });
     }
   };
+
   // 获取字典数据
   const getDictionaryData = () => {
-    dictTypeSelectPullDown(['0005']).then((response) => {
-      setBasic(response.data);
-    });
+    // getBasicData(['1043', '1042', '1041']).then((response) => {
+    //   setBasic(response.data);
+    //   yTable.table.basic = response.data;
+    //   setYTable({ ...yTable });
+    // });
   };
+
+  useEffect(() => {
+    modalForm.validateFields(['crossMethod']);
+  }, [isCross]);
+
+  useEffect(() => {
+    modalForm.validateFields(['meltingTime']);
+  }, [isMelt]);
 
   // 初始化
   useEffect(() => {
-    getDictionaryData();
-    getTableData();
+    // getDictionaryData();
+    // getTableData();
   }, []);
   return (
     <div>
@@ -410,8 +467,7 @@ export default () => {
         maskClosable={false}
         title={modeType.type === 'add' ? '新增' : '编辑'}
         centered
-        visible={modeType.visible}
-        confirmLoading={modeType.loading}
+        visible={modeType.show}
         onOk={() => {
           modalForm.submit();
         }}
@@ -420,11 +476,10 @@ export default () => {
         <Form
           name="basic"
           form={modalForm}
-          labelCol={{ flex: '140px' }}
+          labelCol={{ flex: '150px' }}
           onFinish={saveModalInfo}
-          initialValues={{ shiftHandoverStartTime: moment() }}
+          initialValues={{ isCross: false, isMelt: false }}
         >
-          <Form.Item name="id" hidden></Form.Item>
           <Row>
             <Col span={12}>
               <Form.Item label="交班员" name="handoverOfficer" rules={[{ required: true }]}>
@@ -438,20 +493,12 @@ export default () => {
             </Col>
             <Col span={12}>
               <Form.Item label="交班开始时间" name="shiftHandoverStartTime">
-                <DatePicker
-                  format="YYYY-MM-DD HH:mm:ss"
-                  showTime={true}
-                  style={{ width: '100%' }}
-                />
+                <DatePicker format="YYYY-MM-DD" showTime={true} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item label="交班结束时间" name="shiftHandoverEndTime">
-                <DatePicker
-                  format="YYYY-MM-DD HH:mm:ss"
-                  showTime={true}
-                  style={{ width: '100%' }}
-                />
+                <DatePicker format="YYYY-MM-DD" showTime={true} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
 
