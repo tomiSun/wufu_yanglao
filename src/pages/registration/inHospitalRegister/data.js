@@ -1,22 +1,4 @@
 import { Button, Card, Col, Form, List, Row, Select, Tag, Table, Radio, Input, DatePicker, Modal, InputNumber } from 'antd';
-const dataSource = [
-    {
-        key: '1',
-        name: '胡彦斌',
-        sex: "男",//字典
-        age: 32,
-        careLevel: "一级",//字典
-        diagnosis: '高血压',//字典
-        allergy: "无",//字典？
-        pastHistory: "糖尿病",
-        address: '西湖区湖底公园1号',
-        idCard: "230402XXXX0726031X",
-        contacts: "周杰",
-        relationship: "儿子",
-        contactsPhone: "13745880987",
-        inTime: "2021-7-28"
-    }
-];
 const columns = (edit) => {
     return [
         {
@@ -36,18 +18,18 @@ const columns = (edit) => {
         },
         {
             title: '级别护理',
-            dataIndex: 'careLevel',
-            key: 'careLevel',
+            dataIndex: 'nursingLevel',
+            key: 'nursingLevel',
         },
         {
             title: '入院诊断',
-            dataIndex: 'diagnosis',
-            key: 'diagnosis',
+            dataIndex: 'hospitalDiagnosis',
+            key: 'hospitalDiagnosis',
         },
         {
             title: '入院时间',
-            dataIndex: 'inTime',
-            key: 'inTime',
+            dataIndex: 'admissionTime',
+            key: 'admissionTime',
         },
         {
             title: '过敏史',
@@ -56,13 +38,13 @@ const columns = (edit) => {
         },
         {
             title: '既往史',
-            dataIndex: 'pastHistory',
-            key: 'pastHistory',
+            dataIndex: 'previousHistory',
+            key: 'previousHistory',
         },
         {
             title: '家庭住址',
-            dataIndex: 'address',
-            key: 'address',
+            dataIndex: 'contactAddress',
+            key: 'contactAddress',
         },
         {
             title: '身份证号',
@@ -71,23 +53,23 @@ const columns = (edit) => {
         },
         {
             title: '联系人姓名',
-            dataIndex: 'contacts',
-            key: 'contacts',
+            dataIndex: 'relationName',
+            key: 'relationName',
         },
         {
             title: '关系',
-            dataIndex: 'relationship',
-            key: 'relationship',
+            dataIndex: 'relation',
+            key: 'relation',
         },
         {
             title: '联系电话',
-            dataIndex: 'contactsPhone',
-            key: 'contactsPhone',
+            dataIndex: 'contactNumber',
+            key: 'contactNumber',
         },
         {
             title: '操作',
-            render: edit
+            render: edit,
         }
     ];
 }
-export { dataSource, columns }
+export { columns }

@@ -9,7 +9,7 @@ const dataSource = [
         contacts: "周杰",
         status: "1",
         informer: "周波波",
-        time:"2021-2-25"
+        time: "2021-2-25"
     },
     {
         key: '2',
@@ -20,7 +20,7 @@ const dataSource = [
         contacts: "--",
         status: "0",
         informer: "--",
-        time:"--"
+        time: "--"
     }
 ];
 const columns = (edit) => {
@@ -36,7 +36,7 @@ const columns = (edit) => {
             key: 'name',
         },
         {
-            title: '告知人姓名',
+            title: '医院负责人姓名',
             dataIndex: 'informer',
             key: 'informer',
         },
@@ -51,7 +51,7 @@ const columns = (edit) => {
             key: 'time',
         },
         {
-            title: '风险告知书签订状态',
+            title: '合同签订状态',
             dataIndex: 'status',
             key: 'status',
             render: (value) => {

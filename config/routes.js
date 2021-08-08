@@ -98,6 +98,12 @@ export default [
                 component: './nursingManagement/riskNotification',
               },
               {
+                name: '入院合同',//风险告知书
+                icon: 'smile',
+                path: '/nursingManagement/agreement/index',
+                component: './nursingManagement/agreement',
+              },
+              {
                 name: '护理批量录入',//护理记录
                 icon: 'smile',
                 path: '/nursingManagement/nursingAddRecord/index',
@@ -159,7 +165,7 @@ export default [
                 component: './registration/inHospitalRegister/index',
               },
               {
-                name: '出院办理',
+                name: '出院记录',
                 icon: 'smile',
                 path: '/registration/outHospitalRegister/index',
                 component: './registration/outHospitalRegister/index',

@@ -1,64 +1,57 @@
 import { Button, Card, Col, Form, List, Row, Select, Tag, Table, Radio, Input, DatePicker, Modal, InputNumber } from 'antd';
-const dataSource = [
-    {
-        key: '1',
-        name: '胡彦斌',
-        archivesId: "L000001",
-        careLevel: "一级",//字典
-        isFood:"是",
-        bloodGlucose:"100",
-        time:"2021-2-25",
-        tiemType:"午饭前",
-        takeTime:"2021-2-14 12:00:00"
-    },
-    {
-        key: '2',
-        name: '李佳敏',
-        archivesId: "L000002",
-        careLevel: "一级",//字典
-        isFood:"否",
-        bloodGlucose:"48",
-        time:"2021-2-26",
-        tiemType:"午饭前",
-        takeTime:"2021-2-14 16:20:10"
-    }
-];
-const columns = (edit) => {
+
+const columns = (edit, samplingStatusMap) => {
     return [
         {
-            title: '住院编号',
-            dataIndex: 'archivesId',
-            key: 'archivesId',
+            title: '住院号',
+            dataIndex: 'businessNo',
+            key: 'businessNo',
+        },
+        {
+            title: '床位名称',
+            dataIndex: 'bedName',
+            key: 'bedName',
         },
         {
             title: '姓名',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: '级别护理',
-            dataIndex: 'careLevel',
-            key: 'careLevel',
-        },
-        {
-            title: '是否空腹',
-            dataIndex: 'isFood',
-            key: 'isFood',
+            dataIndex: 'patientName',
+            key: 'patientName',
         },
         {
             title: '血糖值(单位：mmol)',
-            dataIndex: 'bloodGlucose',
-            key: 'bloodGlucose',
+            dataIndex: 'bloodGlucoseValue',
+            key: 'bloodGlucoseValue',
         },
         {
-            title: '采样时间段',
-            dataIndex: 'tiemType',
-            key: 'tiemType',
+            title: '采样日期',
+            dataIndex: 'bloodSugarRecordDate',
+            key: 'bloodSugarRecordDate',
         },
         {
             title: '采样时间',
-            dataIndex: 'takeTime',
-            key: 'takeTime',
+            dataIndex: 'samplingTime',
+            key: 'samplingTime',
+        },
+        {
+            title: '采样状态',
+            dataIndex: 'samplingStatus',
+            key: 'samplingStatus',
+            render: (text, record) => {
+                let res = samplingStatusMap.find((item => {
+                    return item['dictCode'] == text
+                }))
+                return !!res?.['dictName'] ? res['dictName'] : "-"
+            }
+        },
+        {
+            title: '采样签名',
+            dataIndex: 'samplingSignature',
+            key: 'samplingSignature',
+        },
+        {
+            title: '医院诊断',
+            dataIndex: 'hospitalDiagnosis',
+            key: 'hospitalDiagnosis',
         },
         {
             title: '操作',
@@ -66,4 +59,4 @@ const columns = (edit) => {
         }
     ];
 }
-export { dataSource, columns }
+export { columns }
