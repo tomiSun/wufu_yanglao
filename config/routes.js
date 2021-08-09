@@ -282,6 +282,19 @@ export default [
             ],
           },
           {
+            name: '首页',
+            icon: 'highlight',
+            path: '/home',
+            routes: [
+              {
+                name: '首页',
+                icon: 'smile',
+                path: 'home/index',
+                component: './home/index',
+              },
+            ],
+          },
+          {
             component: '404',
           },
         ],
