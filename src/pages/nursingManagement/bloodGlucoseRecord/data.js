@@ -1,4 +1,3 @@
-import { Button, Card, Col, Form, List, Row, Select, Tag, Table, Radio, Input, DatePicker, Modal, InputNumber } from 'antd';
 
 const columns = (edit, samplingStatusMap) => {
     return [

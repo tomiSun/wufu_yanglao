@@ -8,10 +8,11 @@ import {
     Modal, InputNumber, Tabs, message
 } from 'antd';
 import { columns } from './data';
-import PhysicalExamination from '../PhysicalExamination';
-import ProbationEvaluation from '../ProbationEvaluation';
-import Assessment from '../Assessment';
-
+import PhysicalExamination from '../compoment/PhysicalExamination';
+import ProbationEvaluation from '../compoment/ProbationEvaluation';
+import Assessment from '../compoment/Assessment';
+import AgreementForm from '../compoment/AgreementForm';
+import RiskNotificationForm from '../compoment/RiskNotificationForm';
 import {
     addHospitalRegist,
     queryHospitalRegist,
@@ -35,13 +36,15 @@ const validateMessages = {
 const InHospitalRegister = (props) => {
     const [registForm] = Form.useForm();
     const [SForm] = Form.useForm();
-    const [dataSource, setDataSource] = useState([]);
+    const [dataSource, setDataSource] = useState([{1:1}]);
     const [modalVisible, setModalVisible] = useState(false);//基本信息
     const [dictionaryMap, setDictionaryMap] = useState({ "0008": [], "0009": [], "0010": [], "0011": [] })
     const [selectData, setSelectData] = useState([])
     const [physicalExaminationVisible, setPhysicalExaminationVisible] = useState(false);//体检的弹窗
     const [probationEvaluationVisible, setProbationEvaluationVisible] = useState(false);//试用期评估
     const [assessmentVisible, setAssessmentVisible] = useState(false);//入院评估
+    const [agreementFormVisible, setAgreementFormVisible] = useState(false);//合同
+    const [riskNotificationFormVisible, setRiskNotificationFormVisible] = useState(false);//分险告知书
     const [selectRowData, setSelectRowData] = useState([]);//选择的行
     const [mode, setMode] = useState("add")
     useEffect(() => {
@@ -142,9 +145,9 @@ const InHospitalRegister = (props) => {
                 <Button style={{ marginRight: 10 }}
                     size={'small'} type="link" onClick={() => { setProbationEvaluationVisible(true) }}>试用期评估</Button>
                 <Button style={{ marginRight: 10 }}
-                    size={'small'} type="link">合同</Button>
+                    size={'small'} type="link" onClick={() => { setAgreementFormVisible(true) }}>合同</Button>
                 <Button style={{ marginRight: 10 }}
-                    size={'small'} type="link">风险告知书</Button>
+                    size={'small'} type="link" onClick={() => { setRiskNotificationFormVisible(true) }}>风险告知书</Button>
                 <Button style={{ marginRight: 10 }}
                     size={'small'} type="link"
                     onClick={() => { handleOutHospitalRegist(row) }}
@@ -287,6 +290,7 @@ const InHospitalRegister = (props) => {
                 {renderSearch()}
                 {renderForm()}
                 {renderMoadl()}
+                {/* 体检*/}
                 {physicalExaminationVisible && <PhysicalExamination
                     visible={physicalExaminationVisible}
                     onPhysicalExaminationVisible={(flag) => {
@@ -294,6 +298,7 @@ const InHospitalRegister = (props) => {
                     }}
                     selectRowData={selectRowData}
                 />}
+                {/* 试用期评估*/}
                 {probationEvaluationVisible && <ProbationEvaluation
                     visible={probationEvaluationVisible}
                     onProbationEvaluationVisible={(flag) => {
@@ -301,10 +306,27 @@ const InHospitalRegister = (props) => {
                     }}
                     selectRowData={selectRowData}
                 />}
+                {/* 试用期评估*/}
                 {assessmentVisible && <Assessment
                     visible={assessmentVisible}
                     onAssessmentVisible={(flag) => {
                         setAssessmentVisible(flag)
+                    }}
+                    selectRowData={selectRowData}
+                />}
+                {/* 合同 */}
+                {agreementFormVisible && <AgreementForm
+                    visible={agreementFormVisible}
+                    onAgreementFormVisibleVisible={(flag) => {
+                        setAgreementFormVisible(flag)
+                    }}
+                    selectRowData={selectRowData}
+                />}
+                {/* 风险告知书 */}
+                {riskNotificationFormVisible && <RiskNotificationForm
+                    visible={riskNotificationFormVisible}
+                    onRiskNotificationFormVisible={(flag) => {
+                        setRiskNotificationFormVisible(flag)
                     }}
                     selectRowData={selectRowData}
                 />}

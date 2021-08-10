@@ -1,19 +1,14 @@
+/**
+ * 血糖记录
+ *  */
 import React, { useEffect, useState } from 'react';
 import {
   Button,
-  Card,
-  Col,
   Form,
-  List,
-  Row,
   Select,
-  Tag,
   Table,
-  Radio,
   Input,
   DatePicker,
-  Modal,
-  InputNumber,
   Tabs,
   message,
 } from 'antd';
@@ -23,30 +18,15 @@ import moment from 'moment';
 import {
   bloodSugarDel,
   bloodSugarQuery,
-  bloodSugarUpdate,
-  bloodSugarInsert
 } from '@/services/nursingManagement'
 import { dictDateSelect } from '@/services/basicSetting/dictionary'
 import './index.less';
-const { TabPane } = Tabs;
-const layout = (x, y, labelAlign, layout) => {
-  return {
-    labelCol: { span: x },
-    wrapperCol: { span: y },
-    labelAlign,
-    layout,
-  };
-};
-const layout2 = {
-  labelCol: { span: 11 },
-  wrapperCol: { span: 13 },
-};
+import { ULayout } from '@/utils/common'
 const validateMessages = {
   required: '${label} 为必填项',
 };
 
 const RloodGlucoseRecord = (props) => {
-  const [modalVisible, setModalVisible] = useState(false); //基本信息
   const [dataSource, setDataSource] = useState([]);//数据
   const [samplingStatusMap, setSamplingStatusMap] = useState([]);//血糖采样状态的字典
   const [SForm] = Form.useForm();
@@ -83,7 +63,7 @@ const RloodGlucoseRecord = (props) => {
   // 搜索部分
   const renderSearch = () => {
     return (
-      <Form onFinish={() => { }} {...layout(8, 16, 'left', 'inline')} form={SForm}>
+      <Form onFinish={() => { }} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
         <Form.Item label="姓名" name={'patientName'}>
           <Input size={'small'} />
         </Form.Item>
@@ -96,7 +76,7 @@ const RloodGlucoseRecord = (props) => {
         <Form.Item label="结束日期" name={'endTime'}>
           <DatePicker size={'small'} />
         </Form.Item>
-        <Form.Item label="采样状态" name={'samplingStatus'}  {...layout(12, 16)}>
+        <Form.Item label="采样状态" name={'samplingStatus'}  {...ULayout(12, 16)}>
           <Select defaultValue="0001" size={'small'}>
             {samplingStatusMap.map(item => {
               return <Option value={item['dictCode']}>{item['dictName']}</Option>
@@ -144,7 +124,13 @@ const RloodGlucoseRecord = (props) => {
           size={'small'}
           type="link"
           onClick={() => {
-            setModalVisible(true);
+            history.push({
+              pathname: '/nursingManagement/nursingAddRecord/index',
+              query: {
+                selectKey: "3",
+                type: "edit"
+              }
+            });
           }}
         >
           修改

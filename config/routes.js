@@ -91,18 +91,7 @@ export default [
             icon: 'highlight',
             path: '/nursingManagement',
             routes: [
-              {
-                name: '风险告知书',//风险告知书
-                icon: 'smile',
-                path: '/nursingManagement/riskNotification/index',
-                component: './nursingManagement/riskNotification',
-              },
-              {
-                name: '入院合同',//风险告知书
-                icon: 'smile',
-                path: '/nursingManagement/agreement/index',
-                component: './nursingManagement/agreement',
-              },
+
               {
                 name: '护理批量录入',//护理记录
                 icon: 'smile',
@@ -169,6 +158,18 @@ export default [
                 icon: 'smile',
                 path: '/registration/outHospitalRegister/index',
                 component: './registration/outHospitalRegister/index',
+              },
+              {
+                name: '风险告知书',//风险告知书
+                icon: 'smile',
+                path: '/registration/riskNotification/index',
+                component: './registration/riskNotification',
+              },
+              {
+                name: '入院合同',//风险告知书
+                icon: 'smile',
+                path: '/registration/agreement/index',
+                component: './registration/agreement',
               },
             ],
           },

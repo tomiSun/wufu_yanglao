@@ -91,3 +91,12 @@ export const reducer = (state, payload) => {
   // }
   return { ...state, ...payload, randomKey: Math.random() };
 };
+//设置layout
+export const ULayout = (x, y, labelAlign, layout) => {
+  return {
+    labelCol: { span: x },
+    wrapperCol: { span: y },
+    labelAlign,
+    layout,
+  };
+};

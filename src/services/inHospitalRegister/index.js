@@ -107,3 +107,56 @@ export async function assessmentSave(params) {
   });
 };
 
+//风险告知书
+export async function riskNotificationQuery(params) {
+  return request(`/risk-notification/query?businessNo=${params.businessNo}`, {
+    method: 'GET',
+    data: params
+  });
+};
+export async function riskNotificationQueryList(params) {
+  return request(`/risk-notification/query/page`, {
+    method: 'POST',
+    data: params
+  });
+};
+export async function riskNotificationUpdate(params) {
+  return request('/risk-notification/update', {
+    method: 'POST',
+    data: params
+  });
+};
+
+export async function riskNotificationSave(params) {
+  return request('/risk-notification/insert', {
+    method: 'POST',
+    data: params
+  });
+};
+
+//合同
+export async function contractQuery(params) {
+  return request(`/contract/query?businessNo=${params.businessNo}`, {
+    method: 'GET',
+    data: params
+  });
+};
+export async function contractQueryList(params) {
+  return request(`/contract/query/page`, {
+    method: 'POST',
+    data: params
+  });
+};
+export async function contractUpdate(params) {
+  return request('/contract/update', {
+    method: 'POST',
+    data: params
+  });
+};
+
+export async function contractSave(params) {
+  return request('/contract/insert', {
+    method: 'POST',
+    data: params
+  });
+};
