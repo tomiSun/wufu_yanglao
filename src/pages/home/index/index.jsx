@@ -17,24 +17,51 @@ import {
   Rate,
   Card,
   Skeleton,
+  Collapse,
 } from 'antd';
+const { Panel } = Collapse;
 
 export default () => {
-  return (
-    <div className="home">
-      <Row gutter={16}>
-        <Col span={8}>
-          <Card className={styles.room} title="room001">
-            Card content
+  const roomDom = () => {
+    return (
+      <Row gutter={15} justify="start">
+        <Col xs={24} sm={24} md={12} lg={12} xl={8}>
+          <Card className={styles.room} title="001房（双人房）">
+            <Row>
+              <Col style={{ flex: 1 }}>0001床</Col>
+              <Col style={{ flex: 1 }}>0002床</Col>
+            </Row>
           </Card>
         </Col>
-        <Col span={8}>
-          <Card title="Card title">Card content</Card>
+        <Col xs={24} sm={24} md={12} lg={12} xl={8}>
+          <Card className={styles.room} title="001房（双人房）">
+            <Row>
+              <Col style={{ flex: 1 }}>0001床</Col>
+              <Col style={{ flex: 1 }}>0002床</Col>
+            </Row>
+          </Card>
         </Col>
-        <Col span={8}>
-          <Card title="Card title">Card content</Card>
+        <Col xs={24} sm={24} md={12} lg={12} xl={8}>
+          <Card className={styles.room} title="001房（双人房）">
+            <Row>
+              <Col style={{ flex: 1 }}>0001床</Col>
+              <Col style={{ flex: 1 }}>0002床</Col>
+            </Row>
+          </Card>
         </Col>
       </Row>
+    );
+  };
+  return (
+    <div className={styles.home}>
+      <Collapse>
+        <Panel header="1楼" key="1">
+          {roomDom()}
+        </Panel>
+        <Panel header="1楼" key="1">
+          {roomDom()}
+        </Panel>
+      </Collapse>
     </div>
   );
 };

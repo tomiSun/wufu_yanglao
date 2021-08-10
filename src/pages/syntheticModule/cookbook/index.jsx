@@ -1,45 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.less';
-import { SearchForm, YTable, Seltopt } from 'yunyi-component';
-import {
-  Form,
-  Modal,
-  Input,
-  Row,
-  Col,
-  Radio,
-  InputNumber,
-  message,
-  Button,
-  Divider,
-  DatePicker,
-  Checkbox,
-  Select,
-  Tag,
-} from 'antd';
-const { RangePicker } = DatePicker;
-import { DeleteOutlined } from '@ant-design/icons';
+import { YTable } from 'yunyi-component';
+import { message, Button, DatePicker, Select, Tag } from 'antd';
 import { cookbookUpdate, cookbookSelect } from '@/services/syntheticModule/cookbook';
-import { findValByKey, getDefaultOption } from '@/utils/common';
-import { makeWb, pinyin } from 'yunyi-convert';
-import { config } from '@/utils/const';
-const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
-const { TextArea } = Input;
 import moment from 'moment';
+import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
+
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
   const tableHeight = useTableHeight(tableRef);
-
-  // 基础字典数据
-  const [basic, setBasic] = useState({});
+  const [time, setTime] = useState(moment());
+  const [week, setWeek] = useState([]);
   // table模块
   const [yTable, setYTable] = useState({
     table: {
       bordered: true,
       loading: false,
       dataSource: [],
+      basic: {},
       columns: [
         {
           title: '星期',
@@ -66,14 +46,13 @@ export default () => {
               render: (text, record, index) => {
                 return (
                   <Select
-                    // disabled
                     value={record.breakfastStapleFood}
                     mode="multiple"
                     showArrow={false}
                     tagRender={tagRender}
                     defaultValue={['2']}
                     style={{ width: '100%' }}
-                    options={options}
+                    options={yTable?.table?.basic['0012'] || []}
                     onChange={(e, option) => {
                       record.breakfastStapleFood = e;
                       setYTable({ ...yTable });
@@ -96,9 +75,9 @@ export default () => {
                     tagRender={tagRender}
                     defaultValue={['4']}
                     style={{ width: '100%' }}
-                    options={options}
+                    options={yTable?.table?.basic['0013'] || []}
                     onChange={(e, option) => {
-                      record.breakfastStapleFood = e;
+                      record.breakfastMenu = e;
                       setYTable({ ...yTable });
                     }}
                   />
@@ -128,9 +107,9 @@ export default () => {
                     tagRender={tagRender}
                     defaultValue={['1']}
                     style={{ width: '100%' }}
-                    options={options}
+                    options={yTable?.table?.basic['0012'] || []}
                     onChange={(e, option) => {
-                      record.breakfastStapleFood = e;
+                      record.lunchStapleFood = e;
                       setYTable({ ...yTable });
                     }}
                   />
@@ -151,9 +130,9 @@ export default () => {
                     tagRender={tagRender}
                     defaultValue={['3']}
                     style={{ width: '100%' }}
-                    options={options}
+                    options={yTable?.table?.basic['0013'] || []}
                     onChange={(e, option) => {
-                      record.breakfastStapleFood = e;
+                      record.lunchMenu = e;
                       setYTable({ ...yTable });
                     }}
                   />
@@ -183,9 +162,9 @@ export default () => {
                     tagRender={tagRender}
                     defaultValue={['1']}
                     style={{ width: '100%' }}
-                    options={options}
+                    options={yTable?.table?.basic['0012'] || []}
                     onChange={(e, option) => {
-                      record.breakfastStapleFood = e;
+                      record.dinnerStapleFood = e;
                       setYTable({ ...yTable });
                     }}
                   />
@@ -206,9 +185,9 @@ export default () => {
                     tagRender={tagRender}
                     defaultValue={['3']}
                     style={{ width: '100%' }}
-                    options={options}
+                    options={yTable?.table?.basic['0013'] || []}
                     onChange={(e, option) => {
-                      record.breakfastStapleFood = e;
+                      record.dinnerMeun = e;
                       setYTable({ ...yTable });
                     }}
                   />
@@ -219,45 +198,21 @@ export default () => {
         },
       ],
       key: Math.random(),
-      scroll: { x: 1360, y: '100%' },
+      scroll: { y: '100%' },
       dataRow: {},
       rowKey: 'id',
-      pagination: {
-        current: 1,
-        pageSize: 10,
-        showSizeChanger: true,
-        showQuickJumper: true,
-        showTotal: (total) => {
-          return `共 ${total} 条`;
-        },
-        onChange: (page, pageSize) => {
-          console.log('changePage----', page, pageSize);
-          yTable.table.pagination.current = page;
-          yTable.table.pagination.pageSize = pageSize;
-          // queryTypeDetailsListServices();
-        },
-      },
-      basic: {},
+      pagination: false,
       oClick: (count) => {
         yTable.table.dataRow = count;
-        setYTable({ ...yTable });
-      },
-      selectInfo: (info) => {
-        yTable.table.dataRow = info;
-        setYTable({ ...yTable });
-        addOrEdit('edit', true);
       },
     },
   });
 
   // 获取列表Table数据
   const getTableData = (startTime, endTime) => {
-    // const { keyWord, businessNo, timeRange } = topFrom.getFieldsValue();
-    // startTime = (startTime && `${startTime} 00:00:00`) || '';
-    // endTime = (endTime && `${endTime} 23:59:59`) || '';
     const params = {
-      startTime: new Date(startTime),
-      endTime: new Date(endTime),
+      startTime,
+      endTime,
     };
     yTable.table.loading = true;
     yTable.table.dataSource = [];
@@ -265,29 +220,6 @@ export default () => {
     cookbookSelect(params)
       .then((res) => {
         yTable.table.dataSource = res?.data || [];
-        // [
-        //   { id: Monday, week: `一 (${Monday})` },
-        //   { id: Tuesday, week: `二 (${Tuesday})` },
-        //   { id: Wednesday, week: `三 (${Wednesday})` },
-        //   { id: Thursday, week: `四 (${Thursday})` },
-        //   { id: Friday, week: `五 (${Friday})` },
-        //   { id: Saturday, week: `六 (${Saturday})` },
-        //   // { id: Sunday, week: `日 (${Sunday})` },
-        //   {
-        //     breakfastMenu: ['2'],
-        //     breakfastStapleFood: ['4', '1'],
-        //     createTime: '2021-08-08T09:58:04.304Z',
-        //     creatorId: 0,
-        //     date: '2021-08-08',
-        //     dayOfWeek: '周日',
-        //     dinnerMeun: [],
-        //     dinnerStapleFood: [],
-        //     id: 0,
-        //     lunchMenu: [],
-        //     lunchStapleFood: [],
-        //     week: `日 (${Sunday})`,
-        //   },
-        // ];
         setYTable({ ...yTable });
         yTable.table.loading = false;
         yTable.table.pagination.current = res?.data?.pageNum;
@@ -296,29 +228,31 @@ export default () => {
       .catch((err) => {
         yTable.table.loading = false;
         setYTable({ ...yTable });
-        console.log('leaveManagementSelect---err', err);
+        console.log('cookbookSelect---err', err);
       });
   };
   // 提交
-  const cookbookUpdateService = (startTime, endTime) => {
-    cookbookUpdate(yTable.table.dataSource)
+  const cookbookUpdateService = () => {
+    cookbookUpdate({
+      busMenuBatchUpdateInfos: yTable.table.dataSource,
+      startTime: week[0],
+      endTime: week[1],
+    })
       .then((res) => {
         message.success(res.msg);
-        getTableData(week[0], week[6]);
+        getTableData(week[0], week[1]);
       })
       .catch((err) => {
         console.log('cookbookUpdate---err', err);
       });
   };
-
-  // -------------------------
-  const options = [
-    { value: '1', label: '米饭' },
-    { value: '2', label: '面条' },
-    { value: '3', label: '佛跳墙' },
-    { value: '4', label: '回锅肉' },
-  ];
-
+  // 获取字典数据
+  const getDictionaryData = () => {
+    dictTypeSelectPullDown(['0012', '0013']).then((response) => {
+      yTable.table.basic = response.data;
+      setYTable({ ...yTable });
+    });
+  };
   const tagRender = (props) => {
     const { label, value, closable, onClose } = props;
     const onPreventMouseDown = (event) => {
@@ -337,8 +271,7 @@ export default () => {
       </Tag>
     );
   };
-  const [time, setTime] = useState(moment());
-  const [week, setWeek] = useState([]);
+
   useEffect(() => {
     if (time) {
       const Monday = moment(time).day(1).format('YYYY-MM-DD'); // 周一日期
@@ -348,25 +281,13 @@ export default () => {
       const Friday = moment(time).day(5).format('YYYY-MM-DD'); // 周五日期
       const Saturday = moment(time).day(6).format('YYYY-MM-DD'); // 周六日期
       const Sunday = moment(time).day(7).format('YYYY-MM-DD'); // 周日日期
-      setWeek([Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday]);
-
-      // yTable.table.dataSource = [
-      //   { id: 1, week: Monday },
-      //   { id: 2, week: Tuesday },
-      //   { id: 3, week: Wednesday },
-      //   { id: 4, week: Thursday },
-      //   { id: 5, week: Friday },
-      //   { id: 6, week: Saturday },
-      //   { id: 7, week: Sunday },
-      // ];
-
+      setWeek([Monday, Sunday]);
       getTableData(Monday, Sunday);
     }
   }, [time]);
   // 初始化
   useEffect(() => {
-    // getDictionaryData();
-    // getTableData();
+    getDictionaryData();
   }, []);
   return (
     <div className={styles.bloodComposition}>
