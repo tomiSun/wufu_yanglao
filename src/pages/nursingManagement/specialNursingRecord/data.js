@@ -1,77 +1,59 @@
-import { Button, Card, Col, Form, List, Row, Select, Tag, Table, Radio, Input, DatePicker, Modal, InputNumber } from 'antd';
-const dataSource = [
-    {
-        key: '1',
-       a:"Z0001",
-       b:"张三",
-       c:"2020-9-10",
-       d:"无",
-       e:"100ml",
-       f:"120ml",
-       g:"是",
-       h:"良好",
-       i:"糖尿病",
-       g:"李啵啵",
-       k:"无"
-    },
-    
-];
 const columns = (edit) => {
     return [
         {
             title: '住院编号',
-            dataIndex: 'a',
-            key: 'archivesId',
+            dataIndex: 'businessNo',
+            key: 'businessNo',
+        },
+        {
+            title: '床号',
+            dataIndex: 'bedName',
+            key: 'bedName',
         },
         {
             title: '姓名',
-            dataIndex: 'b',
+            dataIndex: 'patientName',
             key: 'name',
         },
         {
             title: '护理日期',
-            dataIndex: 'c',
-            key: 'careLevel',
+            dataIndex: 'nursingTime',
+            key: 'nursingTime',
         },
         {
             title: '是否有过敏史',
-            dataIndex: 'd',
-            key: 'isFood',
+            dataIndex: 'allergy',
+            key: 'allergy',
         },
         {
             title: '出量',
-            dataIndex: 'e',
+            dataIndex: 'output',
             key: 'bloodGlucose',
         },
         {
             title: '入量',
-            dataIndex: 'f',
-            key: 'tiemType',
+            dataIndex: 'input',
+            key: 'input',
         },
         {
             title: '预防压疮护理',
-            dataIndex: 'g',
-            key: 'takeTime',
-        },
-        {
-            title: '精神状态',
-            dataIndex: 'h',
-            key: 'bloodGlucose',
+            dataIndex: 'isPressureUlcersCare',
+            key: 'isPressureUlcersCare',
         },
         {
             title: '医院诊断',
-            dataIndex: 'i',
-            key: 'tiemType',
+            dataIndex: 'hospitalDiagnosis',
+            key: 'hospitalDiagnosis',
         },
         {
             title: '责任人',
-            dataIndex: 'g',
-            key: 'takeTime',
+            dataIndex: 'personInCharge',
+            key: 'personInCharge',
         },
         {
-            title: '其他',
-            dataIndex: 'k',
-            key: 'takeTime',
+            title: '精神状态',
+            dataIndex: 'mentalState',
+            key: 'mentalState',
         },
         {
             title: '操作',
@@ -79,4 +61,4 @@ const columns = (edit) => {
         }
     ];
 }
-export { dataSource, columns }
+export { columns }

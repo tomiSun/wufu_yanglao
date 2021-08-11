@@ -1,94 +1,55 @@
-import { Button, Card, Col, Form, List, Row, Select, Tag, Table, Radio, Input, DatePicker, Modal, InputNumber } from 'antd';
-const dataSource = [
-    {
-        key: '1',
-        a: 'Z0001',
-        b: "9区",
-        c: "1-1",//字典
-        d: "李翔",
-        e: "男",
-        f: "78",
-        g: "每日两次",
-        h: "2021-7-3",
-        i: '桂林枇杷霜',
-        g: "每日两次",
-        k: "5mg",//字典
-        l: "是",
-        m: "有高血压"
-    },
-    {
-        key: '2',
-        a: 'Z0002',
-        b: "9区",
-        c: "1-2",//字典
-        d: "李敏",
-        e: "女",
-        f: "78",
-        g: "每日两次",
-        h: "2021-7-3",
-        i: '桂林枇杷霜',
-        g: "每日两次",
-        k: "5mg",//字典
-        l: "是",
-        m: "有高血压、低血糖"
-    }
-];
 const columns = (edit) => {
     return [
         {
             title: '住院编号',
-            dataIndex: 'a',
-            key: 'archivesId',
-        },
-        {
-            title: '病区',
-            dataIndex: 'b',
-            key: 'name',
+            dataIndex: 'businessNo',
+            key: 'businessNo',
         },
         {
             title: '床号',
-            dataIndex: 'c',
-            key: 'careLevel',
+            dataIndex: 'bedCode',
+            key: 'bedCode',
         },
         {
             title: '姓名',
-            dataIndex: 'd',
-            key: 'isFood',
+            dataIndex: ' name',
+            key: 'name',
         },
-        {
-            title: '性别',
-            dataIndex: 'e',
-            key: 'bloodGlucose',
-        },
+
         {
             title: '年龄',
-            dataIndex: 'f',
-            key: 'tiemType',
+            dataIndex: 'sex',
+            key: 'sex',
         },
         {
             title: '诊断',
-            dataIndex: 'g',
-            key: 'takeTime',
+            dataIndex: 'hospitalDiagnosis',
+            key: 'hospitalDiagnosis',
         },
         {
-            title: '登记日期',
-            dataIndex: 'h',
-            key: 'archivesId',
+            title: '带药日期',
+            dataIndex: 'takeMedicineDate',
+            key: 'takeMedicineDate',
         },
         {
             title: '药品名称',
-            dataIndex: 'i',
-            key: 'name',
+            dataIndex: 'drugName',
+            key: 'drugName',
         },
         {
             title: '用法',
-            dataIndex: 'g',
-            key: 'careLevel',
+            dataIndex: 'usage',
+            key: 'usage',
         },
         {
             title: '用量',
-            dataIndex: 'k',
-            key: 'isFood',
+            dataIndex: 'dosage',
+            key: 'dosage',
+        },
+        {
+            title: '带药量',
+            dataIndex: 'measure',
+            key: 'measure',
         },
         {
             title: '自带药',
@@ -96,9 +57,19 @@ const columns = (edit) => {
             key: 'bloodGlucose',
         },
         {
+            title: '验收人',
+            dataIndex: 'accepterSign',
+            key: 'accepterSign',
+        },
+        {
+            title: '过期时间',
+            dataIndex: 'expiryDate',
+            key: 'expiryDate',
+        },
+        {
             title: '备注',
-            dataIndex: 'm',
-            key: 'tiemType',
+            dataIndex: 'remark',
+            key: 'remark',
         },
         {
             title: '操作',
@@ -106,4 +77,4 @@ const columns = (edit) => {
         }
     ];
 }
-export { dataSource, columns }
+export { columns }

@@ -27,17 +27,19 @@ const validateMessages = {
 };
 
 const RloodGlucoseRecord = (props) => {
-  const [dataSource, setDataSource] = useState([]);//数据
+  //列表数据
+  const [dataSource, setDataSource] = useState([{ 1: 1 }]);//数据
+  //字典
   const [samplingStatusMap, setSamplingStatusMap] = useState([]);//血糖采样状态的字典
+  //搜索的表单
   const [SForm] = Form.useForm();
+  //初始化操作
   useEffect(() => {
-    //初始化列表
     let param = { pageNum: 1, pageSize: 1000 }
     getBloodSugarInfo(param)
     //获取字典
     getDictDataSelect({ pageNum: 1, pageSize: 20, typeCode: "0006" })
   }, []);
-
   //获取血糖列表信息
   const getBloodSugarInfo = async (param) => {
     let res = await bloodSugarQuery(param);
@@ -47,6 +49,7 @@ const RloodGlucoseRecord = (props) => {
       setDataSource([])
     }
   }
+  //刷新操作
   const refushList = () => {
     let search = SForm.getFieldsValue();
     let startTime = search?.['startTime'] && moment(search?.['startTime']).startOf('day').format('YYYY-MM-DD HH:mm:ss');
@@ -60,7 +63,7 @@ const RloodGlucoseRecord = (props) => {
     setSamplingStatusMap(res['data']['list'])
     SForm.setFieldsValue({ samplingStatus: "0001" })
   }
-  // 搜索部分
+  // 搜索表单
   const renderSearch = () => {
     return (
       <Form onFinish={() => { }} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
@@ -100,15 +103,7 @@ const RloodGlucoseRecord = (props) => {
             type="primary"
             size={'small'}
             style={{ marginTop: 4 }}
-            onClick={() => {
-              history.push({
-                pathname: '/nursingManagement/nursingAddRecord/index',
-                query: {
-                  selectKey: "3",
-                  type: "add"
-                }
-              });
-            }}
+            onClick={() => { handleJumpbatch("3", "add") }}
           >
             新增记录
           </Button>
@@ -116,6 +111,17 @@ const RloodGlucoseRecord = (props) => {
       </Form>
     );
   };
+  //新增或者修改的时候到批量的页面
+  const handleJumpbatch = (key, type, row) => {
+    history.push({
+      pathname: '/nursingManagement/nursingAddRecord/index',
+      query: {
+        selectKey: key,
+        type: type,
+        recordId: row?.id
+      }
+    });
+  }
   //操作
   const editButton = (record) => {
     return (
@@ -123,15 +129,7 @@ const RloodGlucoseRecord = (props) => {
         <Button
           size={'small'}
           type="link"
-          onClick={() => {
-            history.push({
-              pathname: '/nursingManagement/nursingAddRecord/index',
-              query: {
-                selectKey: "3",
-                type: "edit"
-              }
-            });
-          }}
+          onClick={() => { handleJumpbatch("3", "edit") }}
         >
           修改
         </Button>
@@ -158,7 +156,7 @@ const RloodGlucoseRecord = (props) => {
     );
   };
   return (
-    <div class="archives">
+    <div class="root">
       <div class="content">
         {renderSearch()}
         {renderForm()}
