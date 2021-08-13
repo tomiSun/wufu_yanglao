@@ -36,11 +36,6 @@ const columns = (edit) => {
             key: 'name',
         },
         {
-            title: '级别护理',
-            dataIndex: 'careLevel',
-            key: 'careLevel',
-        },
-        {
             title: '告知人姓名',
             dataIndex: 'informer',
             key: 'informer',

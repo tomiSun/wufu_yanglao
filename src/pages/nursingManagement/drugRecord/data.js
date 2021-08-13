@@ -1,70 +1,44 @@
-import { Button, Card, Col, Form, List, Row, Select, Tag, Table, Radio, Input, DatePicker, Modal, InputNumber } from 'antd';
-const dataSource = [
-    {
-        key: '1',
-        a: 'Z001',
-        b: "9区",
-        c: "1-1",//字典
-        d:"张三",
-        e:"奥氮平片5mg^20s",
-        f:"25mg", 
-        g:"临睡前",
-        h:"每日2次"
-    },
-    {
-        key: '1',
-        a: 'Z002',
-        b: "9区",
-        c: "1-2",//字典
-        d:"李四",
-        e:"奥氮平片5mg^20s",
-        f:"25mg", 
-        g:"早",
-        h:"每日1次"
-    },
-   
-];
 const columns = (edit) => {
     return [
         {
             title: '住院编号',
-            dataIndex: 'a',
-            key: 'archivesId',
-        },
-        {
-            title: '病区',
-            dataIndex: 'b',
-            key: 'name',
+            dataIndex: 'businessNo',
+            key: 'businessNo',
         },
         {
             title: '床号',
-            dataIndex: 'c',
-            key: 'isFood',
+            dataIndex: 'bedCode',
+            key: 'bedCode',
         },
         {
             title: '姓名',
-            dataIndex: 'd',
-            key: 'bloodGlucose',
+            dataIndex: ' name',
+            key: 'name',
         },
         {
             title: '药品规格',
-            dataIndex: 'e',
-            key: 'tiemType',
+            dataIndex: 'drugSpecification',
+            key: 'drugSpecification',
         },
         {
             title: '剂量',
-            dataIndex: 'f',
-            key: 'takeTime',
+            dataIndex: 'measure',
+            key: 'measure',
         },
         {
             title: '频次',
-            dataIndex: 'g',
-            key: 'tiemType',
+            dataIndex: 'frequency',
+            key: 'frequency',
         },
         {
-            title: '服药时间段',
-            dataIndex: 'h',
-            key: 'takeTime',
+            title: '用药日期',
+            dataIndex: 'medicationDate',
+            key: 'medicationDate',
+        },
+        {
+            title: '用药时间',
+            dataIndex: 'medicationTime',
+            key: 'medicationTime',
         },
         {
             title: '操作',
@@ -72,4 +46,4 @@ const columns = (edit) => {
         }
     ];
 }
-export { dataSource, columns }
+export {  columns }

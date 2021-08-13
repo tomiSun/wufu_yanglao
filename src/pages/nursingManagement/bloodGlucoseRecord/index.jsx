@@ -1,69 +1,100 @@
+/**
+ * 血糖记录
+ *  */
 import React, { useEffect, useState } from 'react';
 import {
   Button,
-  Card,
-  Col,
   Form,
-  List,
-  Row,
   Select,
-  Tag,
   Table,
-  Radio,
   Input,
   DatePicker,
-  Modal,
-  InputNumber,
   Tabs,
+  message,
 } from 'antd';
-import {history} from 'umi'
-import { dataSource, columns } from './data';
+import { history } from 'umi'
+import { columns } from './data';
+import moment from 'moment';
+import {
+  bloodSugarDel,
+  bloodSugarQuery,
+} from '@/services/nursingManagement'
+import { dictDateSelect } from '@/services/basicSetting/dictionary'
 import './index.less';
-const { TabPane } = Tabs;
-const layout = (x, y, labelAlign, layout) => {
-  return {
-    labelCol: { span: x },
-    wrapperCol: { span: y },
-    labelAlign,
-    layout,
-  };
-};
-const layout2 = {
-  labelCol: { span: 11 },
-  wrapperCol: { span: 13 },
-};
+import { ULayout } from '@/utils/common'
 const validateMessages = {
   required: '${label} 为必填项',
-}; //validateMessages={validateMessages}
+};
+
 const RloodGlucoseRecord = (props) => {
-  const [modalVisible, setModalVisible] = useState(false); //基本信息
-  const [modalVisibleArchives, setModalVisibleArchives] = useState(false); //体检档案信息弹窗
-  // 搜索部分
+  //列表数据
+  const [dataSource, setDataSource] = useState([{ 1: 1 }]);//数据
+  //字典
+  const [samplingStatusMap, setSamplingStatusMap] = useState([]);//血糖采样状态的字典
+  //搜索的表单
+  const [SForm] = Form.useForm();
+  //初始化操作
+  useEffect(() => {
+    let param = { pageNum: 1, pageSize: 1000 }
+    getBloodSugarInfo(param)
+    //获取字典
+    getDictDataSelect({ pageNum: 1, pageSize: 20, typeCode: "0006" })
+  }, []);
+  //获取血糖列表信息
+  const getBloodSugarInfo = async (param) => {
+    let res = await bloodSugarQuery(param);
+    if (res['code'] === 200) {
+      setDataSource(res['data']['list'])
+    } else {
+      setDataSource([])
+    }
+  }
+  //刷新操作
+  const refushList = () => {
+    let search = SForm.getFieldsValue();
+    let startTime = search?.['startTime'] && moment(search?.['startTime']).startOf('day').format('YYYY-MM-DD HH:mm:ss');
+    let endTime = search?.['endTime'] && moment(search?.['endTime']).endOf('day').format('YYYY-MM-DD HH:mm:ss');
+    let param = { ...SForm.getFieldsValue(), pageNum: 1, pageSize: 1000, startTime, endTime }
+    getBloodSugarInfo(param)
+  }
+  //获取字典
+  const getDictDataSelect = async (param) => {
+    let res = await dictDateSelect(param);
+    setSamplingStatusMap(res['data']['list'])
+    SForm.setFieldsValue({ samplingStatus: "0001" })
+  }
+  // 搜索表单
   const renderSearch = () => {
     return (
-      <Form onFinish={() => { }} {...layout(8, 16, 'left', 'inline')}>
-        <Form.Item label="姓名" name={'name'}>
+      <Form onFinish={() => { }} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
+        <Form.Item label="姓名" name={'patientName'}>
           <Input size={'small'} />
         </Form.Item>
-        <Form.Item label="档案ID" name={'id'}>
+        <Form.Item label="住院号" name={'businessNo'}>
           <Input size={'small'} />
         </Form.Item>
-        <Form.Item label="采样时间" name={'time'}>
+        <Form.Item label="开始日期" name={'startTime'}>
           <DatePicker size={'small'} />
         </Form.Item>
-        <Form.Item label="采样时间段" name={'name'}  {...layout(12, 16)}>
-          <Select defaultValue="1" size={'small'}>
-            <Option value="1">早餐后2h</Option>
-            <Option value="2">午睡前</Option>
-            <Option value="3">午餐后2h</Option>
-            <Option value="4">晚餐前</Option>
-            <Option value="5">晚餐后2h</Option>
-            <Option value="6">睡前</Option>
-            <Option value="7">随机血糖</Option>
+        <Form.Item label="结束日期" name={'endTime'}>
+          <DatePicker size={'small'} />
+        </Form.Item>
+        <Form.Item label="采样状态" name={'samplingStatus'}  {...ULayout(12, 16)}>
+          <Select defaultValue="0001" size={'small'}>
+            {samplingStatusMap.map(item => {
+              return <Option value={item['dictCode']}>{item['dictName']}</Option>
+            })}
           </Select>
         </Form.Item>
         <Form.Item style={{ marginLeft: 20 }}>
-          <Button type="primary" size={'small'} style={{ marginTop: 4 }}>
+          <Button
+            type="primary"
+            size={'small'}
+            style={{ marginTop: 4 }}
+            onClick={() => {
+              refushList()
+            }}
+          >
             查询
           </Button>
         </Form.Item>
@@ -72,17 +103,7 @@ const RloodGlucoseRecord = (props) => {
             type="primary"
             size={'small'}
             style={{ marginTop: 4 }}
-            // onClick={() => {
-            //   setModalVisible(true);
-            // }}
-            onClick={() => {
-              history.push({
-                pathname: '/nursingManagement/nursingAddRecord/index',
-                query:{
-                  selectKey:"3"
-                }
-              });
-            }}
+            onClick={() => { handleJumpbatch("3", "add") }}
           >
             新增记录
           </Button>
@@ -90,21 +111,39 @@ const RloodGlucoseRecord = (props) => {
       </Form>
     );
   };
+  //新增或者修改的时候到批量的页面
+  const handleJumpbatch = (key, type, row) => {
+    history.push({
+      pathname: '/nursingManagement/nursingAddRecord/index',
+      query: {
+        selectKey: key,
+        type: type,
+        recordId: row?.id
+      }
+    });
+  }
   //操作
   const editButton = (record) => {
     return (
       <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-        {record.status == '0' && (
-          <Button
-            size={'small'}
-            type="primary"
-            onClick={() => {
-              setModalVisible(true);
-            }}
-          >
-            签订
-          </Button>
-        )}
+        <Button
+          size={'small'}
+          type="link"
+          onClick={() => { handleJumpbatch("3", "edit") }}
+        >
+          修改
+        </Button>
+        <Button
+          size={'small'}
+          type="link"
+          onClick={async () => {
+            let res = await bloodSugarDel({ id: record['id'] })
+            message.success("成功")
+            refushList()
+          }}
+        >
+          删除
+        </Button>
       </div>
     );
   };
@@ -112,73 +151,15 @@ const RloodGlucoseRecord = (props) => {
   const renderForm = () => {
     return (
       <div>
-        <Table columns={columns(editButton)} dataSource={dataSource} />
+        <Table columns={columns(editButton, samplingStatusMap)} dataSource={dataSource} />
       </div>
     );
   };
-  //弹窗
-  const renderMoadl = () => {
-    return (
-      <Modal
-        title="血糖检测"
-        width={600}
-        visible={modalVisible}
-        onOk={() => {
-          setModalVisible(false);
-        }}
-        onCancel={() => {
-          setModalVisible(false);
-        }}
-        footer={[<div>
-          <Button type={"primary"}
-            onClick={() => {
-              setModalVisible(false);
-            }}>保存</Button>
-          <Button
-            onClick={() => {
-              setModalVisible(false);
-            }}
-          >取消</Button>
-        </div>]}
-      >
-        <Form onFinish={() => { }} {...layout(8, 16)} style={{ margin: '25px 10px 45px 0px' }}>
-          <Form.Item label="姓名:" name={'a'}>
-            <Input.Search size="small" style={{ width: 300 }} />
-          </Form.Item>
-          <Form.Item label="是否空腹" name={'b'}>
-            <Radio.Group>
-              <Radio value="a">是</Radio>
-              <Radio value="b">否</Radio>
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item label="采样时间段" name={'d'}>
-            <Select style={{ width: 300 }} defaultValue="1">
-              <Option value="1">早餐后2h</Option>
-              <Option value="2">午睡前</Option>
-              <Option value="3">午餐后2h</Option>
-              <Option value="4">晚餐前</Option>
-              <Option value="5">晚餐后2h</Option>
-              <Option value="6">睡前</Option>
-              <Option value="7">随机血糖</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item label="采样时间" name={'e'}>
-            <DatePicker style={{ width: 300 }} />
-          </Form.Item>
-          <Form.Item label="血糖值(单位：mmol)" name={'c'}>
-            <Input size="small" style={{ width: 300 }} />
-          </Form.Item>
-        </Form>
-      </Modal>
-    );
-  };
-
   return (
-    <div class="archives">
+    <div class="root">
       <div class="content">
         {renderSearch()}
         {renderForm()}
-        {renderMoadl()}
       </div>
     </div>
   );

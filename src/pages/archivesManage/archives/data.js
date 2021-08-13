@@ -1,48 +1,11 @@
 import { Button, Card, Col, Form, List, Row, Select, Tag, Table, Radio, Input, DatePicker, Modal, InputNumber } from 'antd';
-const dataSource = [
-    {
-        key: '1',
-        name: '胡彦斌',
-        archivesId:"L000001",
-        sex: "男",//字典
-        age: 32,
-        careLevel: "一级",//字典
-        diagnosis: '高血压',//字典
-        allergy: "无",//字典？
-        pastHistory: "糖尿病",
-        address: '西湖区湖底公园1号',
-        idCard: "230402XXXX0726031X",
-        contacts: "周杰",
-        relationship: "儿子",
-        contactsPhone: "13745880987",
-        inTime: "2021-7-28",
-        occupancyStatus: "已入住"
-    },
-    {
-        key: '2',
-        name: '李基民',
-        archivesId:"L000002",
-        sex: "女",//字典
-        age: 32,
-        careLevel: "一级",//字典
-        diagnosis: '高血压',//字典
-        allergy: "无",//字典？
-        pastHistory: "糖尿病",
-        address: '西湖区湖底公园1号',
-        idCard: "230402XXXX0726031X",
-        contacts: "周杰",
-        relationship: "儿子",
-        contactsPhone: "13745880987",
-        inTime: "2021-7-28",
-        occupancyStatus: "已入住"
-    }
-];
+
 const columns = (edit) => {
     return [
         {
-            title: '住院编号',
-            dataIndex: 'archivesId',
-            key: 'archivesId',
+            title: '档案编号',
+            dataIndex: 'id',
+            key: ' id',
         },
         {
             title: '姓名',
@@ -53,6 +16,9 @@ const columns = (edit) => {
             title: '性别',
             dataIndex: 'sex',
             key: 'sex',
+            render: (t, r) => {
+                return t == "1" ? "男" : "女"
+            }
         },
         {
             title: '年龄',
@@ -60,49 +26,34 @@ const columns = (edit) => {
             key: 'age',
         },
         {
-            title: '级别护理',
-            dataIndex: 'careLevel',
-            key: 'careLevel',
-        },
-        {
-            title: '过敏史',
-            dataIndex: 'allergy',
-            key: 'allergy',
-        },
-        {
-            title: '既往史',
-            dataIndex: 'pastHistory',
-            key: 'pastHistory',
-        },
-        {
-            title: '家庭住址',
-            dataIndex: 'address',
-            key: 'address',
-        },
-        {
             title: '身份证号',
             dataIndex: 'idCard',
             key: 'idCard',
         },
         {
-            title: '联系人姓名',
-            dataIndex: 'contacts',
-            key: 'contacts',
-        },
-        {
-            title: '关系',
-            dataIndex: 'relationship',
-            key: 'relationship',
+            title: '联系地址',
+            dataIndex: 'contactAddress',
+            key: 'contactAddress',
         },
         {
             title: '联系电话',
-            dataIndex: 'contactsPhone',
-            key: 'contactsPhone',
+            dataIndex: 'contactNumber',
+            key: 'contactNumber',
         },
         {
-            title: '入住状态',
-            dataIndex: 'occupancyStatus',
-            key: 'occupancyStatus',
+            title: '联系人姓名',
+            dataIndex: 'guardianName',
+            key: 'guardianName',
+        },
+        {
+            title: '关系',
+            dataIndex: 'relation',
+            key: 'relation',
+        },
+        {
+            title: '创建时间',
+            dataIndex: 'createTime',
+            key: 'createTime'
         },
         {
             title: '操作',
@@ -110,4 +61,4 @@ const columns = (edit) => {
         }
     ];
 }
-export { dataSource, columns }
+export { columns }

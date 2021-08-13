@@ -1,13 +1,26 @@
+import './index.less';
 import React, { useEffect, useState } from 'react';
 import {
     Button, Card, Col,
     Form, List, Row,
     Select, Tag, Table,
     Radio, Input, DatePicker,
-    Modal, InputNumber, Tabs
+    Modal, InputNumber, Tabs, message
 } from 'antd';
-import { dataSource, columns } from './data';
-import './index.less';
+import { columns } from './data';
+import PhysicalExamination from '../compoment/PhysicalExamination';
+import ProbationEvaluation from '../compoment/ProbationEvaluation';
+import Assessment from '../compoment/Assessment';
+import AgreementForm from '../compoment/AgreementForm';
+import RiskNotificationForm from '../compoment/RiskNotificationForm';
+import {
+    addHospitalRegist,
+    queryHospitalRegist,
+    outHospitalRegist,
+    updateHospitalRegist
+} from '@/services/inHospitalRegister';
+import { dictDateSelect } from '@/services/basicSetting/dictionary'
+import moment from 'moment';
 const { TabPane } = Tabs;
 const layout = (x, y, labelAlign, layout) => {
     return {
@@ -20,31 +33,81 @@ const layout = (x, y, labelAlign, layout) => {
 const validateMessages = {
     required: '${label} is required!',
 };
-const Archives = (props) => {
+const InHospitalRegister = (props) => {
+    const [registForm] = Form.useForm();
+    const [SForm] = Form.useForm();
+    const [dataSource, setDataSource] = useState([{1:1}]);
     const [modalVisible, setModalVisible] = useState(false);//基本信息
-    const [modalVisibleArchives, setModalVisibleArchives] = useState(false);//体检档案信息弹窗
+    const [dictionaryMap, setDictionaryMap] = useState({ "0008": [], "0009": [], "0010": [], "0011": [] })
+    const [selectData, setSelectData] = useState([])
+    const [physicalExaminationVisible, setPhysicalExaminationVisible] = useState(false);//体检的弹窗
+    const [probationEvaluationVisible, setProbationEvaluationVisible] = useState(false);//试用期评估
+    const [assessmentVisible, setAssessmentVisible] = useState(false);//入院评估
+    const [agreementFormVisible, setAgreementFormVisible] = useState(false);//合同
+    const [riskNotificationFormVisible, setRiskNotificationFormVisible] = useState(false);//分险告知书
+    const [selectRowData, setSelectRowData] = useState([]);//选择的行
+    const [mode, setMode] = useState("add")
+    useEffect(() => {
+        let param = { pageNum: 1, pageSize: 1000 }
+        getHospitalRegistList(param);
+        //获取字典
+        getDictDataSelect(["0008", "0009", "0010", "0011"]);//过敏史
+    }, []);
+
+    //获取列表信息
+    const getHospitalRegistList = async (param) => {
+        let res = await queryHospitalRegist(param);
+        setDataSource(res['data']['list'])
+    }
+
+    //获取信息
+    const refushList = () => {
+        let data = SForm.getFieldsValue();
+        let param = {
+            ...data, pageNum: 1, pageSize: 1000, status: 0
+        }
+        getHospitalRegistList(param);
+    }
+
+    //获取字典
+    const getDictDataSelect = async (dList) => {
+        let resMap = {}
+        for (const [idx, it] of dList.entries()) {
+            let param = { pageNum: 1, pageSize: 20, typeCode: String(it) }
+            const res = await dictDateSelect(param);
+            let key = param['typeCode']
+            resMap[key] = res['data']['list']
+            if (idx == dList.length - 1) {
+                setDictionaryMap(resMap)
+            }
+        }
+    }
     // 搜索部分
     const renderSearch = () => {
         return (
             <div>
                 <Form onFinish={() => { }}  {...layout(8, 16, "left", "inline")}
+                    form={SForm}
                 >
                     <Form.Item label="姓名" name={"name"}>
                         <Input size={'small'} />
                     </Form.Item>
-                    <Form.Item label="身份证号" name={"name"}>
+                    <Form.Item label="住院号" name={"businessNo"}>
                         <Input size={'small'} />
                     </Form.Item>
-                    <Form.Item label="入院日期" name={"name"}>
+                    {/* <Form.Item label="入院日期" name={"name"}>
                         <DatePicker size={'small'} />
-                    </Form.Item>
+                    </Form.Item> */}
                     <Form.Item >
-                        <Button type="primary" size={'small'}>
+                        <Button type="primary" size={'small'} onClick={() => { refushList() }}>
                             查询
                         </Button>
                     </Form.Item>
                     <Form.Item >
-                        <Button type="primary" size={'small'} onClick={() => { setModalVisible(true) }}>
+                        <Button type="primary" size={'small'} onClick={() => {
+                            setMode("add")
+                            setModalVisible(true)
+                        }}>
                             新增
                         </Button>
                     </Form.Item>
@@ -52,21 +115,43 @@ const Archives = (props) => {
             </div>
         )
     }
+    // 处理编辑基本信息
+    const handleEdit = (row) => {
+        setSelectData(row);
+        setMode("edit");
+        let data = { ...row, admissionTime: moment(row['admissionTime'] || new Date()) };
+        registForm.setFieldsValue(data);
+        setModalVisible(true)
+    }
+    //退院
+    const handleOutHospitalRegist = async (row) => {
+        let res = await outHospitalRegist({ businessNo: row['businessNo'] });
+        message.success("退院成功")
+        refushList()
+    }
     //操作
-    const editButton = () => {
+    const editButton = (row) => {
         return (
             <div >
+                <Button style={{ marginRight: 10 }}
+                    size={'small'} type="link" onClick={() => {
+                        handleEdit(row)
+                    }}>编辑</Button>
                 <Button
                     style={{ marginRight: 10 }}
-                    size={'small'} type="link" onClick={() => { setModalVisibleArchives(true) }}>体检报告</Button>
+                    size={'small'} type="link" onClick={() => { setPhysicalExaminationVisible(true) }}>体检报告</Button>
                 <Button style={{ marginRight: 10 }}
-                    size={'small'} type="link">入住评估</Button>
+                    size={'small'} type="link" onClick={() => { setAssessmentVisible(true) }}>入住评估</Button>
                 <Button style={{ marginRight: 10 }}
-                    size={'small'} type="link">试用期评估</Button>
+                    size={'small'} type="link" onClick={() => { setProbationEvaluationVisible(true) }}>试用期评估</Button>
                 <Button style={{ marginRight: 10 }}
-                    size={'small'} type="link">合同</Button>
+                    size={'small'} type="link" onClick={() => { setAgreementFormVisible(true) }}>合同</Button>
                 <Button style={{ marginRight: 10 }}
-                    size={'small'} type="link">风险告知书</Button>
+                    size={'small'} type="link" onClick={() => { setRiskNotificationFormVisible(true) }}>风险告知书</Button>
+                <Button style={{ marginRight: 10 }}
+                    size={'small'} type="link"
+                    onClick={() => { handleOutHospitalRegist(row) }}
+                >办理出院</Button>
             </div>
         )
     }
@@ -79,36 +164,34 @@ const Archives = (props) => {
     //弹窗
     const renderMoadl = () => {
         return <Modal
-            title="老人档案"
+            title="入院登记"
             visible={modalVisible}
             onOk={() => { setModalVisible(false) }}
-            onCancel={() => { setModalVisible(false) }}>
+            onCancel={() => { setModalVisible(false) }}
+            footer={renderBtnArea()}
+        >
             <>
                 <Card title="基本信息" style={{ width: "80%" }}>
-                    <Form {...layout} name="nest-messages" validateMessages={validateMessages}>
+                    <Form {...layout(8, 16)}
+                        form={registForm}
+                        name="nest-messages"
+                        validateMessages={validateMessages}
+                    >
                         <Form.Item
                             name={'name'}
                             label="姓名"
-                            rules={[
-                                {
-                                    required: true,
-                                },
-                            ]}
+                            rules={[{ required: true }]}
                         >
                             <Input />
                         </Form.Item>
                         <Form.Item
                             name={'sex'}
                             label="性别"
-                            rules={[
-                                {
-                                    required: true,
-                                },
-                            ]}
+                            rules={[{ required: true }]}
                         >
-                            <Radio.Group onChange={() => { }} defaultValue={1}>
-                                <Radio value={1}>男</Radio>
-                                <Radio value={2}>女</Radio>
+                            <Radio.Group defaultValue={'1'}>
+                                <Radio value={'1'}>男</Radio>
+                                <Radio value={'2'}>女</Radio>
                             </Radio.Group>
                         </Form.Item>
                         <Form.Item
@@ -117,632 +200,89 @@ const Archives = (props) => {
                         >
                             <Input />
                         </Form.Item>
-                        <Form.Item name={'careLevel'} label="级别护理">
-                            <Select defaultValue="A" onChange={() => { }}>
-                                <Option value="A">可以自理</Option>
-                                <Option value="B">需要照顾</Option>
+                        <Form.Item name={'nursingLevel'} label="级别护理">
+                            <Select defaultValue="0001" onChange={() => { }}>
+                                {dictionaryMap?.["0011"].map(item => {
+                                    return <Option value={item['dictCode']}>{item['dictName']}</Option>
+                                })}
                             </Select>
                         </Form.Item>
-                        <Form.Item name={'diagnosis'} label='入院诊断'>
-                            <Select
-                                mode="multiple"
-                                defaultValue={["A", "B"]}
-                                onChange={() => { }}>
-                                <Option value="A">高血压</Option>
-                                <Option value="B">糖尿病</Option>
-                            </Select>
+                        <Form.Item name={'hospitalDiagnosis'} label='入院诊断'>
+                            <Input />
                         </Form.Item>
-                        <Form.Item name={'inTime'} label="入院时间">
+                        <Form.Item name={'admissionTime'} label="入院时间">
                             <DatePicker style={{ width: 267 }} />
                         </Form.Item>
                         <Form.Item name={'allergy'} label="过敏史">
                             <Select
                                 mode="multiple"
-                                defaultValue={["A", "B"]}
+                                defaultValue={["0001", "0002"]}
                                 onChange={() => { }}>
-                                <Option value="A">青霉素过敏</Option>
-                                <Option value="B">鸡蛋白过敏    </Option>
+                                {dictionaryMap?.["0008"].map(item => {
+                                    return <Option value={item['dictCode']}>{item['dictName']}</Option>
+                                })}
                             </Select>
                         </Form.Item>
                         <Form.Item name={'pastHistory'} label="既往史">
                             <Select
                                 mode="multiple"
-                                defaultValue={["A", "B"]}
+                                defaultValue={["0001", "0002"]}
                                 onChange={() => { }}>
-                                <Option value="A">高血压</Option>
-                                <Option value="B">糖尿病</Option>
+                                {dictionaryMap?.["0009"].map(item => {
+                                    return <Option value={item['dictCode']}>{item['dictName']}</Option>
+                                })}
                             </Select>
                         </Form.Item>
                         <Form.Item name={'idCard'} label="身份证号">
                             <Input />
                         </Form.Item>
-                        <Form.Item name={'contacts'} label="联系人姓名">
+                        <Form.Item name={'relationName'} label="联系人姓名">
                             <Input />
                         </Form.Item>
-                        <Form.Item name={'relationship'} label="关系">
+                        <Form.Item name={'relation'} label="关系">
                             <Select
-                                mode="multiple"
-                                defaultValue={["A", "B"]}
+                                defaultValue={"0001"}
                                 onChange={() => { }}>
-                                <Option value="A">儿子</Option>
-                                <Option value="B">女儿</Option>
+                                {dictionaryMap?.["0010"].map(item => {
+                                    return <Option value={item['dictCode']}>{item['dictName']}</Option>
+                                })}
                             </Select>
                         </Form.Item>
-                        <Form.Item name={'contactsPhone'} label="联系电话">
+                        <Form.Item name={'contactNumber'} label="联系电话">
                             <Input />
                         </Form.Item>
-                        <Form.Item name={'address'} label="家庭住址">
+                        <Form.Item name={'contactAddress'} label="家庭住址">
                             <Input.TextArea />
                         </Form.Item>
-                        {/* <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-                        </Form.Item> */}
                     </Form>
                 </Card>
             </>
         </Modal>
     }
-    //体检弹窗
-    const renderArchivesModal = () => {
-        return <Modal
-            title="体检信息"
-            width={650}
-            visible={modalVisibleArchives}
-            onOk={() => { setModalVisibleArchives(false) }}
-            onCancel={() => { setModalVisibleArchives(false) }}>
-            <Form {...layout} name="nest-messages" validateMessages={validateMessages}>
-                <Tabs defaultActiveKey="1" onChange={() => { }}>
-                    <TabPane tab="基本信息" key="1">
-                        <Card title="基本信息" style={{ width: 400 }}>
-                            <Form.Item
-                                name={'name'}
-                                label="姓名"
-                                rules={[
-                                    {
-                                        required: true,
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'sex'}
-                                label="性别"
-                                rules={[
-                                    {
-                                        required: true,
-                                    },
-                                ]}
-                            >
-                                <Radio.Group onChange={() => { }} defaultValue={1}>
-                                    <Radio value={1}>男</Radio>
-                                    <Radio value={2}>女</Radio>
-                                </Radio.Group>
-                            </Form.Item>
-                            <Form.Item
-                                name={'age'}
-                                label="年龄"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item name={'contactsPhone'} label="联系电话">
-                                <Input />
-                            </Form.Item>
-                            <Form.Item name={'educationLevel'} label="文化程度">
-                                <Input />
-                            </Form.Item>
-                            <Form.Item name={'pastHistory'} label="既往史">
-                                <Select
-                                    mode="multiple"
-                                    defaultValue={["A", "B"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">高血压</Option>
-                                    <Option value="B">糖尿病</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="医生建议"
-                            >
-                                <Input.TextArea />
-                            </Form.Item>
-                        </Card>
-                    </TabPane>
-                    <TabPane tab="眼科" key="2">
-                        <Card title="眼科信息" style={{ width: 400 }}>
-                            <Form.Item
-                                name={'name'}
-                                label="裸眼视力左"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="裸眼视力右"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="矫正视力左"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="矫正视力右"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="色觉"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">不正常</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="色调"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">单色能辨</Option>
-                                    <Option value="B">单色不能辨</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="其他"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="检查医生"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">张三</Option>
-                                    <Option value="B">李四</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="医生建议"
-                            >
-                                <Input.TextArea />
-                            </Form.Item>
-                        </Card>
-                    </TabPane>
-                    <TabPane tab="五官科" key="3">
-                        <Card title="五官科信息" style={{ width: 400 }}>
-                            <Form.Item
-                                name={'name'}
-                                label="听力左"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="听力右"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="耳疾"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="嗅觉"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="口吃"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="颜面部"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="其他"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="检查医生"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">张三</Option>
-                                    <Option value="B">李四</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="医生建议"
-                            >
-                                <Input.TextArea />
-                            </Form.Item>
-                        </Card>
-                    </TabPane>
-                    <TabPane tab="内科" key="4">
-                        <Card title="内科科信息" style={{ width: 400 }}>
-                            <Form.Item
-                                name={'name'}
-                                label="心率"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="血压"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="发育及营养状况"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">良好</Option>
-                                    <Option value="B">一般</Option>
-                                    <Option value="C">差</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="心血管"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="神经及精神"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="肺及呼吸道"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="肝"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="脾"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="其他"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="检查医生"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">张三</Option>
-                                    <Option value="B">李四</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="医生建议"
-                            >
-                                <Input.TextArea />
-                            </Form.Item>
-                        </Card>
-                    </TabPane>
-                    <TabPane tab="外科" key="5">
-                        <Card title="外科信息" style={{ width: 400 }}>
-                            <Form.Item
-                                name={'name'}
-                                label="身长"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="体重"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="皮肤"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="四肢"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="淋巴"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="关节"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="脊柱"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="甲状腺"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">其他</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="其他"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="检查医生"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">张三</Option>
-                                    <Option value="B">李四</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="医生建议"
-                            >
-                                <Input.TextArea />
-                            </Form.Item>
-                        </Card>
-                    </TabPane>
-                    <TabPane tab="化验检查" key="6">
-                        <Card title="化验检查信息" style={{ width: 400 }}>
-                            <Form.Item
-                                name={'name'}
-                                label="血常规"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">异常</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="肝肾功能"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">异常</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="尿常规"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">异常</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="其他"
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="检查医生"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">张三</Option>
-                                    <Option value="B">李四</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="医生建议"
-                            >
-                                <Input.TextArea />
-                            </Form.Item>
-                        </Card>
-                    </TabPane>
-                    <TabPane tab="胸部透视" key="7">
-                        <Card title="胸部科信息" style={{ width: 400 }}>
-                            <Form.Item
-                                name={'name'}
-                                label="心肺正常"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">正常</Option>
-                                    <Option value="B">异常</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="其他"
-                            >
-                                <Input.TextArea />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="医生建议"
-                            >
-                                <Input.TextArea />
-                            </Form.Item>
-                        </Card>
-                    </TabPane>
-                    <TabPane tab="体检结论建议" key="8">
-                        <Card title="体检结论信息" style={{ width: 400 }}>
-                            <Form.Item
-                                name={'name'}
-                                label="检查医生"
-                            >
-                                <Select
-                                    defaultValue={["A"]}
-                                    onChange={() => { }}>
-                                    <Option value="A">张三</Option>
-                                    <Option value="B">李四</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="检查时间"
-                            >
-                                <DatePicker style={{ width: 267 }} />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="总检结果"
-                            >
-                                <Input.TextArea />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="总检建议"
-                            >
-                                <Input.TextArea />
-                            </Form.Item>
-                            <Form.Item
-                                name={'name'}
-                                label="备注"
-                            >
-                                <Input.TextArea />
-                            </Form.Item>
-                        </Card>
-                    </TabPane>
-                </Tabs>
-            </Form>
-        </Modal>
+    const renderBtnArea = () => {
+        //新增按钮
+        let addBtn = <Button onClick={async () => {
+            let addParam = { ...registForm.getFieldsValue(), aichiveId: "476794627073118208", status: 0 }
+            let res = await addHospitalRegist(addParam)
+            refushList()
+            setModalVisible(false)
+        }}>保存</Button>;
+        //编辑按钮
+        let editBtn = <Button onClick={async () => {
+            let updateParam = { ...registForm.getFieldsValue(), aichiveId: "476794627073118208", id: selectData['id'] }
+            let res = await updateHospitalRegist(updateParam)
+            refushList()
+            setModalVisible(false)
+        }}> 修改</Button>
+        let arrEdit = [editBtn];
+        let arrAdd = [addBtn];
+        if (mode == "edit") {
+            return arrEdit
+        }
+        if (mode == "add") {
+            return arrAdd
+        }
+        return arrAdd;
     }
     return (
         <div class="archives">
@@ -750,10 +290,49 @@ const Archives = (props) => {
                 {renderSearch()}
                 {renderForm()}
                 {renderMoadl()}
-                {renderArchivesModal()}
+                {/* 体检*/}
+                {physicalExaminationVisible && <PhysicalExamination
+                    visible={physicalExaminationVisible}
+                    onPhysicalExaminationVisible={(flag) => {
+                        setPhysicalExaminationVisible(flag)
+                    }}
+                    selectRowData={selectRowData}
+                />}
+                {/* 试用期评估*/}
+                {probationEvaluationVisible && <ProbationEvaluation
+                    visible={probationEvaluationVisible}
+                    onProbationEvaluationVisible={(flag) => {
+                        setProbationEvaluationVisible(flag)
+                    }}
+                    selectRowData={selectRowData}
+                />}
+                {/* 试用期评估*/}
+                {assessmentVisible && <Assessment
+                    visible={assessmentVisible}
+                    onAssessmentVisible={(flag) => {
+                        setAssessmentVisible(flag)
+                    }}
+                    selectRowData={selectRowData}
+                />}
+                {/* 合同 */}
+                {agreementFormVisible && <AgreementForm
+                    visible={agreementFormVisible}
+                    onAgreementFormVisibleVisible={(flag) => {
+                        setAgreementFormVisible(flag)
+                    }}
+                    selectRowData={selectRowData}
+                />}
+                {/* 风险告知书 */}
+                {riskNotificationFormVisible && <RiskNotificationForm
+                    visible={riskNotificationFormVisible}
+                    onRiskNotificationFormVisible={(flag) => {
+                        setRiskNotificationFormVisible(flag)
+                    }}
+                    selectRowData={selectRowData}
+                />}
             </div>
         </div>
     )
 };
 
-export default Archives
+export default InHospitalRegister
