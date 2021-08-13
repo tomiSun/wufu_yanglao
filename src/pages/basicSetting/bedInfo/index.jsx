@@ -259,14 +259,14 @@ export default () => {
             ellipsis: true,
             width: 100,
           },
-          {
-            title: '入住状态',
-            dataIndex: 'status',
-            align: 'left',
-            ellipsis: true,
-            width: 100,
-            render: (text) => findValByKey(basic['0004'], 'value', text, 'label'),
-          },
+          // {
+          //   title: '入住状态',
+          //   dataIndex: 'status',
+          //   align: 'left',
+          //   ellipsis: true,
+          //   width: 100,
+          //   render: (text) => findValByKey(basic['0004'], 'value', text, 'label'),
+          // },
           {
             title: '状态',
             dataIndex: 'useFlag',
@@ -641,8 +641,11 @@ export default () => {
           modalFormSort.setFieldsValue({
             ...record,
             roomCode: yTable.table.selectedNode.code,
+            roomName: yTable.table.selectedNode.name,
             floorCode: yTable.table.selectedNode.floorCode,
+            floorName: yTable.table.selectedNode.floorName,
             buildingCode: yTable.table.selectedNode.buildingCode,
+            buildingName: yTable.table.selectedNode.buildingName,
           });
           break;
 
@@ -898,7 +901,7 @@ export default () => {
             </Button>
           </div> */}
         </Col>
-        <Col flex="1 1 auto" style={{ overflow: 'hidden' }}>
+        <Col flex="1 1 auto" style={{ overflowX: 'hidden' }}>
           <div className={styles.topForm}>
             <div className={styles.searchFormTips}>{addOptions[modalSortConfig.editType]}信息</div>
             <SearchForm searchForm={topRightForm} />
@@ -1031,6 +1034,9 @@ export default () => {
           {modalSortConfig?.editType === 3 ? (
             <Row>
               <Form.Item name="id" hidden></Form.Item>
+              <Form.Item name="buildingName" hidden></Form.Item>
+              <Form.Item name="floorName" hidden></Form.Item>
+              <Form.Item name="roomName" hidden></Form.Item>
               <Col span={24}>
                 <Form.Item
                   label="所属楼宇"
@@ -1068,7 +1074,7 @@ export default () => {
                   <Input placeholder="请输入" />
                 </Form.Item>
               </Col>
-              <Col span={24}>
+              {/* <Col span={24}>
                 <Form.Item
                   label="入住状态"
                   name="status"
@@ -1076,7 +1082,7 @@ export default () => {
                 >
                   <Select placeholder="请选择" options={basic['0004'] || []}></Select>
                 </Form.Item>
-              </Col>
+              </Col> */}
               <Col span={24}>
                 <Form.Item name="useFlag" valuePropName="checked" style={{ marginLeft: 8 }}>
                   <Checkbox>
