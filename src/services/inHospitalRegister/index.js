@@ -8,7 +8,7 @@ export async function trialAssessmentDel(params) {
   });
 };
 export async function trialAssessmentQuery(params) {
-  return request('/trial-assessment/query', {
+  return request(`/trial-assessment/query?businessNo=${params.businessNo}`, {
     method: 'GET',
     data: params
   });
@@ -160,3 +160,10 @@ export async function contractSave(params) {
     data: params
   });
 };
+//根据名字查询病人信息
+export async function patientQuery(params) {
+  return request('/page/patient/query', {
+    method: 'GET',
+    data: params
+  });
+}

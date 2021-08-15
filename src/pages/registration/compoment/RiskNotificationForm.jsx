@@ -17,9 +17,6 @@ import {
     riskNotificationUpdate,
     riskNotificationSave
 } from '@/services/inHospitalRegister/index.js'
-let info1 = { "archiveId": "457947338305048576", "businessNo": "202107201654" }
-let info2 = { "archiveId": "465188927389700096", "businessNo": "77" }
-let record = info1
 const layout = (x, y) => {
     return {
         labelCol: { span: x },
@@ -43,8 +40,8 @@ const RiskNotificationForm = (props) => {
     }, []);
     //初始化 判断是新增还是编辑
     const initData = async () => {
-        riskNotificationForm.setFieldsValue(record)
-        let resQuery = await riskNotificationQuery({ "businessNo": record['businessNo'] })
+        riskNotificationForm.setFieldsValue(selectRowData)
+        let resQuery = await riskNotificationQuery({ "businessNo": selectRowData['businessNo'] })
         if (resQuery['code'] == 200 && !!resQuery['data']) {
             let id = resQuery['data']['busExamArchiveQueryVO']['id']
             setUpdateId(id)

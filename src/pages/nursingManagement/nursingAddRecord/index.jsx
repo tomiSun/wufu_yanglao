@@ -22,25 +22,27 @@ import {
     bloodSugarUpdate,
     bloodSugarInsert,
     updateSpecialNursing,
-    addSpecialNursing
+    addSpecialNursing,
+    addNursingRecord,
+    updateNursingRecord,
+    addVitalSignRecord,
+    updateVitalSignRecord
 } from '@/services/nursingManagement';
-let info1 = {
-    "bedName": "1234",
-    "businessNo": "111",
-    "id": "475308651586916352",
-    "patientName": "赵总"
-}
-let info2 = { "archiveId": "465188927389700096", "businessNo": "77" }
-let record = info1
+import {
+    queryHospitalRegist
+} from '@/services/inHospitalRegister';
 const { TabPane } = Tabs;
 import { ULayout } from '@/utils/common'
 
 const validateMessages = {
     required: '${label} 为必填项',
 };
+
 const NursingAddRecord = (props) => {
-    const { query } = useLocation();
-    const { selectKey, type } = query;
+    const { query } = useLocation()
+    const { selectKey, type, businessNo } = query;
+    //选中的行
+    const [selectRowId, setSelctRowId] = useState("");
     //护理
     const [nursingForm] = Form.useForm();
     //血糖
@@ -53,12 +55,44 @@ const NursingAddRecord = (props) => {
     const [tabKey, setTabKey] = useState(selectKey || "1");
     //当前页面的状态
     const [ftype, setFtype] = useState(type)
-
-    const [samplingStatusMap, setSamplingStatusMap] = useState([]);
+    //字典
+    const [dictionaryMap, setDictionaryMap] = useState({ "0006": [], "0014": [] })
+    //用户信息
+    const [record, setRecord] = useState([])
+    //用户信息
+    const [recordList, setRecordList] = useState([])
     //获取字典
+    // useEffect(() => {
+    //     getDictDataSelect({ pageNum: 1, pageSize: 20, typeCode: "0006" })
+    // }, []);
     useEffect(() => {
-        getDictDataSelect({ pageNum: 1, pageSize: 20, typeCode: "0006" })
+        //获取字典
+        getDictDataSelect(["0006", "0014"]);//过敏史
+        let param = { pageSize: 10, pageNum: 1, statue: "0" }
+        if (type == "edit") {
+            param['businessNo'] = businessNo
+        }
+        getPeopleInfoByBusNo(param)//查询url上的人员信息
     }, []);
+    //查询url上的人员信息
+    const getPeopleInfoByBusNo = async (param) => {
+        let res = await queryHospitalRegist(param);
+        setRecordList(res['data']['list'])
+        setRecord(res['data']['list'][0])
+    }
+    //获取字典
+    const getDictDataSelect = async (dList) => {
+        let resMap = {}
+        for (const [idx, it] of dList.entries()) {
+            let param = { pageNum: 1, pageSize: 20, typeCode: String(it) }
+            const res = await dictDateSelect(param);
+            let key = param['typeCode']
+            resMap[key] = res['data']['list']
+            if (idx == dList.length - 1) {
+                setDictionaryMap(resMap)
+            }
+        }
+    }
     // 搜索部分
     const renderSearch = () => {
         return (
@@ -88,84 +122,110 @@ const NursingAddRecord = (props) => {
     };
     //人员信息
     const renderPeopleInfo = () => {
-        return <Table columns={columns()} dataSource={dataSource} />
-    }
-    //获取字典
-    const getDictDataSelect = async (param) => {
-        let res = await dictDateSelect(param);
-        setSamplingStatusMap(res['data']['list'])
+        return <Table columns={columns()}
+            dataSource={recordList}
+            rowClassName={(record, index) => {
+                return record["businessNo"] == selectRowId ? styles["rowSelect"] : styles["row"]
+            }}
+            onRow={record => {
+                return {
+                    onClick: event => {
+                      console.log(event)
+                      debugger
+                    }, // 点击行
+                };
+            }}
+        />
     }
     //护理项目
     const renderNursingItem = () => {
         return (
             <Form onFinish={() => { }} {...ULayout(8, 16)} style={{ width: '80%' }} form={nursingForm}>
-                <Form.Item label="日期" name={'a'} >
+                <Form.Item label="日期" name={'recordTime'} >
                     <DatePicker style={{ width: "100%" }} size={'small'} />
                 </Form.Item>
-                <Form.Item label="时间段" name={'b'}>
-                    <Checkbox.Group size={'small'}>
-                        <Row>
-                            <Col span={5}>
-                                <Checkbox value="A">早</Checkbox>
-                            </Col>
-                            <Col span={5}>
-                                <Checkbox value="D">中</Checkbox>
-                            </Col>
-                            <Col span={6}>
-                                <Checkbox value="B">晚</Checkbox>
-                            </Col>
-                            <Col span={8}>
-                                <Checkbox value="F">睡前</Checkbox>
-                            </Col>
-                        </Row>
-                    </Checkbox.Group>
+                <Form.Item label="时间段" name={'timePoint'}>
+                    <Select style={{ width: "100%" }} defaultValue="0001">
+                        {dictionaryMap?.['0014'].map(item => {
+                            return <Option value={item['dictCode']}>{item['dictName']}</Option>
+                        })}
+                    </Select>
                 </Form.Item>
-                <Form.Item label="体温" name={'c'}>
+                <Form.Item label="体温" name={'temperature'}>
                     <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="°C" />
                 </Form.Item>
-                <Form.Item label="脉搏心率" name={'d'}>
+                <Form.Item label="脉搏心率" name={'pulse'}>
                     <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="次/分" />
                 </Form.Item>
-                <Form.Item label="R" name={'d'}>
+                <Form.Item label="呼吸" name={'breathing'}>
                     <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="次/分" />
                 </Form.Item>
-                <Form.Item label="BP mmHg" name={'d'}>
-                    <Input AUTOCOMPLETE="OFF" size={'small'} />
+                <Form.Item label="高压" name={'highBloodPressure'}>
+                    <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="mmHg" />
                 </Form.Item>
-                <Form.Item label="基础护理" name={'e'}>
-                    <Checkbox.Group  >
-                        <Row>
-                            <Col span={8}>
-                                <Checkbox value="A">洗头理发</Checkbox>
-                            </Col>
-                            <Col span={16}>
-                                <Checkbox value="D">更换清晰晾晒衣被</Checkbox>
-                            </Col>
-                            <Col span={8}>
-                                <Checkbox value="B">修剪指甲</Checkbox>
-                            </Col>
-                            <Col span={16}>
-                                <Checkbox value="F">清扫房间整理衣物</Checkbox>
-                            </Col>
-                            <Col span={8}>
-                                <Checkbox value="C">清洗便器</Checkbox>
-                            </Col>
-                            <Col span={16}>
-                                <Checkbox value="E">送开水打洗漱水</Checkbox>
-                            </Col>
-                        </Row>
-                    </Checkbox.Group>
+                <Form.Item label="低压" name={'lowBloodPressure'}>
+                    <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="mmHg" />
                 </Form.Item>
-                <Form.Item label="老人身心观察记录" name={'d'}>
+                <Form.Item label="是否打扫房间" name={'isCleanRoom'}>
+                    <Radio.Group>
+                        <Radio value="0001">是</Radio>
+                        <Radio value="0002">否</Radio>
+                    </Radio.Group>
+                </Form.Item>
+                <Form.Item label="是否清洗便池" name={'isCleanToilet'}>
+                    <Radio.Group>
+                        <Radio value="0001">是</Radio>
+                        <Radio value="0002">否</Radio>
+                    </Radio.Group>
+                </Form.Item>
+                <Form.Item label="是否洗头理发" name={'isHaircut'}>
+                    <Radio.Group>
+                        <Radio value="0001">是</Radio>
+                        <Radio value="0002">否</Radio>
+                    </Radio.Group>
+                </Form.Item>
+                <Form.Item label="是否晾晒衣服" name={'isHangClothes'}>
+                    <Radio.Group>
+                        <Radio value="0001">是</Radio>
+                        <Radio value="0002">否</Radio>
+                    </Radio.Group>
+                </Form.Item>
+                <Form.Item label="是否修剪指甲" name={'isManicure'}>
+                    <Radio.Group>
+                        <Radio value="0001">是</Radio>
+                        <Radio value="0002">否</Radio>
+                    </Radio.Group>
+                </Form.Item>
+                <Form.Item label="是否进餐送餐" name={'isMeals'}>
+                    <Radio.Group>
+                        <Radio value="0001">是</Radio>
+                        <Radio value="0002">否</Radio>
+                    </Radio.Group>
+                </Form.Item>
+                <Form.Item label="老人身心观察记录" name={'physicalAndMentalStatus'}>
                     <Input.TextArea AUTOCOMPLETE="OFF" size={'small'} rows={3} />
                 </Form.Item>
-                <Form.Item label="其他" name={'d'}>
+                <Form.Item label="其他" name={'other'}>
                     <Input.TextArea AUTOCOMPLETE="OFF" size={'small'} rows={4} />
                 </Form.Item>
                 <Form.Item>
                     <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                        <Button type="primary" size={'small'} style={{ position: "relative", right: 0 }}>
-                            保存
+                        <Button
+                            type="primary"
+                            size={'small'}
+                            style={{ position: "relative", right: 0 }}
+                            onClick={async () => {
+                                if (ftype == "add") {
+                                    let param = { ...bloodForm.getFieldsValue(), ...record }
+                                    let res = await addNursingRecord(param)
+                                }
+                                if (ftype == "edit") {
+                                    let param = { ...bloodForm.getFieldsValue(), ...record }
+                                    let res = await updateNursingRecord(param)
+                                }
+                            }}
+                        >
+                            {ftype == "add" ? "保存" : "修改"}
                         </Button>
                     </div>
                 </Form.Item>
@@ -179,7 +239,7 @@ const NursingAddRecord = (props) => {
                 form={bloodForm}>
                 <Form.Item label="采样状态" name={'samplingStatus'}>
                     <Select style={{ width: "100%" }} defaultValue="0001">
-                        {samplingStatusMap.map(item => {
+                        {dictionaryMap?.['0006'].map(item => {
                             return <Option value={item['dictCode']}>{item['dictName']}</Option>
                         })}
                     </Select>
@@ -271,8 +331,22 @@ const NursingAddRecord = (props) => {
                 </Form.Item>
                 <Form.Item>
                     <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                        <Button type="primary" size={'small'} style={{ position: "relative", right: 0 }}>
-                            保存
+                        <Button
+                            type="primary"
+                            size={'small'}
+                            style={{ position: "relative", right: 0 }}
+                            onClick={async () => {
+                                if (ftype == "add") {
+                                    let param = { ...bloodForm.getFieldsValue(), ...record }
+                                    let res = await addSpecialNursing(param)
+                                }
+                                if (ftype == "edit") {
+                                    let param = { ...bloodForm.getFieldsValue(), ...record }
+                                    let res = await updateSpecialNursing(param)
+                                }
+                            }}
+                        >
+                            {ftype == "add" ? "保存" : "修改"}
                         </Button>
                     </div>
                 </Form.Item>
@@ -283,46 +357,43 @@ const NursingAddRecord = (props) => {
     const threeVolumeList = () => {
         return (
             <Form onFinish={() => { }} {...ULayout(8, 16)} style={{ width: '80%' }} form={threeVolumeForm}>
-                <Form.Item label="过敏史" name={'n'}>
-                    <Radio.Group>
-                        <Radio value="a">是</Radio>
-                        <Radio value="b">否</Radio>
-                    </Radio.Group>
-                </Form.Item>
-                <Form.Item label="护理日期" name={'a'}>
+                <Form.Item label="护理日期" name={'recordTime'}>
                     <DatePicker style={{ width: "100%" }} />
                 </Form.Item>
-                <Form.Item label="护理时间" name={'b'}>
+                <Form.Item label="护理时间" name={'timePoint'}>
                     <TimePicker style={{ width: "100%" }} />
                 </Form.Item>
-                <Form.Item label="手术后天数" name={'c'} >
+                {/* <Form.Item label="手术后天数" name={'c'} >
                     <Input size="small" style={{ width: "100%" }} />
-                </Form.Item>
-                <Form.Item label="体温" name={'d'}>
+                </Form.Item> */}
+                <Form.Item label="体温" name={'temperature'}>
                     <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="°C" />
                 </Form.Item>
-                <Form.Item label="脉搏心率" name={'e'}>
+                <Form.Item label="脉搏心率" name={'pulse'}>
                     <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="次/分" />
                 </Form.Item>
-                <Form.Item label="呼吸" name={'f'}>
+                <Form.Item label="呼吸" name={'breathing'}>
                     <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="次/分" />
                 </Form.Item>
-                <Form.Item label="血压" name={'g'}>
+                <Form.Item label="高压" name={'highBloodPressure'}>
                     <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="mmHg" />
                 </Form.Item>
-                <Form.Item label="入量" name={'h'}>
+                <Form.Item label="低压" name={'lowBloodPressure'}>
+                    <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="mmHg" />
+                </Form.Item>
+                <Form.Item label="入量" name={'intake'}>
                     <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="ml" />
                 </Form.Item>
-                <Form.Item label=" 出量" name={'i'}>
+                <Form.Item label=" 出量" name={'output'}>
                     <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="ml" />
                 </Form.Item>
-                <Form.Item label=" 小便" name={'g'}>
+                <Form.Item label=" 小便" name={'urine'}>
                     <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="ml" />
                 </Form.Item>
-                <Form.Item label=" 大便" name={'k'}>
+                {/* <Form.Item label=" 大便" name={'k'}>
                     <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="ml" />
-                </Form.Item>
-                <Form.Item label=" 体重" name={'l'}>
+                </Form.Item> */}
+                <Form.Item label=" 体重" name={'weight'}>
                     <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="Kg" />
                 </Form.Item>
                 <Form.Item label=" 血氧饱和度" name={'m'}>
@@ -337,11 +408,11 @@ const NursingAddRecord = (props) => {
                             onClick={async () => {
                                 if (ftype == "add") {
                                     let param = { ...bloodForm.getFieldsValue(), ...record }
-                                    let res = await addSpecialNursing(param)
+                                    let res = await addVitalSignRecord(param)
                                 }
                                 if (ftype == "edit") {
                                     let param = { ...bloodForm.getFieldsValue(), ...record }
-                                    let res = await updateSpecialNursing(param)
+                                    let res = await updateVitalSignRecord(param)
                                 }
                             }}
                         >

@@ -1,34 +1,9 @@
-import { Button, Card, Col, Form, List, Row, Select, Tag, Table, Radio, Input, DatePicker, Modal, InputNumber } from 'antd';
-const dataSource = [
-    {
-        key: '1',
-        name: '胡彦斌',
-        archivesId: "L000001",
-        careLevel: "一级",//字典
-        isFood:"是",
-        bloodGlucose:"100",
-        time:"2021-2-25",
-        tiemType:"午饭前",
-        takeTime:"2021-2-14 12:00:00"
-    },
-    {
-        key: '2',
-        name: '李佳敏',
-        archivesId: "L000002",
-        careLevel: "一级",//字典
-        isFood:"否",
-        bloodGlucose:"48",
-        time:"2021-2-26",
-        tiemType:"午饭前",
-        takeTime:"2021-2-14 16:20:10"
-    }
-];
 const columns = (edit) => {
     return [
         {
             title: '住院编号',
-            dataIndex: 'archivesId',
-            key: 'archivesId',
+            dataIndex: 'businessNo',
+            key: 'businessNo',
         },
         {
             title: '姓名',
@@ -36,29 +11,59 @@ const columns = (edit) => {
             key: 'name',
         },
         {
-            title: '级别护理',
-            dataIndex: 'careLevel',
-            key: 'careLevel',
+            title: '呼吸',
+            dataIndex: 'breathing',
+            key: 'breathing',
         },
         {
-            title: '是否空腹',
-            dataIndex: 'isFood',
-            key: 'isFood',
+            title: '高压',
+            dataIndex: 'highBloodPressure',
+            key: 'highBloodPressure',
         },
         {
-            title: '血糖值(单位：mmol)',
-            dataIndex: 'bloodGlucose',
-            key: 'bloodGlucose',
+            title: '低压',
+            dataIndex: 'lowBloodPressure',
+            key: 'lowBloodPressure',
         },
         {
-            title: '采样时间段',
-            dataIndex: 'tiemType',
-            key: 'tiemType',
+            title: '入量',
+            dataIndex: 'intake',
+            key: 'intake',
         },
         {
-            title: '采样时间',
-            dataIndex: 'takeTime',
-            key: 'takeTime',
+            title: '出量',
+            dataIndex: 'output',
+            key: 'output',
+        },
+        {
+            title: '脉搏',
+            dataIndex: 'pulse',
+            key: 'pulse',
+        },
+        {
+            title: '出量',
+            dataIndex: 'output',
+            key: 'output',
+        },
+        {
+            title: '记录时间',
+            dataIndex: 'recordTime',
+            key: 'recordTime',
+        },
+        {
+            title: '体温',
+            dataIndex: 'temperature',
+            key: 'temperature',
+        },
+        {
+            title: '尿量',
+            dataIndex: 'urine',
+            key: 'urine',
+        },
+        {
+            title: '体重',
+            dataIndex: 'weight',
+            key: 'weight',
         },
         {
             title: '操作',
@@ -66,4 +71,4 @@ const columns = (edit) => {
         }
     ];
 }
-export { dataSource, columns }
+export { columns }

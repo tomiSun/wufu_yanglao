@@ -23,15 +23,10 @@ import {
   examArchiveUpdate,
   examArchiveSave
 } from '@/services/inHospitalRegister/index.js'
-let info1 = { "archiveId": "457947338305048576", "businessNo": "202107201654" }
-let info2 = { "archiveId": "465188927389700096", "businessNo": "77" }
-let record = info1
 const { TabPane } = Tabs;
 const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
-  // labelAlign: 'left',
-  // layout: 'inline',
 };
 const validateMessages = {
   required: '${label} is required!',
@@ -39,9 +34,9 @@ const validateMessages = {
 const PhysicalExamination = (props) => {
   //属性
   const { selectRowData, onPhysicalExaminationVisible, visible } = props;
-  const { archiveId } = selectRowData;
   //变量
   const [mode, setMode] = useState("add");//模式是新增还是编辑
+  
   //form
   const [busExamArchiveForm] = Form.useForm();//基础与总结
   const [busExamEntArchiveForm] = Form.useForm();//五官
@@ -56,9 +51,8 @@ const PhysicalExamination = (props) => {
   }, []);
   //初始化 判断是新增还是编辑
   const initData = async () => {
-    //"465188927389700096" 
-    busExamArchiveForm.setFieldsValue(record)
-    let resQuery = await examArchiveQuery({ "businessNo": record['businessNo'] })
+    busExamArchiveForm.setFieldsValue(selectRowData)
+    let resQuery = await examArchiveQuery({ "businessNo": selectRowData['businessNo'] })
     if (resQuery['code'] == 200 && !!resQuery['data']) {
       let id = resQuery['data']['busExamArchiveQueryVO']['id']
       setUpdateId(id)
@@ -89,35 +83,25 @@ const PhysicalExamination = (props) => {
               <Form
                 form={busExamArchiveForm}
                 {...layout} name="nest-messages" validateMessages={validateMessages}>
-                <Form.Item name={'archiveId'} label="档案ID" {...layout}>
-                  <Input />
+                <Form.Item name={'aichiveId'} label="档案ID" {...layout} >
+                  <Input disabled/>
                 </Form.Item>
                 <Form.Item name={'businessNo'} label="住院号" {...layout}>
-                  <Input />
+                  <Input  disabled/>
                 </Form.Item>
                 <Form.Item
                   name={'name'}
                   label="姓名"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
                 >
-                  <Input />
+                  <Input  disabled/>
                 </Form.Item>
                 <Form.Item
                   name={'sex'}
                   label="性别"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
                 >
-                  <Radio.Group onChange={() => { }} defaultValue={1}>
-                    <Radio value={1}>男</Radio>
-                    <Radio value={2}>女</Radio>
+                  <Radio.Group onChange={() => { }} defaultValue={"1"} disabled>
+                    <Radio value={"1"}>男</Radio>
+                    <Radio value={"2"}>女</Radio>
                   </Radio.Group>
                 </Form.Item>
                 <Form.Item name={'age'} label="年龄">
@@ -419,7 +403,7 @@ const PhysicalExamination = (props) => {
     }}>保存</Button>;
     //删除按钮
     let delBtn = <Button onClick={async () => {
-      let res1 = await examArchiveDel({"businessNo":record['businessNo']})
+      let res1 = await examArchiveDel({ "businessNo": selectRowData['businessNo'] })
     }}>删除</Button>
     //编辑按钮
     let editBtn = <Button onClick={async () => {
