@@ -1,76 +1,108 @@
-import { Button, Card, Col, Form, List, Row, Select, Tag, Table, Radio, Input, DatePicker, Modal, InputNumber } from 'antd';
-const dataSource = [
-    {
-        key: '1',
-        a:"Z001",
-        b:"张三",
-        c:"2020-7-20",
-        d:"早",
-        e:"37",
-        f:"120",
-        g:"10",
-        h:"100",
-        l:"12",
-        m:"良好",
-        n:"无"
-    }
-];
+
 const columns = (edit) => {
     return [
         {
             title: '住院编号',
-            dataIndex: 'a',
-            key: 'archivesId',
+            dataIndex: 'businessNo',
+            key: 'businessNo',
         },
         {
             title: '姓名',
-            dataIndex: 'b',
+            dataIndex: 'name',
             key: 'name',
         },
         {
             title: '护理日期',
-            dataIndex: 'c',
-            key: 'careLevel',
+            dataIndex: 'createTime',
+            key: 'createTime',
         },
         {
             title: '护理时间段',
-            dataIndex: 'd',
-            key: 'tiemType',
+            dataIndex: 'timePoint',
+            key: 'timePoint',
         },
         {
             title: '体温（°C）',
-            dataIndex: 'e',
-            key: 'takeTime',
+            dataIndex: 'temperature',
+            key: 'temperature',
         },
         {
             title: '脉搏心率（次/分）',
-            dataIndex: 'f',
-            key: 'name',
+            dataIndex: 'pulse',
+            key: 'pulse',
         },
         {
-            title: 'R（次/分）',
-            dataIndex: 'g',
-            key: 'careLevel',
+            title: '呼吸',
+            dataIndex: 'breathing',
+            key: 'breathing',
         },
         {
-            title: 'BP mmHg（次/分）',
-            dataIndex: 'h',
+            title: '高压',
+            dataIndex: 'highBloodPressure',
+            key: 'highBloodPressure',
+        },
+        {
+            title: '低压',
+            dataIndex: 'lowBloodPressure',
+            key: 'lowBloodPressure',
+        },
+        {
+            title: '是否打扫房间',
+            dataIndex: 'isCleanRoom',
+            key: 'isCleanRoom',
+            render: (t, r) => {
+                return t == "0" ? "是" : "否"
+            }
+        },
+        {
+            title: '是否清洗便池',
+            dataIndex: 'isCleanToilet',
             key: 'tiemType',
+            render: (t, r) => {
+                return t == "0" ? "是" : "否"
+            }
         },
         {
-            title: '基础护理',
-            dataIndex: 'l',
-            key: 'takeTime',
+            title: '是否洗头理发',
+            dataIndex: 'isHaircut',
+            key: 'isHaircut',
+            render: (t, r) => {
+                return t == "0" ? "是" : "否"
+            }
+        },
+        {
+            title: '是否晾晒衣服',
+            dataIndex: 'isHangClothes',
+            key: 'isHangClothes',
+            render: (t, r) => {
+                return t == "0" ? "是" : "否"
+            }
+        },
+        {
+            title: '是否修剪指甲',
+            dataIndex: 'isManicure',
+            key: 'isManicure',
+            render: (t, r) => {
+                return t == "0" ? "是" : "否"
+            }
+        },
+        {
+            title: '是否进餐送餐',
+            dataIndex: 'isMeals',
+            key: 'isMeals',
+            render: (t, r) => {
+                return t == "0" ? "是" : "否"
+            }
         },
         {
             title: '老人身心观察记录',
-            dataIndex: 'm',
-            key: 'tiemType',
+            dataIndex: 'physicalAndMentalStatus',
+            key: 'physicalAndMentalStatus',
         },
         {
             title: '其他',
-            dataIndex: 'n',
-            key: 'takeTime',
+            dataIndex: 'other',
+            key: 'other',
         },
         {
             title: '操作',
@@ -78,4 +110,4 @@ const columns = (edit) => {
         }
     ];
 }
-export { dataSource, columns }
+export { columns }

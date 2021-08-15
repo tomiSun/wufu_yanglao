@@ -2,7 +2,7 @@ import request from '@/utils/request';
 
 // 护理-血糖
 export async function bloodSugarDel(params) {
-  return request(`/blood-sugar/delete?id=${params['id']}`, {
+  return request(`/blood-sugar/delete?ids=${params['id']}`, {
     method: 'GET',
     data: params
   });
@@ -45,7 +45,7 @@ export async function takeMedicineUpdate(params) {
   });
 };
 export async function takeMedicineDel(params) {
-  return request('/medicine/del', {
+  return request(`/medicine/del?ids=${params['id']}`, {
     method: 'GET',
     data: params
   });
@@ -70,7 +70,7 @@ export async function medicationRecordUpdate(params) {
   });
 };
 export async function medicineRecordDel(params) {
-  return request('/medicine/delMedicationRecord', {
+  return request(`/medicine/delMedicationRecord?ids=${params['id']}`, {
     method: 'GET',
     data: params
   });
@@ -95,7 +95,59 @@ export async function updateSpecialNursing(params) {
   });
 };
 export async function delSpecialNursing(params) {
-  return request('/nursingManage/delSpecialNursing', {
+  return request(`/nursingManage/delSpecialNursing?ids=${params['id']}`, {
+    method: 'GET',
+    data: params
+  });
+};
+
+//护理管理
+export async function addNursingRecord(params) {
+  return request('/nursingManage/addNursingRecord', {
+    method: 'POST',
+    data: params
+  });
+};
+export async function pageNursingRecord(params) {
+  return request('/nursingManage/pageNursingRecord', {
+    method: 'POST',
+    data: params
+  });
+};
+export async function updateNursingRecord(params) {
+  return request('/nursingManage/updateNursingRecord', {
+    method: 'POST',
+    data: params
+  });
+};
+export async function delNursingRecord(params) {
+  return request(`/nursingManage/delNursingRecord?ids=${params['id']}`, {
+    method: 'GET',
+    data: params
+  });
+};
+
+//三测单
+export async function addVitalSignRecord(params) {
+  return request('/nursingManage/addVitalSignRecord', {
+    method: 'POST',
+    data: params
+  });
+};
+export async function pageVitalSignRecord(params) {
+  return request('/nursingManage/queryVitalSignRecord', {
+    method: 'POST',
+    data: params
+  });
+};
+export async function updateVitalSignRecord(params) {
+  return request('/nursingManage/batchUpdateVitalSignRecord', {
+    method: 'POST',
+    data: params
+  });
+};
+export async function delVitalSignRecord(params) {
+  return request(`/nursingManage/delVitalSignRecord?ids=${String(params['id'])}`, {
     method: 'GET',
     data: params
   });

@@ -1,0 +1,14 @@
+.box2 {
+  padding: 20px;
+  background: #fff;
+  min-width: 300px;
+  overflow: scroll;
+}
+.box2 .block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 20px;
+  border: 1px dashed #424242;
+}

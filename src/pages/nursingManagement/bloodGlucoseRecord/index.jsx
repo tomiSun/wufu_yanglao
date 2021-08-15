@@ -107,6 +107,15 @@ const RloodGlucoseRecord = (props) => {
           >
             新增记录
           </Button>
+          <Form.Item>
+          <Button
+            type="primary"
+            size={'small'}
+            onClick={() => { SForm.resetFields() }}
+          >
+            清空
+          </Button>
+        </Form.Item>
         </Form.Item>
       </Form>
     );
@@ -129,7 +138,7 @@ const RloodGlucoseRecord = (props) => {
         <Button
           size={'small'}
           type="link"
-          onClick={() => { handleJumpbatch("3", "edit") }}
+          onClick={() => { handleJumpbatch("3", "edit", record) }}
         >
           修改
         </Button>

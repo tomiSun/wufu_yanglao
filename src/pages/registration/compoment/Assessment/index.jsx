@@ -25,10 +25,6 @@ import {
     assessmentSave
 } from '@/services/inHospitalRegister/index.js';
 
-// import { hearInfo } form './data'
-let info1 = { "archiveId": "457947338305048576", "businessNo": "202107201654" }
-let info2 = { "archiveId": "465188927389700096", "businessNo": "77" }
-let record = info1
 const { TabPane } = Tabs;
 const layout = {
     labelCol: { span: 8 },
@@ -62,8 +58,8 @@ const Assessment = (props) => {
     //初始化 判断是新增还是编辑
     const initData = async () => {
         //"465188927389700096" 
-        hearingForm.setFieldsValue(record)
-        let resQuery = await assessmentQuery({ "businessNo": record['businessNo'] })
+        hearingForm.setFieldsValue(selectRowData)
+        let resQuery = await assessmentQuery({ "businessNo": selectRowData['businessNo'] })
         if (resQuery['code'] == 200 && !!resQuery['data']) {
             let id = resQuery['data']['id']
             setUpdateId(id)
@@ -522,8 +518,8 @@ const Assessment = (props) => {
             type={"primary"}
             onClick={async () => {
                 let addParam = {
-                    businessNo: record['businessNo'],
-                    archiveId: record['archiveId'],
+                    businessNo: selectRowData['businessNo'],
+                    archiveId: selectRowData['archiveId'],
                     admissionTime: new Date(),
                     age: 18,
                     floorName: "1",
@@ -544,7 +540,7 @@ const Assessment = (props) => {
             }}>新增</Button>;
         //删除按钮
         let delBtn = <Button onClick={async () => {
-            let res1 = await assessmentDel({ "businessNo": record['businessNo'] })
+            let res1 = await assessmentDel({ "businessNo": selectRowData['businessNo'] })
         }}>删除</Button>
         //编辑按钮
         let editBtn = <Button
@@ -552,8 +548,8 @@ const Assessment = (props) => {
             onClick={async () => {
                 let updateParam = {
                     id: updateId,
-                    businessNo: record['businessNo'],
-                    archiveId: record['archiveId'],
+                    businessNo: selectRowData['businessNo'],
+                    archiveId: selectRowData['archiveId'],
                     admissionTime: new Date(),
                     age: 18,
                     floorName: "1",

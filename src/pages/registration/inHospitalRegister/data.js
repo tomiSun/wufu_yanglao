@@ -1,4 +1,6 @@
-import { Button, Card, Col, Form, List, Row, Select, Tag, Table, Radio, Input, DatePicker, Modal, InputNumber } from 'antd';
+const formatStr = (str) => {
+    return str.replace("[\"", "").replace("\"]", "").replace('"', "").replace('"', "")
+}
 const columns = (edit) => {
     return [
         {
@@ -32,14 +34,47 @@ const columns = (edit) => {
             key: 'admissionTime',
         },
         {
+            title: '费用到期时间',
+            dataIndex: 'feesDueDate',
+            key: 'feesDueDate',
+        },
+        {
+            title: '费用到期标志',
+            dataIndex: 'feesDueStatue',
+            key: 'feesDueStatue',
+            render: (t, r) => {
+                if (t == null) {
+                    return "-"
+                }
+                return t == "0" ? "正常" : "欠费"
+            }
+        },
+        {
+            title: '床位号',
+            dataIndex: 'bedCode',
+            key: 'bedCode',
+        },
+        {
             title: '过敏史',
             dataIndex: 'allergy',
             key: 'allergy',
+            render: (t, r) => {
+                if (t == null) {
+                    return "-"
+                }
+                return formatStr(t)
+            }
         },
         {
             title: '既往史',
             dataIndex: 'previousHistory',
             key: 'previousHistory',
+            render: (t, r) => {
+                if (t == null) {
+                    return "-"
+                }
+                return formatStr(t)
+            }
         },
         {
             title: '家庭住址',
