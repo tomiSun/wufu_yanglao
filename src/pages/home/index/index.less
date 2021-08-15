@@ -1,0 +1,158 @@
+.home {
+  padding: 5px 0;
+  position: relative;
+  :global {
+    .ant-collapse-content > .ant-collapse-content-box {
+      padding: 0 5px 5px 10px;
+    }
+    .ant-list-sm .ant-list-item {
+      padding: 8px;
+    }
+    .ant-card-head {
+      min-height: unset;
+      padding: 0 5px;
+      height: 35px;
+      // border-bottom: 1px solid #f0f0f0;
+    }
+    .ant-card-head-title {
+      display: inline-block;
+      flex: 1 1;
+      padding: 5px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+  }
+    .ant-card-body{
+      padding: 0 !important;
+    }
+    .ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header {
+      padding: 5px;
+      padding-right: 5px;
+    }
+    .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+      position: relative;
+      padding: 6px;
+      color: rgba(0, 0, 0, 0.85);
+      line-height: 1.5715;
+      cursor: pointer;
+      transition: all 0.3s, visibility 0s;
+  }
+    .ant-collapse-ghost > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+  }
+
+}
+.top{
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  position: sticky;
+  width: 100%;
+  top: 0px;
+  right: 0;
+  z-index: 2;
+  background: #fff;
+  .left{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .search{
+      margin-left: 10px;
+    }
+  }
+  .right{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  .bedInfo{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .title{
+      margin-right: 10px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+  .roomMark{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .title{
+      margin-right: 10px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+  }
+
+}
+.room {
+  margin-top: 10px;
+  border: 1px solid #f0f0f0 !important;
+  height: calc(100% - 10px);
+  :global{
+    .ant-card-body{
+      height: calc(100% - 35px);
+    }
+  }
+}
+
+.bed {
+  // margin-top: 5px;
+  // border: 1px solid #f0f0f0 !important;
+  height: 100%;
+  .rowHeader{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    // border-bottom: 1px solid #f0f0f0;
+    // padding-bottom: 5px;
+    .avatar{
+      display: block;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    & > div{
+      &:not(:first-child){
+        margin-left: 5px;
+      }
+    }
+  }
+  .row{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    & > div{
+      margin-top: 5px;
+    }
+    .item{
+      flex: 1 1 50%;
+    }
+    .itemTwo{
+      flex: 1 1 100%;
+    }
+    .bold{
+      font-weight: 600;
+    }
+  }
+  :global{
+    .ant-card-body{
+      height: calc(100% - 35px);
+    }
+  }
+}
+
+.spinContainer{
+  width: 100%;
+  height: calc(100vh - 113px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

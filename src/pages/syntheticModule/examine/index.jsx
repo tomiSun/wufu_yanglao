@@ -194,11 +194,11 @@ export default () => {
           key: 'opera',
           align: 'center',
           width: 130,
-          render: (text, examine) => (
+          render: (text, record) => (
             <div className={styles.opera}>
               <a
                 onClick={() => {
-                  addOrEdit('edit', true, examine);
+                  addOrEdit('edit', true, record);
                 }}
               >
                 编辑
@@ -207,7 +207,7 @@ export default () => {
               <Divider type="vertical" />
               <a
                 onClick={() => {
-                  del(examine);
+                  del(record);
                 }}
               >
                 删除
@@ -240,11 +240,6 @@ export default () => {
         yTable.table.dataRow = count;
         setYTable({ ...yTable });
       },
-      // selectInfo: (info) => {
-      //   yTable.table.dataRow = info;
-      //   setYTable({ ...yTable });
-      //   addOrEdit('edit', true);
-      // },
     },
   });
 
@@ -256,15 +251,15 @@ export default () => {
   });
 
   // 新增 / 编辑
-  const addOrEdit = (type, visible, examine) => {
-    if (type === 'edit' && !Object.getOwnPropertyNames(examine).length) {
+  const addOrEdit = (type, visible, record) => {
+    if (type === 'edit' && !Object.getOwnPropertyNames(record).length) {
       return message.error('请选中行');
     }
     modalForm.resetFields();
     if (type === 'edit') {
       modalForm.setFieldsValue({
-        ...examine,
-        inspectionTime: examine?.inspectionTime && moment(examine?.inspectionTime),
+        ...record,
+        inspectionTime: record?.inspectionTime && moment(record?.inspectionTime),
       });
     }
     changeModal(type, visible);
@@ -276,8 +271,8 @@ export default () => {
     setModeType({ ...modeType });
   };
   // 删除
-  const del = (examine) => {
-    if (!!Object.getOwnPropertyNames(examine).length) {
+  const del = (record) => {
+    if (!!Object.getOwnPropertyNames(record).length) {
       Modal.confirm({
         title: '是否要删除该条数据',
         icon: <DeleteOutlined />,
@@ -286,7 +281,7 @@ export default () => {
         cancelText: '取消',
         style: { padding: '30px' },
         onOk() {
-          examineDel({ ids: examine.id })
+          examineDel({ ids: record.id })
             .then((res) => {
               message.success(res.msg);
               yTable.table.dataRow = {};

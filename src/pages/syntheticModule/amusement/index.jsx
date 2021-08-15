@@ -238,11 +238,6 @@ export default () => {
         yTable.table.dataRow = count;
         setYTable({ ...yTable });
       },
-      // selectInfo: (info) => {
-      //   yTable.table.dataRow = info;
-      //   setYTable({ ...yTable });
-      //   addOrEdit('edit', true, info);
-      // },
     },
   });
 

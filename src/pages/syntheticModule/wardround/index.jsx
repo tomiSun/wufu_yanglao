@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.less';
-import { SearchForm, YTable, Seltopt } from 'yunyi-component';
+import { SearchForm, YTable } from 'yunyi-component';
 import {
   Form,
   Modal,
@@ -14,22 +15,22 @@ import {
   Divider,
   DatePicker,
   Checkbox,
+  Select,
 } from 'antd';
-import moment from 'moment';
 import { DeleteOutlined } from '@ant-design/icons';
-// import {
-//   getBloodTableData,
-//   delBloodTableData,
-//   insertBloodType,
-//   updateBloodType,
-// } from '@/services/blood/bloodcomposition';
-// import { getBasicData } from '@/services/basicData/basic';
+import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
+import {
+  wardroundAdd,
+  wardroundDel,
+  wardroundSelect,
+  wardroundUpdate,
+} from '@/services/syntheticModule/wardround';
 import { findValByKey, getDefaultOption } from '@/utils/common';
-import { makeWb, pinyin } from 'yunyi-convert';
 import { config } from '@/utils/const';
 const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
 const { TextArea } = Input;
+import moment from 'moment';
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
@@ -40,24 +41,27 @@ export default () => {
     inputArr: [
       {
         name: 'keyWord',
-        placeholder: '请输入查房人',
-        sort: 1,
+        placeholder: '请输入查房人姓名',
+        sort: 2,
         style: { width: '200px' },
+        pressEnter: (enter) => {
+          getTableData();
+        },
       },
     ],
     dateArr: [
-      {
-        label: '时间',
-        name: 'startDate',
-        config: {
-          time: moment().format('YYYY-MM-DD'),
-          showTime: false,
-          onChange: (e) => {
-            console.log('onChange-----startDate', e);
-          },
-        },
-        sort: 1,
-      },
+      // {
+      //   label: '考核时间',
+      //   name: 'startDate',
+      //   config: {
+      //     time: moment().format('YYYY-MM-DD'),
+      //     showTime: false,
+      //     onChange: (e) => {
+      //       console.log('onChange-----startDate', e);
+      //     },
+      //   },
+      //   sort: 1,
+      // },
       // {
       //   // label: '时间范围',
       //   name: 'endDate',
@@ -66,31 +70,28 @@ export default () => {
       //   },
       //   sort: 2,
       // },
-      // {
-      //   label: '交班时间',
-      //   name: 'timeRange',
-      //   config: {
-      //     dateType: 'range',
-      //     timeStart: moment().startOf('day'),
-      //     timeEnd: moment().endOf('day'),
-      //     showTime: true,
-      //     onChange: (e) => {
-      //       topRightFrom.setFieldsValue({ timeRange: e });
-      //     },
-      //     onChange: (e) => {
-      //       topRightFrom.setFieldsValue({ timeRange: e });
-      //       yRightTable.table.pagination.current = 1;
-      //       getBloodMasterData();
-      //     },
-      //   },
-      //   style: { width: '220px' },
-      //   sort: 2,
-      // },
+      {
+        label: '查房时间',
+        name: 'timeRange',
+        config: {
+          dateType: 'range',
+          timeStart: moment().startOf('day'),
+          timeEnd: moment().endOf('day'),
+          showTime: false,
+          onChange: (e) => {
+            topFrom.setFieldsValue({ timeRange: e });
+          },
+        },
+        style: { width: '220px' },
+        sort: 1,
+      },
     ],
     btnArr: [
       {
         name: '查询',
-        callback: () => {},
+        callback: () => {
+          getTableData();
+        },
         sort: 2,
         style: { marginRight: '15px' },
       },
@@ -103,75 +104,42 @@ export default () => {
           addOrEdit('add', true);
         },
       },
-      // {
-      //   name: '编辑',
-      //   style: { position: 'absolute', left: '97px' },
-      //   callback: () => {
-      //     addOrEdit('edit', true);
-      //   },
-      // },
-      // {
-      //   name: '删除',
-      //   type: 'danger',
-      //   style: { position: 'absolute', left: '179px' },
-      //   callback: () => {
-      //     del();
-      //   },
-      // },
-      // {
-      //   name: '刷新',
-      //   style: { position: 'absolute', left: '257px' },
-      //   callback: () => {
-      //     refreshData();
-      //   },
-      // },
     ],
     layout: 'inline',
     form: topFrom,
     cls: 'opera',
-    // styles: { marginTop: '10px' },
-    getInfoData: (value) => {
-      refreshData();
+    initialValues: {
+      timeRange: [
+        moment().startOf('day').format('YYYY-MM-DD'),
+        // moment().subtract(90, 'days').format('YYYY-MM-DD'),
+        moment().endOf('day').format('YYYY-MM-DD'),
+      ],
     },
   };
-  // {key:'1',value:'2'}
-  // [{key:'1',value:'2'},{key:'1',value:'2'}]
-  // [{key:'1',value:'2'},{key:'1',value:'2'}]
-  // ['1001','1003']
-  // let res = {
-  //   '1001':[
-  //     {key:'001',name:'男',value:'001',label:'男'},
-  //     {key:'002',name:'女',value:'001',label:'男'}
-  //   ],
-  //   '1002':[{key:'002',name:'男',value:'001',label:'男'}]
-  // }
+
   // modal配置项
   const [modalForm] = Form.useForm();
 
   // 基础字典数据
   const [basic, setBasic] = useState({});
 
-  // 动态更改form校验状态
-  const [isCross, setIsCross] = useState(false);
-  const [isMelt, setIsMelt] = useState(false);
-
   // table模块
   const [yTable, setYTable] = useState({
     table: {
       bordered: true,
       loading: false,
-      dataSource: [{ id: 1 }],
+      dataSource: [],
       columns: [
         {
           title: '查房时间',
-          dataIndex: 'typeName',
+          dataIndex: 'wardRoundTime',
           ellipsis: true,
           align: 'center',
           width: 150,
         },
         {
           title: '查房人',
-          dataIndex: 'number',
+          dataIndex: 'wardRounds',
           align: 'center',
           ellipsis: true,
           width: 160,
@@ -185,120 +153,120 @@ export default () => {
           children: [
             {
               title: '生活照料',
-              dataIndex: 'building',
-              key: 'building',
+              dataIndex: 'livingConditions',
+              key: 'livingConditions',
               width: 200,
               children: [
                 {
                   title: '发现情况摘要',
-                  dataIndex: 'building',
-                  key: 'building',
+                  dataIndex: 'livingConditions',
+                  key: 'livingConditions',
                   width: 100,
                 },
                 {
                   title: '处理意见',
-                  dataIndex: 'number',
-                  key: 'number',
+                  dataIndex: 'lifeOpinion',
+                  key: 'lifeOpinion',
                   width: 100,
                 },
               ],
             },
             {
               title: '心理护理',
-              dataIndex: 'number',
-              key: 'number',
+              dataIndex: 'psychologicalSituation',
+              key: 'psychologicalSituation',
               width: 100,
               children: [
                 {
                   title: '发现情况摘要',
-                  dataIndex: 'building',
-                  key: 'building',
+                  dataIndex: 'psychologicalSituation',
+                  key: 'psychologicalSituation',
                   width: 100,
                 },
                 {
                   title: '处理意见',
-                  dataIndex: 'number',
-                  key: 'number',
+                  dataIndex: 'psychologicalOpinion',
+                  key: 'psychologicalOpinion',
                   width: 100,
                 },
               ],
             },
             {
               title: '后勤保障',
-              dataIndex: 'number',
-              key: 'number',
+              dataIndex: 'logisticsSituation',
+              key: 'logisticsSituation',
               width: 100,
               children: [
                 {
                   title: '发现情况摘要',
-                  dataIndex: 'building',
-                  key: 'building',
+                  dataIndex: 'logisticsSituation',
+                  key: 'logisticsSituation',
                   width: 100,
                 },
                 {
                   title: '处理意见',
-                  dataIndex: 'number',
-                  key: 'number',
+                  dataIndex: 'logisticsOpinion',
+                  key: 'logisticsOpinion',
                   width: 100,
                 },
               ],
             },
             {
               title: '安全隐患',
-              dataIndex: 'number',
-              key: 'number',
+              dataIndex: 'securitySituation',
+              key: 'securitySituation',
               width: 100,
               children: [
                 {
                   title: '发现情况摘要',
-                  dataIndex: 'building',
-                  key: 'building',
+                  dataIndex: 'securitySituation',
+                  key: 'securitySituation',
                   width: 100,
                 },
                 {
                   title: '处理意见',
-                  dataIndex: 'number',
-                  key: 'number',
+                  dataIndex: 'safetyAdvice',
+                  key: 'safetyAdvice',
                   width: 100,
                 },
               ],
             },
             {
               title: '环境卫生及其他',
-              dataIndex: 'number',
-              key: 'number',
+              dataIndex: 'environmentalConditions',
+              key: 'environmentalConditions',
               width: 100,
               children: [
                 {
                   title: '发现情况摘要',
-                  dataIndex: 'building',
-                  key: 'building',
+                  dataIndex: 'environmentalConditions',
+                  key: 'environmentalConditions',
                   width: 100,
                 },
                 {
                   title: '处理意见',
-                  dataIndex: 'number',
-                  key: 'number',
+                  dataIndex: 'environmentalOpinion',
+                  key: 'environmentalOpinion',
                   width: 100,
                 },
               ],
             },
             {
               title: '意见或建议',
-              dataIndex: 'number',
-              key: 'number',
+              dataIndex: 'opinionSituation',
+              key: 'opinionSituation',
               width: 100,
               children: [
                 {
                   title: '发现情况摘要',
-                  dataIndex: 'building',
-                  key: 'building',
+                  dataIndex: 'opinionSituation',
+                  key: 'opinionSituation',
                   width: 100,
                 },
                 {
                   title: '处理意见',
-                  dataIndex: 'number',
-                  key: 'number',
+                  dataIndex: 'opinion',
+                  key: 'opinion',
                   width: 100,
                 },
               ],
@@ -317,37 +285,28 @@ export default () => {
                   addOrEdit('edit', true, record);
                 }}
               >
-                查看
-              </a>
-
-              <Divider type="vertical" />
-              <a
-                onClick={() => {
-                  addOrEdit('edit', true, record);
-                }}
-              >
                 编辑
               </a>
 
-              {/* <Divider type="vertical" />
+              <Divider type="vertical" />
               <a
                 onClick={() => {
                   del(record);
                 }}
               >
                 删除
-              </a> */}
+              </a>
             </div>
           ),
         },
       ],
       key: Math.random(),
-      scroll: { x: 1360, y: '100%' },
+      scroll: { x: 940, y: '100%' },
       dataRow: {},
       rowKey: 'id',
       pagination: {
         current: 1,
-        pageSize: 10,
+        pageSize: pageSize,
         showSizeChanger: true,
         showQuickJumper: true,
         showTotal: (total) => {
@@ -365,18 +324,19 @@ export default () => {
         yTable.table.dataRow = count;
         setYTable({ ...yTable });
       },
-      selectInfo: (info) => {
-        yTable.table.dataRow = info;
-        setYTable({ ...yTable });
-        addOrEdit('edit', true);
-      },
+      // selectInfo: (info) => {
+      //   yTable.table.dataRow = info;
+      //   setYTable({ ...yTable });
+      //   addOrEdit('edit', true);
+      // },
     },
   });
 
   // 判断新增 / 编辑
   const [modeType, setModeType] = useState({
     type: null,
-    show: false,
+    visible: false,
+    loading: false,
   });
 
   // 新增 / 编辑
@@ -388,15 +348,7 @@ export default () => {
     if (type === 'edit') {
       modalForm.setFieldsValue({
         ...record,
-        isCross: !!record.isCross ? true : false,
-        isMelt: !!record.isMelt ? true : false,
-      });
-    } else {
-      // 选择框默认值
-      modalForm.setFieldsValue({
-        typeName: getDefaultOption(basic['1041'])?.name,
-        typeCode: getDefaultOption(basic['1041'])?.key,
-        unit: getDefaultOption(basic['1043'])?.key,
+        wardRoundTime: record?.wardRoundTime && moment(record?.wardRoundTime),
       });
     }
     changeModal(type, visible);
@@ -404,7 +356,7 @@ export default () => {
   // 修改弹窗配置
   const changeModal = (type, visible) => {
     modeType.type = type;
-    modeType.show = visible;
+    modeType.visible = visible;
     setModeType({ ...modeType });
   };
   // 删除
@@ -418,111 +370,123 @@ export default () => {
         cancelText: '取消',
         style: { padding: '30px' },
         onOk() {
-          // delBloodTableData({ id: record.id }).then((response) => {
-          //   message.success('删除成功');
-          //   yTable.table.dataRow = {};
-          //   yTable.table.loading = true;
-          //   setYTable({ ...yTable });
-          //   getTableData();
-          // });
+          wardroundDel({ id: record.id })
+            .then((res) => {
+              message.success(res.msg);
+              yTable.table.dataRow = {};
+              getTableData();
+            })
+            .catch((err) => {
+              console.log('err-wardroundDel: ', err);
+            });
         },
       });
     } else {
-      message.error('请选中行数');
+      message.error('请选中行');
     }
   };
-  // 重置密码
-  const resetPassWord = (record) => {
-    if (!!Object.getOwnPropertyNames(record).length) {
-      Modal.confirm({
-        title: '您确定要重置密码为000000吗？',
-        okText: '确定',
-        okType: 'danger',
-        cancelText: '取消',
-        style: { padding: '30px' },
-        onOk() {
-          // delBloodTableData({ id: record.id }).then((response) => {
-          //   message.success('删除成功');
-          //   yTable.table.dataRow = {};
-          //   yTable.table.loading = true;
-          //   setYTable({ ...yTable });
-          //   getTableData();
-          // });
-        },
-      });
-    } else {
-      message.error('请选中行数');
-    }
-  };
-
-  // 刷新
-  const refreshData = () => {
-    yTable.table.loading = true;
-    setYTable({ ...yTable });
-    getTableData();
-  };
-
   // 获取列表Table数据
   const getTableData = () => {
-    // getBloodTableData({ keyWord: topFrom.getFieldsValue().keyWord })
-    //   .then((response) => {
-    //     response.data?.map((items) => (items.key = items.id));
-    //     yTable.table.key = Math.random();
-    //     yTable.table.loading = false;
-    //     yTable.table.dataRow = {};
-    //     yTable.table.dataSource = response.data;
-    //     setYTable({ ...yTable });
-    //   })
-    //   .catch(() => {
-    //     yTable.table.loading = false;
-    //     yTable.table.dataSource = [];
-    //     setYTable({ ...yTable });
-    //   });
+    const { keyWord, timeRange } = topFrom.getFieldsValue();
+    const startTime = timeRange && timeRange[0] ? `${timeRange[0]} 00:00:00` : '';
+    const endTime = timeRange && timeRange[1] ? `${timeRange[1]} 23:59:59` : '';
+    const params = {
+      wardRounds: keyWord,
+      startTime,
+      endTime,
+      pageNum: yTable.table.pagination.current,
+      pageSize: yTable.table.pagination.pageSize,
+    };
+    yTable.table.loading = true;
+    yTable.table.dataSource = [];
+    setYTable({ ...yTable });
+    wardroundSelect(params)
+      .then((res) => {
+        yTable.table.dataSource = res?.data?.list || [];
+        yTable.table.loading = false;
+        yTable.table.pagination.current = res?.data?.pageNum;
+        setYTable({ ...yTable });
+      })
+      .catch((err) => {
+        yTable.table.loading = false;
+        setYTable({ ...yTable });
+        console.log('wardroundSelect---err', err);
+      });
   };
 
   // 新增 / 修改 提交时触发
-  const saveModalInfo = () => {
+  const saveModalInfo = async () => {
+    const formData = await modalForm.validateFields();
+    const { wardRoundTime } = formData;
     let query = {
       ...modalForm.getFieldsValue(),
-      typeCode: findValByKey(basic['1041'], 'name', modalForm.getFieldsValue().typeName, 'key'),
+      wardRoundTime: wardRoundTime && moment(wardRoundTime).format('YYYY-MM-DD HH:mm:ss'),
     };
-    console.log('query: ', query);
-    yTable.table.loading = true;
-    setYTable({ ...yTable });
+    modeType.loading = true;
+    setModeType({ ...modeType });
     if (modeType.type === 'add') {
-      // insertBloodType(query).then((response) => {
-      //   message.success('新增成功');
-      //   addOrEdit('', false);
-      //   getTableData();
-      // });
+      wardroundAdd(query)
+        .then((response) => {
+          message.success(response.msg);
+          modeType.visible = false;
+          modeType.loading = false;
+          setModeType({ ...modeType });
+          getTableData();
+        })
+        .catch((err) => {
+          console.log('err-wardroundAdd: ', err);
+          modeType.loading = false;
+          setModeType({ ...modeType });
+        });
     } else {
-      // updateBloodType({ ...query, id: yTable.table.dataRow.id }).then((response) => {
-      //   message.success('编辑成功');
-      //   addOrEdit('', false);
-      //   getTableData();
-      // });
+      wardroundUpdate(query)
+        .then((response) => {
+          message.success(response.msg);
+          modeType.visible = false;
+          modeType.loading = false;
+          setModeType({ ...modeType });
+          getTableData();
+        })
+        .catch((err) => {
+          console.log('err-wardroundUpdate: ', err);
+          modeType.loading = false;
+          setModeType({ ...modeType });
+        });
     }
   };
-
   // 获取字典数据
   const getDictionaryData = () => {
-    // getBasicData(['1043', '1042', '1041']).then((response) => {
-    //   setBasic(response.data);
-    //   yTable.table.basic = response.data;
-    //   setYTable({ ...yTable });
-    // });
+    dictTypeSelectPullDown(['0005']).then((response) => {
+      setBasic(response.data);
+    });
   };
+  const caseList = [
+    'livingConditions',
+    'psychologicalSituation',
+    'logisticsSituation',
+    'securitySituation',
+    'environmentalOpinion',
+    'opinionSituation',
+  ];
+  const ideaList = [
+    'lifeOpinion',
+    'psychologicalOpinion',
+    'logisticsOpinion',
+    'safetyAdvice',
+    'environmentalConditions',
+    'opinion',
+  ];
   const [yTableModal, setYTableModal] = useState({
     table: {
       bordered: true,
       loading: false,
       dataSource: [
-        { id: 1, week: '生活照料' },
-        { id: 2, week: '心理护理' },
-        { id: 3, week: '后勤保障' },
-        { id: 4, week: '安全隐患' },
-        { id: 5, week: '环境卫生及其他' },
-        { id: 6, week: '意见或建议' },
+        { id: 0, week: '生活照料' },
+        { id: 1, week: '心理护理' },
+        { id: 2, week: '后勤保障' },
+        { id: 3, week: '安全隐患' },
+        { id: 4, week: '环境卫生及其他' },
+        { id: 5, week: '意见或建议' },
       ],
       columns: [
         {
@@ -534,22 +498,31 @@ export default () => {
         },
         {
           title: '发现情况摘要',
-          dataIndex: 'typeName',
+          dataIndex: 'case',
           ellipsis: true,
           align: 'left',
           // width: 200,
           render: (text, record, index) => {
-            return <TextArea autoSize={true} bordered={false} placeholder="请输入" />;
+            return (
+              <Form.Item label="" name={caseList[index]} rules={[{ required: true }]}>
+                <TextArea autoSize={true} bordered={false} placeholder="请输入" />
+              </Form.Item>
+            );
           },
         },
         {
           title: '处置意见',
-          dataIndex: 'bloodName',
+          dataIndex: 'idea',
           ellipsis: true,
           align: 'left',
           // width: 200,
           render: (text, record, index) => {
-            return <TextArea autoSize={true} bordered={false} placeholder="请输入" />;
+            // return <TextArea autoSize={true} bordered={false} placeholder="请输入" />;
+            return (
+              <Form.Item label="" name={ideaList[index]} rules={[{ required: true }]}>
+                <TextArea autoSize={true} bordered={false} placeholder="请输入" />
+              </Form.Item>
+            );
           },
         },
       ],
@@ -568,18 +541,10 @@ export default () => {
       },
     },
   });
-  useEffect(() => {
-    modalForm.validateFields(['crossMethod']);
-  }, [isCross]);
-
-  useEffect(() => {
-    modalForm.validateFields(['meltingTime']);
-  }, [isMelt]);
-
   // 初始化
   useEffect(() => {
-    // getDictionaryData();
-    // getTableData();
+    getDictionaryData();
+    getTableData();
   }, []);
   return (
     <div>
@@ -594,7 +559,8 @@ export default () => {
         maskClosable={false}
         title={modeType.type === 'add' ? '新增' : '编辑'}
         centered
-        visible={modeType.show}
+        visible={modeType.visible}
+        confirmLoading={modeType.loading}
         onOk={() => {
           modalForm.submit();
         }}
@@ -605,22 +571,27 @@ export default () => {
           form={modalForm}
           labelCol={{ flex: '80px' }}
           onFinish={saveModalInfo}
-          initialValues={{ isCross: false, isMelt: false }}
+          initialValues={{ wardRoundTime: moment() }}
         >
+          <Form.Item name="id" hidden></Form.Item>
           <Row>
             <Col span={12}>
-              <Form.Item label="查房时间" name="collectionTime">
-                <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
+              <Form.Item label="查房时间" name="wardRoundTime">
+                <DatePicker
+                  format="YYYY-MM-DD HH:mm:ss"
+                  showTime={true}
+                  style={{ width: '100%' }}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="查房人" name="number" rules={[{ required: true }]}>
+              <Form.Item label="查房人" name="wardRounds" rules={[{ required: true }]}>
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
           </Row>
+          <YTable {...yTableModal} />
         </Form>
-        <YTable {...yTableModal} />
       </Modal>
     </div>
   );

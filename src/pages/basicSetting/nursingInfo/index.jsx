@@ -65,28 +65,6 @@ export default () => {
           changeModal('add', true);
         },
       },
-      // {
-      //   name: '编辑',
-      //   style: { position: 'absolute', left: '97px' },
-      //   callback: () => {
-      //     addOrEdit('edit', true);
-      //   },
-      // },
-      // {
-      //   name: '删除',
-      //   type: 'danger',
-      //   style: { position: 'absolute', left: '179px' },
-      //   callback: () => {
-      //     del();
-      //   },
-      // },
-      // {
-      //   name: '刷新',
-      //   style: { position: 'absolute', left: '257px' },
-      //   callback: () => {
-      //     refreshData();
-      //   },
-      // },
     ],
     layout: 'inline',
     form: topFrom,
@@ -98,28 +76,28 @@ export default () => {
     table: {
       bordered: true,
       loading: false,
-      dataSource: [{ id: 1 }],
+      dataSource: [],
       columns: [
         {
           title: '护工编号',
           dataIndex: 'careCode',
           align: 'left',
           ellipsis: true,
-          width: 60,
+          width: 100,
         },
         {
           title: '姓名',
           dataIndex: 'name',
           ellipsis: true,
           align: 'left',
-          width: 80,
+          width: 100,
         },
         {
           title: '性别',
           dataIndex: 'sex',
           ellipsis: true,
           align: 'left',
-          width: 60,
+          width: 100,
           render: (text, record, index) => {
             return findValByKey(yTable.table.basic['0001'], 'value', text, 'label');
           },
@@ -129,42 +107,42 @@ export default () => {
           dataIndex: 'birthday',
           ellipsis: true,
           align: 'left',
-          width: 150,
+          width: 100,
         },
         {
           title: '年龄',
           dataIndex: 'age',
           align: 'left',
           ellipsis: true,
-          width: 60,
+          width: 100,
         },
         {
           title: '身份证号',
           dataIndex: 'idCard',
           ellipsis: true,
           align: 'left',
-          width: 160,
+          width: 100,
         },
         {
           title: '联系方式',
           dataIndex: 'contactNumber',
           ellipsis: true,
           align: 'left',
-          width: 80,
+          width: 100,
         },
         {
           title: '联系地址',
           dataIndex: 'address',
           ellipsis: true,
           align: 'left',
-          width: 180,
+          width: 100,
         },
         {
           title: '状态',
           dataIndex: 'useFlag',
           key: 'useFlag',
-          width: 50,
           align: 'center',
+          width: 100,
           render: (text, record, info) => (text === 1 ? '启用' : '停用'),
         },
         {
@@ -195,12 +173,14 @@ export default () => {
         },
       ],
       key: Math.random(),
-      scroll: { x: 1360, y: '100%' },
+      // scroll: { x: '280px', y: '100%' },
+      // scroll: { x: 1000 },
+      // scroll: { x: 1000 },
       dataRow: {},
       rowKey: 'id',
       pagination: {
         current: 1,
-        pageSize: pageSize,
+        pageSize: pageSize || 20,
         showSizeChanger: true,
         showQuickJumper: true,
         showTotal: (total) => {
@@ -370,7 +350,12 @@ export default () => {
     <div>
       <SearchForm searchForm={searchTopForm} />
       <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
-        <YTable {...yTable} />
+        <YTable
+          table={{
+            ...yTable.table,
+            scroll: yTable?.table?.dataSource.length ? { x: true, y: '100%' } : {},
+          }}
+        />
       </div>
       <Modal
         width={720}
