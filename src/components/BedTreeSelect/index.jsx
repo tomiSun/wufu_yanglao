@@ -63,8 +63,7 @@ import {
 export const BedTreeSelect = (props) => {
     const [value, setValue] = useState(undefined)
     const [treeData, setTreeData] = useState([]);
-    const onChange = value => {
-        debugger
+    const onChange = (value,record) => {
         props.onSelect(value)
         setValue(value)
     };

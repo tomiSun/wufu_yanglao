@@ -16,8 +16,9 @@ import { history } from 'umi'
 import { columns } from './data';
 import moment from 'moment';
 import {
-  bloodSugarDel,
-  bloodSugarQuery,
+  delSpecialNursing,
+  pageSpecialNursing,
+  
 } from '@/services/nursingManagement'
 import { dictDateSelect } from '@/services/basicSetting/dictionary'
 import './index.less';
@@ -42,7 +43,7 @@ const RloodGlucoseRecord = (props) => {
   }, []);
   //获取血糖列表信息
   const getBloodSugarInfo = async (param) => {
-    let res = await bloodSugarQuery(param);
+    let res = await pageSpecialNursing(param);
     if (res['code'] === 200) {
       setDataSource(res['data']['list'])
     } else {
@@ -108,6 +109,15 @@ const RloodGlucoseRecord = (props) => {
             新增记录
           </Button>
         </Form.Item>
+        <Form.Item>
+          <Button
+            type="primary"
+            size={'small'}
+            onClick={() => { SForm.resetFields() }}
+          >
+            清空
+          </Button>
+        </Form.Item>
       </Form>
     );
   };
@@ -129,7 +139,7 @@ const RloodGlucoseRecord = (props) => {
         <Button
           size={'small'}
           type="link"
-          onClick={() => { handleJumpbatch("4", "edit") }}
+          onClick={() => { handleJumpbatch("4", "edit",record) }}
         >
           修改
         </Button>
@@ -137,7 +147,7 @@ const RloodGlucoseRecord = (props) => {
           size={'small'}
           type="link"
           onClick={async () => {
-            let res = await bloodSugarDel({ id: record['id'] })
+            let res = await delSpecialNursing({ id: record['id'] })
             message.success("成功")
             refushList()
           }}

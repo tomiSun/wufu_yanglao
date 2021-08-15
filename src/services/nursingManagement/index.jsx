@@ -2,7 +2,7 @@ import request from '@/utils/request';
 
 // 护理-血糖
 export async function bloodSugarDel(params) {
-  return request(`/blood-sugar/delete?id=${params['id']}`, {
+  return request(`/blood-sugar/delete?ids=${params['id']}`, {
     method: 'GET',
     data: params
   });
@@ -45,7 +45,7 @@ export async function takeMedicineUpdate(params) {
   });
 };
 export async function takeMedicineDel(params) {
-  return request(`/medicine/del?id=${params['id']}`, {
+  return request(`/medicine/del?ids=${params['id']}`, {
     method: 'GET',
     data: params
   });
@@ -70,7 +70,7 @@ export async function medicationRecordUpdate(params) {
   });
 };
 export async function medicineRecordDel(params) {
-  return request(`/medicine/delMedicationRecord?id=${params['id']}`, {
+  return request(`/medicine/delMedicationRecord?ids=${params['id']}`, {
     method: 'GET',
     data: params
   });
@@ -95,7 +95,7 @@ export async function updateSpecialNursing(params) {
   });
 };
 export async function delSpecialNursing(params) {
-  return request(`/nursingManage/delSpecialNursing?id=${params['id']}`, {
+  return request(`/nursingManage/delSpecialNursing?ids=${params['id']}`, {
     method: 'GET',
     data: params
   });
@@ -121,7 +121,7 @@ export async function updateNursingRecord(params) {
   });
 };
 export async function delNursingRecord(params) {
-  return request(`/nursingManage/delNursingRecord?id=${params['id']}`, {
+  return request(`/nursingManage/delNursingRecord?ids=${params['id']}`, {
     method: 'GET',
     data: params
   });
@@ -147,7 +147,7 @@ export async function updateVitalSignRecord(params) {
   });
 };
 export async function delVitalSignRecord(params) {
-  return request(`/nursingManage/delVitalSignRecord?id=${params['id']}`, {
+  return request(`/nursingManage/delVitalSignRecord?ids=${String(params['id'])}`, {
     method: 'GET',
     data: params
   });

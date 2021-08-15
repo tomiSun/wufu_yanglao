@@ -16,8 +16,8 @@ import { history } from 'umi'
 import { columns } from './data';
 import moment from 'moment';
 import {
-  bloodSugarDel,
-  bloodSugarQuery,
+  delNursingRecord,
+  pageNursingRecord,
 } from '@/services/nursingManagement'
 import { dictDateSelect } from '@/services/basicSetting/dictionary'
 import './index.less';
@@ -42,7 +42,7 @@ const RloodGlucoseRecord = (props) => {
   }, []);
   //获取血糖列表信息
   const getBloodSugarInfo = async (param) => {
-    let res = await bloodSugarQuery(param);
+    let res = await pageNursingRecord(param);
     if (res['code'] === 200) {
       setDataSource(res['data']['list'])
     } else {
@@ -67,7 +67,7 @@ const RloodGlucoseRecord = (props) => {
   const renderSearch = () => {
     return (
       <Form onFinish={() => { }} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
-        <Form.Item label="姓名" name={'patientName'}>
+        <Form.Item label="姓名" name={'name'}>
           <Input size={'small'} />
         </Form.Item>
         <Form.Item label="住院号" name={'businessNo'}>
@@ -103,9 +103,18 @@ const RloodGlucoseRecord = (props) => {
             type="primary"
             size={'small'}
             style={{ marginTop: 4 }}
-            onClick={() => { handleJumpbatch("4", "add") }}
+            onClick={() => { handleJumpbatch("1", "add") }}
           >
             新增记录
+          </Button>
+        </Form.Item>
+        <Form.Item>
+          <Button
+            type="primary"
+            size={'small'}
+            onClick={() => { SForm.resetFields() }}
+          >
+            清空
           </Button>
         </Form.Item>
       </Form>
@@ -138,7 +147,7 @@ const RloodGlucoseRecord = (props) => {
           size={'small'}
           type="link"
           onClick={async () => {
-            let res = await bloodSugarDel({ id: record['id'] })
+            let res = await delNursingRecord({ id: record['id'] })
             message.success("成功")
             refushList()
           }}

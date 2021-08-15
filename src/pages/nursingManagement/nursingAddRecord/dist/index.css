@@ -1,0 +1,54 @@
+.nursingAddRecord {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: calc(100vh - 52px);
+  overflow-y: scroll;
+  background-color: #f2f2f2;
+}
+.nursingAddRecord .top {
+  background-color: #fff;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+}
+.nursingAddRecord .content {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  height: calc(100vh - 102px);
+}
+.nursingAddRecord .content-left {
+  margin: 0px 5px 10px 10px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #fff;
+  width: 30%;
+  height: 100%;
+  overflow-y: scroll;
+}
+.nursingAddRecord .content-right {
+  margin: 0px 10px 10px 5px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #fff;
+  width: 70%;
+  height: 100%;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+}
+.nursingAddRecord .addRecordBox {
+  display: flex;
+  justify-content: center;
+  padding: 30px 100px 0px 0px;
+  overflow-y: scroll ;
+}
+.nursingAddRecord .rowSelect {
+  background-color: #1890ff;
+  color: #fff;
+}
+.nursingAddRecord .row {
+  background-color: #fff;
+}

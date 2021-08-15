@@ -28,7 +28,7 @@ const validateMessages = {
 
 const RloodGlucoseRecord = (props) => {
   //列表数据
-  const [dataSource, setDataSource] = useState([{ 1: 1 }]);//数据
+  const [dataSource, setDataSource] = useState([]);//数据
   //字典
   const [samplingStatusMap, setSamplingStatusMap] = useState([]);//血糖采样状态的字典
   //搜索的表单
@@ -44,7 +44,7 @@ const RloodGlucoseRecord = (props) => {
   const getBloodSugarInfo = async (param) => {
     let res = await pageVitalSignRecord(param);
     if (res['code'] === 200) {
-      setDataSource(res['data']['list'])
+      setDataSource(res['data'])
     } else {
       setDataSource([])
     }
@@ -67,7 +67,7 @@ const RloodGlucoseRecord = (props) => {
   const renderSearch = () => {
     return (
       <Form onFinish={() => { }} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
-        <Form.Item label="姓名" name={'patientName'}>
+        <Form.Item label="姓名" name={'name'}>
           <Input size={'small'} />
         </Form.Item>
         <Form.Item label="住院号" name={'businessNo'}>
@@ -101,6 +101,15 @@ const RloodGlucoseRecord = (props) => {
             新增记录
           </Button>
         </Form.Item>
+        <Form.Item>
+          <Button
+            type="primary"
+            size={'small'}
+            onClick={() => { SForm.resetFields() }}
+          >
+            清空
+          </Button>
+        </Form.Item>
       </Form>
     );
   };
@@ -122,7 +131,7 @@ const RloodGlucoseRecord = (props) => {
         <Button
           size={'small'}
           type="link"
-          onClick={() => { handleJumpbatch("4", "edit") }}
+          onClick={() => { handleJumpbatch("2", "edit", record) }}
         >
           修改
         </Button>

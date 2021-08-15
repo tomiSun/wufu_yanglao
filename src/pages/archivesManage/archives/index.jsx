@@ -99,7 +99,6 @@ const Archives = (props) => {
           编辑
         </Button>
         <Button size={'small'} type="link" onClick={async () => {
-          debugger
           let res = await baseArchiveDel({ id: row['id'] })
           message.success("删除成功")
           refushList()

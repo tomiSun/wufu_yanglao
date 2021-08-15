@@ -198,7 +198,7 @@ const InHospitalRegister = (props) => {
         )
     }
     //处理房间号的变更
-    const handleRoomChange = async (value) => {
+    const handleRoomChange = async (value,v2) => {
         //bedRoomQuery,
         let res = await bedQuery({ pageNum: 1, pageSize: 10, id: value, keyWords: "" })
         setBedList(res['data']['list'])
@@ -234,19 +234,13 @@ const InHospitalRegister = (props) => {
                     >
                         <Form.Item
                             name={'name'}
-                            label="姓名1"
+                            label="姓名"
                             rules={[{ required: true }]}
                         >
                             <Select
                                 showSearch
-                                placeholder="姓名1"
-                                // onSelect={() => {
-                                //     nameSelectChange
-                                // }}
-                                // onFocus={onFocus}
-                                // onBlur={nameSelectBlur}
+                                placeholder="姓名"
                                 onSearch={nameSelectBlur}
-                            // onSearch={onSearch}
                             >
                                 {nameSelectList.map(item => {
                                     return <Option value={item["archiveId"]}>{item['name']}</Option>

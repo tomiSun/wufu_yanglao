@@ -8,8 +8,8 @@ const columns = (edit) => {
         },
         {
             title: '姓名',
-            dataIndex: 'patientName',
-            key: 'patientName',
+            dataIndex: 'name',
+            key: 'name',
         },
         {
             title: '护理日期',
@@ -50,31 +50,49 @@ const columns = (edit) => {
             title: '是否打扫房间',
             dataIndex: 'isCleanRoom',
             key: 'isCleanRoom',
+            render: (t, r) => {
+                return t == "0" ? "是" : "否"
+            }
         },
         {
             title: '是否清洗便池',
             dataIndex: 'isCleanToilet',
             key: 'tiemType',
+            render: (t, r) => {
+                return t == "0" ? "是" : "否"
+            }
         },
         {
             title: '是否洗头理发',
             dataIndex: 'isHaircut',
             key: 'isHaircut',
+            render: (t, r) => {
+                return t == "0" ? "是" : "否"
+            }
         },
         {
             title: '是否晾晒衣服',
             dataIndex: 'isHangClothes',
             key: 'isHangClothes',
+            render: (t, r) => {
+                return t == "0" ? "是" : "否"
+            }
         },
         {
             title: '是否修剪指甲',
             dataIndex: 'isManicure',
             key: 'isManicure',
+            render: (t, r) => {
+                return t == "0" ? "是" : "否"
+            }
         },
         {
             title: '是否进餐送餐',
             dataIndex: 'isMeals',
             key: 'isMeals',
+            render: (t, r) => {
+                return t == "0" ? "是" : "否"
+            }
         },
         {
             title: '老人身心观察记录',
