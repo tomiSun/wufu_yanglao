@@ -28,13 +28,13 @@ class SecurityLayout extends React.Component {
       redirect: window.location.href,
     });
 
-    // if (!isLogin && window.location.pathname !== '/user/login') {
-    //   return <Redirect to={`/user/login?${queryString}${window.location.pathname}`} />;
-    // }
+    if (!isLogin && window.location.pathname !== '/user/login') {
+      return <Redirect to={`/user/login?${queryString}${window.location.pathname}`} />;
+    }
 
-    // if (!isLogin || !isReady) {
-    //   return <PageLoading />;
-    // }
+    if (!isLogin || !isReady) {
+      return <PageLoading />;
+    }
 
     return children;
   }
