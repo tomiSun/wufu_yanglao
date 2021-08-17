@@ -80,13 +80,13 @@ const RloodGlucoseRecord = (props) => {
         <Form.Item label="结束日期" name={'endTime'}>
           <DatePicker size={'small'} />
         </Form.Item>
-        <Form.Item label="采样状态" name={'samplingStatus'}  {...ULayout(12, 16)}>
+        {/* <Form.Item label="采样状态" name={'samplingStatus'}  {...ULayout(12, 16)}>
           <Select defaultValue="0001" size={'small'}>
             {samplingStatusMap.map(item => {
               return <Option value={item['dictCode']}>{item['dictName']}</Option>
             })}
           </Select>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item style={{ marginLeft: 20 }}>
           <Button
             type="primary"

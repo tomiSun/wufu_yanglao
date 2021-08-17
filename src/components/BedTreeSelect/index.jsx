@@ -79,7 +79,6 @@ export const BedTreeSelect = (props) => {
         <TreeSelect
             // size={"small"}
             // treeCheckable
-            style={{ width: 273 }}
             value={value}
             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
             treeData={treeData}

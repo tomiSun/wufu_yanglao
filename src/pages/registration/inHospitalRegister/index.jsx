@@ -42,9 +42,11 @@ const validateMessages = {
 };
 const InHospitalRegister = (props) => {
     const [registForm] = Form.useForm();
+    const [registOutForm] = Form.useForm();
     const [SForm] = Form.useForm();
     const [dataSource, setDataSource] = useState([{ 1: 1 }]);
     const [modalVisible, setModalVisible] = useState(false);//基本信息
+    const [modalOutVisible, setModalOutVisible] = useState(false);//出院办理
     const [dictionaryMap, setDictionaryMap] = useState({ "0008": [], "0009": [], "0010": [], "0011": [] })
     const [selectData, setSelectData] = useState([])
     const [physicalExaminationVisible, setPhysicalExaminationVisible] = useState(false);//体检的弹窗
@@ -143,7 +145,8 @@ const InHospitalRegister = (props) => {
     }
     //退院
     const handleOutHospitalRegist = async (row) => {
-        let res = await outHospitalRegist({ businessNo: row['businessNo'] });
+        let res = await outHospitalRegist({ businessNo: row['businessNo'], peopleTo: registOutForm.getFieldsValue().peopleTo });
+
         message.success("退院成功")
         refushList()
     }
@@ -182,11 +185,14 @@ const InHospitalRegister = (props) => {
                         setRiskNotificationFormVisible(true)
                     }}>风险告知书</Button>
                 <Button style={{ marginRight: 10 }}
-                    size={'small'} type="link"
+                    size={'small'}
+                    type={'link'}
                     onClick={() => {
                         setSelectRowData(row)
-                        handleOutHospitalRegist(row)
-                    }}
+                        setModalOutVisible(true);
+                        registOutForm.setFieldsValue({ peopleTo: "1" })
+                    }
+                    }
                 >办理出院</Button>
             </div>
         )
@@ -198,7 +204,7 @@ const InHospitalRegister = (props) => {
         )
     }
     //处理房间号的变更
-    const handleRoomChange = async (value,v2) => {
+    const handleRoomChange = async (value, v2) => {
         //bedRoomQuery,
         let res = await bedQuery({ pageNum: 1, pageSize: 10, id: value, keyWords: "" })
         setBedList(res['data']['list'])
@@ -226,122 +232,177 @@ const InHospitalRegister = (props) => {
             footer={renderBtnArea()}
         >
             <>
-                <Card title="基本信息" style={{ width: "82%" }}>
-                    <Form {...layout(8, 16)}
-                        form={registForm}
-                        name="nest-messages"
-                        validateMessages={validateMessages}
+                <Form {...layout(8, 16)}
+                    form={registForm}
+                    name="nest-messages"
+                    validateMessages={validateMessages}
+                    style={{ marginRight: 60, marginTop: 20 }}
+                >
+                    <Form.Item
+                        name={'name'}
+                        label="姓名"
+                        rules={[{ required: true }]}
                     >
-                        <Form.Item
-                            name={'name'}
-                            label="姓名"
-                            rules={[{ required: true }]}
+                        <Select
+                            showSearch
+                            placeholder="姓名"
+                            onSearch={nameSelectBlur}
                         >
-                            <Select
-                                showSearch
-                                placeholder="姓名"
-                                onSearch={nameSelectBlur}
-                            >
-                                {nameSelectList.map(item => {
-                                    return <Option value={item["archiveId"]}>{item['name']}</Option>
-                                })}
-                            </Select>
-                        </Form.Item>
-                        <Form.Item
-                            name={'sex'}
-                            label="性别"
-                            rules={[{ required: true }]}
+                            {nameSelectList.map(item => {
+                                return <Option value={item["archiveId"]}>{item['name']}</Option>
+                            })}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        name={'sex'}
+                        label="性别"
+                        rules={[{ required: true }]}
+                    >
+                        <Radio.Group defaultValue={'1'}>
+                            <Radio value={'1'}>男</Radio>
+                            <Radio value={'2'}>女</Radio>
+                        </Radio.Group>
+                    </Form.Item>
+                    <Form.Item
+                        name={'age'}
+                        label="年龄"
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name={'roomCode'}
+                        label="房间号"
+                        treeDefaultExpandAll={true}
+                    >
+                        <BedTreeSelect onSelect={handleRoomChange} style={{ width: '100%' }} />
+                    </Form.Item>
+                    <Form.Item
+                        name={'peopleFrom'}
+                        label="来源"
+                    >
+                        <Select
+                            onChange={(value, record) => {
+                                setRoomInfo(record['data'])
+                            }}
+                            defaultValue={"1"}
                         >
-                            <Radio.Group defaultValue={'1'}>
-                                <Radio value={'1'}>男</Radio>
-                                <Radio value={'2'}>女</Radio>
-                            </Radio.Group>
-                        </Form.Item>
-                        <Form.Item
-                            name={'age'}
-                            label="年龄"
+                            {[{ name: "社会", value: "1" }, { name: "医院", value: "2" }].map(item => {
+                                return <Option value={item['value']} data={item}>{item['name']}</Option>
+                            })}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        name={'bedCode'}
+                        label="床位号"
+                    >
+                        <Select
+                            onChange={(value, record) => {
+                                setRoomInfo(record['data'])
+                            }}>
+                            {bedList.map(item => {
+                                return <Option value={item['bedCode']} data={item}>{item['name']}</Option>
+                            })}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name={'nursingLevel'} label="级别护理">
+                        <Select defaultValue="0001" onChange={() => { }}>
+                            {dictionaryMap?.["0011"].map(item => {
+                                return <Option value={item['dictCode']}>{item['dictName']}</Option>
+                            })}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name={'hospitalDiagnosis'} label='入院诊断'>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name={'admissionTime'} label="入院时间">
+                        <DatePicker style={{ width: '100%' }} />
+                    </Form.Item>
+                    <Form.Item name={'feesDueDate'} label="费用到期时间">
+                        <DatePicker style={{ width: '100%' }} />
+                    </Form.Item>
+                    <Form.Item name={'allergy'} label="过敏史">
+                        <Select
+                            mode="multiple"
+                            // defaultValue={["0001", "0002"]}
+                            onChange={() => { }}>
+                            {dictionaryMap?.["0008"].map(item => {
+                                return <Option value={item['dictName']}>{item['dictName']}</Option>
+                            })}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name={'previousHistory'} label="既往史">
+                        <Select
+                            mode="multiple"
+                            // defaultValue={["0001", "0002"]}
+                            onChange={() => { }}>
+                            {dictionaryMap?.["0009"].map(item => {
+                                return <Option value={item['dictName']}>{item['dictName']}</Option>
+                            })}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name={'idCard'} label="身份证号">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name={'relationName'} label="联系人姓名">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name={'relation'} label="关系">
+                        <Select
+                            defaultValue={"0001"}
+                            onChange={() => { }}>
+                            {dictionaryMap?.["0010"].map(item => {
+                                return <Option value={item['dictCode']}>{item['dictName']}</Option>
+                            })}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name={'contactNumber'} label="联系电话">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name={'contactAddress'} label="家庭住址">
+                        <Input.TextArea />
+                    </Form.Item>
+                </Form>
+            </>
+        </Modal>
+    }
+    const rendeOutrMoadl = () => {
+        return <Modal
+            title="出院登记"
+            visible={modalOutVisible}
+            onOk={() => { setModalOutVisible(false) }}
+            onCancel={() => { setModalOutVisible(false) }}
+            style={{ width: 500 }}
+            footer={[<Button
+                type="primary"
+                onClick={() => {
+                    handleOutHospitalRegist(selectRowData)
+                }}>
+                办理出院
+            </Button>]}
+        >
+            <>
+                <Form {...layout(8, 16)}
+                    form={registOutForm}
+                    name="nest-messages"
+                    validateMessages={validateMessages}
+                    style={{ marginRight: 60, marginTop: 20 }}
+                >
+                    <Form.Item
+                        name={'peopleTo'}
+                        label="流向"
+                    >
+                        <Select
+                            onChange={(value, record) => {
+                                setRoomInfo(record['data'])
+                            }}
+                            defaultValue={"1"}
                         >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            name={'roomCode'}
-                            label="房间号"
-                            treeDefaultExpandAll={true}
-                        >
-                            <BedTreeSelect onSelect={handleRoomChange} />
-                        </Form.Item>
-                        <Form.Item
-                            name={'bedCode'}
-                            label="床位号"
-                        >
-                            <Select
-                                onChange={(value, record) => {
-                                    setRoomInfo(record['data'])
-                                }}>
-                                {bedList.map(item => {
-                                    return <Option value={item['bedCode']} data={item}>{item['name']}</Option>
-                                })}
-                            </Select>
-                        </Form.Item>
-                        <Form.Item name={'nursingLevel'} label="级别护理">
-                            <Select defaultValue="0001" onChange={() => { }}>
-                                {dictionaryMap?.["0011"].map(item => {
-                                    return <Option value={item['dictCode']}>{item['dictName']}</Option>
-                                })}
-                            </Select>
-                        </Form.Item>
-                        <Form.Item name={'hospitalDiagnosis'} label='入院诊断'>
-                            <Input />
-                        </Form.Item>
-                        <Form.Item name={'admissionTime'} label="入院时间">
-                            <DatePicker style={{ width: 273 }} />
-                        </Form.Item>
-                        <Form.Item name={'feesDueDate'} label="费用到期时间">
-                            <DatePicker style={{ width: 273 }} />
-                        </Form.Item>
-                        <Form.Item name={'allergy'} label="过敏史">
-                            <Select
-                                mode="multiple"
-                                // defaultValue={["0001", "0002"]}
-                                onChange={() => { }}>
-                                {dictionaryMap?.["0008"].map(item => {
-                                    return <Option value={item['dictName']}>{item['dictName']}</Option>
-                                })}
-                            </Select>
-                        </Form.Item>
-                        <Form.Item name={'previousHistory'} label="既往史">
-                            <Select
-                                mode="multiple"
-                                // defaultValue={["0001", "0002"]}
-                                onChange={() => { }}>
-                                {dictionaryMap?.["0009"].map(item => {
-                                    return <Option value={item['dictName']}>{item['dictName']}</Option>
-                                })}
-                            </Select>
-                        </Form.Item>
-                        <Form.Item name={'idCard'} label="身份证号">
-                            <Input />
-                        </Form.Item>
-                        <Form.Item name={'relationName'} label="联系人姓名">
-                            <Input />
-                        </Form.Item>
-                        <Form.Item name={'relation'} label="关系">
-                            <Select
-                                defaultValue={"0001"}
-                                onChange={() => { }}>
-                                {dictionaryMap?.["0010"].map(item => {
-                                    return <Option value={item['dictCode']}>{item['dictName']}</Option>
-                                })}
-                            </Select>
-                        </Form.Item>
-                        <Form.Item name={'contactNumber'} label="联系电话">
-                            <Input />
-                        </Form.Item>
-                        <Form.Item name={'contactAddress'} label="家庭住址">
-                            <Input.TextArea />
-                        </Form.Item>
-                    </Form>
-                </Card>
+                            {[{ name: "社会", value: "1" }, { name: "医院", value: "2" }].map(item => {
+                                return <Option value={item['value']} data={item}>{item['name']}</Option>
+                            })}
+                        </Select>
+                    </Form.Item>
+                </Form>
             </>
         </Modal>
     }
@@ -376,6 +437,7 @@ const InHospitalRegister = (props) => {
                 {renderSearch()}
                 {renderForm()}
                 {renderMoadl()}
+                {rendeOutrMoadl()}
                 {/* 体检*/}
                 {physicalExaminationVisible && <PhysicalExamination
                     visible={physicalExaminationVisible}
