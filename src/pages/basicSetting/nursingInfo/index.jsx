@@ -121,7 +121,7 @@ export default () => {
           dataIndex: 'idCard',
           ellipsis: true,
           align: 'left',
-          width: 100,
+          width: 150,
         },
         {
           title: '联系方式',
@@ -137,14 +137,14 @@ export default () => {
           align: 'left',
           width: 100,
         },
-        {
-          title: '状态',
-          dataIndex: 'useFlag',
-          key: 'useFlag',
-          align: 'center',
-          width: 100,
-          render: (text, record, info) => (text === 1 ? '启用' : '停用'),
-        },
+        // {
+        //   title: '状态',
+        //   dataIndex: 'useFlag',
+        //   key: 'useFlag',
+        //   align: 'center',
+        //   width: 100,
+        //   render: (text, record, info) => (text === 1 ? '启用' : '停用'),
+        // },
         {
           title: '操作',
           key: 'opera',
@@ -247,7 +247,7 @@ export default () => {
     const formData = await modalForm.validateFields();
     const params = {
       ...formData,
-      useFlag: ~~formData?.useFlag,
+      // useFlag: ~~formData?.useFlag,
       birthday: formData?.birthday && moment(formData?.birthday).format('YYYY-MM-DD'),
     };
     modalConfig.loading = true;
@@ -377,7 +377,7 @@ export default () => {
           className={styles.modalform}
           onFinish={saveInfoData}
           labelCol={{ flex: '100px' }}
-          initialValues={{ useFlag: 1 }}
+          // initialValues={{ useFlag: 1 }}
         >
           <Form.Item name="id" hidden></Form.Item>
           <Row>
@@ -431,13 +431,13 @@ export default () => {
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
-            <Col span={24}>
+            {/* <Col span={24}>
               <Form.Item name="useFlag" valuePropName="checked" style={{ marginLeft: 8 }}>
                 <Checkbox>
                   <span className={styles.labeltext}>启用</span>
                 </Checkbox>
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
         </Form>
       </Modal>

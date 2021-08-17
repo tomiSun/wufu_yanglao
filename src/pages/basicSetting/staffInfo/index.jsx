@@ -128,7 +128,7 @@ export default () => {
           dataIndex: 'idCard',
           ellipsis: true,
           align: 'left',
-          width: 60,
+          width: 150,
         },
         {
           title: '联系方式',
@@ -483,7 +483,7 @@ export default () => {
             <Col span={24}>
               <Form.Item name="useFlag" valuePropName="checked" style={{ marginLeft: 8 }}>
                 <Checkbox>
-                  <span className={styles.labeltext}>停用</span>
+                  <span className={styles.labeltext}>启用</span>
                 </Checkbox>
               </Form.Item>
             </Col>
