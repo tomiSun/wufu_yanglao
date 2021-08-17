@@ -92,7 +92,7 @@ const Login = (props) => {
         sessionStorage.setItem('employeeCode', get(res, 'data.employeeCode', ''));
         sessionStorage.setItem('name', get(res, 'data.name', ''));
         sessionStorage.setItem('userId', get(res, 'data.userId', ''));
-        history.push('/basicSetting/dictionary');
+        history.push('/home/index');
       })
       .catch((err) => {
         console.log('err-logining: ', err);
