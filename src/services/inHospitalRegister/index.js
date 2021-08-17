@@ -75,7 +75,7 @@ export async function queryHospitalRegist(params) {
 }
 //出院 
 export async function outHospitalRegist(params) {
-  return request(`/hospitalRegist/out?businessNo=${params.businessNo}`, {
+  return request(`/hospitalRegist/out?businessNo=${params.businessNo}&to=${params.peopleTo}`, {
     method: 'GET',
   });
 }

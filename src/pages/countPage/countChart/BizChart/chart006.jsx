@@ -12,11 +12,11 @@ import {
   Legend,
 } from 'bizcharts';
 
-// const pieData = [
-//   { item: '自理老人数', percent: 152 },
-//   { item: '完全失能老人数', percent: 40 },
-//   { item: '部分失能老人数', percent: 24 },
-// ];
+let pieData = [
+  { item: '自理老人数', percent: 10 },
+  { item: '完全失能老人数', percent: 10 },
+  { item: '部分失能老人数', percent: 10 },
+];
 const cols = {
   percent: {
     formatter: (val) => {
@@ -29,7 +29,7 @@ const cols = {
 export default function Demo(props) {
   const { chartData } = props;
   if (chartData.length == 0) {
-    return <></>
+    return <>暂无数据</>
   }
   const formatData = (data) => {
     let arr = []
@@ -44,10 +44,9 @@ export default function Demo(props) {
       }, 0)
     })
     arr.push({ item: '自理老人数', percent: data.provideForOneself.reduce((total,it) => { return total = total + it['targetNum'] }, 0) })
-    debugger
     return arr
   }
-  const pieData = formatData(chartData)
+   pieData = formatData(chartData)
   return (
     <Chart
       data={pieData}

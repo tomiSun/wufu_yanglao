@@ -255,7 +255,7 @@ function outHospitalRegist(params) {
     while (1) {
       switch (_context12.prev = _context12.next) {
         case 0:
-          return _context12.abrupt("return", (0, _request["default"])("/hospitalRegist/out?businessNo=".concat(params.businessNo), {
+          return _context12.abrupt("return", (0, _request["default"])("/hospitalRegist/out?businessNo=".concat(params.businessNo, "&to=").concat(params.peopleTo), {
             method: 'GET'
           }));
 
