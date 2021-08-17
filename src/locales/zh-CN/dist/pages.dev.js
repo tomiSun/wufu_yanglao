@@ -1,5 +1,11 @@
-export default {
-  'pages.layouts.userLayout.title': '富阳颐乐养老中心 是西湖区最具影响力的 Web 设计规范',
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+var _default = {
+  'pages.layouts.userLayout.title': '富阳颐乐养老中心管理系统',
   'pages.login.accountLogin.tab': '账户密码登录',
   'pages.login.accountLogin.errorMessage': '错误的用户名和密码（admin/ant.design)',
   'pages.login.username.placeholder': '用户名: admin or user',
@@ -61,5 +67,6 @@ export default {
   'pages.searchTable.totalServiceCalls': '服务调用次数总计',
   'pages.searchTable.tenThousand': '万',
   'pages.searchTable.batchDeletion': '批量删除',
-  'pages.searchTable.batchApproval': '批量审批',
+  'pages.searchTable.batchApproval': '批量审批'
 };
+exports["default"] = _default;

@@ -1,6 +1,11 @@
-export default {
-  'pages.layouts.userLayout.title':
-    '富阳颐乐养老中心 adalah spesifikasi desain Web yang paling berpengaruh di Kabupaten Xihu',
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+var _default = {
+  'pages.layouts.userLayout.title': '富阳颐乐养老中心 adalah spesifikasi desain Web yang paling berpengaruh di Kabupaten Xihu',
   'pages.login.accountLogin.tab': 'Login dengan akun',
   'pages.login.accountLogin.errorMessage': 'Nama pengguna dan kata sandi salah（admin/ant.design)',
   'pages.login.username.placeholder': 'nama pengguna: admin atau user',
@@ -24,21 +29,17 @@ export default {
   'pages.welcome.advancedComponent': 'Formulir Lanjutan',
   'pages.welcome.link': 'Selamat datang',
   'pages.welcome.advancedLayout': 'Tata letak Lanjutan',
-  'pages.welcome.alertMessage':
-    'Komponen heavy-duty yang lebih cepat dan lebih kuat telah dirilis.',
+  'pages.welcome.alertMessage': 'Komponen heavy-duty yang lebih cepat dan lebih kuat telah dirilis.',
   'pages.admin.subPage.title': 'Halaman ini hanya dapat dilihat oleh admin',
-  'pages.admin.subPage.alertMessage':
-    'umi ui telah dirilis, silahkan gunakan npm run ui untuk memulai pengalaman.',
+  'pages.admin.subPage.alertMessage': 'umi ui telah dirilis, silahkan gunakan npm run ui untuk memulai pengalaman.',
   'pages.searchTable.createForm.newRule': 'Aturan baru',
   'pages.searchTable.updateForm.ruleConfig': 'Konfigurasi aturan',
   'pages.searchTable.updateForm.basicConfig': 'Informasi dasar',
   'pages.searchTable.updateForm.ruleName.nameLabel': 'Nama aturan',
   'pages.searchTable.updateForm.ruleName.nameRules': 'Harap masukkan nama aturan!',
   'pages.searchTable.updateForm.ruleDesc.descLabel': 'Deskripsi aturan',
-  'pages.searchTable.updateForm.ruleDesc.descPlaceholder':
-    'Harap masukkan setidaknya lima karakter',
-  'pages.searchTable.updateForm.ruleDesc.descRules':
-    'Harap masukkan deskripsi aturan setidaknya lima karakter!',
+  'pages.searchTable.updateForm.ruleDesc.descPlaceholder': 'Harap masukkan setidaknya lima karakter',
+  'pages.searchTable.updateForm.ruleDesc.descRules': 'Harap masukkan deskripsi aturan setidaknya lima karakter!',
   'pages.searchTable.updateForm.ruleProps.title': 'Properti aturan',
   'pages.searchTable.updateForm.object': 'Objek pemantauan',
   'pages.searchTable.updateForm.ruleProps.templateLabel': 'Template aturan',
@@ -66,5 +67,6 @@ export default {
   'pages.searchTable.totalServiceCalls': 'Jumlah total panggilan layanan',
   'pages.searchTable.tenThousand': '0000',
   'pages.searchTable.batchDeletion': 'Penghapusan batch',
-  'pages.searchTable.batchApproval': 'Persetujuan batch',
+  'pages.searchTable.batchApproval': 'Persetujuan batch'
 };
+exports["default"] = _default;
