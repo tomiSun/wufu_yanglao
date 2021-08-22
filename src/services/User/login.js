@@ -14,6 +14,13 @@ export async function loginout(params) {
     data: params,
   });
 }
+// 修改密码
+export async function updatePassword(params) {
+  return request('/validation/updatePassword', {
+    method: 'POST',
+    data: params,
+  });
+}
 // 手机号登录接口
 export async function verificationCodeLogin(params) {
   return request('/platform/sysUser/verificationCodeLogin', {
