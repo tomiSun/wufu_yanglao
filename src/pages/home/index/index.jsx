@@ -265,7 +265,7 @@ export default () => {
   useEffect(() => {
     if (buildingCode) {
       queryPageService({ buildingCode });
-      queryPageBedService();
+      queryPageBedService({ buildingCode });
     }
   }, [buildingCode]);
   useEffect(() => {
@@ -290,7 +290,7 @@ export default () => {
             className={styles.search}
             onClick={() => {
               queryPageService({ buildingCode });
-              queryPageBedService();
+              queryPageBedService({ buildingCode });
             }}
           >
             查询

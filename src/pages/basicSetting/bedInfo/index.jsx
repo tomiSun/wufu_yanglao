@@ -90,6 +90,7 @@ export default () => {
   // 树形节点选中
   const treeSelect = async (selectedKeys, info) => {
     console.log('selectedKeys, info: ', selectedKeys, info);
+    formTopRight.resetFields();
     let pos = info.node.pos.split('-');
     // 0 养老院 1 楼宇 2 楼层 3 房间
     let editType = pos.length - 2;
@@ -339,11 +340,14 @@ export default () => {
     inputArr: [
       {
         label: '',
-        name: 'name',
+        name: 'keyWords',
         placeholder: '请输入',
         sort: 1,
         style: {
           width: 200,
+        },
+        pressEnter: (enter) => {
+          getTableData(modalSortConfig.editType);
         },
       },
     ],
@@ -398,14 +402,16 @@ export default () => {
         setTreeData([]);
         console.log('queryTypeList---err', err);
       });
+    // 下拉框
+    getOpt();
   };
   // 统一接口 获取右侧表格数据
   const getTableData = (key) => {
     getTreeData();
     const editType = key || modalSortConfig.editType;
-    const { keyWord } = formTopRight.getFieldsValue();
+    const { keyWords } = formTopRight.getFieldsValue();
     let params = {
-      keyWords: keyWord || '',
+      keyWords,
       pageNum: yTable.table.pagination.current,
       pageSize: yTable.table.pagination.pageSize,
     };
@@ -855,20 +861,19 @@ export default () => {
   };
   useEffect(() => {
     getDictionaryData();
-    // 下拉框
-    getOpt();
+
     getTreeData();
   }, []);
   return (
     <div>
       <Row className="flexNoWrap overflowXHidden margin0" type="flex">
         <Col flex="0 0 280px" className={styles.treeBox}>
-          <Form form={treeSearchForm} layout="vertical">
+          {/* <Form form={treeSearchForm} layout="vertical">
             <Form.Item label="" name="typeName" style={{ marginTop: '15px' }}>
               <Input onPressEnter={getTreeData} />
             </Form.Item>
           </Form>
-          <Divider style={{ margin: 0 }} />
+          <Divider style={{ margin: 0 }} /> */}
           <Tree
             showIcon={false}
             treeData={treeData}
