@@ -28,14 +28,19 @@ const noMatch = (
 );
 
 /** Use Authorized check all menu item */
-const menuDataRender = (menuList) =>
-  menuList.map((item) => {
+const menuDataRender = (menuList) => {
+  // 只有admin账号显示员工信息路由
+  if (sessionStorage.getItem('employeeCode') !== 'admin') {
+    menuList = menuList.filter((it) => it.path !== '/basicSetting/staffInfo');
+  }
+  return menuList.map((item) => {
     const localItem = {
       ...item,
       children: item.children ? menuDataRender(item.children) : undefined,
     };
     return Authorized.check(item.authority, localItem, null);
   });
+};
 
 const defaultFooterDom = (
   <DefaultFooter
