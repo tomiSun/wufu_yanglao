@@ -8,8 +8,8 @@
 export default {
   dev: {
     '/api/': {
-      // target: 'http://118.31.54.70:8081',
-      target: 'https://qewtay.39nat.com',
+      // target: 'http://120.27.222.210:8081',
+      target: 'http://120.27.222.210:8081',
       // target: 'https://120.27.222.210',
       // target: 'https://10.0.0.48',
       changeOrigin: true,
