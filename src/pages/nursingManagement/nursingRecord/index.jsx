@@ -161,7 +161,11 @@ const RloodGlucoseRecord = (props) => {
   const renderForm = () => {
     return (
       <div>
-        <Table columns={columns(editButton, samplingStatusMap)} dataSource={dataSource} />
+        <Table
+          columns={columns(editButton, samplingStatusMap)}
+          dataSource={dataSource}
+          scroll={{ x: 1300 }}
+        />
       </div>
     );
   };

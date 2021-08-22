@@ -7,60 +7,72 @@ exports.columns = void 0;
 
 var columns = function columns(edit) {
   return [{
-    title: '住院编号',
+    title: '住院号',
     dataIndex: 'businessNo',
-    key: 'businessNo'
+    key: 'businessNo',
+    width: 200,
+    fixed: 'left'
   }, {
     title: '姓名',
     dataIndex: 'name',
-    key: 'name'
+    key: 'name',
+    width: 120,
+    fixed: 'left'
   }, {
     title: '呼吸',
     dataIndex: 'breathing',
-    key: 'breathing'
+    key: 'breathing',
+    width: 120
   }, {
     title: '高压',
     dataIndex: 'highBloodPressure',
-    key: 'highBloodPressure'
+    key: 'highBloodPressure',
+    width: 120
   }, {
     title: '低压',
     dataIndex: 'lowBloodPressure',
-    key: 'lowBloodPressure'
+    key: 'lowBloodPressure',
+    width: 120
   }, {
     title: '入量',
     dataIndex: 'intake',
-    key: 'intake'
+    key: 'intake',
+    width: 120
   }, {
     title: '出量',
     dataIndex: 'output',
-    key: 'output'
+    key: 'output',
+    width: 120
   }, {
     title: '脉搏',
     dataIndex: 'pulse',
-    key: 'pulse'
-  }, {
-    title: '出量',
-    dataIndex: 'output',
-    key: 'output'
-  }, {
-    title: '记录时间',
-    dataIndex: 'recordTime',
-    key: 'recordTime'
+    key: 'pulse',
+    width: 120
   }, {
     title: '体温',
     dataIndex: 'temperature',
-    key: 'temperature'
+    key: 'temperature',
+    width: 120
   }, {
     title: '尿量',
     dataIndex: 'urine',
-    key: 'urine'
+    key: 'urine',
+    width: 120
   }, {
     title: '体重',
     dataIndex: 'weight',
-    key: 'weight'
+    key: 'weight',
+    width: 120
+  }, {
+    title: '记录时间',
+    dataIndex: 'recordTime',
+    key: 'recordTime',
+    width: 200
   }, {
     title: '操作',
-    render: edit
+    render: edit,
+    fixed: 'right',
+    width: 120
   }];
 };
 

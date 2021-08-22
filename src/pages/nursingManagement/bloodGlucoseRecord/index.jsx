@@ -79,13 +79,13 @@ const RloodGlucoseRecord = (props) => {
         <Form.Item label="结束日期" name={'endTime'}>
           <DatePicker size={'small'} />
         </Form.Item>
-        <Form.Item label="采样状态" name={'samplingStatus'}  {...ULayout(12, 16)}>
+        {/* <Form.Item label="采样状态" name={'samplingStatus'}  {...ULayout(12, 16)}>
           <Select defaultValue="0001" size={'small'}>
             {samplingStatusMap.map(item => {
               return <Option value={item['dictCode']}>{item['dictName']}</Option>
             })}
           </Select>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item style={{ marginLeft: 20 }}>
           <Button
             type="primary"
@@ -105,17 +105,18 @@ const RloodGlucoseRecord = (props) => {
             style={{ marginTop: 4 }}
             onClick={() => { handleJumpbatch("3", "add") }}
           >
-            新增记录
+            新增
           </Button>
-          <Form.Item>
+        </Form.Item>
+        <Form.Item>
           <Button
             type="primary"
             size={'small'}
+            style={{ marginTop: 4 }}
             onClick={() => { SForm.resetFields() }}
           >
             清空
           </Button>
-        </Form.Item>
         </Form.Item>
       </Form>
     );
@@ -160,7 +161,11 @@ const RloodGlucoseRecord = (props) => {
   const renderForm = () => {
     return (
       <div>
-        <Table columns={columns(editButton, samplingStatusMap)} dataSource={dataSource} />
+        <Table
+          columns={columns(editButton, samplingStatusMap)}
+          dataSource={dataSource}
+          scroll={{ x: 1300 }}
+        />
       </div>
     );
   };

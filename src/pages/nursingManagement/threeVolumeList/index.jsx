@@ -105,6 +105,7 @@ const RloodGlucoseRecord = (props) => {
           <Button
             type="primary"
             size={'small'}
+            style={{ marginTop: 4 }}
             onClick={() => { SForm.resetFields() }}
           >
             清空
@@ -153,7 +154,11 @@ const RloodGlucoseRecord = (props) => {
   const renderForm = () => {
     return (
       <div>
-        <Table columns={columns(editButton, samplingStatusMap)} dataSource={dataSource} />
+        <Table 
+        columns={columns(editButton, samplingStatusMap)}
+         dataSource={dataSource} 
+         scroll={{ x: 1300 }}
+         />
       </div>
     );
   };

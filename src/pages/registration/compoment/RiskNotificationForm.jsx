@@ -12,11 +12,13 @@ import {
     Modal,
     message
 } from 'antd';
+import moment from 'moment';
 import {
     riskNotificationQuery,
     riskNotificationUpdate,
     riskNotificationSave
-} from '@/services/inHospitalRegister/index.js'
+} from '@/services/inHospitalRegister/index.js';
+
 const layout = (x, y) => {
     return {
         labelCol: { span: x },
@@ -43,7 +45,12 @@ const RiskNotificationForm = (props) => {
         riskNotificationForm.setFieldsValue(selectRowData)
         let resQuery = await riskNotificationQuery({ "businessNo": selectRowData['businessNo'] })
         if (resQuery['code'] == 200 && !!resQuery['data']) {
-            let id = resQuery['data']['busExamArchiveQueryVO']['id']
+            let id = resQuery['data']['id']
+            riskNotificationForm.setFieldsValue({
+                ...resQuery['data'],
+                guardianTime: moment(resQuery['data']['guardianTime']),
+                informerTime: moment(resQuery['data']['informerTime']),
+            })
             setUpdateId(id)
             setMode("edit")
         } else {
@@ -58,10 +65,10 @@ const RiskNotificationForm = (props) => {
                 width={1000}
                 visible={visible}
                 onOk={() => {
-                    setModalVisible(false);
+                    onRiskNotificationFormVisible(false)
                 }}
                 onCancel={() => {
-                    setModalVisible(false);
+                    onRiskNotificationFormVisible(false)
                 }}
                 style={{ marginTop: -50, marginRight: 120 }}
                 footer={renderBtnArea()}
@@ -70,15 +77,15 @@ const RiskNotificationForm = (props) => {
                     <h2 style={{ textAlign: 'center' }}>
                         <a>杭州富阳颐乐老年护理中心入住老人潜在意外风险告知书</a>
                     </h2>
-                    <Form onFinish={() => { }} {...layout(8, 16)} style={{ marginTop: 20 }}>
+                    <Form onFinish={() => { }} {...layout(8, 16)} style={{ marginTop: 20 }} form={riskNotificationForm}>
                         <Row gutter={24}>
                             <Col span={12}>
-                                <Form.Item label="负责人签名:" name={'director'}>
+                                <Form.Item label="负责人签名:" name={'informer'}>
                                     <Input width="200" size="small" />
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
-                                <Form.Item label="签订时间" name={'directorTime'}>
+                                <Form.Item label="签订时间" name={'informerTime'} initialValue={moment(new Date())}>
                                     <DatePicker style={{ width: 200 }} size="small" />
                                 </Form.Item>
                             </Col>
@@ -90,7 +97,7 @@ const RiskNotificationForm = (props) => {
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
-                                <Form.Item label="签订时间" name={'guardianTime'}>
+                                <Form.Item label="签订时间" name={'guardianTime'} initialValue={moment(new Date())}>
                                     <DatePicker style={{ width: 200 }} size="small" />
                                 </Form.Item>
                             </Col>
@@ -103,17 +110,17 @@ const RiskNotificationForm = (props) => {
     const renderBtnArea = () => {
         //新增按钮
         let addBtn = <Button onClick={async () => {
-            let addParam = { ...riskNotificationForm.getFieldsValue(), ...selectRowData }
+            let addParam = { ...selectRowData, ...riskNotificationForm.getFieldsValue(), }
             let res = await riskNotificationSave(addParam);
             message.info("新增成功")
-            onPhysicalExaminationVisible(false);
+            onRiskNotificationFormVisible(false)
         }}>保存</Button>;
         //编辑按钮
         let editBtn = <Button onClick={async () => {
-            let updateParam = { ...riskNotificationForm.getFieldsValue(), ...selectRowData }
+            let updateParam = { ...selectRowData, ...riskNotificationForm.getFieldsValue(), id: updateId }
             let res = await riskNotificationUpdate(updateParam);
             message.info("修改成功")
-            onPhysicalExaminationVisible(false);
+            onRiskNotificationFormVisible(false)
         }}>修改</Button>
         let arrEdit = [editBtn];
         let arrAdd = [addBtn];

@@ -26,9 +26,9 @@ const dataSource = [
 const columns = (edit) => {
     return [
         {
-            title: '住院编号',
-            dataIndex: 'archivesId',
-            key: 'archivesId',
+            title: '住院号',
+            dataIndex: 'businessNo',
+            key: 'businessNo',
         },
         {
             title: '姓名',
@@ -37,18 +37,18 @@ const columns = (edit) => {
         },
         {
             title: '医院负责人姓名',
-            dataIndex: 'informer',
-            key: 'informer',
+            dataIndex: 'director',
+            key: 'director',
         },
         {
             title: '监护人姓名',
-            dataIndex: 'contacts',
-            key: 'contacts',
+            dataIndex: 'guardian',
+            key: 'guardian',
         },
         {
             title: '签订时间',
-            dataIndex: 'time',
-            key: 'time',
+            dataIndex: 'guardianTime',
+            key: 'guardianTime',
         },
         {
             title: '合同签订状态',
@@ -60,10 +60,10 @@ const columns = (edit) => {
                 </div>)
             }
         },
-        {
-            title: '操作',
-            render: edit
-        }
+        // {
+        //     title: '操作',
+        //     render: edit
+        // }
     ];
 }
 export { dataSource, columns }

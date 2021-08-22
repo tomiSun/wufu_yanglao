@@ -10,6 +10,7 @@ import {
   DatePicker,
   Modal,
   Tabs,
+  message,
 } from 'antd';
 import {
   medicineRecordInsert,
@@ -20,6 +21,14 @@ import {
 import { dictDateSelect } from '@/services/basicSetting/dictionary'
 import { dataSource, columns } from './data';
 import { ULayout } from '@/utils/common';
+//登记接口
+import {
+  patientQuery,
+  queryHospitalRegist,
+} from '@/services/inHospitalRegister';
+import moment from 'moment';
+const DICT_LSIT = { "0006": [] }
+const DICT_ARR = ["0006"]
 //通用校验提醒
 const validateMessages = {
   required: '${label} 为必填项',
@@ -36,23 +45,43 @@ const DrugRecord = (props) => {
   //搜索的表单
   const [SForm] = Form.useForm();
   //录入表单的
-  const [Tform] = Form.useForm();
+  const [TForm] = Form.useForm();
   //选中的行
   const [selectData, setSelectData] = useState([])
+  //新增选中的人
+  const [addBasicInfo, setAddBasicInfo] = useState({})
+  //人名数据
+  const [nameSelectList, setNameSelectList] = useState([]);//复合搜索的人的集合
+  //字典
+  const [dictionaryMap, setDictionaryMap] = useState(DICT_LSIT)
   //初始化操作
   useEffect(() => {
-    let param = { pageNum: 1, pageSize: 1000 }
+    let param = { pageNum: 1, pageSize: 10 }
     getmedicineRecordQuery(param)
     //获取字典
-    getDictDataSelect({ pageNum: 1, pageSize: 20, typeCode: "0006" })
+    getDictDataSelect(DICT_ARR);//过敏史
   }, []);
   //刷新操作
   const refushList = () => {
     let search = SForm.getFieldsValue();
-    let startTime = search?.['startTime'] && moment(search?.['startTime']).startOf('day').format('YYYY-MM-DD HH:mm:ss');
-    let endTime = search?.['endTime'] && moment(search?.['endTime']).endOf('day').format('YYYY-MM-DD HH:mm:ss');
-    let param = { ...SForm.getFieldsValue(), pageNum: 1, pageSize: 1000, startTime, endTime }
+    // let startTime = search?.['startTime'] && moment(search?.['startTime']).startOf('day').format('YYYY-MM-DD HH:mm:ss');
+    // let endTime = search?.['endTime'] && moment(search?.['endTime']).endOf('day').format('YYYY-MM-DD HH:mm:ss');
+    let param = { ...search, pageNum: 1, pageSize: 10 }
     getmedicineRecordQuery(param)
+
+  }
+  //获取字典
+  const getDictDataSelect = async (dList) => {
+    let resMap = {}
+    for (const [idx, it] of dList.entries()) {
+      let param = { pageNum: 1, pageSize: 20, typeCode: String(it) }
+      const res = await dictDateSelect(param);
+      let key = param['typeCode']
+      resMap[key] = res['data']['list']
+      if (idx == dList.length - 1) {
+        setDictionaryMap(resMap)
+      }
+    }
   }
   //获取血糖列表信息
   const getmedicineRecordQuery = async (param) => {
@@ -63,25 +92,45 @@ const DrugRecord = (props) => {
       setDataSource([])
     }
   }
-  //获取字典
-  const getDictDataSelect = async (param) => {
-    let res = await dictDateSelect(param);
-    setSamplingStatusMap(res['data']['list'])
-    SForm.setFieldsValue({ samplingStatus: "0001" })
+
+  //姓名搜索框
+  const nameSelectChange = async (value) => {
+    if (!value) {
+      message.info("该人员已经退院")
+      return
+    }
+    let res = await queryHospitalRegist({ businessNo: value, pageSize: 10, pageNum: 1, status: 0, statue: 0, });
+    if (res?.data?.list[0]) {
+      let data = res?.data?.list[0]
+      setAddBasicInfo({ ...data, archiveId: data.id })
+      TForm.setFieldsValue({ ...data, relationName: data.guardianName })
+    }
+  }
+  //姓名搜索框
+  const nameSelectBlur = async (e, data) => {
+    let res = await patientQuery({ keyWords: e });
+    if (!!res['data']) {
+      let data = res['data'].map(item => {
+        return { label: item['name'], value: item['businessNo'] }
+      })
+      setNameSelectList(data)
+    } else {
+      setNameSelectList([])
+    }
   }
   // 搜索部分
   const renderSearch = () => {
     return (
-      <Form {...ULayout(8, 16, 'left', 'inline')}>
+      <Form {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
         <Form.Item label="姓名" name={'name'}>
           <Input AUTOCOMPLETE="OFF" size={'small'} />
         </Form.Item>
-        <Form.Item label="住院编号" name={'businessNo'}>
+        {/* <Form.Item label="住院号" name={'businessNo'}>
           <Input AUTOCOMPLETE="OFF" size={'small'} />
-        </Form.Item>
-        <Form.Item label="服药日期" name={'medicationDate'}>
+        </Form.Item> */}
+        {/* <Form.Item label="服药日期" name={'medicationDate'}>
           <DatePicker AUTOCOMPLETE="OFF" size={'small'} />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item>
           <Button type="primary" size={'small'}
             onClick={() => { refushList() }}>
@@ -103,8 +152,6 @@ const DrugRecord = (props) => {
       </Form>
     );
   };
-  //查询
-
   //操作
   const editButton = (record) => {
     return (
@@ -115,9 +162,11 @@ const DrugRecord = (props) => {
               size={'small'}
               type="link"
               onClick={() => {
-                setFtype("add")
+                setFtype("edit")
                 setModalVisible(true);
-                setSelectData(record)
+                setSelectData(record);
+                let data={...record,medicationDate:moment(record['medicationDate'])}
+                TForm.setFieldsValue(data)
               }}
             >
               编辑
@@ -126,8 +175,9 @@ const DrugRecord = (props) => {
               size={'small'}
               type="link"
               style={{ marginLeft: 10 }}
-              onClick={async() => {
-                let res = await medicineRecordDel({ ids: record.id })
+              onClick={async () => {
+                let res = await medicineRecordDel({ id: record.id })
+                message.info("删除成功")
                 refushList()
               }}
             >
@@ -142,7 +192,11 @@ const DrugRecord = (props) => {
   const renderForm = () => {
     return (
       <div>
-        <Table columns={columns(editButton)} dataSource={dataSource} />
+        <Table
+          columns={columns(editButton,dictionaryMap)}
+          dataSource={dataSource}
+          scroll={{ x: 1300 }}
+        />
       </div>
     );
   };
@@ -150,7 +204,7 @@ const DrugRecord = (props) => {
   const renderMoadl = () => {
     return (
       <Modal
-        title="血糖检测"
+        title="服药记录"
         width={500}
         visible={modalVisible}
         onOk={() => {
@@ -162,22 +216,31 @@ const DrugRecord = (props) => {
         footer={null}
       >
         <div style={{ paddingTop: 20, paddingLeft: 40, paddingRight: 40 }}>
-          <Form  {...ULayout(8, 16)} style={{ marginTop: 20 }} form={Tform}>
+          <Form  {...ULayout(8, 16)} style={{ marginTop: 20 }} form={TForm}>
             <Form.Item label="姓名:" name={'name'}>
-              <Input size="small" style={{ width: 200 }} />
-            </Form.Item>
-            <Form.Item label="采样时间段" name={'medicationTime'}>
-              <Select style={{ width: 200 }} defaultValue="1">
-                <Option value="1">早餐后2h</Option>
-                <Option value="2">午睡前</Option>
-                <Option value="3">午餐后2h</Option>
-                <Option value="4">晚餐前</Option>
-                <Option value="5">晚餐后2h</Option>
-                <Option value="6">睡前</Option>
-                <Option value="7">随机血糖</Option>
+              <Select
+                showSearch
+                placeholder="姓名"
+                onSearch={nameSelectBlur}
+                style={{ width: 200 }}
+                onChange={(value) => {
+                  nameSelectChange(value)
+                }}
+                options={nameSelectList}
+                filterOption={(inputValue, option) => {
+                  return option.label.indexOf(inputValue) > -1
+                }}
+              >
               </Select>
             </Form.Item>
-            <Form.Item label="用药日期" name={'medicationDate'}>
+            <Form.Item label="采样时间段" name={'medicationTime'}>
+              <Select style={{ width: 200 }}>
+                {dictionaryMap?.["0006"].map(item => {
+                  return <Option value={item['dictCode']}>{item['dictName']}</Option>
+                })}
+              </Select>
+            </Form.Item>
+            <Form.Item label="用药日期" name={'medicationDate'} initialValue={moment(new Date())}>
               <DatePicker style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="药品规格" name={'drugSpecification'}>
@@ -195,15 +258,17 @@ const DrugRecord = (props) => {
               style={{ marginLeft: 200 }}
               type={"primary"}
               onClick={async () => {
-                let param = Tform.getFieldsValue()
+                let param = TForm.getFieldsValue()
                 if (ftype == "add") {
-                  let res = await medicineRecordInsert(param);
+                  let params = { ...param,  businessNo:addBasicInfo['businessNo'], bedCode: selectData['bedCode'] }
+                  let res = await medicineRecordInsert(params);
                   message.success("添加成功")
                   setModalVisible(false);
                   refushList()
                 }
                 if (ftype == "edit") {
-                  let res = await medicationRecordUpdate({ ...param, id: selectData.id });
+                  let params = { ...param, id: selectData.id, businessNo: selectData['businessNo'], bedCode: selectData['bedCode'] }
+                  let res = await medicationRecordUpdate(params);
                   message.success("修改成功")
                   setModalVisible(false);
                   refushList()
@@ -211,7 +276,7 @@ const DrugRecord = (props) => {
               }}>{ftype == "add" ? "保存" : "修改"}</Button>
           </Form.Item>
         </div>
-      </Modal>
+      </Modal >
     );
   };
 

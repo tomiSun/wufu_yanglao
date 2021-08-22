@@ -1,59 +1,74 @@
+import './index.less';
 import React, { useEffect, useState } from 'react';
 import {
   Button,
-  Card,
   Col,
   Form,
-  List,
   Row,
   Select,
-  Tag,
   Table,
-  Radio,
   Input,
   DatePicker,
   Modal,
-  InputNumber,
-  Tabs,
+  Pagination
 } from 'antd';
-import { dataSource, columns } from './data';
-import './index.less';
-const { TabPane } = Tabs;
-const layout = (x, y) => {
-  return {
-    labelCol: { span: x },
-    wrapperCol: { span: y },
-    labelAlign: 'left',
-    layout: 'inline',
-  };
-};
-const layout2 = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
-};
-const validateMessages = {
-  required: '${label} is required!',
-};
+import { columns } from './data';
+import { ULayout } from '@/utils/common'
+import {
+  riskNotificationQueryList
+} from '@/services/inHospitalRegister'
 const RiskNotification = (props) => {
   const [modalVisible, setModalVisible] = useState(false); //基本信息
+  const [dataSource, setDataSource] = useState([]);//数据
+  const [pageInfo, setPageInfo] = useState({
+    total: 0,
+    pageSize: 10,
+    pageNum: 1
+  })
+  const [SForm] = Form.useForm();
+  useEffect(() => {
+    let param = pageInfo
+    getList(param);
+  }, [])
+  //获取数据
+  const getList = async (param) => {
+    let res = await riskNotificationQueryList(param);
+    setDataSource(res['data']['list'])
+    setPageInfo({
+      pageSize: param.pageSize,
+      pageNum: param.pageNum,
+      total: res.data.total
+    })
+  }
+  //刷新
+  const refushList = async (pageParam) => {
+    let search = SForm.getFieldsValue();
+    let pageInfoCopy = { ...pageInfo, ...pageParam }
+    let param = {
+      ...search,
+      pageSize: pageInfoCopy.pageSize,
+      pageNum: pageInfoCopy.pageNum,
+      status: 0
+    }
+    getList(param)
+  }
   // 搜索部分
   const renderSearch = () => {
     return (
-      <Form onFinish={() => { }} {...layout(8, 16)}>
+      <Form {...ULayout(8, 16, "left", "inline")} >
         <Form.Item label="姓名" name={'name'}>
           <Input size={'small'} />
         </Form.Item>
-        <Form.Item label="档案ID" name={'name'}>
+        <Form.Item label="档案ID" name={'businessNo'}>
           <Input size={'small'} />
         </Form.Item>
-        <Form.Item label="签订状态" name={'name'} {...layout(10, 16)}>
-          <Select defaultValue="1" size={'small'}>
-            <Option value="2">已签订</Option>
-            <Option value="1">已签订</Option>
-          </Select>
-        </Form.Item>
         <Form.Item>
-          <Button type="primary" size={'small'} style={{ marginLeft: 20 }}>
+          <Button type="primary" size={'small'}
+            style={{ marginLeft: 20 }}
+            onClick={() => {
+              refushList({ pageNum: 1 })
+            }}
+          >
             查询
           </Button>
         </Form.Item>
@@ -82,70 +97,24 @@ const RiskNotification = (props) => {
   const renderForm = () => {
     return (
       <div>
-        <Table columns={columns(editButton)} dataSource={dataSource} />
-      </div>
-    );
-  };
-  //弹窗
-  const renderMoadl = () => {
-    return (
-      <Modal
-        title="风险告知书"
-        width={800}
-        visible={modalVisible}
-        onOk={() => {
-          setModalVisible(false);
-        }}
-        onCancel={() => {
-          setModalVisible(false);
-        }}
-        style={{ marginTop: -50, marginRight: 120 }}
-        footer={[<div>
-          <Button type={"primary"}
-            onClick={() => {
-              setModalVisible(false);
-            }}>保存</Button>
-          <Button
-            onClick={() => {
-              setModalVisible(false);
-            }}
-          >取消</Button>
-        </div>]}
-      >
-        <div style={{ padding: 30 }}>
-          <h2 style={{ textAlign: 'center' }}>
-            <a  >
-              杭州富阳颐乐老年护理中心入住老人潜在意外风险告知书
-            </a>
-          </h2>
-          <Form onFinish={() => { }} {...layout2} style={{ marginTop: 20 }}>
-            <Row gutter={24}>
-              <Col span={14}>
-                <Form.Item label="告知人签名:" name={'a'}>
-                  <Input width="200" size="small" />
-                </Form.Item>
-              </Col>
-              <Col span={10}>
-                <Form.Item label="签订时间" name={'b'}>
-                  <DatePicker width="200" size="small" />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={24}>
-              <Col span={14}>
-                <Form.Item label="监护人签名" name={'c'}>
-                  <Input width="200" size="small" />
-                </Form.Item>
-              </Col>
-              <Col span={10}>
-                <Form.Item label="签订时间" name={'time'}>
-                  <DatePicker width="200" size="small" />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
-        </div>
-      </Modal>
+        <Table
+          columns={columns(editButton)}
+          dataSource={dataSource}
+          scroll={{ x: 1300 }}
+          pagination={false}
+        />
+        <Pagination
+          defaultCurrent={1}
+          current={pageInfo['pageNum']}
+          defaultPageSize={pageInfo['pageSize']}
+          total={pageInfo['total']}
+          onChange={(page, pageSize) => {
+            setPageInfo({ total: pageInfo.total, pageNum: page, pageSize })
+            refushList({ total: pageInfo.total, pageNum: page, pageSize });
+          }}
+          style={{ position: "absolute", bottom: 35, right: 50 }} />
+      </div >
+
     );
   };
 
@@ -154,7 +123,6 @@ const RiskNotification = (props) => {
       <div class="content">
         {renderSearch()}
         {renderForm()}
-        {renderMoadl()}
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ import {
   contractUpdate,
   contractSave
 } from '@/services/inHospitalRegister/index.js'
+import moment from 'moment';
 const layout = (x, y) => {
   return {
     labelCol: { span: x },
@@ -28,7 +29,7 @@ const validateMessages = {
 };
 const AgreementForm = (props) => {
   //属性
-  const { selectRowData, onPhysicalExaminationVisible, visible } = props;
+  const { selectRowData, onAgreementFormVisibleVisible, visible } = props;
   //变量
   const [mode, setMode] = useState("add");//模式是新增还是编辑
   //form
@@ -43,7 +44,12 @@ const AgreementForm = (props) => {
     agreementForm.setFieldsValue(selectRowData)
     let resQuery = await contractQuery({ "businessNo": selectRowData['businessNo'] })
     if (resQuery['code'] == 200 && !!resQuery['data']) {
-      let id = resQuery['data']['busExamArchiveQueryVO']['id']
+      let id = resQuery['data']['id'];
+      agreementForm.setFieldsValue({
+        ...resQuery['data'],
+        guardianTime: moment(resQuery['data']['guardianTime']),
+        directorTime: moment(resQuery['data']['directorTime']),
+      })
       setUpdateId(id)
       setMode("edit")
     } else {
@@ -58,10 +64,11 @@ const AgreementForm = (props) => {
         width={1000}
         visible={visible}
         onOk={() => {
-          setModalVisible(false);
+          onAgreementFormVisibleVisible(false)
+          // setModalVisible(false);
         }}
         onCancel={() => {
-          setModalVisible(false);
+          onAgreementFormVisibleVisible(false)
         }}
         style={{ marginTop: -50, marginRight: 120 }}
         footer={renderBtnArea()}
@@ -70,7 +77,7 @@ const AgreementForm = (props) => {
           <h2 style={{ textAlign: 'center' }}>
             <a>杭州富阳颐乐老年护理中心老人入住合同</a>
           </h2>
-          <Form onFinish={() => { }} {...layout(8, 16)} style={{ marginTop: 20 }}>
+          <Form onFinish={() => { }} {...layout(8, 16)} style={{ marginTop: 20 }} form={agreementForm}>
             <Row gutter={24}>
               <Col span={12}>
                 <Form.Item label="负责人签名:" name={'director'}>
@@ -78,7 +85,7 @@ const AgreementForm = (props) => {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="签订时间" name={'directorTime'}>
+                <Form.Item label="签订时间" name={'directorTime'} initialValue={moment(new Date())}>
                   <DatePicker style={{ width: 200 }} size="small" />
                 </Form.Item>
               </Col>
@@ -90,7 +97,7 @@ const AgreementForm = (props) => {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="签订时间" name={'guardianTime'}>
+                <Form.Item label="签订时间" name={'guardianTime'} initialValue={moment(new Date())}>
                   <DatePicker style={{ width: 200 }} size="small" />
                 </Form.Item>
               </Col>
@@ -103,17 +110,17 @@ const AgreementForm = (props) => {
   const renderBtnArea = () => {
     //新增按钮
     let addBtn = <Button onClick={async () => {
-      let addParam = { ...agreementForm.getFieldsValue(), ...selectRowData }
+      let addParam = { ...selectRowData, ...agreementForm.getFieldsValue(), }
       let res = await contractSave(addParam);
       message.info("新增成功")
-      onPhysicalExaminationVisible(false);
+      onAgreementFormVisibleVisible(false)
     }}>保存</Button>;
     //编辑按钮
     let editBtn = <Button onClick={async () => {
-      let updateParam = { ...agreementForm.getFieldsValue(), ...selectRowData }
+      let updateParam = { ...selectRowData, ...agreementForm.getFieldsValue(), id: updateId }
       let res = await contractUpdate(updateParam);
       message.info("修改成功")
-      onPhysicalExaminationVisible(false);
+      onAgreementFormVisibleVisible(false)
     }}>修改</Button>
     let arrEdit = [editBtn];
     let arrAdd = [addBtn];

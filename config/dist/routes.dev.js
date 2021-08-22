@@ -53,6 +53,45 @@ var _default = [{
     authority: ['admin', 'user'],
     routes: [//从这里开始是我们的路由
     {
+      name: '首页',
+      icon: 'highlight',
+      path: 'home/index',
+      component: './home/index' // routes: [
+      //   {
+      //     name: '首页',
+      //     icon: 'smile',
+      //     path: 'home/index',
+      //     component: './home/index',
+      //   },
+      // ],
+
+    }, {
+      name: '基础设置',
+      icon: 'highlight',
+      path: '/basicSetting',
+      routes: [{
+        name: '基础字典',
+        icon: 'smile',
+        path: '/basicSetting/dictionary',
+        component: './basicSetting/dictionary'
+      }, {
+        name: '员工信息',
+        icon: 'smile',
+        path: '/basicSetting/staffInfo',
+        component: './basicSetting/staffInfo'
+      }, {
+        name: '护工信息',
+        icon: 'smile',
+        path: '/basicSetting/nursingInfo',
+        component: './basicSetting/nursingInfo'
+      }, {
+        name: '床位信息',
+        icon: 'smile',
+        path: '/basicSetting/bedInfo',
+        component: './basicSetting/bedInfo' // component: './basicSetting/bedInfo/index-v1',
+
+      }]
+    }, {
       name: '基础档案',
       icon: 'highlight',
       path: '/archivesManage',
@@ -94,7 +133,34 @@ var _default = [{
     //     },
     //   ],
     // },
-    //护理管理
+    {
+      name: '流程管理',
+      icon: 'highlight',
+      path: '/registration',
+      routes: [{
+        name: '入院办理',
+        icon: 'smile',
+        path: '/registration/inHospitalRegister/index',
+        component: './registration/inHospitalRegister/index'
+      }, {
+        name: '出院记录',
+        icon: 'smile',
+        path: '/registration/outHospitalRegister/index',
+        component: './registration/outHospitalRegister/index'
+      }, {
+        name: '风险告知书',
+        //风险告知书
+        icon: 'smile',
+        path: '/registration/riskNotification/index',
+        component: './registration/riskNotification'
+      }, {
+        name: '入院合同',
+        //风险告知书
+        icon: 'smile',
+        path: '/registration/agreement/index',
+        component: './registration/agreement'
+      }]
+    }, //护理管理
     {
       name: '护理管理',
       icon: 'highlight',
@@ -130,8 +196,8 @@ var _default = [{
         path: '/nursingManagement/threeVolumeList/index',
         component: './nursingManagement/threeVolumeList'
       }, {
-        name: '药品管理',
-        //药品管理
+        name: '带药管理',
+        //带药管理
         icon: 'smile',
         path: '/nursingManagement/drugManage/index',
         component: './nursingManagement/drugManage'
@@ -147,59 +213,6 @@ var _default = [{
         icon: 'smile',
         path: '/nursingManagement/leaveManagement/index',
         component: './nursingManagement/leaveManagement'
-      }]
-    }, {
-      name: '流程管理',
-      icon: 'highlight',
-      path: '/registration',
-      routes: [{
-        name: '入院办理',
-        icon: 'smile',
-        path: '/registration/inHospitalRegister/index',
-        component: './registration/inHospitalRegister/index'
-      }, {
-        name: '出院记录',
-        icon: 'smile',
-        path: '/registration/outHospitalRegister/index',
-        component: './registration/outHospitalRegister/index'
-      }, {
-        name: '风险告知书',
-        //风险告知书
-        icon: 'smile',
-        path: '/registration/riskNotification/index',
-        component: './registration/riskNotification'
-      }, {
-        name: '入院合同',
-        //风险告知书
-        icon: 'smile',
-        path: '/registration/agreement/index',
-        component: './registration/agreement'
-      }]
-    }, {
-      name: '基础设置',
-      icon: 'highlight',
-      path: '/basicSetting',
-      routes: [{
-        name: '基础字典',
-        icon: 'smile',
-        path: '/basicSetting/dictionary',
-        component: './basicSetting/dictionary'
-      }, {
-        name: '员工信息',
-        icon: 'smile',
-        path: '/basicSetting/staffInfo',
-        component: './basicSetting/staffInfo'
-      }, {
-        name: '护工信息',
-        icon: 'smile',
-        path: '/basicSetting/nursingInfo',
-        component: './basicSetting/nursingInfo'
-      }, {
-        name: '床位信息',
-        icon: 'smile',
-        path: '/basicSetting/bedInfo',
-        component: './basicSetting/bedInfo' // component: './basicSetting/bedInfo/index-v1',
-
       }]
     }, {
       name: '综合模块',
@@ -250,16 +263,6 @@ var _default = [{
         icon: 'smile',
         path: 'countPage/countChart/index',
         component: './countPage/countChart/index'
-      }]
-    }, {
-      name: '首页',
-      icon: 'highlight',
-      path: '/home',
-      routes: [{
-        name: '首页',
-        icon: 'smile',
-        path: 'home/index',
-        component: './home/index'
       }]
     }, {
       component: '404'

@@ -65,14 +65,15 @@ const ChartMap = (num, props) => {
 import {
   queryBrokenLine,
   queryCake,
-  selectCountInfo
+  selectCountInfo,
+  querySource
 } from '@/services/countPage'
 export default function IndexPage(props) {
   const { data, height = 360, mode } = props;
   const [cssTemData, setCssTemData] = useState(data);
   const [maxHeight, setmaxHeight] = useState(height);
   const [pickerType, setPickerType] = useState(["mode2", "mode3"].includes(mode) ? "month" : "day")
-  const [pickerDate, setPickerDate] = useState([moment(new Date(), dateFormat), moment(new Date(), dateFormat)]);
+  const [pickerDate, setPickerDate] = useState([moment(new Date(),dateFormat).subtract('month',12), moment(new Date(), dateFormat)]);
   const [chartData, setChartData] = useState([]);
   useEffect(() => {
     getChartData({ pickerDate, pickerType })
@@ -128,7 +129,10 @@ export default function IndexPage(props) {
       endTime: p.pickerDate[1]
     }
     let res = await selectCountInfo(param);
-    const { originalNum,
+    let resSource = await querySource(param);
+    const { fromHsp, fromSociety, toHsp, toSociety } = resSource.data
+    const {
+      originalNum,
       inHospitalNum,
       outHospitalNum,
       stayHospitalNum,
@@ -146,27 +150,34 @@ export default function IndexPage(props) {
       "0006": String(disabilityNum),
       "0007": String(partialDisability),
       "0008": String(provideForOneself),
-      "0009": { one: 1, two: 2 },
-      "00010": { one: 1, two: 2 },
+      "0009": [
+        {
+          type: '来源于社会人数',
+          value: fromSociety,
+        },
+        {
+          type: '来源于医院人数',
+          value: fromHsp,
+        }
+      ],
+      "0010": [
+        {
+          type: '来源于社会人数',
+          value: toSociety,
+        },
+        {
+          type: '来源于医院人数',
+          value: toHsp,
+        }
+      ]
     })
   }
-
   const getLine = async (p) => {
     let param = {
       startTime: p.pickerDate[0],
       endTime: p.pickerDate[1],
       timeType: p.pickerType == "year" ? "2" : "1"
     }
-    // let data = {
-    //   "code": 200, "data": {
-    //     "outHospital":
-    //       [{ "targetNum": 10, "tempData": "2021-08" },
-    //       { "targetNum": 12, "tempData": "2021-07" }],
-    //     "inHospital": [{ "targetNum": 41, "tempData": "2021-07" },
-    //     { "targetNum": 13, "tempData": "2021-08" }]
-    //   }, "msg": "提交成功"
-    // }
-
     let res = await queryBrokenLine(param)
     setChartData(res['data'])
   }
@@ -176,14 +187,6 @@ export default function IndexPage(props) {
       endTime: p.pickerDate[1],
       timeType: p.pickerType == "year" ? "2" : "1"
     }
-    // let data = {
-    //   "code": 200,
-    //   "data": {
-    //     "provideForOneself": [], "disability": [],
-    //     "partialDisability": [{ "targetNum": 1, "tempData": "2021-07" },
-    //     { "targetNum": 3, "tempData": "2021-08" }]
-    //   }, "msg": "提交成功"
-    // }
 
     let res = await queryCake(param)
     setChartData(res['data'])

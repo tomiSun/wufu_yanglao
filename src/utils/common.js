@@ -100,3 +100,8 @@ export const ULayout = (x, y, labelAlign, layout) => {
     layout,
   };
 };
+//根据dictCode 获取dictName
+export const getDictNameByCode = (dict, key, code) => {
+  let item = dict[key].find(item => { if (item.dictCode == code) return item })
+  return !!item ? item['dictName'] : "-"
+}

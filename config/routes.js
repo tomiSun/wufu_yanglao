@@ -220,7 +220,7 @@ export default [
                 component: './nursingManagement/threeVolumeList',
               },
               {
-                name: '药品管理', //药品管理
+                name: '带药管理', //带药管理
                 icon: 'smile',
                 path: '/nursingManagement/drugManage/index',
                 component: './nursingManagement/drugManage',

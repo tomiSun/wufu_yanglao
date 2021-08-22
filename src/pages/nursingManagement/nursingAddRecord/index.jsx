@@ -70,6 +70,8 @@ const NursingAddRecord = (props) => {
     const [record, setRecord] = useState([])
     //用户信息
     const [recordList, setRecordList] = useState([])
+    //用户选择的楼宇信息
+    const [SRoomInfo, setSRoomInfo] = useState({})
     //初始化状态
     const initStateValue = () => {
         setFtype("add");
@@ -78,47 +80,51 @@ const NursingAddRecord = (props) => {
         specialNursingForm.resetFields()
         threeVolumeForm.resetFields()
     }
+
     //获取字典
-    // useEffect(() => {
-    //     getDictDataSelect({ pageNum: 1, pageSize: 20, typeCode: "0006" })
-    // }, []);
     useEffect(() => {
         //获取字典
         getDictDataSelect(["0006", "0014", "0011"]);//过敏史
-        let param = { pageSize: 10, pageNum: 1, statue: "0" }
         if (type == "edit") {
             param['businessNo'] = businessNo
             getRecordInfoById()
         }
-        getPeopleInfoByBusNo(param)//查询url上的人员信息
+        let param = { pageSize: 10, pageNum: 1, status: "0" }
+        getPeopleInfoList(param)//查询url上的人员信息
     }, []);
     //查询护理记录
     const getRecordInfoById = async () => {
         let mapApi = {
             "1": pageNursingRecord,
-            "2": bloodSugarQuery,
-            "3": pageSpecialNursing,
-            "4": pageVitalSignRecord,
+            "2": pageVitalSignRecord,
+            "3": bloodSugarQuery,
+            "4": pageSpecialNursing,
         }
         let formMap = {
             "1": nursingForm,
-            "2": bloodForm,
-            "3": specialNursingForm,
-            "4": threeVolumeForm,
+            "2": threeVolumeForm,
+            "3": bloodForm,
+            "4": specialNursingForm,
         }
         let res = await mapApi[selectKey]({ id: recordId })
         let data = res?.data?.list[0]
         formMap[selectKey].setFieldsValue({
             ...data,
-            recordTime: moment(data['recordTime']),
-            createTime: moment(data['createTime'])
+            recordTime: moment(data['recordTime'] || new Date()),
+            createTime: moment(data['createTime'] || new Date()),
+            samplingTime: moment(data['samplingTime'] || new Date()),
+            bloodSugarRecordDate: moment(data['bloodSugarRecordDate'] || new Date()),
         })
     }
-    //查询url上的人员信息
-    const getPeopleInfoByBusNo = async (param) => {
+    //查询人员列表
+    const getPeopleInfoList = async (param) => {
         let res = await queryHospitalRegist(param);
         setRecordList(res['data']['list'])
-        setRecord(res['data']['list'][0])
+    }
+    //刷新人员列表
+    const refushPeopleInfoList = async () => {
+        let param = { ...SForm.getFieldsValue(), ...SRoomInfo, pageNum: 1, pageSize: 1000, status: 0 }
+        getPeopleInfoList(param)
     }
     //获取字典
     const getDictDataSelect = async (dList) => {
@@ -138,23 +144,36 @@ const NursingAddRecord = (props) => {
         return (
             <Form onFinish={() => { }} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
                 <Form.Item label="姓名" name={'name'}>
-                    <Input AUTOCOMPLETE="OFF" size={'small'} />
+                    <Input AUTOCOMPLETE="OFF" size={'small'} allowClear />
                 </Form.Item>
-                <Form.Item label="住院编号" name={'id'}>
-                    <Input AUTOCOMPLETE="OFF" size={'small'} />
+                <Form.Item label="住院号" name={'businessNo'} >
+                    <Input AUTOCOMPLETE="OFF" size={'small'} allowClear />
                 </Form.Item>
-                <Form.Item label="床位号" name={'time'}>
-                    <BedTreeSelect />
+                <Form.Item label="床位号" name={'bedCodeKey'}>
+                    <BedTreeSelect
+                        style={{ width: 300 }}
+                        onSelect={(value, node) => {
+                            let data = {
+                                bedCode: node?.bedCode,
+                                buildingCode: node?.buildingCode,
+                                floorCode: node?.floorCode,
+                                roomCode: node?.roomCode,
+                            }
+                            setSRoomInfo(data)
+                        }}
+                    />
                 </Form.Item>
-                <Form.Item label="护理等级" name={'time'}>
-                    <Select style={{ width: "100%" }} defaultValue="0001">
+                {/* <Form.Item label="护理等级" name={'time'}>
+                    <Select style={{ width: "100%" }} style={{ width: 150 }}>
                         {dictionaryMap?.['0011'].map(item => {
                             return <Option value={item['dictCode']}>{item['dictName']}</Option>
                         })}
                     </Select>
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item>
-                    <Button type="primary" size={'small'}>
+                    <Button type="primary" size={'small'} onClick={() => {
+                        refushPeopleInfoList()
+                    }}>
                         查询
                     </Button>
                 </Form.Item>
@@ -197,11 +216,11 @@ const NursingAddRecord = (props) => {
     //护理项目
     const renderNursingItem = () => {
         return (
-            <Form onFinish={() => { }} {...ULayout(8, 16)} style={{ width: '80%' }} form={nursingForm}>
-                <Form.Item label="日期" name={'recordTime'} >
+            <Form  {...ULayout(8, 16)} style={{ width: '80%', overflow: scroll }} form={nursingForm}>
+                <Form.Item label="日期" name={'recordTime'} initialValue={moment(new Date())}>
                     <DatePicker style={{ width: "100%" }} size={'small'} />
                 </Form.Item>
-                <Form.Item label="时间段" name={'timePoint'}>
+                <Form.Item label="时间段" name={'timePoint'} initialValue={"0001"}>
                     <Select style={{ width: "100%" }} defaultValue="0001">
                         {dictionaryMap?.['0014'].map(item => {
                             return <Option value={item['dictCode']}>{item['dictName']}</Option>
@@ -223,43 +242,43 @@ const NursingAddRecord = (props) => {
                 <Form.Item label="低压" name={'lowBloodPressure'}>
                     <Input AUTOCOMPLETE="OFF" size={'small'} addonAfter="mmHg" />
                 </Form.Item>
-                <Form.Item label="是否打扫房间" name={'isCleanRoom'}>
+                <Form.Item label="是否打扫房间" name={'isCleanRoom'} initialValue={"0"}>
                     <Radio.Group>
                         <Radio value="0">是</Radio>
                         <Radio value="1">否</Radio>
                     </Radio.Group>
                 </Form.Item>
-                <Form.Item label="是否清洗便池" name={'isCleanToilet'}>
+                <Form.Item label="是否清洗便池" name={'isCleanToilet'} initialValue={"0"} >
                     <Radio.Group>
                         <Radio value="0">是</Radio>
                         <Radio value="1">否</Radio>
                     </Radio.Group>
                 </Form.Item>
-                <Form.Item label="是否洗头理发" name={'isHaircut'}>
+                <Form.Item label="是否洗头理发" name={'isHaircut'} initialValue={"0"}>
                     <Radio.Group>
                         <Radio value="0">是</Radio>
                         <Radio value="1">否</Radio>
                     </Radio.Group>
                 </Form.Item>
-                <Form.Item label="是否晾晒衣服" name={'isHangClothes'}>
+                <Form.Item label="是否晾晒衣服" name={'isHangClothes'} initialValue={"0"}>
                     <Radio.Group>
                         <Radio value="0">是</Radio>
                         <Radio value="1">否</Radio>
                     </Radio.Group>
                 </Form.Item>
-                <Form.Item label="是否修剪指甲" name={'isManicure'}>
+                <Form.Item label="是否修剪指甲" name={'isManicure'} initialValue={"0"}>
                     <Radio.Group>
                         <Radio value="0">是</Radio>
                         <Radio value="1">否</Radio>
                     </Radio.Group>
                 </Form.Item>
-                <Form.Item label="是否进餐送餐" name={'isMeals'}>
+                <Form.Item label="是否进餐送餐" name={'isMeals'} initialValue={"0"}>
                     <Radio.Group>
                         <Radio value="0">是</Radio>
                         <Radio value="1">否</Radio>
                     </Radio.Group>
                 </Form.Item>
-                <Form.Item label="老人身心观察记录" name={'physicalAndMentalStatus'}>
+                <Form.Item label="老人身心观察记录" name={'physicalAndMentalStatus'} >
                     <Input.TextArea AUTOCOMPLETE="OFF" size={'small'} rows={3} />
                 </Form.Item>
                 <Form.Item label="其他" name={'other'}>
@@ -273,6 +292,10 @@ const NursingAddRecord = (props) => {
                             style={{ position: "relative", right: 0 }}
                             onClick={async () => {
                                 if (ftype == "add") {
+                                    if (!record['businessNo']) {
+                                        message.warn("请选中要添加的老人")
+                                        return
+                                    }
                                     let param = { ...record, ...nursingForm.getFieldsValue(), patientName: record['name'] }
                                     let res = await addNursingRecord(param)
                                     message.info("新增成功")
@@ -297,18 +320,18 @@ const NursingAddRecord = (props) => {
         return (
             <Form onFinish={() => { }} {...ULayout(8, 16)} style={{ width: '80%' }}
                 form={bloodForm}>
-                <Form.Item label="采样状态" name={'samplingStatus'}>
+                <Form.Item label="采样状态" name={'samplingStatus'} initialValue={"0001"}>
                     <Select style={{ width: "100%" }} defaultValue="0001">
                         {dictionaryMap?.['0006'].map(item => {
                             return <Option value={item['dictCode']}>{item['dictName']}</Option>
                         })}
                     </Select>
                 </Form.Item>
-                <Form.Item label="采样日期" name={'bloodSugarRecordDate'}>
+                <Form.Item label="采样日期" name={'bloodSugarRecordDate'} initialValue={moment(new Date())}>
                     <DatePicker style={{ width: "100%" }} />
                 </Form.Item>
-                <Form.Item label="采样时间" name={'samplingTime'}>
-                    <DatePicker style={{ width: "100%" }} />
+                <Form.Item label="采样时间" name={'samplingTime'} initialValue={moment(new Date())}>
+                    <TimePicker style={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item label="采样签名" name={'samplingSignature'}>
                     <Input size="small" style={{ width: "100%" }} />
@@ -327,12 +350,18 @@ const NursingAddRecord = (props) => {
                             style={{ position: "relative", right: 0 }}
                             onClick={async () => {
                                 if (ftype == "add") {
+                                    if (!record['businessNo']) {
+                                        message.warn("请选中要添加的老人")
+                                        return
+                                    }
                                     let param = { ...record, ...bloodForm.getFieldsValue(), patientName: record['name'] }
                                     let res = await bloodSugarInsert(param)
+                                    message.info("添加成功")
                                 }
                                 if (ftype == "edit") {
                                     let param = { ...record, ...bloodForm.getFieldsValue(), id: recordId, patientName: record['name'] }
                                     let res = await bloodSugarUpdate(param)
+                                    message.info("修改成功")
                                 }
                             }}
                         >
@@ -348,7 +377,7 @@ const NursingAddRecord = (props) => {
     const specialNursingRecord = () => {
         return (
             <Form onFinish={() => { }} {...ULayout(8, 16)} style={{ width: '80%' }} form={specialNursingForm}>
-                <Form.Item label="护理时间" name={'nursingTime'}>
+                <Form.Item label="护理时间" name={'nursingTime'} initialValue={moment(new Date())}>
                     <DatePicker style={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item label="是否晚间护理" name={'isEveningCare'}>
@@ -369,23 +398,23 @@ const NursingAddRecord = (props) => {
                         <Radio value="1">否</Radio>
                     </Radio.Group>
                 </Form.Item>
-                <Form.Item label="出量记录" name={'output'} >
-                    <Input size="small" style={{ width: "100%" }} />
-                </Form.Item>
-                <Form.Item label="入量记录" name={'input'} >
-                    <Input size="small" style={{ width: "100%" }} />
-                </Form.Item>
                 <Form.Item label="预防压疮护理" name={'isPressureUlcersCare'} >
                     <Radio.Group>
                         <Radio value="0">是</Radio>
                         <Radio value="1">否</Radio>
                     </Radio.Group>
                 </Form.Item>
-                <Form.Item label="医院诊断" name={'hospitalDiagnosis'}>
-                    <Input.TextArea AUTOCOMPLETE="OFF" size={'small'} rows={3} />
+                <Form.Item label="出量记录" name={'output'} >
+                    <Input size="small" style={{ width: "100%" }} />
+                </Form.Item>
+                <Form.Item label="入量记录" name={'input'} >
+                    <Input size="small" style={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item label="责任人" name={'personInCharge'}>
                     <Input AUTOCOMPLETE="OFF" size={'small'} />
+                </Form.Item>
+                <Form.Item label="医院诊断" name={'hospitalDiagnosis'}>
+                    <Input.TextArea AUTOCOMPLETE="OFF" size={'small'} rows={3} />
                 </Form.Item>
                 <Form.Item label="精神状态及其他" name={'mentalState'}>
                     <Input.TextArea AUTOCOMPLETE="OFF" size={'small'} rows={4} />
@@ -398,8 +427,31 @@ const NursingAddRecord = (props) => {
                             style={{ position: "relative", right: 0 }}
                             onClick={async () => {
                                 if (ftype == "add") {
+                                    if (!record['businessNo']) {
+                                        message.warn("请选中要添加的老人")
+                                        return
+                                    }
+                                    if (!record['businessNo']) {
+                                        message.warn("请选中要添加的老人")
+                                    }
                                     let param = { ...record, ...specialNursingForm.getFieldsValue(), patientName: record['name'] }
-                                    let res = await addSpecialNursing(param)
+                                    let params = {
+                                        allergy: param?.allergy,
+                                        bedName: param?.bedName || "#",
+                                        businessNo: param?.businessNo,
+                                        hospitalDiagnosis: param?.hospitalDiagnosis,
+                                        input: param?.input,
+                                        isEveningCare: param?.isEveningCare,
+                                        isMorningCare: param?.isMorningCare,
+                                        isPressureUlcersCare: param?.isPressureUlcersCare,
+                                        mentalState: param?.mentalState,
+                                        nursingTime: param?.nursingTime,
+                                        output: param?.output,
+                                        patientName: param?.name,
+                                        personInCharge: param?.personInCharge,
+                                        roomName: param?.roomName || "#",
+                                    }
+                                    let res = await addSpecialNursing(params)
                                 }
                                 if (ftype == "edit") {
                                     let param = { ...record, ...specialNursingForm.getFieldsValue(), id: recordId, patientName: record['name'] }
@@ -419,7 +471,7 @@ const NursingAddRecord = (props) => {
     const threeVolumeList = () => {
         return (
             <Form onFinish={() => { }} {...ULayout(8, 16)} style={{ width: '80%' }} form={threeVolumeForm}>
-                <Form.Item label="护理日期" name={'recordTime'}>
+                <Form.Item label="护理日期" name={'recordTime'} initialValue={moment(new Date())}>
                     <DatePicker style={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item label="时间段" name={'timePoint'}>
@@ -473,6 +525,10 @@ const NursingAddRecord = (props) => {
                             style={{ position: "relative", right: 0 }}
                             onClick={async () => {
                                 if (ftype == "add") {
+                                    if (!record['businessNo']) {
+                                        message.warn("请选中要添加的老人")
+                                        return
+                                    }
                                     let param = { ...record, ...threeVolumeForm.getFieldsValue(), patientName: record['name'] }
                                     let res = await addVitalSignRecord(param)
                                 }
@@ -492,15 +548,15 @@ const NursingAddRecord = (props) => {
     }
     //基本信息
     const renderSelectInfo = () => {
-        const { name, sex, bedCode } = record
         return (
             <div>
-                <span>{`姓名：${name || "-"}`}</span>
-                <span>{`性别：${sex || "-"}`}</span>
-                <span>{`床号：${bedCode || "-"}`}</span>
-            </div>
-
-        )
+                <h4 style={{ display: 'inline-block', marginRight: 40 }}>{`姓名：${record?.name || "-"}`}</h4>
+                <h4 style={{ display: 'inline-block', marginRight: 40 }}>{`性别：${record?.sex === "1" ? "男" : "女" || "-"}`}</h4>
+                <h4 style={{ display: 'inline-block', marginRight: 40 }}>{`床号：${record['buildingName'] || "#"}-${record['floorName'] || "#"}-${record['roomName'] || "#"}-${record['bedName'] || "#"}`}</h4>
+                <h4 style={{ display: 'inline-block', marginRight: 40 }}>{`住院号：${record?.businessNo || "-"}`}</h4>
+                <h4 style={{ display: 'inline-block', marginRight: 40 }}>{`年龄：${record?.age || "-"}`}</h4>
+                <h4 style={{ display: 'inline-block', marginRight: 40 }}>{`电话号：${record?.contactNumber || "-"}`}</h4>
+            </div>)
     }
     //清空按钮
     const renderClear = () => {

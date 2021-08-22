@@ -2,7 +2,7 @@ import request from '@/utils/request';
 
 // 试用期评估
 export async function trialAssessmentDel(params) {
-  return request('/trial-assessment/delete', {
+  return request(`/trial-assessment/delete?businessNo=${params.businessNo}`, {
     method: 'GET',
     data: params
   });
@@ -162,7 +162,15 @@ export async function contractSave(params) {
 };
 //根据名字查询病人信息
 export async function patientQuery(params) {
-  return request('/page/patient/query', {
+  return request(`/page/patient/query?keyWords=${params.keyWords}`, {
+    method: 'GET',
+    data: params
+  });
+}
+
+//床位查找
+export async function queryBed(params) {
+  return request(`/bed/bed/get-list?keyWords=${params['keyWords']}`, {
     method: 'GET',
     data: params
   });

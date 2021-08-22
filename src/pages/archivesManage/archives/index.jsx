@@ -15,9 +15,11 @@ import {
   Modal,
   InputNumber,
   Tabs,
-  message
+  message,
+  Pagination
 } from 'antd';
 import { dataSource, columns } from './data';
+import { dictDateSelect } from '@/services/basicSetting/dictionary';
 import {
   baseArchiveDel,
   baseArchiveQuery,
@@ -25,7 +27,6 @@ import {
   baseArchiveInsert
 } from '@/services/archives'
 import './index.less';
-const { TabPane } = Tabs;
 const layout = (x, y, labelAlign, layout) => {
   return {
     labelCol: { span: x },
@@ -35,7 +36,7 @@ const layout = (x, y, labelAlign, layout) => {
   }
 };
 const validateMessages = {
-  required: '${label} is required!',
+  required: '${label}必填！',
 };
 
 const Archives = (props) => {
@@ -44,28 +45,52 @@ const Archives = (props) => {
   const [SFrom] = Form.useForm()
   const [dataSource, setDataSource] = useState([]);
   const [selectData, setSelectData] = useState([]);
+  const [dictionaryMap, setDictionaryMap] = useState({ "0010": [], })
   const [type, setType] = useState("add");
-
-  const refushList = async () => {
+  const [pageInfo, setPageInfo] = useState({
+    total: 0,
+    pageSize: 10,
+    pageNum: 1
+  })
+  useEffect(() => {
+    refushList(pageInfo);
+    getDictDataSelect(["0010"]);//过敏史
+  }, [])
+  const refushList = async (pageParam) => {
     let param = SFrom.getFieldsValue();
-    let res = await baseArchiveQuery({ ...param, pageSize: 1000, pageNum: 1 })
+    let pageInfoCopy = { ...pageInfo, ...pageParam }
+    let res = await baseArchiveQuery({ ...param, pageSize: pageInfoCopy.pageSize, pageNum: pageInfoCopy.pageNum })
     setDataSource(res['data']['list'])
+    setPageInfo({ ...pageInfoCopy, total: res.data.total })
+  }
+  //获取字典
+  const getDictDataSelect = async (dList) => {
+    let resMap = {}
+    for (const [idx, it] of dList.entries()) {
+      let param = { pageNum: 1, pageSize: 20, typeCode: String(it) }
+      const res = await dictDateSelect(param);
+      let key = param['typeCode']
+      resMap[key] = res['data']['list']
+      if (idx == dList.length - 1) {
+        setDictionaryMap(resMap)
+      }
+    }
   }
   const renderSearch = () => {
     return (
       <Form  {...layout(8, 16, "left", "inline")} form={SFrom}>
         <Form.Item label="姓名" name={'name'}>
-          <Input width="200" size={'small'} />
+          <Input width="200" size={'small'} allowClear onPressEnter={() => { refushList() }} />
         </Form.Item>
         <Form.Item label="档案ID" name={'archiveId'}>
-          <Input width="200" size={'small'} />
+          <Input width="200" size={'small'} allowClear onPressEnter={() => { refushList() }} />
         </Form.Item>
         <Form.Item >
           <Button
             type="primary"
             size={'small'}
             onClick={async () => {
-              refushList()
+              refushList({ pageNum: 1 })
             }}
           >
             查询
@@ -101,7 +126,7 @@ const Archives = (props) => {
         <Button size={'small'} type="link" onClick={async () => {
           let res = await baseArchiveDel({ id: row['id'] })
           message.success("删除成功")
-          refushList()
+          refushList({pageNum:1})
         }} size="small">
           删除
         </Button>
@@ -111,9 +136,25 @@ const Archives = (props) => {
   //表单
   const renderForm = () => {
     return (
-      <div>
-        <Table columns={columns(editButton)} dataSource={dataSource} />
-      </div>
+      <>
+        <Table
+          className="comomnTable"
+          scroll={{ x: 1600 }}
+          columns={columns(editButton, dictionaryMap)}
+          dataSource={dataSource}
+          pagination={false}
+        />
+        <Pagination
+          defaultCurrent={1}
+          current={pageInfo['pageNum']}
+          defaultPageSize={pageInfo['pageSize']}
+          total={pageInfo['total']}
+          onChange={(page, pageSize) => {
+            setPageInfo({ total: pageInfo.total, pageNum: page, pageSize })
+            refushList({ total: pageInfo.total, pageNum: page, pageSize });
+          }}
+          style={{ position: "absolute", bottom: 35, right: 50 }} />
+      </>
     );
   };
   //弹窗
@@ -131,7 +172,7 @@ const Archives = (props) => {
         footer={null}
       >
         <>
-          <Card title="基本信息" style={{ width: '80%' }}>
+          <Card title="基本信息" style={{ width: '80%' }} bordered={false}>
             <Form {...layout(8, 16)} name="nest-messages"
               validateMessages={validateMessages}
               form={archivesForm}>
@@ -145,29 +186,34 @@ const Archives = (props) => {
               <Form.Item
                 name={'sex'}
                 label="性别"
+                initialValue={"1"}
                 rules={[{ required: true }]}
               >
-                <Radio.Group onChange={() => { }} defaultValue={"1"}>
+                <Radio.Group onChange={() => { }} defaultValue={"1"} >
                   <Radio value={"1"}>男</Radio>
                   <Radio value={"2"}>女</Radio>
                 </Radio.Group>
               </Form.Item>
-              <Form.Item name={'age'} label="年龄">
+              <Form.Item name={'age'} label="年龄" rules={[{ required: true }]}>
                 <Input />
               </Form.Item>
-              <Form.Item name={'idCard'} label="身份证号">
+              <Form.Item name={'idCard'} label="身份证号" rules={[{ required: true }]}>
                 <Input />
               </Form.Item>
-              <Form.Item name={'guardianName'} label="联系人姓名">
+              <Form.Item name={'guardianName'} label="联系人姓名" rules={[{ required: true }]}>
                 <Input />
               </Form.Item>
-              <Form.Item name={'relation'} label="关系">
+              <Form.Item name={'relation'} label="关系" initialValue={"0001"}>
+                <Select style={{ width: "100%" }} defaultValue="0001">
+                  {dictionaryMap?.['0010'].map(item => {
+                    return <Option value={item['dictCode']} >{item['dictName']}</Option>
+                  })}
+                </Select>
+              </Form.Item>
+              <Form.Item name={'contactNumber'} label="联系电话" rules={[{ required: true }]}>
                 <Input />
               </Form.Item>
-              <Form.Item name={'contactNumber'} label="联系电话">
-                <Input />
-              </Form.Item>
-              <Form.Item name={'contactAddress'} label="家庭住址">
+              <Form.Item name={'contactAddress'} label="家庭住址" >
                 <Input.TextArea />
               </Form.Item>
               <Form.Item >

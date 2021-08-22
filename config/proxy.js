@@ -5,11 +5,12 @@
  * For details, please see
  * https://pro.ant.design/docs/deploy
  */
+//  http://120.27.222.210:8081/swagger-ui.html
 export default {
   dev: {
     '/api/': {
-      target: 'http://118.31.54.70:8081/',
-      // target: 'https://3rci7w.39nat.com',
+      target: 'http://120.27.222.210:8081/',
+      // target: 'https://xuchaojie.39nat.com',
       // target: 'https://10.0.0.48',
       changeOrigin: true,
       secure: false,

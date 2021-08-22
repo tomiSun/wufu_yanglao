@@ -5,18 +5,22 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.columns = void 0;
 
-var columns = function columns(edit) {
-  return [{
-    title: '住院编号',
-    dataIndex: 'businessNo',
-    key: 'businessNo'
-  }, {
-    title: '床号',
-    dataIndex: 'bedCode',
-    key: 'bedCode'
-  }, {
+var _common = require("@/utils/common.js");
+
+var columns = function columns(edit, dictionaryMap) {
+  return [// {
+  //     title: '住院号',
+  //     dataIndex: 'businessNo',
+  //     key: 'businessNo',
+  // },
+  // {
+  //     title: '床号',
+  //     dataIndex: 'bedCode',
+  //     key: 'bedCode',
+  // },
+  {
     title: '姓名',
-    dataIndex: ' name',
+    dataIndex: 'name',
     key: 'name'
   }, {
     title: '年龄',
@@ -25,7 +29,10 @@ var columns = function columns(edit) {
   }, {
     title: '诊断',
     dataIndex: 'hospitalDiagnosis',
-    key: 'hospitalDiagnosis'
+    key: 'hospitalDiagnosis',
+    render: function render(t, r) {
+      return (0, _common.getDictNameByCode)(dictionaryMap, "0015", t);
+    }
   }, {
     title: '带药日期',
     dataIndex: 'takeMedicineDate',

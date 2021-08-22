@@ -15,7 +15,7 @@ const dataSource = [
 const columns = (edit) => {
     return [
         {
-            title: '住院编号',
+            title: '住院号',
             dataIndex: 'a',
             key: 'archivesId',
         },
