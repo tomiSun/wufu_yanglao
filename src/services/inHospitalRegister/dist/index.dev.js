@@ -28,6 +28,7 @@ exports.contractQueryList = contractQueryList;
 exports.contractUpdate = contractUpdate;
 exports.contractSave = contractSave;
 exports.patientQuery = patientQuery;
+exports.queryBed = queryBed;
 
 var _request = _interopRequireDefault(require("@/utils/request"));
 
@@ -39,7 +40,7 @@ function trialAssessmentDel(params) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          return _context.abrupt("return", (0, _request["default"])('/trial-assessment/delete', {
+          return _context.abrupt("return", (0, _request["default"])("/trial-assessment/delete?businessNo=".concat(params.businessNo), {
             method: 'GET',
             data: params
           }));
@@ -513,7 +514,7 @@ function patientQuery(params) {
     while (1) {
       switch (_context25.prev = _context25.next) {
         case 0:
-          return _context25.abrupt("return", (0, _request["default"])('/page/patient/query', {
+          return _context25.abrupt("return", (0, _request["default"])("/page/patient/query?keyWords=".concat(params.keyWords), {
             method: 'GET',
             data: params
           }));
@@ -521,6 +522,25 @@ function patientQuery(params) {
         case 1:
         case "end":
           return _context25.stop();
+      }
+    }
+  });
+} //床位查找
+
+
+function queryBed(params) {
+  return regeneratorRuntime.async(function queryBed$(_context26) {
+    while (1) {
+      switch (_context26.prev = _context26.next) {
+        case 0:
+          return _context26.abrupt("return", (0, _request["default"])("/bed/bed/get-list?keyWords=".concat(params['keyWords']), {
+            method: 'GET',
+            data: params
+          }));
+
+        case 1:
+        case "end":
+          return _context26.stop();
       }
     }
   });

@@ -1,6 +1,11 @@
-export default {
-  'pages.layouts.userLayout.title':
-    '富阳颐乐养老中心 is the most influential web design specification in Xihu district',
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+var _default = {
+  'pages.layouts.userLayout.title': '富阳颐乐养老中心 is the most influential web design specification in Xihu district',
   'pages.login.accountLogin.tab': 'Account Login',
   'pages.login.accountLogin.errorMessage': 'Incorrect username/password（admin/ant.design)',
   'pages.login.username.placeholder': 'Username: admin or user',
@@ -26,8 +31,7 @@ export default {
   'pages.welcome.advancedLayout': 'Advanced Layout',
   'pages.welcome.alertMessage': 'Faster and stronger heavy-duty components have been released.',
   'pages.admin.subPage.title': 'This page can only be viewed by Admin',
-  'pages.admin.subPage.alertMessage':
-    'Umi ui is now released, welcome to use npm run ui to start the experience.',
+  'pages.admin.subPage.alertMessage': 'Umi ui is now released, welcome to use npm run ui to start the experience.',
   'pages.searchTable.createForm.newRule': 'New Rule',
   'pages.searchTable.updateForm.ruleConfig': 'Rule configuration',
   'pages.searchTable.updateForm.basicConfig': 'Basic Information',
@@ -35,8 +39,7 @@ export default {
   'pages.searchTable.updateForm.ruleName.nameRules': 'Please enter the rule name!',
   'pages.searchTable.updateForm.ruleDesc.descLabel': 'Rule Description',
   'pages.searchTable.updateForm.ruleDesc.descPlaceholder': 'Please enter at least five characters',
-  'pages.searchTable.updateForm.ruleDesc.descRules':
-    'Please enter a rule description of at least five characters!',
+  'pages.searchTable.updateForm.ruleDesc.descRules': 'Please enter a rule description of at least five characters!',
   'pages.searchTable.updateForm.ruleProps.title': 'Configure Properties',
   'pages.searchTable.updateForm.object': 'Monitoring Object',
   'pages.searchTable.updateForm.ruleProps.templateLabel': 'Rule Template',
@@ -64,5 +67,6 @@ export default {
   'pages.searchTable.totalServiceCalls': 'Total Number of Service Calls',
   'pages.searchTable.tenThousand': '0000',
   'pages.searchTable.batchDeletion': 'bacth deletion',
-  'pages.searchTable.batchApproval': 'batch approval',
+  'pages.searchTable.batchApproval': 'batch approval'
 };
+exports["default"] = _default;

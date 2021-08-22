@@ -5,6 +5,7 @@
  * For details, please see
  * https://pro.ant.design/docs/deploy
  */
+//  http://120.27.222.210:8081/swagger-ui.html
 export default {
   dev: {
     '/api/': {

@@ -18,7 +18,7 @@ import moment from 'moment';
 import {
   delSpecialNursing,
   pageSpecialNursing,
-  
+
 } from '@/services/nursingManagement'
 import { dictDateSelect } from '@/services/basicSetting/dictionary'
 import './index.less';
@@ -26,21 +26,37 @@ import { ULayout } from '@/utils/common'
 const validateMessages = {
   required: '${label} 为必填项',
 };
-
+const DICT_LSIT = { "0006": [], "0015": [] }
+const DICT_ARR = ["0006", "0015"]
 const RloodGlucoseRecord = (props) => {
   //列表数据
   const [dataSource, setDataSource] = useState([{ 1: 1 }]);//数据
-  //字典
-  const [samplingStatusMap, setSamplingStatusMap] = useState([]);//血糖采样状态的字典
   //搜索的表单
   const [SForm] = Form.useForm();
+  //字典
+  const [dictionaryMap, setDictionaryMap] = useState(DICT_LSIT)
   //初始化操作
   useEffect(() => {
     let param = { pageNum: 1, pageSize: 1000 }
     getBloodSugarInfo(param)
     //获取字典
-    getDictDataSelect({ pageNum: 1, pageSize: 20, typeCode: "0006" })
+    getDictDataSelect(DICT_ARR);//过敏史
   }, []);
+
+  //获取字典
+  const getDictDataSelect = async (dList) => {
+    let resMap = {}
+    for (const [idx, it] of dList.entries()) {
+      let param = { pageNum: 1, pageSize: 20, typeCode: String(it) }
+      const res = await dictDateSelect(param);
+      let key = param['typeCode']
+      resMap[key] = res['data']['list']
+      if (idx == dList.length - 1) {
+        setDictionaryMap(resMap)
+      }
+    }
+  }
+
   //获取血糖列表信息
   const getBloodSugarInfo = async (param) => {
     let res = await pageSpecialNursing(param);
@@ -57,12 +73,6 @@ const RloodGlucoseRecord = (props) => {
     let endTime = search?.['endTime'] && moment(search?.['endTime']).endOf('day').format('YYYY-MM-DD HH:mm:ss');
     let param = { ...SForm.getFieldsValue(), pageNum: 1, pageSize: 1000, startTime, endTime }
     getBloodSugarInfo(param)
-  }
-  //获取字典
-  const getDictDataSelect = async (param) => {
-    let res = await dictDateSelect(param);
-    setSamplingStatusMap(res['data']['list'])
-    SForm.setFieldsValue({ samplingStatus: "0001" })
   }
   // 搜索表单
   const renderSearch = () => {
@@ -113,6 +123,7 @@ const RloodGlucoseRecord = (props) => {
           <Button
             type="primary"
             size={'small'}
+            style={{ marginTop: 4 }}
             onClick={() => { SForm.resetFields() }}
           >
             清空
@@ -139,7 +150,7 @@ const RloodGlucoseRecord = (props) => {
         <Button
           size={'small'}
           type="link"
-          onClick={() => { handleJumpbatch("4", "edit",record) }}
+          onClick={() => { handleJumpbatch("4", "edit", record) }}
         >
           修改
         </Button>
@@ -161,7 +172,11 @@ const RloodGlucoseRecord = (props) => {
   const renderForm = () => {
     return (
       <div>
-        <Table columns={columns(editButton, samplingStatusMap)} dataSource={dataSource} />
+        <Table
+          columns={columns(editButton, dictionaryMap)}
+          dataSource={dataSource}
+          scroll={{ x: 1300 }}
+        />
       </div>
     );
   };

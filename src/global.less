@@ -1,5 +1,6 @@
 @import '~antd/dist/antd.css';
 @import '~antd/es/style/themes/default.less';
+
 html,
 body,
 #root {
@@ -33,12 +34,15 @@ ol {
   .ant-table {
     width: 100%;
     overflow-x: auto;
-    &-thead > tr,
-    &-tbody > tr {
-      > th,
-      > td {
+
+    &-thead>tr,
+    &-tbody>tr {
+
+      >th,
+      >td {
         white-space: pre;
-        > span {
+
+        >span {
           display: block;
         }
       }
@@ -47,17 +51,20 @@ ol {
 }
 
 // 兼容IE11
-@media screen and(-ms-high-contrast: active), (-ms-high-contrast: none) {
-  body .ant-design-pro > .ant-layout {
+@media screen and(-ms-high-contrast: active),
+(-ms-high-contrast: none) {
+  body .ant-design-pro>.ant-layout {
     min-height: 100vh;
   }
 }
+
 // 覆盖原始样式
 .ant-pro-top-menu {
   position: fixed;
   top: 0;
   left: 0;
 }
+
 // card
 // .ant-card {
 //   border: none !important;
@@ -95,10 +102,11 @@ ol {
 
 // table
 .ant-table-wrapper {
-  .ant-table-thead > tr > th,
-  .ant-table-tbody > tr > td,
-  .ant-table tfoot > tr > th,
-  .ant-table tfoot > tr > td {
+
+  .ant-table-thead>tr>th,
+  .ant-table-tbody>tr>td,
+  .ant-table tfoot>tr>th,
+  .ant-table tfoot>tr>td {
     position: relative;
     padding: 0 4px !important;
     height: 36px;
@@ -135,30 +143,44 @@ ol {
     margin-bottom: 10px;
   }
 }
+
 .flexNoWrap {
   flex-wrap: nowrap !important;
 }
+
 .overflowHide {
   overflow: hidden;
 }
+
+tr:hover {
+  td {
+    //  background: rgba(222, 233, 243, 0.35) !important;
+    color: black;
+    cursor: pointer;
+  }
+}
+
 .pt10 {
   padding-top: 10px;
 }
+
 .clickRowStyle {
   background: rgba(24, 144, 255, 0.35) !important;
+
   &.ant-table-row-selected {
     td {
       background: rgba(24, 144, 255, 0.35) !important;
     }
   }
 }
+
 .ant-table {
   .ant-table-tbody {
-    tr:hover {
-      td {
-        background: rgba(24, 144, 255, 0.35) !important;
-      }
-    }
+    // tr:hover {
+    //   td {
+    //     background: rgba(24, 144, 255, 0.35) !important;
+    //   }
+    // }
     tr.ant-table-placeholder:hover {
       td {
         background: transparent !important;
@@ -166,31 +188,38 @@ ol {
     }
   }
 }
+
 .ant-radio-group {
   display: block;
   width: 100%;
 }
+
 .ant-pagination-simple .ant-pagination-simple-pager input {
   padding: 0;
   max-width: 30px;
 }
+
 .opera {
   padding-left: 12px !important;
   padding-right: 12px !important;
   padding-top: 10px !important;
+
   .ant-row.ant-form-item {
     margin-bottom: 10px;
   }
 }
+
 .bgWhite {
   background: #ffffff;
 }
+
 .operaNoMarginRight {
   .ant-row.ant-form-item {
     margin-bottom: 10px;
     margin-right: 0;
   }
 }
+
 .operaWidthAll {
   .ant-row.ant-form-item {
     margin-bottom: 10px;
@@ -198,13 +227,16 @@ ol {
     width: 100%;
   }
 }
+
 .ant-btn.ant-btn-icon-only.ant-input-search-button {
   width: 32px;
 }
-.ant-table.ant-table-bordered > .ant-table-container {
+
+.ant-table.ant-table-bordered>.ant-table-container {
   border-bottom: 1px solid #f0f0f0 !important;
   border-right: 1px solid #f0f0f0 !important;
 }
+
 .ant-pagination-total-text {
   min-width: 50px;
 }
@@ -213,191 +245,239 @@ ol {
   border: 1px solid red !important;
   color: red;
 }
+
 .redMark {
   border: 1px solid red !important;
 }
+
 .bold-700 {
   font-weight: 700;
 }
 
-.noPadding, .ant-card-body {
-  padding: 0 !important;
-}
-.ant-table-thead .ant-table-cell, .ant-table-thead .ant-table-selection-column{
+.noPadding,
+.ant-card-body {
   padding: 0 !important;
 }
 
-.mainTable .ant-table-body{
+.ant-table-thead .ant-table-cell,
+.ant-table-thead .ant-table-selection-column {
+  padding: 0 !important;
+}
+
+.mainTable .ant-table-body {
   height: 100% !important;
 }
 
-.ant-modal-body{
+.ant-modal-body {
   padding: 10px !important;
 }
 
-.specialBtns .ant-space-item{
+.specialBtns .ant-space-item {
   float: right;
 }
-.bgWhite .ant-select{
+
+.bgWhite .ant-select {
   width: 100% !important;
 }
-.ant-card-head-title{
+
+.ant-card-head-title {
   font-weight: bold !important;
 }
-.opera .ant-btn-sm{
+
+.opera .ant-btn-sm {
   padding: 0 10px;
 }
-.ant-layout-content{
+
+.ant-layout-content {
   height: calc(100vh - 48px);
 }
-.globalContent .btns{
+
+.globalContent .btns {
   margin-bottom: 5px;
 }
-.ant-modal-confirm-body-wrapper{
+
+.ant-modal-confirm-body-wrapper {
   padding-top: 20px;
 }
-.ant-tabs-nav{
+
+.ant-tabs-nav {
   margin: 0 0 0 0 !important;
 }
-.ant-form-item-label{
+
+.ant-form-item-label {
   padding: 0 !important;
 }
-.ant-transfer-list-with-pagination{
+
+.ant-transfer-list-with-pagination {
   width: 380px !important;
   height: 220px !important;
 }
-.ant-table-content{
+
+.ant-table-content {
   height: 100%;
 }
-.autocompleteTextRight{
-  .ant-select-selector{
-    .ant-select-selection-search{
-      input.ant-select-selection-search-input{
+
+.autocompleteTextRight {
+  .ant-select-selector {
+    .ant-select-selection-search {
+      input.ant-select-selection-search-input {
         text-align: end !important;
       }
     }
   }
 }
+
 // 公共表格样式
 .mainTable {
   .ant-spin-nested-loading {
     height: 100%;
   }
+
   .ant-spin-container {
     height: 100%;
   }
+
   .ant-table-container {
     height: 100%;
   }
+
   .ant-table-placeholder {
     height: 100%;
   }
+
   .ant-table-body {
     height: calc(100% - 36px);
     max-height: calc(100% - 36px) !important;
     overflow: auto scroll;
   }
+
   .ant-table {
     height: 100%;
     width: 100%;
     overflow: hidden;
   }
 }
+
 .mainTableNoFoot {
   .ant-spin-nested-loading {
     height: 100%;
   }
+
   .ant-spin-container {
     height: 100%;
   }
+
   .ant-table-container {
     height: 100%;
   }
+
   .ant-table-placeholder {
     height: 100%;
   }
+
   .ant-table-body {
     height: calc(100% - 48px);
     max-height: calc(100% - 48px) !important;
     overflow: auto scroll;
   }
+
   .ant-table {
     height: 100%;
     width: 100%;
     overflow: hidden;
   }
+
   .ant-table-content {
     height: calc(100% - 13px);
   }
 }
+
 .autoHeightTable {
   .ant-spin-nested-loading {
     height: 100%;
   }
+
   .ant-spin-container {
     height: 100%;
   }
+
   .ant-table {
     height: 100%;
     overflow: hidden;
   }
 }
+
 .ant-form-horizontal {
   .ant-form-item-control {
     overflow: hidden;
   }
 }
+
 .yTableStyle {
-  & > div{
-    height:100%;
-  }
-  .ant-table-wrapper{
+  &>div {
     height: 100%;
   }
+
+  .ant-table-wrapper {
+    height: 100%;
+  }
+
   .ant-spin-nested-loading {
     height: 100%;
   }
-  .ant-spin-container,.ant-table-container {
+
+  .ant-spin-container,
+  .ant-table-container {
     height: 100%;
   }
+
   .ant-table {
     height: 100%;
     // overflow: hidden;
   }
+
   .ant-table-body {
     height: calc(100% - 36px - 56px) !important;
-    max-height:  calc(100% - 36px  - 56px) !important;
+    max-height: calc(100% - 36px - 56px) !important;
     overflow-y: auto !important;
     position: relative;
   }
-  .ant-table-empty{
-    table{
+
+  .ant-table-empty {
+    table {
       height: 100%;
-       .ant-table-placeholder {
+
+      .ant-table-placeholder {
         width: 100%;
         height: 100%;
-        .ant-table-cell{
-          .ant-table-expanded-row-fixed{
-            height: 100%  !important;
+
+        .ant-table-cell {
+          .ant-table-expanded-row-fixed {
+            height: 100% !important;
           }
+
           .ant-empty {
             position: absolute;
-            top:50%;
-            left:50%;
-            transform: translate(-50%,-50%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
           }
         }
       }
     }
   }
 }
+
 .ant-form-horizontal {
   .ant-form-item-control {
     overflow: hidden;
   }
 }
+
 // 清除表格暂无数据右边框
-.ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > tbody > tr > td > .ant-table-expanded-row-fixed::after, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-header > table > tbody > tr > td > .ant-table-expanded-row-fixed::after, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-body > table > tbody > tr > td > .ant-table-expanded-row-fixed::after {
+.ant-table.ant-table-bordered>.ant-table-container>.ant-table-content>table>tbody>tr>td>.ant-table-expanded-row-fixed::after,
+.ant-table.ant-table-bordered>.ant-table-container>.ant-table-header>table>tbody>tr>td>.ant-table-expanded-row-fixed::after,
+.ant-table.ant-table-bordered>.ant-table-container>.ant-table-body>table>tbody>tr>td>.ant-table-expanded-row-fixed::after {
   position: absolute;
   top: 0;
   right: 0px;
@@ -405,30 +485,44 @@ ol {
   border-right: none !important;
   content: '';
 }
-.fontBold{
+
+.fontBold {
   font-weight: 600;
 }
+
 // 解决无数据时表格宽度异常问题
-.ant-table-cell-scrollbar{
+.ant-table-cell-scrollbar {
   width: 0 !important;
 }
-.flexContainer{
+
+.flexContainer {
   display: flex;
   justify-content: flex-start;
   align-items: center;
 }
-.overflowXHidden{
+
+.overflowXHidden {
   overflow-x: hidden;
 }
-.margin0{
+
+.margin0 {
   margin: 0 !important;
 }
+
 // 重置popover样式
 .ant-popover-inner-content {
   padding: 0 !important;
   color: rgba(0, 0, 0, 1);
+
   .ant-list-sm .ant-list-item {
     padding: 4px 0 !important;
   }
 }
 
+.ant-tabs-content-holder {
+  overflow: auto !important;
+}
+
+.ant-card-head {
+  border-bottom: 0px
+}

@@ -7,7 +7,7 @@ exports.columns = void 0;
 
 var _common = require("@/utils/common.js");
 
-var columns = function columns(edit, dictionaryMap) {
+var columns = function columns(dictionaryMap) {
   return [{
     title: '姓名',
     dataIndex: 'name',
@@ -34,16 +34,6 @@ var columns = function columns(edit, dictionaryMap) {
     fixed: 'left',
     width: 80
   }, {
-    title: '床位号',
-    dataIndex: 'bedName',
-    key: 'bedName',
-    fixed: 'left',
-    width: 120,
-    render: function render(t, r) {
-      var res = "".concat(r['buildingName'] || "#", "-").concat(r['floorName'] || "#", "-").concat(r['roomName'] || "#", "-").concat(r['bedName'] || "#");
-      return res;
-    }
-  }, {
     title: '护理级别',
     dataIndex: 'nursingLevel',
     key: 'nursingLevel',
@@ -69,22 +59,10 @@ var columns = function columns(edit, dictionaryMap) {
     key: 'admissionTime',
     width: 200
   }, {
-    title: '费用到期时间',
-    dataIndex: 'feesDueDate',
-    key: 'feesDueDate',
+    title: '出院时间',
+    dataIndex: 'updateTime',
+    key: 'updateTime',
     width: 200
-  }, {
-    title: '费用到期标志',
-    dataIndex: 'feesDueStatue',
-    key: 'feesDueStatue',
-    width: 120,
-    render: function render(t, r) {
-      if (t == null) {
-        return "-";
-      }
-
-      return t == "0" ? "正常" : "欠费";
-    }
   }, {
     title: '过敏史',
     dataIndex: 'allergy',
@@ -134,11 +112,6 @@ var columns = function columns(edit, dictionaryMap) {
     dataIndex: 'contactAddress',
     key: 'contactAddress',
     width: 220
-  }, {
-    title: '操作',
-    render: edit,
-    width: 600,
-    fixed: 'right'
   }];
 };
 

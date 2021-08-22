@@ -1,93 +1,122 @@
-import { Button, Card, Col, Form, List, Row, Select, Tag, Table, Radio, Input, DatePicker, Modal, InputNumber } from 'antd';
-const dataSource = [
-    {
-        key: '1',
-        name: '胡彦斌',
-        sex: "男",//字典
-        age: 32,
-        careLevel: "一级",//字典
-        diagnosis: '高血压',//字典
-        allergy: "无",//字典？
-        pastHistory: "糖尿病",
-        address: '西湖区湖底公园1号',
-        idCard: "230402XXXX0726031X",
-        contacts: "周杰",
-        relationship: "儿子",
-        contactsPhone: "13745880987",
-        inTime: "2021-7-28"
-    }
-];
-const columns = (edit) => {
+
+import { getDictNameByCode } from '@/utils/common.js'
+const columns = ( dictionaryMap) => {
     return [
         {
             title: '姓名',
             dataIndex: 'name',
             key: 'name',
+            width: 120,
+            fixed: 'left'
         },
         {
             title: '性别',
             dataIndex: 'sex',
             key: 'sex',
+            width: 50,
+            fixed: 'left',
+            render: (t, r) => {
+                if (!t) { return "-" }
+                return String(t) === "1" ? "男" : "女"
+            }
         },
         {
             title: '年龄',
             dataIndex: 'age',
             key: 'age',
+            fixed: 'left',
+            width: 80,
         },
         {
-            title: '级别护理',
-            dataIndex: 'careLevel',
-            key: 'careLevel',
+            title: '护理级别',
+            dataIndex: 'nursingLevel',
+            key: 'nursingLevel',
+            width: 100,
+            render: (t, r) => {
+                return getDictNameByCode(dictionaryMap, "0011", t)
+            }
         },
         {
             title: '入院诊断',
-            dataIndex: 'diagnosis',
-            key: 'diagnosis',
+            dataIndex: 'hospitalDiagnosis',
+            key: 'hospitalDiagnosis',
+            width: 200,
+            render: (t, r) => {
+                let res = ""
+                t.forEach((element, index) => {
+                    res = res + `${index == 0 ? "" : "、"}` + getDictNameByCode(dictionaryMap, "0015", element)
+                });
+                return res
+            }
         },
         {
             title: '入院时间',
-            dataIndex: 'inTime',
-            key: 'inTime',
+            dataIndex: 'admissionTime',
+            key: 'admissionTime',
+            width: 200,
+        },
+        {
+            title: '出院时间',
+            dataIndex: 'updateTime',
+            key: 'updateTime',
+            width: 200,
         },
         {
             title: '过敏史',
             dataIndex: 'allergy',
             key: 'allergy',
+            width: 200,
+            render: (t, r) => {
+                let res = ""
+                t.forEach((element, index) => {
+                    res = res + `${index == 0 ? "" : "、"}` + getDictNameByCode(dictionaryMap, "0008", element)
+                });
+                return res
+            }
         },
         {
             title: '既往史',
-            dataIndex: 'pastHistory',
-            key: 'pastHistory',
-        },
-        {
-            title: '家庭住址',
-            dataIndex: 'address',
-            key: 'address',
+            dataIndex: 'previousHistory',
+            key: 'previousHistory',
+            width: 200,
+            render: (t, r) => {
+                let res = ""
+                t.forEach((element, index) => {
+                    res = res + `${index == 0 ? "" : "、"}` + getDictNameByCode(dictionaryMap, "0009", element)
+                });
+                return res
+            }
         },
         {
             title: '身份证号',
             dataIndex: 'idCard',
             key: 'idCard',
+            width: 200,
         },
         {
             title: '联系人姓名',
-            dataIndex: 'contacts',
-            key: 'contacts',
+            dataIndex: 'relationName',
+            key: 'relationName',
+            width: 100,
         },
         {
             title: '关系',
-            dataIndex: 'relationship',
-            key: 'relationship',
+            dataIndex: 'relation',
+            key: 'relation',
+            width: 100,
         },
         {
             title: '联系电话',
-            dataIndex: 'contactsPhone',
-            key: 'contactsPhone',
+            dataIndex: 'contactNumber',
+            key: 'contactNumber',
+            width: 120,
         },
         {
-            title: '操作',
-            render: edit
-        }
+            title: '家庭住址',
+            dataIndex: 'contactAddress',
+            key: 'contactAddress',
+            width: 220,
+        },
     ];
 }
-export { dataSource, columns }
+export { columns }

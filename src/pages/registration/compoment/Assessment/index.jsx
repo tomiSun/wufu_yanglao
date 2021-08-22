@@ -17,6 +17,7 @@ import {
     InputNumber,
     Tabs,
     Checkbox,
+    message,
 } from 'antd';
 import {
     assessmentDel,
@@ -57,11 +58,17 @@ const Assessment = (props) => {
     }, []);
     //初始化 判断是新增还是编辑
     const initData = async () => {
-        //"465188927389700096" 
-        hearingForm.setFieldsValue(selectRowData)
         let resQuery = await assessmentQuery({ "businessNo": selectRowData['businessNo'] })
         if (resQuery['code'] == 200 && !!resQuery['data']) {
             let id = resQuery['data']['id']
+            hearingForm.setFieldsValue(resQuery['data'])
+            visualForm.setFieldsValue(resQuery['data'])
+            pressureSoreForm.setFieldsValue(resQuery['data'])
+            chokingForm.setFieldsValue(resQuery['data'])
+            communicateForm.setFieldsValue(resQuery['data'])
+            fallForm.setFieldsValue(resQuery['data'])
+            commitSuicideForm.setFieldsValue(resQuery['data'])
+            leaveForm.setFieldsValue(resQuery['data'])
             setUpdateId(id)
             setMode("edit")
         } else {
@@ -499,16 +506,18 @@ const Assessment = (props) => {
                 onCancel={() => {
                     onAssessmentVisible(false);
                 }}
-                style={{ height: 700 }}
+                style={{ height: 800, marginTop: -70 }}
             >
-                {renderBasicCard(hearInfo)}
-                {renderBasicCard(visualInfo)}
-                {renderBasicCard(pressureInfo)}
-                {renderBasicCard(chokingInfo)}
-                {renderBasicCard(communicateInfo)}
-                {renderBasicCard(fallFInfo)}
-                {renderBasicCard(commitSuicideInfo)}
-                {renderBasicCard(leaveInfo)}
+                <div style={{ height: 700, overflow: "auto" }}>
+                    {renderBasicCard(hearInfo)}
+                    {renderBasicCard(visualInfo)}
+                    {renderBasicCard(pressureInfo)}
+                    {renderBasicCard(chokingInfo)}
+                    {renderBasicCard(communicateInfo)}
+                    {renderBasicCard(fallFInfo)}
+                    {renderBasicCard(commitSuicideInfo)}
+                    {renderBasicCard(leaveInfo)}
+                </div>
             </Modal >
         )
     }
@@ -536,11 +545,14 @@ const Assessment = (props) => {
                     ...leaveForm.getFieldsValue()
                 }
                 let res3 = await assessmentSave(addParam)
-                console.log("AAA", JSON.stringify(addParam))
+                message.success("新增成功")
+                onAssessmentVisible(false);
             }}>新增</Button>;
         //删除按钮
         let delBtn = <Button onClick={async () => {
             let res1 = await assessmentDel({ "businessNo": selectRowData['businessNo'] })
+            message.success("删除成功")
+            onAssessmentVisible(false);
         }}>删除</Button>
         //编辑按钮
         let editBtn = <Button
@@ -566,6 +578,8 @@ const Assessment = (props) => {
                     ...leaveForm.getFieldsValue()
                 }
                 let res3 = await assessmentUpdate(updateParam)
+                message.success("修改成功")
+                onAssessmentVisible(false);
             }}>修改</Button>
         let arrEdit = [editBtn, delBtn];
         let arrAdd = [addBtn];

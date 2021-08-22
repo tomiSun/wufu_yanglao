@@ -59,8 +59,8 @@ const defaultFooterDom = (
         blankTarget: true,
       },
       {
-        key: 'Ant Design',
-        title: 'Ant Design',
+        key: '富阳颐乐养老中心',
+        title: '富阳颐乐养老中心',
         href: 'https://ant.design',
         blankTarget: true,
       },

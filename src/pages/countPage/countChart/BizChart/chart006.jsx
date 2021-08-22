@@ -39,7 +39,6 @@ export default function Demo(props) {
     arr.push({ item: '完全失能老人数', percent: data.disability.reduce(( total,it) => { return total = total + it['targetNum'] }, 0) })
     arr.push({
       item: '部分失能老人数', percent: data.partialDisability.reduce((total, it) => {
-        debugger
         return total = total + it['targetNum']
       }, 0)
     })

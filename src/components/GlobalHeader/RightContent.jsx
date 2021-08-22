@@ -32,8 +32,8 @@ const GlobalHeaderRight = (props) => {
             value: 'umi ui',
           },
           {
-            label: <a href="next.ant.design">Ant Design</a>,
-            value: 'Ant Design',
+            label: <a href="next.ant.design">富阳颐乐养老中心</a>,
+            value: '富阳颐乐养老中心',
           },
           {
             label: <a href="https://protable.ant.design/">Pro Table</a>,

@@ -11,8 +11,15 @@ export async function queryCake(params) {
         data: params
     });
 }
+
 export async function selectCountInfo(params) {
     return request('/summary/select', {
+        method: 'POST',
+        data: params
+    });
+}
+export async function querySource(params) {
+    return request('/summary/querySource', {
         method: 'POST',
         data: params
     });

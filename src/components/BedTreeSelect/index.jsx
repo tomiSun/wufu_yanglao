@@ -3,70 +3,15 @@ import { TreeSelect } from 'antd';
 import {
     bedTree,
 } from '@/services/basicSetting/bedInfo';
-// const treeData = [
-//     {
-//         title: '一号楼',
-//         value: '0-0',
-//         children: [
-//             {
-//                 title: '一层',
-//                 value: '0-0-1',
-//                 children: [
-//                     {
-//                         title: '101室',
-//                         value: '0-0-1-0',
-//                     },
-//                     {
-//                         title: '102室',
-//                         value: '0-0-1-1',
-//                     }
-//                 ]
-//             },
-//             {
-//                 title: '二层',
-//                 value: '0-0-2',
-//                 children: [
-//                     {
-//                         title: '101室',
-//                         value: '0-0-2-0',
-//                     },
-//                     {
-//                         title: '102室',
-//                         value: '0-0-2-1',
-//                     }
-//                 ]
-//             },
-//         ],
-//     },
-//     {
-//         title: '二号楼',
-//         value: '0-1',
-//         children: [
-//             {
-//                 title: '一层',
-//                 value: '0-1-1',
-//                 children: [
-//                     {
-//                         title: '101室',
-//                         value: '0-1-1-0',
-//                     },
-//                     {
-//                         title: '102室',
-//                         value: '0-1-1-1',
-//                     }
-//                 ]
-//             }
-//         ],
-//     },
-// ];
+
 
 export const BedTreeSelect = (props) => {
     const [value, setValue] = useState(undefined)
     const [treeData, setTreeData] = useState([]);
-    const onChange = (value,record) => {
-        props.onSelect(value)
+    const onSelect = (value, node, extra) => {
+        props.onSelect(value, node, extra)
         setValue(value)
-    };
+    }
     useEffect(() => {
         getRoomTree()
     }, [])
@@ -77,14 +22,14 @@ export const BedTreeSelect = (props) => {
     }
     return (
         <TreeSelect
-            // size={"small"}
-            // treeCheckable
+            style={{ ...props?.style }}
+            allowClear
+            treeDefaultExpandAll={true}
             value={value}
             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
             treeData={treeData}
             placeholder="请选择老人所在位置"
-            // treeDefaultExpandAll
-            onChange={onChange}
+            onSelect={onSelect}
         />
     );
 }

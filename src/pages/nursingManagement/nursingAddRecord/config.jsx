@@ -1,29 +1,19 @@
 const columns = (edit) => {
     return [
         {
-            title: '住院编号',
-            dataIndex: 'businessNo',
-            key: 'businessNo',
-        },
-        {
             title: '姓名',
             dataIndex: 'name',
             key: 'name',
-        },
-        {
-            title: '性别',
-            dataIndex: 'sex',
-            key: 'sex',
-            render: (t, r) => {
-                return t == "1" ? "男" : "女"
-            }
+            width: 150
         },
         {
             title: '床号',
-            dataIndex: 'bedCode',
-            key: 'bedCode',
+            dataIndex: 'bedName',
+            key: 'bedName',
+            width: 150,
             render: (t, r) => {
-                return t
+                let res = `${r['buildingName'] || "#"}-${r['floorName'] || "#"}-${r['roomName'] || "#"}-${r['bedName'] || "#"}`
+                return res
             }
         },
     ];

@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.queryBrokenLine = queryBrokenLine;
 exports.queryCake = queryCake;
 exports.selectCountInfo = selectCountInfo;
+exports.querySource = querySource;
 
 var _request = _interopRequireDefault(require("@/utils/request"));
 
@@ -60,6 +61,24 @@ function selectCountInfo(params) {
         case 1:
         case "end":
           return _context3.stop();
+      }
+    }
+  });
+}
+
+function querySource(params) {
+  return regeneratorRuntime.async(function querySource$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          return _context4.abrupt("return", (0, _request["default"])('/summary/querySource', {
+            method: 'POST',
+            data: params
+          }));
+
+        case 1:
+        case "end":
+          return _context4.stop();
       }
     }
   });
