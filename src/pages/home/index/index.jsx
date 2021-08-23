@@ -31,7 +31,7 @@ import { bedBuildList } from '@/services/basicSetting/bedInfo';
 import { queryPage, queryPageBed } from '@/services/home/index';
 import { findValByKey, getDefaultOption } from '@/utils/common';
 const { Panel } = Collapse;
-
+import { history } from 'umi';
 export default () => {
   const color = {
     empty: '#fdfbdb',
@@ -70,6 +70,34 @@ export default () => {
     });
     return res.join(',');
   };
+  const goToPage = (key, businesNo) => {
+    switch (key) {
+      case 1:
+        history.push('/nursingManagement/threeVolumeList/index?businesNo=businesNo');
+        break;
+      case 2:
+        history.push('/nursingManagement/nursingRecord/index?businesNo=businesNo');
+        break;
+      case 3:
+        history.push('/nursingManagement/specialNursingRecord/index?businesNo=businesNo');
+        break;
+      case 4:
+        history.push('/nursingManagement/bloodGlucoseRecord/index?businesNo=businesNo');
+        break;
+      case 5:
+        history.push('/nursingManagement/drugManage/index?businesNo=businesNo');
+        break;
+      case 6:
+        history.push('/nursingManagement/drugRecord/index?businesNo=businesNo');
+        break;
+      case 7:
+        history.push('/nursingManagement/leaveManagement/index?businesNo=businesNo');
+        break;
+
+      default:
+        break;
+    }
+  };
   const bedDom = (bedList) => {
     return bedList?.map((bed) => {
       return (
@@ -83,17 +111,19 @@ export default () => {
                   size="small"
                   // header={<div style={{ paddingLeft: '15px' }}>操作</div>}
                   dataSource={[
-                    '三测单',
-                    '护理记录',
-                    '特级护理记录',
-                    '血糖记录',
-                    '带药管理',
-                    '服药记录',
-                    '请假',
+                    { name: '三测单', key: 1 },
+                    { name: '护理记录', key: 2 },
+                    { name: '特级护理记录', key: 3 },
+                    { name: '血糖记录', key: 4 },
+                    { name: '药品管理', key: 5 },
+                    { name: '服药记录', key: 6 },
+                    { name: '请假', key: 7 },
                   ]}
                   renderItem={(item) => (
                     <List.Item>
-                      <Button type="link">{item}</Button>
+                      <Button type="link" onClick={() => goToPage(item.key, bed.businesNo)}>
+                        {item.name}
+                      </Button>
                     </List.Item>
                   )}
                 />
@@ -235,7 +265,7 @@ export default () => {
   useEffect(() => {
     if (buildingCode) {
       queryPageService({ buildingCode });
-      queryPageBedService();
+      queryPageBedService({ buildingCode });
     }
   }, [buildingCode]);
   useEffect(() => {
@@ -260,7 +290,7 @@ export default () => {
             className={styles.search}
             onClick={() => {
               queryPageService({ buildingCode });
-              queryPageBedService();
+              queryPageBedService({ buildingCode });
             }}
           >
             查询
