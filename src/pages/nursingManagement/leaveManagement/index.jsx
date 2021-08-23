@@ -435,12 +435,12 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="请假开始时间" name="leaveStartTime">
+              <Form.Item label="请假开始时间" name="leaveStartTime" rules={[{ required: true }]}>
                 <DatePicker format="YYYY-MM-DD HH:mm:s" showTime={true} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="请假结束时间" name="leaveEndTime">
+              <Form.Item label="请假结束时间" name="leaveEndTime" rules={[{ required: true }]}>
                 <DatePicker format="YYYY-MM-DD HH:mm:s" showTime={true} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
