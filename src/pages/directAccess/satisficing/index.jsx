@@ -33,6 +33,7 @@ export default (props) => {
     const query = {
       ...formData,
       phone,
+      total: addTotal(),
     };
     btnConfig.loading = true;
     setBtnConfig({ ...btnConfig });
@@ -49,6 +50,36 @@ export default (props) => {
         btnConfig.loading = false;
         setBtnConfig({ ...btnConfig });
       });
+  };
+  const addTotal = () => {
+    let {
+      environment,
+      careQuality,
+      customerService,
+      medicalService,
+      recreationalActivity,
+      diet,
+      deal,
+      syntheticService,
+    } = modalForm.getFieldsValue();
+    environment = (environment && parseInt(environment)) || 0;
+    careQuality = (careQuality && parseInt(careQuality)) || 0;
+    customerService = (customerService && parseInt(customerService)) || 0;
+    medicalService = (medicalService && parseInt(medicalService)) || 0;
+    recreationalActivity = (recreationalActivity && parseInt(recreationalActivity)) || 0;
+    diet = (diet && parseInt(diet)) || 0;
+    deal = (deal && parseInt(deal)) || 0;
+    syntheticService = (syntheticService && parseInt(syntheticService)) || 0;
+    const res =
+      environment +
+      careQuality +
+      customerService +
+      medicalService +
+      recreationalActivity +
+      diet +
+      deal +
+      syntheticService;
+    return res;
   };
   return (
     <div className={styles.satisficing}>
@@ -75,7 +106,7 @@ export default (props) => {
             </Col> */}
           <Col span={24}>
             <Form.Item
-              name="radio1"
+              name="environment"
               label="1,您对本院生活环境满意吗？（设备，卫生周边）"
               rules={[{ required: true, message: 'Please pick an item!' }]}
             >
@@ -91,7 +122,7 @@ export default (props) => {
           </Col>
           <Col span={24}>
             <Form.Item
-              name="radio2"
+              name="careQuality"
               label="2,您对护理质量满意吗？（态度，操作，个人卫生）"
               rules={[{ required: true, message: 'Please pick an item!' }]}
             >
@@ -107,7 +138,7 @@ export default (props) => {
           </Col>
           <Col span={24}>
             <Form.Item
-              name="radio3"
+              name="customerService"
               label="3,您对本院客服人员院管理人员满意吗？"
               rules={[{ required: true, message: 'Please pick an item!' }]}
             >
@@ -123,7 +154,7 @@ export default (props) => {
           </Col>
           <Col span={24}>
             <Form.Item
-              name="radio4"
+              name="medicalService"
               label="4,您对医疗服务满意吗？"
               rules={[{ required: true, message: 'Please pick an item!' }]}
             >
@@ -139,7 +170,7 @@ export default (props) => {
           </Col>
           <Col span={24}>
             <Form.Item
-              name="radio5"
+              name="recreationalActivity"
               label="5,您对本院组织的各项日常文化娱乐活动满意吗？"
               rules={[{ required: true, message: 'Please pick an item!' }]}
             >
@@ -155,7 +186,7 @@ export default (props) => {
           </Col>
           <Col span={24}>
             <Form.Item
-              name="radio6"
+              name="diet"
               label="6,您对现在的饮食满意吗？"
               rules={[{ required: true, message: 'Please pick an item!' }]}
             >
@@ -171,7 +202,7 @@ export default (props) => {
           </Col>
           <Col span={24}>
             <Form.Item
-              name="radio7"
+              name="deal"
               label="7,您对本院日常事情处理时间，处理态度，处理结果满意吗？"
               rules={[{ required: true, message: 'Please pick an item!' }]}
             >
@@ -187,7 +218,7 @@ export default (props) => {
           </Col>
           <Col span={24}>
             <Form.Item
-              name="radio8"
+              name="syntheticService"
               label="8,您对本院各部门综合服务水平满意吗？"
               rules={[{ required: true, message: 'Please pick an item!' }]}
             >
@@ -202,14 +233,13 @@ export default (props) => {
             </Form.Item>
           </Col>
           {/* <Col span={24}>
-            总计？？？
             <Form.Item label="总计" name="total">
-                <Input placeholder="请输入" />
-              </Form.Item>
+              <Input placeholder="请输入" disabled />
+            </Form.Item>
           </Col> */}
 
           <Col span={24}>
-            <Form.Item label="您的其他意见和建议" name="remark">
+            <Form.Item label="您的其他意见和建议" name="suggestion">
               <TextArea placeholder="请输入" />
             </Form.Item>
           </Col>

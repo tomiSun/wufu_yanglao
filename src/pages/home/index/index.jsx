@@ -61,12 +61,21 @@ export default () => {
   const changeFeesDueStatue = () => {};
   // 获取过敏史
   const getAllergyNames = (codes) => {
-    if (!codes) {
+    if (!codes?.length) {
       return '';
     }
-    const codeList = codes.split(',');
-    const res = codeList.map((it) => {
+    const res = codes.map((it) => {
       return findValByKey(basic['0008'], 'value', it, 'label');
+    });
+    return res.join(',');
+  };
+  // 获取入院诊断
+  const getHospitalDiagnosisNames = (codes) => {
+    if (!codes?.length) {
+      return '';
+    }
+    const res = codes.map((it) => {
+      return findValByKey(basic['0015'], 'value', it, 'label');
     });
     return res.join(',');
   };
@@ -233,7 +242,7 @@ export default () => {
 
   // 获取字典数据
   const getDictionaryData = () => {
-    dictTypeSelectPullDown(['0008']).then((response) => {
+    dictTypeSelectPullDown(['0008', '0015']).then((response) => {
       setBasic(response.data);
     });
   };

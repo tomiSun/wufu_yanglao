@@ -2,7 +2,7 @@ import request from 'umi-request';
 import { message, Modal } from 'antd';
 import envConfig from '../../config/env';
 // import { getConfig } from '@/api/index.js';
-
+import { history } from 'umi';
 // request拦截器, 改变url 或 options.
 request.interceptors.request.use(async (url, options) => {
   if (!options.headers['Authorization']) {
@@ -57,6 +57,13 @@ request.interceptors.response.use(async (response, options) => {
     //   cancelText: '取消',
     //   centered:true,
     // })
+    if (data.code == '2002') {
+      sessionStorage.setItem('Authorization', '');
+      sessionStorage.setItem('employeeCode', '');
+      sessionStorage.setItem('name', '');
+      sessionStorage.setItem('userId', '');
+      history.push('/user/login');
+    }
     return Promise.reject(data.message);
   } else {
     console.log('data: ', data);
