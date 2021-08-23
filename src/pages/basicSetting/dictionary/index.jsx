@@ -419,7 +419,7 @@ export default () => {
       centered: true,
       icon: <ExclamationCircleOutlined />,
       onOk() {
-        dictDateDel({ dictCodes: record?.dictCode || '' })
+        dictDateDel({ dictCodes: record?.dictCode || '', typeCode: record?.dictTypeCode || '' })
           .then((res) => {
             message.success(res?.msg);
             getTableData();

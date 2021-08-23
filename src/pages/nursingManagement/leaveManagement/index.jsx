@@ -25,6 +25,8 @@ import {
   leaveManagementSelect,
   leaveManagementUpdate,
 } from '@/services/nursingManagement/leaveManagement';
+import { patientQuery } from '@/services/inHospitalRegister';
+import { baseArchiveQuery } from '@/services/archives';
 import { findValByKey, getDefaultOption } from '@/utils/common';
 import { config } from '@/utils/const';
 const { pageSize, pageNum } = config;
@@ -360,10 +362,23 @@ export default () => {
       setBasic(response.data);
     });
   };
-
+  const [nameSelectList, setNameSelectList] = useState([]); //复合搜索的人的集合
+  //姓名搜索框
+  const nameSelectBlur = async (e, data) => {
+    let res = await patientQuery({ keyWords: e || '' });
+    if (!!res['data']) {
+      let data = res['data'].map((item) => {
+        return { label: item['name'], value: item['businessNo'] };
+      });
+      setNameSelectList(data);
+    } else {
+      setNameSelectList([]);
+    }
+  };
   // 初始化
   useEffect(() => {
     getDictionaryData();
+    nameSelectBlur();
     getTableData();
   }, []);
   return (
@@ -394,15 +409,29 @@ export default () => {
           initialValues={{}}
         >
           <Form.Item name="id" hidden></Form.Item>
+          <Form.Item name="name" hidden></Form.Item>
           <Row>
             <Col span={12}>
               <Form.Item label="住院号" name="businessNo" rules={[{ required: true }]}>
-                <Input placeholder="请输入" />
+                <Input placeholder="请输入" disabled />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="姓名" name="name" rules={[{ required: true }]}>
-                <Input placeholder="请输入" />
+              <Form.Item label="姓名" name="businessNo" rules={[{ required: true }]}>
+                {/* <Input placeholder="请输入" /> */}
+                <Select
+                  showSearch
+                  placeholder="请输入姓名"
+                  // onSearch={nameSelectBlur}
+                  onChange={(value, option) => {
+                    console.log('value,option: ', value, option);
+                    modalForm.setFieldsValue({ businessNo: value, name: option.label });
+                  }}
+                  options={nameSelectList}
+                  filterOption={(inputValue, option) => {
+                    return option.label.indexOf(inputValue) > -1;
+                  }}
+                ></Select>
               </Form.Item>
             </Col>
             <Col span={12}>
