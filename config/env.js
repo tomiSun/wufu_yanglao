@@ -4,19 +4,19 @@ const envConfig = {
   //   FILE_PATH: 'https://10.0.0.50',
   // },
   beta: {
-    BASE_API: 'https://10.0.0.50/api',
+    BASE_API: 'http://120.27.222.210:8081/api',
     FILE_PATH: 'http://10.0.0.50',
   },
   stable: {
-    BASE_API: 'https://10.0.0.48/api',
+    BASE_API: 'http://120.27.222.210:8081/api',
     FILE_PATH: 'http://10.0.0.48',
   },
   fybeta: {
-    BASE_API: 'https://10.120.22.101/api',
+    BASE_API: 'http://120.27.222.210:8081/api',
     FILE_PATH: 'https://10.81.208.98',
   },
   fyprod: {
-    BASE_API: 'https://10.81.208.98/api',
+    BASE_API: 'http://120.27.222.210:8081/api',
     FILE_PATH: 'https://10.81.208.98',
   },
 };

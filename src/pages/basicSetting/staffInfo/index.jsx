@@ -144,14 +144,14 @@ export default () => {
           align: 'left',
           width: 180,
         },
-        {
-          title: '是否为管理员',
-          dataIndex: 'isAdministrator',
-          align: 'left',
-          ellipsis: true,
-          width: 100,
-          render: (text, record, info) => (text === 1 ? '是' : '否'),
-        },
+        // {
+        //   title: '是否为管理员',
+        //   dataIndex: 'isAdministrator',
+        //   align: 'left',
+        //   ellipsis: true,
+        //   width: 100,
+        //   render: (text, record, info) => (text === 1 ? '是' : '否'),
+        // },
         {
           title: '状态',
           dataIndex: 'useFlag',
@@ -472,14 +472,14 @@ export default () => {
                 <TextArea placeholder="请输入" />
               </Form.Item>
             </Col>
-            <Col span={24}>
+            {/* <Col span={24}>
               <Form.Item label="是否为管理员" name="isAdministrator">
                 <Radio.Group>
                   <Radio value={0}>否</Radio>
                   <Radio value={1}>是</Radio>
                 </Radio.Group>
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={24}>
               <Form.Item name="useFlag" valuePropName="checked" style={{ marginLeft: 8 }}>
                 <Checkbox>

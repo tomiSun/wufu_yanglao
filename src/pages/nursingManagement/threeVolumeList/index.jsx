@@ -11,6 +11,7 @@ import {
   DatePicker,
   Tabs,
   message,
+  Pagination
 } from 'antd';
 import { history } from 'umi'
 import { columns } from './data';
@@ -33,10 +34,14 @@ const RloodGlucoseRecord = (props) => {
   const [samplingStatusMap, setSamplingStatusMap] = useState([]);//血糖采样状态的字典
   //搜索的表单
   const [SForm] = Form.useForm();
+  const [pageInfo, setPageInfo] = useState({
+    total: 0,
+    pageSize: 10,
+    pageNum: 1
+  })
   //初始化操作
   useEffect(() => {
-    let param = { pageNum: 1, pageSize: 1000 }
-    getBloodSugarInfo(param)
+    getBloodSugarInfo(pageInfo)
     //获取字典
     getDictDataSelect({ pageNum: 1, pageSize: 20, typeCode: "0006" })
   }, []);
@@ -45,16 +50,19 @@ const RloodGlucoseRecord = (props) => {
     let res = await pageVitalSignRecord(param);
     if (res['code'] === 200) {
       setDataSource(res['data'])
+      //todo bug
+      setPageInfo({ pageNum: param['pageNum'], pageSize: param['pageSize'], total: res.data.total })
     } else {
       setDataSource([])
     }
   }
   //刷新操作
-  const refushList = () => {
+  const refushList = (pageParam) => {
     let search = SForm.getFieldsValue();
+    let pageInfoCopy = { ...pageInfo, ...pageParam }
     let startTime = search?.['startTime'] && moment(search?.['startTime']).startOf('day').format('YYYY-MM-DD HH:mm:ss');
     let endTime = search?.['endTime'] && moment(search?.['endTime']).endOf('day').format('YYYY-MM-DD HH:mm:ss');
-    let param = { ...SForm.getFieldsValue(), pageNum: 1, pageSize: 1000, startTime, endTime }
+    let param = { ...SForm.getFieldsValue(), ...pageInfoCopy, startTime, endTime }
     getBloodSugarInfo(param)
   }
   //获取字典
@@ -68,16 +76,16 @@ const RloodGlucoseRecord = (props) => {
     return (
       <Form onFinish={() => { }} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
         <Form.Item label="姓名" name={'name'}>
-          <Input size={'small'} />
+          <Input size={'small'} allowClear/>
         </Form.Item>
         <Form.Item label="住院号" name={'businessNo'}>
-          <Input size={'small'} />
+          <Input size={'small'} allowClear/>
         </Form.Item>
         <Form.Item label="开始日期" name={'startTime'}>
-          <DatePicker size={'small'} />
+          <DatePicker size={'small'} allowClear/>
         </Form.Item>
         <Form.Item label="结束日期" name={'endTime'}>
-          <DatePicker size={'small'} />
+          <DatePicker size={'small'} allowClear/>
         </Form.Item>
         <Form.Item style={{ marginLeft: 20 }}>
           <Button
@@ -85,7 +93,7 @@ const RloodGlucoseRecord = (props) => {
             size={'small'}
             style={{ marginTop: 4 }}
             onClick={() => {
-              refushList()
+              refushList({ pageNum: 1 })
             }}
           >
             查询
@@ -142,7 +150,7 @@ const RloodGlucoseRecord = (props) => {
           onClick={async () => {
             let res = await delVitalSignRecord({ id: record['id'] })
             message.success("成功")
-            refushList()
+            refushList({ pageNum: 1 })
           }}
         >
           删除
@@ -154,11 +162,22 @@ const RloodGlucoseRecord = (props) => {
   const renderForm = () => {
     return (
       <div>
-        <Table 
-        columns={columns(editButton, samplingStatusMap)}
-         dataSource={dataSource} 
-         scroll={{ x: 1300 }}
-         />
+        <Table
+          columns={columns(editButton, samplingStatusMap)}
+          dataSource={dataSource}
+          scroll={{ x: 1300 }}
+          pagination={false}
+        />
+        <Pagination
+          defaultCurrent={1}
+          current={pageInfo['pageNum']}
+          defaultPageSize={pageInfo['pageSize']}
+          total={pageInfo['total']}
+          onChange={(page, pageSize) => {
+            setPageInfo({ total: pageInfo.total, pageNum: page, pageSize })
+            refushList({ total: pageInfo.total, pageNum: page, pageSize });
+          }}
+          style={{ position: "absolute", bottom: 35, right: 50 }} />
       </div>
     );
   };

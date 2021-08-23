@@ -55,11 +55,11 @@ const RiskNotification = (props) => {
   // 搜索部分
   const renderSearch = () => {
     return (
-      <Form {...ULayout(8, 16, "left", "inline")} >
+      <Form {...ULayout(8, 16, "left", "inline")} form={SForm}>
         <Form.Item label="姓名" name={'name'}>
           <Input size={'small'} />
         </Form.Item>
-        <Form.Item label="档案ID" name={'businessNo'}>
+        <Form.Item label="住院号" name={'businessNo'}>
           <Input size={'small'} />
         </Form.Item>
         <Form.Item>

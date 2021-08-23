@@ -2,7 +2,7 @@ import request from '@/utils/request';
 
 // 护理-血糖
 export async function bloodSugarDel(params) {
-  return request(`/blood-sugar/delete?ids=${params['id']}`, {
+  return request(`/blood-sugar/delete?id=${params['id']}`, {
     method: 'GET',
     data: params
   });
@@ -45,7 +45,7 @@ export async function takeMedicineUpdate(params) {
   });
 };
 export async function takeMedicineDel(params) {
-  return request(`/medicine/del?ids=${params['id']}`, {
+  return request(`/medicine/del?ids=${params['ids']}`, {
     method: 'GET',
     data: params
   });

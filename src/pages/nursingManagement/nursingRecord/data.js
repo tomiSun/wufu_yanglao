@@ -1,5 +1,5 @@
-
-const columns = (edit) => {
+import { getDictNameByCode } from '@/utils/common.js'
+const columns = (edit, dictionaryMap) => {
     return [
         {
             title: '住院号',
@@ -26,6 +26,9 @@ const columns = (edit) => {
             dataIndex: 'timePoint',
             key: 'timePoint',
             width: 200,
+            render: (t, r) => {
+                return getDictNameByCode(dictionaryMap, "0006", t)
+            }
         },
         {
             title: '体温（°C）',

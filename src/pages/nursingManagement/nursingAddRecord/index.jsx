@@ -69,6 +69,8 @@ const NursingAddRecord = (props) => {
     //用户信息
     const [record, setRecord] = useState([])
     //用户信息
+    const [nursingRecord, setRnursingRecord] = useState([])
+    //用户信息
     const [recordList, setRecordList] = useState([])
     //用户选择的楼宇信息
     const [SRoomInfo, setSRoomInfo] = useState({})
@@ -80,16 +82,16 @@ const NursingAddRecord = (props) => {
         specialNursingForm.resetFields()
         threeVolumeForm.resetFields()
     }
-
     //获取字典
     useEffect(() => {
+        let param = { pageSize: 10, pageNum: 1, status: "0" }
         //获取字典
         getDictDataSelect(["0006", "0014", "0011"]);//过敏史
         if (type == "edit") {
             param['businessNo'] = businessNo
             getRecordInfoById()
+            getPeopleInfoList({ businessNo, pageNum: 1, pageSize: 10 })
         }
-        let param = { pageSize: 10, pageNum: 1, status: "0" }
         getPeopleInfoList(param)//查询url上的人员信息
     }, []);
     //查询护理记录
@@ -107,13 +109,15 @@ const NursingAddRecord = (props) => {
             "4": specialNursingForm,
         }
         let res = await mapApi[selectKey]({ id: recordId })
-        let data = res?.data?.list[0]
+        let data = res?.data?.list[0];
+        setRnursingRecord(data)
         formMap[selectKey].setFieldsValue({
             ...data,
             recordTime: moment(data['recordTime'] || new Date()),
             createTime: moment(data['createTime'] || new Date()),
             samplingTime: moment(data['samplingTime'] || new Date()),
             bloodSugarRecordDate: moment(data['bloodSugarRecordDate'] || new Date()),
+            nursingTime: moment(data['nursingTime'] || new Date()),
         })
     }
     //查询人员列表
@@ -301,7 +305,8 @@ const NursingAddRecord = (props) => {
                                     message.info("新增成功")
                                 }
                                 if (ftype == "edit") {
-                                    let param = { ...record, ...nursingForm.getFieldsValue(), id: recordId, patientName: record['name'] }
+                                    debugger
+                                    let param = { ...record, ...nursingRecord, ...nursingForm.getFieldsValue(), id: recordId, businessNo: businessNo, patientName: record['name'] }
                                     let res = await updateNursingRecord(param)
                                     message.info("修改成功")
                                 }
@@ -359,6 +364,7 @@ const NursingAddRecord = (props) => {
                                     message.info("添加成功")
                                 }
                                 if (ftype == "edit") {
+                                    debugger
                                     let param = { ...record, ...bloodForm.getFieldsValue(), id: recordId, patientName: record['name'] }
                                     let res = await bloodSugarUpdate(param)
                                     message.info("修改成功")
@@ -452,10 +458,12 @@ const NursingAddRecord = (props) => {
                                         roomName: param?.roomName || "#",
                                     }
                                     let res = await addSpecialNursing(params)
+                                    message.success("新增成功")
                                 }
                                 if (ftype == "edit") {
                                     let param = { ...record, ...specialNursingForm.getFieldsValue(), id: recordId, patientName: record['name'] }
                                     let res = await updateSpecialNursing(param)
+                                    message.success("编辑成功")
                                 }
                             }}
                         >
@@ -531,10 +539,12 @@ const NursingAddRecord = (props) => {
                                     }
                                     let param = { ...record, ...threeVolumeForm.getFieldsValue(), patientName: record['name'] }
                                     let res = await addVitalSignRecord(param)
+                                    message.success("新增成功")
                                 }
                                 if (ftype == "edit") {
                                     let param = { ...record, ...threeVolumeForm.getFieldsValue(), id: recordId, patientName: record['name'] }
                                     let res = await updateVitalSignRecord(param)
+                                    message.success("编辑成功")
                                 }
                             }}
                         >

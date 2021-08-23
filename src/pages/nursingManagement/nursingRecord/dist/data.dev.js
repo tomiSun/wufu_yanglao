@@ -5,7 +5,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.columns = void 0;
 
-var columns = function columns(edit) {
+var _common = require("@/utils/common.js");
+
+var columns = function columns(edit, dictionaryMap) {
   return [{
     title: '住院号',
     dataIndex: 'businessNo',
@@ -27,7 +29,10 @@ var columns = function columns(edit) {
     title: '护理时间段',
     dataIndex: 'timePoint',
     key: 'timePoint',
-    width: 200
+    width: 200,
+    render: function render(t, r) {
+      return (0, _common.getDictNameByCode)(dictionaryMap, "0006", t);
+    }
   }, {
     title: '体温（°C）',
     dataIndex: 'temperature',

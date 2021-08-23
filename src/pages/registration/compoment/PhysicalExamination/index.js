@@ -224,20 +224,20 @@ const PhysicalExamination = (props) => {
                   <Option value='1'>其他</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name={'smellCode'} label="嗅觉">
-                <Select defaultValue={'0'} onChange={() => { }} initialValue={"0"}>
+              <Form.Item name={'smellCode'} label="嗅觉" initialValue={"0"}>
+                <Select defaultValue={'0'}  >
                   <Option value='0'>正常</Option>
                   <Option value='1'>其他</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name={'stutteringCode'} label="口吃">
-                <Select defaultValue={'0'} onChange={() => { }} initialValue={"0"}>
+              <Form.Item name={'stutteringCode'} label="口吃" initialValue={"0"}>
+                <Select defaultValue={'0'} >
                   <Option value='0'>正常</Option>
                   <Option value='1'>其他</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name={'faceCode'} label="颜面部">
-                <Select defaultValue={'0'} onChange={() => { }} initialValue={"0"}>
+              <Form.Item name={'faceCode'} label="颜面部" initialValue={"0"}>
+                <Select defaultValue={'0'} >
                   <Option value='0'>正常</Option>
                   <Option value='1'>其他</Option>
                 </Select>
@@ -246,10 +246,7 @@ const PhysicalExamination = (props) => {
                 <Input />
               </Form.Item>
               <Form.Item name={'signature'} label="检查医生" initialValue={"0"}>
-                <Select defaultValue={'0'} onChange={() => { }}>
-                  <Option value='0'>张三</Option>
-                  <Option value='1'>李四</Option>
-                </Select>
+                <Input />
               </Form.Item>
               <Form.Item name={'suggestion'} label="医生建议">
                 <Input.TextArea />
@@ -311,10 +308,6 @@ const PhysicalExamination = (props) => {
                 <Input />
               </Form.Item>
               <Form.Item name={'signature'} label="检查医生" >
-                {/* <Select defaultValue={'0'} onChange={() => { }}>
-                  <Option value='0'>张三</Option>
-                  <Option value='1'>李四</Option>
-                </Select> */}
                 <Input></Input>
               </Form.Item>
               <Form.Item name={'suggestion'} label="医生建议">
@@ -333,38 +326,38 @@ const PhysicalExamination = (props) => {
               <Form.Item name={'shapeSign'} label="体重">
                 <Input />
               </Form.Item>
-              <Form.Item name={'skinCode'} label="皮肤">
-                <Select defaultValue={'0'} onChange={() => { }} initialValue={"0"}>
+              <Form.Item name={'skinCode'} label="皮肤" initialValue={"0"}>
+                <Select defaultValue={'0'} >
                   <Option value='0'>正常</Option>
                   <Option value='1'>其他</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name={'limbsCode'} label="四肢">
-                <Select defaultValue={'0'} onChange={() => { }} initialValue={"0"}>
+              <Form.Item name={'limbsCode'} label="四肢" initialValue={"0"}>
+                <Select defaultValue={'0'}  >
                   <Option value='0'>正常</Option>
                   <Option value='1'>其他</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name={'lymphaticCode'} label="淋巴">
-                <Select defaultValue={'0'} onChange={() => { }} initialValue={"0"}>
+              <Form.Item name={'lymphaticCode'} label="淋巴" initialValue={"0"}>
+                <Select defaultValue={'0'} >
                   <Option value='0'>正常</Option>
                   <Option value='1'>其他</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name={'jointsCode'} label="关节">
-                <Select defaultValue={'0'} onChange={() => { }} initialValue={"0"}>
+              <Form.Item name={'jointsCode'} label="关节" initialValue={"0"}>
+                <Select defaultValue={'0'}>
                   <Option value='0'>正常</Option>
                   <Option value='1'>其他</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name={'spineCode'} label="脊柱">
-                <Select defaultValue={'0'} onChange={() => { }} initialValue={"0"}>
+              <Form.Item name={'spineCode'} label="脊柱" initialValue={"0"}>
+                <Select defaultValue={'0'}  >
                   <Option value='0'>正常</Option>
                   <Option value='1'>其他</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name={'thyroidCode'} label="甲状腺">
-                <Select defaultValue={'0'} onChange={() => { }} initialValue={"0"}>
+              <Form.Item name={'thyroidCode'} label="甲状腺" initialValue={"0"}>
+                <Select defaultValue={'0'}  >
                   <Option value='0'>正常</Option>
                   <Option value='1'>其他</Option>
                 </Select>
@@ -373,10 +366,7 @@ const PhysicalExamination = (props) => {
                 <Input />
               </Form.Item>
               <Form.Item name={'signature'} label="检查医生">
-                <Select defaultValue={'0'} onChange={() => { }} initialValue={"0"}>
-                  <Option value='0'>张三</Option>
-                  <Option value='1'>李四</Option>
-                </Select>
+                <Input />
               </Form.Item>
               <Form.Item name={'suggestion'} label="医生建议">
                 <Input.TextArea />
@@ -388,26 +378,26 @@ const PhysicalExamination = (props) => {
               style={{ width: 500, margin: 10 }}
               form={busExamOtherArchiveForm}
               {...layout} name="nest-messages" validateMessages={validateMessages}>
-              <Form.Item name={'routineBloodCode'} label="血常规">
-                <Select defaultValue={'0'} onChange={() => { }} initialValue={"0"}>
+              <Form.Item name={'routineBloodCode'} label="血常规" initialValue={"0"}>
+                <Select defaultValue={'0'}  >
                   <Option value='0'>正常</Option>
                   <Option value='1'>异常</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name={'altCode'} label="肝肾功能">
-                <Select defaultValue={'0'} onChange={() => { }} initialValue={"0"}>
+              <Form.Item name={'altCode'} label="肝肾功能" initialValue={"0"}>
+                <Select defaultValue={'0'} >
                   <Option value='0'>正常</Option>
                   <Option value='1'>异常</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name={'routineUrineCode'} label="尿常规">
-                <Select defaultValue={'0'} onChange={() => { }} initialValue={"0"}>
+              <Form.Item name={'routineUrineCode'} label="尿常规" initialValue={"0"}>
+                <Select defaultValue={'0'}  >
                   <Option value='0'>正常</Option>
                   <Option value='1'>异常</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name={'chestPerspectiveCode'} label="肝肾功能">
-                <Select defaultValue={'0'} onChange={() => { }} initialValue={"0"}>
+              <Form.Item name={'chestPerspectiveCode'} label="肝肾功能"  initialValue={"0"}>
+                <Select defaultValue={'0'} >
                   <Option value='0'>正常</Option>
                   <Option value='1'>异常</Option>
                 </Select>

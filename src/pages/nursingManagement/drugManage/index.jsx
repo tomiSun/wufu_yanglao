@@ -11,6 +11,7 @@ import {
   Modal,
   Tabs,
   message,
+  Pagination
 } from 'antd';
 import {
   takeMedicineInsert,
@@ -54,10 +55,14 @@ const DrugManage = (props) => {
   const [nameSelectList, setNameSelectList] = useState([]);//复合搜索的人的集合
   //字典
   const [dictionaryMap, setDictionaryMap] = useState(DICT_LSIT)
+  const [pageInfo, setPageInfo] = useState({
+    total: 0,
+    pageSize: 10,
+    pageNum: 1
+  })
   //初始化操作
   useEffect(() => {
-    let param = { pageNum: 1, pageSize: 1000 }
-    getmedicineRecordQuery(param)
+    getmedicineRecordQuery(pageInfo)
     //获取字典
     getDictDataSelect(DICT_ARR);//过敏史
   }, []);
@@ -75,13 +80,12 @@ const DrugManage = (props) => {
     }
   }
   //刷新操作
-  const refushList = () => {
+  const refushList = (pageParam) => {
     let search = SForm.getFieldsValue();
+    let pageInfoCopy = { ...pageInfo, ...pageParam}
     // let startTime = search?.['startTime'] && moment(search?.['startTime']).startOf('day').format('YYYY-MM-DD HH:mm:ss');
     // let endTime = search?.['endTime'] && moment(search?.['endTime']).endOf('day').format('YYYY-MM-DD HH:mm:ss');
-    let param = {
-      ...search, pageNum: 1, pageSize: 1000,
-    }
+    let param = { ...search, ...pageInfoCopy }
     getmedicineRecordQuery(param)
   }
   //获取血糖列表信息
@@ -89,6 +93,7 @@ const DrugManage = (props) => {
     let res = await takeMedicineQuery(param)
     if (res['code'] === 200) {
       setDataSource(res['data']['list'])
+      setPageInfo({ pageNum: param['pageNum'], pageSize: param['pageSize'], total: res.data.total })
     } else {
       setDataSource([])
     }
@@ -123,17 +128,17 @@ const DrugManage = (props) => {
           name={'name'}
           label="姓名"
         >
-          <Input AUTOCOMPLETE="OFF" size={'small'} />
+          <Input AUTOCOMPLETE="OFF" size={'small'} allowClear/>
         </Form.Item>
         {/* <Form.Item label="住院号" name={'businessNo'}>
           <Input AUTOCOMPLETE="OFF" size={'small'} />
         </Form.Item> */}
         <Form.Item label="带药日期" name={'takeMedicineDate'}>
-          <DatePicker AUTOCOMPLETE="OFF" size={'small'} />
+          <DatePicker AUTOCOMPLETE="OFF" size={'small'} allowClear/>
         </Form.Item>
         <Form.Item>
           <Button type="primary" size={'small'}
-            onClick={() => { refushList() }}>
+            onClick={() => { refushList({ pageNum: 1 }) }}>
             查询
           </Button>
         </Form.Item>
@@ -152,8 +157,6 @@ const DrugManage = (props) => {
       </Form >
     );
   };
-  //查询
-
   //操作
   const editButton = (record) => {
     return (
@@ -178,9 +181,10 @@ const DrugManage = (props) => {
               type="link"
               style={{ marginLeft: 10 }}
               onClick={async () => {
+                debugger
                 let res = await takeMedicineDel({ ids: record.id })
                 message.info("删除成功")
-                refushList()
+                refushList({ pageNum: 1 })
               }}
             >
               删除
@@ -196,7 +200,19 @@ const DrugManage = (props) => {
       <div>
         <Table scroll={{ x: 1300 }}
           columns={columns(editButton, dictionaryMap)}
-          dataSource={dataSource} />
+          dataSource={dataSource}
+          pagination={false}
+        />
+        <Pagination
+          defaultCurrent={1}
+          current={pageInfo['pageNum']}
+          defaultPageSize={pageInfo['pageSize']}
+          total={pageInfo['total']}
+          onChange={(page, pageSize) => {
+            setPageInfo({ total: pageInfo.total, pageNum: page, pageSize })
+            refushList({ total: pageInfo.total, pageNum: page, pageSize });
+          }}
+          style={{ position: "absolute", bottom: 35, right: 50 }} />
       </div>
     );
   };
@@ -298,7 +314,7 @@ const DrugManage = (props) => {
                   let res = await takeMedicineInsert(params);
                   message.success("添加成功")
                   setModalVisible(false);
-                  refushList()
+                  refushList({ pageNum: 1 })
                 }
                 if (ftype == "edit") {
                   let params = {
@@ -311,7 +327,7 @@ const DrugManage = (props) => {
                   let res = await takeMedicineUpdate(params);
                   message.success("修改成功")
                   setModalVisible(false);
-                  refushList()
+                  refushList({ pageNum: 1 })
                 }
               }}>{ftype == "add" ? "保存" : "修改"}</Button>
           </Form.Item>

@@ -126,7 +126,7 @@ const Archives = (props) => {
         <Button size={'small'} type="link" onClick={async () => {
           let res = await baseArchiveDel({ id: row['id'] })
           message.success("删除成功")
-          refushList({pageNum:1})
+          refushList({ pageNum: 1 })
         }} size="small">
           删除
         </Button>
@@ -165,9 +165,11 @@ const Archives = (props) => {
         visible={modalVisible}
         onOk={() => {
           setModalVisible(false);
+          archivesForm.resetFields()
         }}
         onCancel={() => {
           setModalVisible(false);
+          archivesForm.resetFields()
         }}
         footer={null}
       >
@@ -189,7 +191,7 @@ const Archives = (props) => {
                 initialValue={"1"}
                 rules={[{ required: true }]}
               >
-                <Radio.Group onChange={() => { }} defaultValue={"1"} >
+                <Radio.Group defaultValue={"1"} >
                   <Radio value={"1"}>男</Radio>
                   <Radio value={"2"}>女</Radio>
                 </Radio.Group>
@@ -226,12 +228,14 @@ const Archives = (props) => {
                       let res = await baseArchiveInsert(param);
                       message.success("添加成功")
                       setModalVisible(false);
+                      archivesForm.resetFields()
                       refushList()
                     }
                     if (type == "edit") {
                       let res = await baseArchiveUpdate({ ...param, id: selectData.id });
                       message.success("修改成功")
                       setModalVisible(false);
+                      archivesForm.resetFields()
                       refushList()
                     }
                   }}>{type == "add" ? "保存" : "修改"}</Button>

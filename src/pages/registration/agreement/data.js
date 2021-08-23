@@ -52,8 +52,8 @@ const columns = (edit) => {
         },
         {
             title: '合同签订状态',
-            dataIndex: 'status',
-            key: 'status',
+            dataIndex: 'isSignContract',
+            key: 'isSignContract',
             render: (value) => {
                 return (<div>
                     {value == "1" ? <Tag color="cyan">已签订</Tag> : <Tag color="red">未签订</Tag>}

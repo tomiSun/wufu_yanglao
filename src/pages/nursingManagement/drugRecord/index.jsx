@@ -11,6 +11,7 @@ import {
   Modal,
   Tabs,
   message,
+  Pagination
 } from 'antd';
 import {
   medicineRecordInsert,
@@ -54,19 +55,24 @@ const DrugRecord = (props) => {
   const [nameSelectList, setNameSelectList] = useState([]);//复合搜索的人的集合
   //字典
   const [dictionaryMap, setDictionaryMap] = useState(DICT_LSIT)
+  const [pageInfo, setPageInfo] = useState({
+    total: 0,
+    pageSize: 10,
+    pageNum: 1
+  })
   //初始化操作
   useEffect(() => {
-    let param = { pageNum: 1, pageSize: 10 }
-    getmedicineRecordQuery(param)
+    getmedicineRecordQuery(pageInfo)
     //获取字典
     getDictDataSelect(DICT_ARR);//过敏史
   }, []);
   //刷新操作
-  const refushList = () => {
+  const refushList = (pageParam) => {
     let search = SForm.getFieldsValue();
+    let pageInfoCopy = { ...pageInfo, ...pageParam }
     // let startTime = search?.['startTime'] && moment(search?.['startTime']).startOf('day').format('YYYY-MM-DD HH:mm:ss');
     // let endTime = search?.['endTime'] && moment(search?.['endTime']).endOf('day').format('YYYY-MM-DD HH:mm:ss');
-    let param = { ...search, pageNum: 1, pageSize: 10 }
+    let param = { ...search, ...pageInfoCopy }
     getmedicineRecordQuery(param)
 
   }
@@ -88,6 +94,7 @@ const DrugRecord = (props) => {
     let res = await medicineRecordQuery(param)
     if (res['code'] === 200) {
       setDataSource(res['data']['list'])
+      setPageInfo({ pageNum: param['pageNum'], pageSize: param['pageSize'], total: res.data.total })
     } else {
       setDataSource([])
     }
@@ -123,7 +130,7 @@ const DrugRecord = (props) => {
     return (
       <Form {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
         <Form.Item label="姓名" name={'name'}>
-          <Input AUTOCOMPLETE="OFF" size={'small'} />
+          <Input AUTOCOMPLETE="OFF" size={'small'} allowClear/>
         </Form.Item>
         {/* <Form.Item label="住院号" name={'businessNo'}>
           <Input AUTOCOMPLETE="OFF" size={'small'} />
@@ -133,7 +140,7 @@ const DrugRecord = (props) => {
         </Form.Item> */}
         <Form.Item>
           <Button type="primary" size={'small'}
-            onClick={() => { refushList() }}>
+            onClick={() => { refushList({ pageNum: 1 }) }}>
             查询
           </Button>
         </Form.Item>
@@ -165,7 +172,7 @@ const DrugRecord = (props) => {
                 setFtype("edit")
                 setModalVisible(true);
                 setSelectData(record);
-                let data={...record,medicationDate:moment(record['medicationDate'])}
+                let data = { ...record, medicationDate: moment(record['medicationDate']) }
                 TForm.setFieldsValue(data)
               }}
             >
@@ -178,7 +185,7 @@ const DrugRecord = (props) => {
               onClick={async () => {
                 let res = await medicineRecordDel({ id: record.id })
                 message.info("删除成功")
-                refushList()
+                refushList({ pageNum: 1 })
               }}
             >
               删除
@@ -193,10 +200,21 @@ const DrugRecord = (props) => {
     return (
       <div>
         <Table
-          columns={columns(editButton,dictionaryMap)}
+          columns={columns(editButton, dictionaryMap)}
           dataSource={dataSource}
           scroll={{ x: 1300 }}
+          pagination={false}
         />
+        <Pagination
+          defaultCurrent={1}
+          current={pageInfo['pageNum']}
+          defaultPageSize={pageInfo['pageSize']}
+          total={pageInfo['total']}
+          onChange={(page, pageSize) => {
+            setPageInfo({ total: pageInfo.total, pageNum: page, pageSize })
+            refushList({ total: pageInfo.total, pageNum: page, pageSize });
+          }}
+          style={{ position: "absolute", bottom: 35, right: 50 }} />
       </div>
     );
   };
@@ -260,18 +278,18 @@ const DrugRecord = (props) => {
               onClick={async () => {
                 let param = TForm.getFieldsValue()
                 if (ftype == "add") {
-                  let params = { ...param,  businessNo:addBasicInfo['businessNo'], bedCode: selectData['bedCode'] }
+                  let params = { ...param, businessNo: addBasicInfo['businessNo'], bedCode: selectData['bedCode'] }
                   let res = await medicineRecordInsert(params);
                   message.success("添加成功")
                   setModalVisible(false);
-                  refushList()
+                  refushList({ pageNum: 1 })
                 }
                 if (ftype == "edit") {
                   let params = { ...param, id: selectData.id, businessNo: selectData['businessNo'], bedCode: selectData['bedCode'] }
                   let res = await medicationRecordUpdate(params);
                   message.success("修改成功")
                   setModalVisible(false);
-                  refushList()
+                  refushList({ pageNum: 1 })
                 }
               }}>{ftype == "add" ? "保存" : "修改"}</Button>
           </Form.Item>
