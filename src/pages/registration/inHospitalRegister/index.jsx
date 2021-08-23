@@ -123,10 +123,10 @@ const InHospitalRegister = (props) => {
                     form={SForm}
                 >
                     <Form.Item label="姓名" name={"name"}>
-                        <Input size={'small'} />
+                        <Input size={'small'} allowClear/>
                     </Form.Item>
                     <Form.Item label="住院号" name={"businessNo"}>
-                        <Input size={'small'} />
+                        <Input size={'small'} allowClear/>
                     </Form.Item>
                     {/* <Form.Item label="入院日期" name={"name"}>
                         <DatePicker size={'small'} />
