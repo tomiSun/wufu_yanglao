@@ -135,7 +135,7 @@ export async function addVitalSignRecord(params) {
   });
 };
 export async function pageVitalSignRecord(params) {
-  return request('/nursingManage/queryVitalSignRecord', {
+  return request('/nursingManage/pageNursingRecord', {
     method: 'POST',
     data: params
   });

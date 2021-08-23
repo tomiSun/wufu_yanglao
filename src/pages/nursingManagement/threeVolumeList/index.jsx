@@ -41,15 +41,15 @@ const RloodGlucoseRecord = (props) => {
   })
   //初始化操作
   useEffect(() => {
-    getBloodSugarInfo(pageInfo)
+    getBloodSugarInfo({ pageNum: pageInfo.pageNum, pageSize: pageInfo.pageSize })
     //获取字典
     getDictDataSelect({ pageNum: 1, pageSize: 20, typeCode: "0006" })
   }, []);
   //获取血糖列表信息
   const getBloodSugarInfo = async (param) => {
-    let res = await pageVitalSignRecord(param);
+    let res = await pageVitalSignRecord({ ...param, total: null });
     if (res['code'] === 200) {
-      setDataSource(res['data'])
+      setDataSource(res['data']['list'])
       //todo bug
       setPageInfo({ pageNum: param['pageNum'], pageSize: param['pageSize'], total: res.data.total })
     } else {
@@ -76,16 +76,16 @@ const RloodGlucoseRecord = (props) => {
     return (
       <Form onFinish={() => { }} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
         <Form.Item label="姓名" name={'name'}>
-          <Input size={'small'} allowClear/>
+          <Input size={'small'} allowClear />
         </Form.Item>
         <Form.Item label="住院号" name={'businessNo'}>
-          <Input size={'small'} allowClear/>
+          <Input size={'small'} allowClear />
         </Form.Item>
         <Form.Item label="开始日期" name={'startTime'}>
-          <DatePicker size={'small'} allowClear/>
+          <DatePicker size={'small'} allowClear />
         </Form.Item>
         <Form.Item label="结束日期" name={'endTime'}>
-          <DatePicker size={'small'} allowClear/>
+          <DatePicker size={'small'} allowClear />
         </Form.Item>
         <Form.Item style={{ marginLeft: 20 }}>
           <Button

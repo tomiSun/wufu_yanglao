@@ -109,7 +109,7 @@ const NursingAddRecord = (props) => {
             "4": specialNursingForm,
         }
         let res = await mapApi[selectKey]({ id: recordId })
-        let data = res?.data?.list[0];
+        let data = res?.data?.list && res?.data?.list.length > 0 && res?.data?.list[0];
         setRnursingRecord(data)
         formMap[selectKey].setFieldsValue({
             ...data,
