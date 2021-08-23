@@ -76,6 +76,7 @@ const PhysicalExamination = (props) => {
     busExamArchiveForm.setFieldsValue(selectRowData)
     let resQuery = await examArchiveQuery({ "businessNo": selectRowData['businessNo'] })
     if (resQuery['code'] == 200 && !!resQuery['data']) {
+      debugger
       let data = {
         ...resQuery['data']['busExamArchiveQueryVO'],
         ...resQuery['data']['busExamEntArchiveQueryVO'],
@@ -83,7 +84,7 @@ const PhysicalExamination = (props) => {
         ...resQuery['data']['busExamInternalArchiveQueryVO'],
         ...resQuery['data']['busExamOtherArchiveQueryVO'],
         ...resQuery['data']['busExamSurgicalArchiveQueryVO'],
-        signTime:moment(resQuery['data']['busExamOtherArchiveQueryVO']['signTime'])
+        signTime: moment(resQuery['data']['busExamArchiveForm']?.['signTime'] || new Date())
       }
       busExamArchiveForm.setFieldsValue(data)
       busExamEntArchiveForm.setFieldsValue(data)
@@ -123,7 +124,7 @@ const PhysicalExamination = (props) => {
           onPhysicalExaminationVisible(false);
           formReset()
         }}
-        style={{  marginTop: -70 }}
+        style={{ marginTop: -70 }}
       >
         <Tabs defaultActiveKey="1" onChange={() => { }}>
           <TabPane tab="基本信息" key="1">
