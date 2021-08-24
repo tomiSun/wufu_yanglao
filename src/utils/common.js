@@ -102,6 +102,43 @@ export const ULayout = (x, y, labelAlign, layout) => {
 };
 //根据dictCode 获取dictName
 export const getDictNameByCode = (dict, key, code) => {
-  let item = dict[key].find(item => { if (item.dictCode == code) return item })
-  return !!item ? item['dictName'] : "-"
-}
+  let item = dict[key].find((item) => {
+    if (item.dictCode == code) return item;
+  });
+  return !!item ? item['dictName'] : '-';
+};
+export const analyzeIDCard = (idcard) => {
+  const sexAndAge = {};
+  //获取用户身份证号码
+  const userCard = idcard;
+  //如果用户身份证号码为undefined则返回空
+  if (!userCard || userCard?.length != 18) {
+    return sexAndAge;
+  }
+
+  // 获取性别
+  if (parseInt(userCard.substr(16, 1)) % 2 == 1) {
+    // 男
+    sexAndAge.sex = '1';
+  } else {
+    // 女
+    sexAndAge.sex = '2';
+  }
+  // 获取出生日期
+  const yearBirth = userCard.substring(6, 10);
+  const monthBirth = userCard.substring(10, 12);
+  const dayBirth = userCard.substring(12, 14);
+  sexAndAge.birthDay = `${yearBirth}-${monthBirth}-${dayBirth}`;
+  // 获取当前年月日并计算年龄
+  const myDate = new Date();
+  const monthNow = myDate.getMonth() + 1;
+  const dayNow = myDate.getDate();
+  const age = myDate.getFullYear() - yearBirth;
+  if (monthNow < monthBirth || (monthNow == monthBirth && dayNow < dayBirth)) {
+    age--;
+  }
+  // 得到年龄
+  sexAndAge.age = age;
+  // 返回 性别和年龄
+  return sexAndAge;
+};

@@ -549,7 +549,7 @@ export default () => {
   return (
     <div>
       <SearchForm searchForm={searchTopForm} />
-      <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
+      <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyleHeadThereRow">
         <YTable {...yTable} />
       </div>
       <Modal

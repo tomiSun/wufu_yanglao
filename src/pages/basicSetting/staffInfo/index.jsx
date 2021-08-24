@@ -83,7 +83,7 @@ export default () => {
     table: {
       bordered: true,
       loading: false,
-      dataSource: [{ id: 1 }],
+      dataSource: [],
       columns: [
         {
           title: '员工编号',
@@ -458,7 +458,20 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="身份证号" name="idCard">
+              <Form.Item
+                label="身份证号"
+                name="idCard"
+                rules={[
+                  {
+                    required: true,
+                    message: '请输入身份证号！',
+                  },
+                  {
+                    pattern: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
+                    message: '身份证号格式错误！',
+                  },
+                ]}
+              >
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>

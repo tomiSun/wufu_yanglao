@@ -85,7 +85,7 @@ export default () => {
     table: {
       bordered: true,
       loading: false,
-      dataSource: [{ id: 1 }],
+      dataSource: [],
       columns: [
         {
           title: '日期',
@@ -336,7 +336,7 @@ export default () => {
   return (
     <div>
       <SearchForm searchForm={searchTopForm} />
-      <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
+      <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyleHeadTwoRow">
         <YTable {...yTable} />
       </div>
       <Modal

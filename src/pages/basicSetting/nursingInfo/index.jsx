@@ -20,7 +20,7 @@ const { confirm } = Modal;
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
 import { careAdd, careDel, careSelect, careUpdate } from '@/services/basicSetting/nursingInfo';
-import { findValByKey, getDefaultOption } from '@/utils/common';
+import { findValByKey, analyzeIDCard } from '@/utils/common';
 import { makeWb, pinyin } from 'yunyi-convert';
 import { config } from '@/utils/const';
 const { pageSize, pageNum } = config;
@@ -392,6 +392,29 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
+              <Form.Item
+                label="身份证号"
+                name="idCard"
+                rules={[
+                  {
+                    required: true,
+                    message: '请输入身份证号！',
+                  },
+                  {
+                    pattern: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
+                    message: '身份证号格式错误！',
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="请输入"
+                  onBlur={(e) => {
+                    console.log('e: ', e);
+                  }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item label="性别" name="sex" rules={[{ required: false, message: '' }]}>
                 {/* <Seltopt
                   selectArr={basic['0001'] || []}
@@ -416,11 +439,7 @@ export default () => {
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item label="身份证号" name="idCard">
-                <Input placeholder="请输入" />
-              </Form.Item>
-            </Col>
+
             <Col span={12}>
               <Form.Item label="联系方式" name="contactNumber">
                 <Input placeholder="请输入" />
