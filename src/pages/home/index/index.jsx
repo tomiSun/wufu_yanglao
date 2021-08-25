@@ -335,7 +335,8 @@ export default () => {
         </Collapse>
       ) : (
         <div className={styles.spinContainer}>
-          <Spin />
+          {/* <Spin /> */}
+          暂无数据
         </div>
       )}
     </div>

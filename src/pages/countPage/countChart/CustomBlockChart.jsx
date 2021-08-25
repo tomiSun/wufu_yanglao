@@ -24,7 +24,7 @@ import {
   Chart020,
   Chart021,
   Chart022,
-  Chart023
+  Chart023,
 } from './BizChart/index';
 import { useState } from 'react';
 import moment from 'moment';
@@ -59,24 +59,22 @@ const ChartMap = (num, props) => {
     21: <Chart021 {...props} />,
     22: <Chart022 {...props} />,
     23: <Chart023 {...props} />,
-  }
-  return mapList[num]
+  };
+  return mapList[num];
 };
-import {
-  queryBrokenLine,
-  queryCake,
-  selectCountInfo,
-  querySource
-} from '@/services/countPage'
+import { queryBrokenLine, queryCake, selectCountInfo, querySource } from '@/services/countPage';
 export default function IndexPage(props) {
   const { data, height = 360, mode } = props;
   const [cssTemData, setCssTemData] = useState(data);
   const [maxHeight, setmaxHeight] = useState(height);
-  const [pickerType, setPickerType] = useState(["mode2", "mode3"].includes(mode) ? "month" : "day")
-  const [pickerDate, setPickerDate] = useState([moment(new Date(),dateFormat).subtract('month',12), moment(new Date(), dateFormat)]);
+  const [pickerType, setPickerType] = useState(['mode2', 'mode3'].includes(mode) ? 'month' : 'day');
+  const [pickerDate, setPickerDate] = useState([
+    moment(new Date(), dateFormat).subtract('month', 12),
+    moment(new Date(), dateFormat),
+  ]);
   const [chartData, setChartData] = useState([]);
   useEffect(() => {
-    getChartData({ pickerDate, pickerType })
+    getChartData({ pickerDate, pickerType });
   }, []);
   //解析数据的函数
   const renderCol = (arr, lastspanRadio) => {
@@ -87,9 +85,7 @@ export default function IndexPage(props) {
           return (
             <Col span={item.span}>
               {!!item.children ? (
-                <Row gutter={gutterArr}>
-                  {renderCol(item.children, spanRadio)}
-                </Row>
+                <Row gutter={gutterArr}>{renderCol(item.children, spanRadio)}</Row>
               ) : (
                 <div
                   className="block"
@@ -101,7 +97,9 @@ export default function IndexPage(props) {
                   }}
                 >
                   {/* <h2 style={{ borderRadius: 20, background: "#f2f2f2" }}>{`${item.temp}`}</h2> */}
-                  {!!item.temp ? ChartMap([item.temp], { ...item, pickerDate, pickerType, chartData }) : '暂未配置模版'}
+                  {!!item.temp
+                    ? ChartMap([item.temp], { ...item, pickerDate, pickerType, chartData })
+                    : '暂未配置模版'}
                 </div>
               )}
             </Col>
@@ -113,24 +111,24 @@ export default function IndexPage(props) {
 
   //获取图标信息
   const getChartData = (param) => {
-    if (mode == "mode1") {
-      getCount(param)
+    if (mode == 'mode1') {
+      getCount(param);
     }
-    if (mode == "mode2") {
-      getLine(param)
+    if (mode == 'mode2') {
+      getLine(param);
     }
-    if (mode == "mode3") {
-      getCake(param)
+    if (mode == 'mode3') {
+      getCake(param);
     }
-  }
+  };
   const getCount = async (p) => {
     let param = {
       startTime: p.pickerDate[0],
-      endTime: p.pickerDate[1]
-    }
+      endTime: p.pickerDate[1],
+    };
     let res = await selectCountInfo(param);
     let resSource = await querySource(param);
-    const { fromHsp, fromSociety, toHsp, toSociety } = resSource.data
+    const { fromHsp, fromSociety, toHsp, toSociety } = resSource?.data || {};
     const {
       originalNum,
       inHospitalNum,
@@ -140,17 +138,17 @@ export default function IndexPage(props) {
       disabilityNum,
       partialDisability,
       provideForOneself,
-    } = res['data']
+    } = res['data'];
     setChartData({
-      "0001": String(originalNum),
-      "0002": String(inHospitalNum),
-      "0003": String(outHospitalNum),
-      "0004": String(stayHospitalNum),
-      "0005": String(takeUpBed),
-      "0006": String(disabilityNum),
-      "0007": String(partialDisability),
-      "0008": String(provideForOneself),
-      "0009": [
+      '0001': String(originalNum),
+      '0002': String(inHospitalNum),
+      '0003': String(outHospitalNum),
+      '0004': String(stayHospitalNum),
+      '0005': String(takeUpBed),
+      '0006': String(disabilityNum),
+      '0007': String(partialDisability),
+      '0008': String(provideForOneself),
+      '0009': [
         {
           type: '来源于社会人数',
           value: fromSociety,
@@ -158,9 +156,9 @@ export default function IndexPage(props) {
         {
           type: '来源于医院人数',
           value: fromHsp,
-        }
+        },
       ],
-      "0010": [
+      '0010': [
         {
           type: '来源于社会人数',
           value: toSociety,
@@ -168,63 +166,64 @@ export default function IndexPage(props) {
         {
           type: '来源于医院人数',
           value: toHsp,
-        }
-      ]
-    })
-  }
+        },
+      ],
+    });
+  };
   const getLine = async (p) => {
     let param = {
       startTime: p.pickerDate[0],
       endTime: p.pickerDate[1],
-      timeType: p.pickerType == "year" ? "2" : "1"
-    }
-    let res = await queryBrokenLine(param)
-    setChartData(res['data'])
-  }
+      timeType: p.pickerType == 'year' ? '2' : '1',
+    };
+    let res = await queryBrokenLine(param);
+    setChartData(res['data']);
+  };
   const getCake = async (p) => {
     let param = {
       startTime: p.pickerDate[0],
       endTime: p.pickerDate[1],
-      timeType: p.pickerType == "year" ? "2" : "1"
-    }
+      timeType: p.pickerType == 'year' ? '2' : '1',
+    };
 
-    let res = await queryCake(param)
-    setChartData(res['data'])
-  }
+    let res = await queryCake(param);
+    setChartData(res['data']);
+  };
   return (
     <div className={'box2'} style={{ marginTop: 16 }}>
       {/* 动态模版2 */}
       <>
-        <div style={{ display: "flex", flexDirection: "row", marginBottom: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 10 }}>
           <RangePicker
             defaultValue={[moment(new Date(), dateFormat), moment(new Date(), dateFormat)]}
             picker={pickerType}
-            locale={{ default: 'zh-CN', }}
+            locale={{ default: 'zh-CN' }}
             value={pickerDate}
-            onChange={value => {
-              setPickerDate(value)
-              getChartData({ pickerDate: value, pickerType })
+            onChange={(value) => {
+              setPickerDate(value);
+              getChartData({ pickerDate: value, pickerType });
             }}
           />
-          {["mode2", "mode3"].includes(mode) && <Radio.Group
-            style={{ marginLeft: 20 }}
-            value={pickerType}
-            onChange={(value) => {
-              setPickerType(value.target.value)
-              getChartData({ pickerDate, pickerType: value.target.value })
-            }}>
-            {/* <Radio.Button value="week">周</Radio.Button> */}
-            <Radio.Button value="month">月</Radio.Button>
-            <Radio.Button value="year">年</Radio.Button>
-          </Radio.Group>}
+          {['mode2', 'mode3'].includes(mode) && (
+            <Radio.Group
+              style={{ marginLeft: 20 }}
+              value={pickerType}
+              onChange={(value) => {
+                setPickerType(value.target.value);
+                getChartData({ pickerDate, pickerType: value.target.value });
+              }}
+            >
+              {/* <Radio.Button value="week">周</Radio.Button> */}
+              <Radio.Button value="month">月</Radio.Button>
+              <Radio.Button value="year">年</Radio.Button>
+            </Radio.Group>
+          )}
         </div>
 
         {cssTemData.map((item) => {
           return (
             <div>
-              <Row gutter={gutterArr}>
-                {renderCol(item.children, item.span / 24)}
-              </Row>
+              <Row gutter={gutterArr}>{renderCol(item.children, item.span / 24)}</Row>
             </div>
           );
         })}
