@@ -32,6 +32,8 @@ import { queryPage, queryPageBed } from '@/services/home/index';
 import { findValByKey, getDefaultOption } from '@/utils/common';
 const { Panel } = Collapse;
 import { history } from 'umi';
+import Icon from '@ant-design/icons';
+import { ReactComponent as empty } from '@/assets/empty.svg';
 export default () => {
   const color = {
     empty: '#fdfbdb',
@@ -335,7 +337,16 @@ export default () => {
         </Collapse>
       ) : (
         <div className={styles.spinContainer}>
-          <Spin />
+          {/* <Spin /> */}
+          {/* 暂无数据 */}
+          <div className="empty">
+            <div className="content">
+              <div className="item">
+                <Icon component={empty} className="img" />
+              </div>
+              <div className="txt">暂无数据</div>
+            </div>
+          </div>
         </div>
       )}
     </div>
