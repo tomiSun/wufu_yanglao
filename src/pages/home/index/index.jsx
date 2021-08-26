@@ -1,39 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { history } from 'umi';
 import styles from './index.less';
-import { SearchForm, YTable, Seltopt } from 'yunyi-component';
-import {
-  Form,
-  Modal,
-  Input,
-  Row,
-  Col,
-  Radio,
-  InputNumber,
-  message,
-  Button,
-  Divider,
-  DatePicker,
-  Checkbox,
-  Rate,
-  Card,
-  Skeleton,
-  Collapse,
-  Popover,
-  List,
-  Select,
-  Tag,
-  Anchor,
-  Switch,
-  Spin,
-} from 'antd';
+import { Row, Col, Button, Card, Collapse, Popover, List, Select, Tag } from 'antd';
 import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
 import { bedBuildList } from '@/services/basicSetting/bedInfo';
 import { queryPage, queryPageBed } from '@/services/home/index';
-import { findValByKey, getDefaultOption } from '@/utils/common';
-const { Panel } = Collapse;
-import { history } from 'umi';
+import { findValByKey } from '@/utils/common';
 import Icon from '@ant-design/icons';
 import { ReactComponent as empty } from '@/assets/empty.svg';
+
+const { Panel } = Collapse;
 export default () => {
   const color = {
     empty: '#fdfbdb',
@@ -59,8 +35,6 @@ export default () => {
       }
     });
   };
-  // 修改收费状态
-  const changeFeesDueStatue = () => {};
   // 获取过敏史
   const getAllergyNames = (codes) => {
     if (!codes?.length) {
@@ -72,16 +46,7 @@ export default () => {
     return res.join(',');
   };
   // 获取入院诊断
-  const getHospitalDiagnosisNames = (codes) => {
-    if (!codes?.length) {
-      return '';
-    }
-    const res = codes.map((it) => {
-      return findValByKey(basic['0015'], 'value', it, 'label');
-    });
-    return res.join(',');
-  };
-  const goToPage = (key, businesNo) => {
+  const goToPage = (key) => {
     switch (key) {
       case 1:
         history.push('/nursingManagement/threeVolumeList/index?businesNo=businesNo');
