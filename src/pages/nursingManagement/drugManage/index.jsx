@@ -194,7 +194,7 @@ const DrugManage = (props) => {
               style={{ marginLeft: 10 }}
               onClick={async () => {
                 let res = await takeMedicineDel({ ids: record.id });
-                message.info('删除成功');
+                message.success('删除成功');
                 refushList({ pageNum: 1 });
               }}
             >

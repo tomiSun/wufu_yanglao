@@ -112,14 +112,14 @@ const RiskNotificationForm = (props) => {
         let addBtn = <Button onClick={async () => {
             let addParam = { ...selectRowData, ...riskNotificationForm.getFieldsValue(), }
             let res = await riskNotificationSave(addParam);
-            message.info("新增成功")
+            message.success("新增成功")
             onRiskNotificationFormVisible(false)
         }}>保存</Button>;
         //编辑按钮
         let editBtn = <Button onClick={async () => {
             let updateParam = { ...selectRowData, ...riskNotificationForm.getFieldsValue(), id: updateId }
             let res = await riskNotificationUpdate(updateParam);
-            message.info("修改成功")
+            message.success("修改成功")
             onRiskNotificationFormVisible(false)
         }}>修改</Button>
         let arrEdit = [editBtn];

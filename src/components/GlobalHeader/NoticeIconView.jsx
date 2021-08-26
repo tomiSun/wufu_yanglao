@@ -112,7 +112,7 @@ class GlobalHeaderRight extends Component {
         viewMoreText="查看更多"
         onClear={this.handleNoticeClear}
         onPopupVisibleChange={onNoticeVisibleChange}
-        onViewMore={() => message.info('Click on view more')}
+        onViewMore={() => message.success('Click on view more')}
         clearClose
       >
         <NoticeIcon.Tab

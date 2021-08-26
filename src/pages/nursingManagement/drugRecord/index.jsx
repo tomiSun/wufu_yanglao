@@ -103,7 +103,7 @@ const DrugRecord = (props) => {
   //姓名搜索框
   const nameSelectChange = async (value) => {
     if (!value) {
-      message.info("该人员已经退院")
+      message.success("该人员已经退院")
       return
     }
     let res = await queryHospitalRegist({ businessNo: value, pageSize: 10, pageNum: 1, status: 0, statue: 0, });
@@ -184,7 +184,7 @@ const DrugRecord = (props) => {
               style={{ marginLeft: 10 }}
               onClick={async () => {
                 let res = await medicineRecordDel({ id: record.id })
-                message.info("删除成功")
+                message.success("删除成功")
                 refushList({ pageNum: 1 })
               }}
             >

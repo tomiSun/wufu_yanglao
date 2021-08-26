@@ -112,14 +112,14 @@ const AgreementForm = (props) => {
     let addBtn = <Button onClick={async () => {
       let addParam = { ...selectRowData, ...agreementForm.getFieldsValue(), }
       let res = await contractSave(addParam);
-      message.info("新增成功")
+      message.success("新增成功")
       onAgreementFormVisibleVisible(false)
     }}>保存</Button>;
     //编辑按钮
     let editBtn = <Button onClick={async () => {
       let updateParam = { ...selectRowData, ...agreementForm.getFieldsValue(), id: updateId }
       let res = await contractUpdate(updateParam);
-      message.info("修改成功")
+      message.success("修改成功")
       onAgreementFormVisibleVisible(false)
     }}>修改</Button>
     let arrEdit = [editBtn];
