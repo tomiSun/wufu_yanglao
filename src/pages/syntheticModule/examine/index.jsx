@@ -1,22 +1,12 @@
+/* eslint-disable object-shorthand */
+/* eslint-disable no-shadow */
+/* eslint-disable import/first */
+/* eslint-disable no-use-before-define */
 /* eslint-disable no-console */
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.less';
 import { SearchForm, YTable } from 'yunyi-component';
-import {
-  Form,
-  Modal,
-  Input,
-  Row,
-  Col,
-  Radio,
-  InputNumber,
-  message,
-  Button,
-  Divider,
-  DatePicker,
-  Checkbox,
-  Select,
-} from 'antd';
+import { Form, Modal, Input, Row, Col, message, Divider, DatePicker, Select } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
 import {
@@ -24,13 +14,14 @@ import {
   examineDel,
   examineSelect,
   examineUpdate,
+  selectByName,
 } from '@/services/syntheticModule/examine';
-import { findValByKey, getDefaultOption } from '@/utils/common';
 import { config } from '@/utils/const';
-const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
-const { TextArea } = Input;
 import moment from 'moment';
+
+const { pageSize } = config;
+const { TextArea } = Input;
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
@@ -44,7 +35,7 @@ export default () => {
         placeholder: '请输入姓名',
         sort: 2,
         style: { width: '200px' },
-        pressEnter: (enter) => {
+        pressEnter: () => {
           getTableData();
         },
       },
@@ -329,7 +320,7 @@ export default () => {
   const saveModalInfo = async () => {
     const formData = await modalForm.validateFields();
     const { inspectionTime } = formData;
-    let query = {
+    const query = {
       ...modalForm.getFieldsValue(),
       inspectionTime: inspectionTime && moment(inspectionTime).format('YYYY-MM-DD'),
     };
@@ -371,11 +362,25 @@ export default () => {
       setBasic(response.data);
     });
   };
-
+  const [nameOptions, setNameOptions] = useState([]);
+  const getNameOptions = (e) => {
+    selectByName({ carerName: e || '' })
+      .then((res) => {
+        const data =
+          res?.data?.map((item) => {
+            return { label: item?.name, value: item?.careCode };
+          }) || [];
+        setNameOptions(data);
+      })
+      .catch((err) => {
+        console.log('err: ', err);
+      });
+  };
   // 初始化
   useEffect(() => {
     getDictionaryData();
     getTableData();
+    getNameOptions();
   }, []);
   return (
     <div>
@@ -405,6 +410,7 @@ export default () => {
           initialValues={{ inspectionTime: moment() }}
         >
           <Form.Item name="id" hidden></Form.Item>
+          <Form.Item name="carerName" hidden></Form.Item>
           <Row>
             <Col span={12}>
               <Form.Item label="科室" name="department" rules={[{ required: true }]}>
@@ -412,8 +418,20 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="姓名" name="carerName" rules={[{ required: true }]}>
-                <Input placeholder="请输入" />
+              <Form.Item label="姓名" name="careCode" rules={[{ required: true }]}>
+                {/* <Input placeholder="请输入" /> */}
+                <Select
+                  showSearch
+                  placeholder="请输入姓名"
+                  onChange={(value, option) => {
+                    console.log('value,option: ', value, option);
+                    modalForm.setFieldsValue({ careCode: value, carerName: option.label });
+                  }}
+                  options={nameOptions}
+                  filterOption={(inputValue, option) => {
+                    return option.label.indexOf(inputValue) > -1;
+                  }}
+                ></Select>
               </Form.Item>
             </Col>
             <Col span={12}>
