@@ -263,7 +263,7 @@ const InHospitalRegister = (props) => {
     const handleRoomInit = async (value, v2) => {
         //bedRoomQuery,
         let res = await queryBed({ keyWords: "" })
-        let resData = res['data']
+        let resData = res['data']||[]
         let list = resData.map(item => {
             return {
                 label: `${item['buildingName'] || "#"}-${item['floorName'] || "#"}-${item['roomName'] || "#"}-${item['bedName'] || "#"}`,
