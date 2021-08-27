@@ -8,8 +8,8 @@ const scale = {
 	city: {
 		formatter: v => {
 			return {
-				London: '原有人数',
-				Tokyo: '入院人数'
+				inHospital: '入人数',
+				outHospital: '出院人数'
 			}[v]
 		}
 	}
@@ -20,14 +20,14 @@ const formatData = (data) => {
 		arr.push({
 			month: item['tempData'],
 			city: "inHospital",
-			temperature: item["targetNum"]
+			temperature: item["targetNum"] || 0
 		})
 	})
 	data?.outHospital.forEach(item => {
 		arr.push({
 			month: item['tempData'],
 			city: "outHospital",
-			temperature: item["targetNum"]
+			temperature: item["targetNum"] || 0
 		})
 	})
 	return arr
@@ -35,7 +35,7 @@ const formatData = (data) => {
 export default function IndexPage(props) {
 	const { chartData } = props;
 	if (chartData.length == 0) {
-		return<>暂无数据</>
+		return <>暂无数据</>
 	}
 	const data = formatData(chartData)
 	return <Chart scale={scale} padding={[30, 20, 60, 40]} autoFit data={data} interactions={['element-active']}>

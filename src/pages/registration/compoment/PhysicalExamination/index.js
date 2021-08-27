@@ -49,6 +49,7 @@ const PhysicalExamination = (props) => {
   const [busExamInternalArchiveForm] = Form.useForm(); //内科
   const [busExamOtherArchiveForm] = Form.useForm(); //检查
   const [busExamSurgicalArchiveForm] = Form.useForm(); //外科
+  const [selectKey, setSelectKey] = useState("1");
   //更新时的ID
   const [updateId, setUpdateId] = useState('');
   const [dictionaryMap, setDictionaryMap] = useState(DICT_LSIT);
@@ -85,12 +86,12 @@ const PhysicalExamination = (props) => {
         ...resQuery['data']['busExamSurgicalArchiveQueryVO'],
         signTime: moment(resQuery['data']['busExamArchiveForm']?.['signTime'] || new Date()),
       };
-      busExamArchiveForm.setFieldsValue(data);
-      busExamEntArchiveForm.setFieldsValue(data);
-      busExamEyesArchiveForm.setFieldsValue(data);
-      busExamInternalArchiveForm.setFieldsValue(data);
-      busExamOtherArchiveForm.setFieldsValue(data);
-      busExamSurgicalArchiveForm.setFieldsValue(data);
+      busExamArchiveForm.setFieldsValue({ ...data });
+      busExamEntArchiveForm.setFieldsValue({ ...data, ...resQuery['data']['busExamEntArchiveQueryVO'] });
+      busExamEyesArchiveForm.setFieldsValue({ ...data, ...resQuery['data']['busExamEyesArchiveQueryVO'] });
+      busExamInternalArchiveForm.setFieldsValue({ ...data, ...resQuery['data']['busExamInternalArchiveQueryVO'] });
+      busExamOtherArchiveForm.setFieldsValue({ ...data, ...resQuery['data']['busExamOtherArchiveQueryVO'] });
+      busExamSurgicalArchiveForm.setFieldsValue({ ...data, ...resQuery['data']['busExamSurgicalArchiveQueryVO'] });
       let id = resQuery['data']['busExamArchiveQueryVO']['id'];
       setUpdateId(id);
       setMode('edit');
@@ -125,7 +126,7 @@ const PhysicalExamination = (props) => {
         }}
         style={{ marginTop: -70 }}
       >
-        <Tabs defaultActiveKey="1" onChange={() => {}}>
+        <Tabs defaultActiveKey="1" onChange={(key) => { setSelectKey(key) }}>
           <TabPane tab="基本信息" key="1">
             <Form
               style={{ width: 500, margin: 10 }}
@@ -144,7 +145,7 @@ const PhysicalExamination = (props) => {
                 <Input disabled />
               </Form.Item>
               <Form.Item name={'sex'} label="性别" initialValue={'1'}>
-                <Radio.Group onChange={() => {}} defaultValue={'1'} disabled>
+                <Radio.Group onChange={() => { }} defaultValue={'1'} disabled>
                   <Radio value={'1'}>男</Radio>
                   <Radio value={'2'}>女</Radio>
                 </Radio.Group>
@@ -156,14 +157,14 @@ const PhysicalExamination = (props) => {
                 <Input />
               </Form.Item>
               <Form.Item name={'education'} label="文化程度" initialValue={'0003'}>
-                <Select mode="multiple" onChange={() => {}}>
+                <Select onChange={() => { }}>
                   {dictionaryMap?.['0016'].map((item) => {
                     return <Option value={item['dictCode']}>{item['dictName']}</Option>;
                   })}
                 </Select>
               </Form.Item>
               <Form.Item name={'medicalHistoryCode'} label="既往史">
-                <Select mode="multiple" onChange={() => {}}>
+                <Select mode="multiple" onChange={() => { }}>
                   {dictionaryMap?.['0009'].map((item) => {
                     return <Option value={item['dictCode']}>{item['dictName']}</Option>;
                   })}
@@ -192,7 +193,7 @@ const PhysicalExamination = (props) => {
                 <Input />
               </Form.Item>
               <Form.Item name={'colorVisionCode'} label="色觉" initialValue={'0001'}>
-                <Select onChange={() => {}}>
+                <Select onChange={() => { }}>
                   {dictionaryMap?.['0017'].map((item) => {
                     return <Option value={item['dictCode']}>{item['dictName']}</Option>;
                   })}
@@ -241,7 +242,7 @@ const PhysicalExamination = (props) => {
               <Form.Item name={'other'} label="其他">
                 <Input />
               </Form.Item>
-              <Form.Item name={'signature'} label="检查医生" initialValue={'0'}>
+              <Form.Item name={'signature'} label="检查医生" >
                 <Input />
               </Form.Item>
               <Form.Item name={'suggestion'} label="医生建议">
@@ -267,38 +268,38 @@ const PhysicalExamination = (props) => {
                 <Input />
               </Form.Item>
               <Form.Item name={'nutritureCode'} label="发育及营养状况" initialValue={'0'}>
-                <Select defaultValue={'0'} onChange={() => {}}>
+                <Select defaultValue={'0'} onChange={() => { }}>
                   <Option value="0">良好</Option>
                   <Option value="1">一般</Option>
                   <Option value="C">差</Option>
                 </Select>
               </Form.Item>
               <Form.Item name={'cardiovascularCode'} label="心血管" initialValue={'0'}>
-                <Select defaultValue={'0'} onChange={() => {}}>
+                <Select defaultValue={'0'} onChange={() => { }}>
                   <Option value="0">正常</Option>
                   <Option value="1">其他</Option>
                 </Select>
               </Form.Item>
               <Form.Item name={'nerveCode'} label="神经及精神" initialValue={'0'}>
-                <Select defaultValue={'0'} onChange={() => {}}>
+                <Select defaultValue={'0'} onChange={() => { }}>
                   <Option value="0">正常</Option>
                   <Option value="1">其他</Option>
                 </Select>
               </Form.Item>
               <Form.Item name={'lungCode'} label="肺及呼吸道" initialValue={'0'}>
-                <Select defaultValue={'0'} onChange={() => {}}>
+                <Select defaultValue={'0'} onChange={() => { }}>
                   <Option value="0">正常</Option>
                   <Option value="1">其他</Option>
                 </Select>
               </Form.Item>
               <Form.Item name={'liverCode'} label="肝" initialValue={'0'}>
-                <Select defaultValue={'0'} onChange={() => {}}>
+                <Select defaultValue={'0'} onChange={() => { }}>
                   <Option value="0">正常</Option>
                   <Option value="1">其他</Option>
                 </Select>
               </Form.Item>
               <Form.Item name={'spleenCode'} label="脾" initialValue={'0'}>
-                <Select defaultValue={'0'} onChange={() => {}}>
+                <Select defaultValue={'0'} onChange={() => { }}>
                   <Option value="0">正常</Option>
                   <Option value="1">其他</Option>
                 </Select>
@@ -412,7 +413,7 @@ const PhysicalExamination = (props) => {
               </Form.Item>
             </Form>
           </TabPane>
-          <TabPane tab="体检结果" key="8">
+          <TabPane tab="体检结果" key="7">
             <Form
               style={{ width: 500, margin: 10 }}
               form={busExamArchiveForm}
@@ -465,6 +466,7 @@ const PhysicalExamination = (props) => {
       <Button
         onClick={async () => {
           let res1 = await examArchiveDel({ businessNo: selectRowData['businessNo'] });
+          message.success('删除成功');
           onPhysicalExaminationVisible(false);
           formReset();
         }}
@@ -485,6 +487,7 @@ const PhysicalExamination = (props) => {
             busExamSurgicalArchiveUpdatePO: busExamSurgicalArchiveForm.getFieldsValue(),
           };
           let res3 = await examArchiveUpdate(updateParam);
+          message.success('修改成功');
           onPhysicalExaminationVisible(false);
           formReset();
         }}
@@ -492,7 +495,22 @@ const PhysicalExamination = (props) => {
         修改
       </Button>
     );
-    let arrEdit = [editBtn, delBtn];
+    //清空按钮
+    let clearBtn = (
+      <Button
+        onClick={async () => {
+          selectKey == "2" && busExamEyesArchiveForm.resetFields()
+          selectKey == "3" && busExamEntArchiveForm.resetFields()
+          selectKey == "4" && busExamInternalArchiveForm.resetFields()
+          selectKey == "5" && busExamSurgicalArchiveForm.resetFields()
+          selectKey == "6" && busExamOtherArchiveForm.resetFields()
+          selectKey == "7" && busExamArchiveForm.resetFields()
+        }}
+      >
+        清空
+      </Button>
+    );
+    let arrEdit = selectKey == "1" ? [editBtn, delBtn] : [editBtn, clearBtn];
     let arrAdd = [addBtn];
     if (mode == 'edit') {
       return arrEdit;

@@ -61,7 +61,9 @@ const Assessment = (props) => {
         let resQuery = await assessmentQuery({ "businessNo": selectRowData['businessNo'] })
         if (resQuery['code'] == 200 && !!resQuery['data']) {
             let id = resQuery['data']['id']
-            hearingForm.setFieldsValue(resQuery['data'])
+            let item1=formartItems(resQuery['data']['hearingItems'])
+            debugger
+            hearingForm.setFieldsValue({ ...resQuery['data'], ...item1})
             visualForm.setFieldsValue(resQuery['data'])
             pressureSoreForm.setFieldsValue(resQuery['data'])
             chokingForm.setFieldsValue(resQuery['data'])
@@ -75,11 +77,22 @@ const Assessment = (props) => {
             setMode("add")
         }
     }
+    const formartItems = (arr) => {
+        if (!arr || !arr.length > 0) {
+            return {}
+        }
+        let res ={}
+        arr.forEach(element => {
+            res[element.name]=element.point
+        });
+        debugger
+        return res
+    }
     //听力
     const hearInfo = {
         title: "听力判断",
         extra: "评判标准：清楚：<5分；困难：5～10分；完全听不到：>10分",
-        form: visualForm,
+        form: hearingForm,
         judge: [5, 10],
         judgeString: ["清楚", "困难", "完全听不到"],
         data: {
@@ -135,7 +148,7 @@ const Assessment = (props) => {
     const visualInfo = {
         title: "视力判断",
         extra: "评判标准：清楚：<4分； 部分清楚：4～8分；完全看不见：>8分",
-        form: hearingForm,
+        form: visualForm,
         judge: [4, 8],
         judgeString: ["清楚", "部分清楚", "完全看不见"],
         data: {
@@ -295,7 +308,7 @@ const Assessment = (props) => {
     const fallFInfo = {
         title: "跌倒风险",
         extra: "评判标准：低风险：<1分；中度风险：1～3分；高度风险：>3分",
-        form: hearingForm,
+        form: fallForm,
         judge: [1, 3],
         judgeString: ["低风险", "中度风险", "高度风险"],
         data: {

@@ -123,7 +123,11 @@ var columns = function columns(edit, dictionaryMap) {
     title: '关系',
     dataIndex: 'relation',
     key: 'relation',
-    width: 100
+    width: 100,
+    render: function render(t, r) {
+      var res = (0, _common.getDictNameByCode)(dictionaryMap, "0010", t);
+      return res;
+    }
   }, {
     title: '联系电话',
     dataIndex: 'contactNumber',

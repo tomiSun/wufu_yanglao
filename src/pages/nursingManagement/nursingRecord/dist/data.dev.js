@@ -107,7 +107,7 @@ var columns = function columns(edit, dictionaryMap) {
       return t == "0" ? "是" : "否";
     }
   }, {
-    title: '老人身心观察记录',
+    title: '身心观察记录',
     dataIndex: 'physicalAndMentalStatus',
     key: 'physicalAndMentalStatus',
     width: 200

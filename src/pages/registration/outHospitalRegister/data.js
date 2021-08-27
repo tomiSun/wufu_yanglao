@@ -104,6 +104,10 @@ const columns = ( dictionaryMap) => {
             dataIndex: 'relation',
             key: 'relation',
             width: 100,
+            render: (t, r) => {
+                let res =getDictNameByCode(dictionaryMap, "0010", t)
+                 return res
+             }
         },
         {
             title: '联系电话',

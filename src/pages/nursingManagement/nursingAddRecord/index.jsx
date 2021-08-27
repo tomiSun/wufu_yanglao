@@ -226,7 +226,7 @@ const NursingAddRecord = (props) => {
   //护理项目
   const renderNursingItem = () => {
     return (
-      <Form {...ULayout(8, 16)} style={{ width: '80%', overflow: scroll }} form={nursingForm}>
+      <Form {...ULayout(8, 16)} style={{ width: '80%'}} form={nursingForm}>
         <Form.Item label="日期" name={'recordTime'} initialValue={moment(new Date())}>
           <DatePicker style={{ width: '100%' }} size={'small'} />
         </Form.Item>
@@ -288,7 +288,7 @@ const NursingAddRecord = (props) => {
             <Radio value="1">否</Radio>
           </Radio.Group>
         </Form.Item>
-        <Form.Item label="老人身心观察记录" name={'physicalAndMentalStatus'}>
+        <Form.Item label="身心观察记录" name={'physicalAndMentalStatus'}>
           <Input.TextArea AUTOCOMPLETE="OFF" size={'small'} rows={3} />
         </Form.Item>
         <Form.Item label="其他" name={'other'}>

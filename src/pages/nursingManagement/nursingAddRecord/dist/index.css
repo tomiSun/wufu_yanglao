@@ -2,8 +2,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  overflow-y: scroll;
-  background-color: #f2f2f2;
+  background-color: #d17373;
 }
 .nursingAddRecord .top {
   background-color: #fff;
@@ -24,7 +23,6 @@
   background-color: #fff;
   width: 30%;
   height: 100%;
-  overflow-y: scroll;
 }
 .nursingAddRecord .content-right {
   margin: 0px 10px 10px 5px;
@@ -33,16 +31,13 @@
   background-color: #fff;
   width: 70%;
   height: 100%;
-  overflow-y: scroll;
   display: flex;
   flex-direction: column;
 }
 .nursingAddRecord .addRecordBox {
   display: flex;
-  height: 1000px;
   justify-content: center;
   padding: 30px 100px 0px 0px;
-  overflow: scroll;
 }
 .nursingAddRecord .rowSelect {
   background-color: #1890ff;
