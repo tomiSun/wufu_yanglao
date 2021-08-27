@@ -46,6 +46,15 @@ export default () => {
     return res.join(',');
   };
   // 获取入院诊断
+  const gethospitalDiagnosiNames = (codes) => {
+    if (!codes?.length) {
+      return '';
+    }
+    const res = codes.map((it) => {
+      return findValByKey(basic['0015'], 'value', it, 'label');
+    });
+    return res.join(',');
+  };
   const goToPage = (key) => {
     switch (key) {
       case 1:
@@ -163,7 +172,9 @@ export default () => {
                         </div>
                       </div>
                       <div className={styles.row}>
-                        <div className={styles.item}>入院诊断：{bed?.hospitalDiagnosis}</div>
+                        <div className={styles.item}>
+                          入院诊断：{gethospitalDiagnosiNames(bed?.hospitalDiagnosis)}
+                        </div>
                       </div>
                       <div className={styles.row}>
                         {/* TODO */}
