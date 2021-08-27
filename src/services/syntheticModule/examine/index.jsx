@@ -14,6 +14,13 @@ export async function examineDel(params) {
     params,
   });
 }
+// 根据姓名模糊查询护工信息
+export async function selectByName(params) {
+  return request('/care/selectByName', {
+    method: 'GET',
+    params,
+  });
+}
 // 查询
 export async function examineSelect(params) {
   return request('/comprehensive/pageCheck', {
