@@ -164,11 +164,12 @@ const PhysicalExamination = (props) => {
                 </Select>
               </Form.Item>
               <Form.Item name={'medicalHistoryCode'} label="既往史">
-                <Select mode="multiple" onChange={() => { }}>
+                {/* <Select mode="multiple" onChange={() => { }}>
                   {dictionaryMap?.['0009'].map((item) => {
                     return <Option value={item['dictCode']}>{item['dictName']}</Option>;
                   })}
-                </Select>
+                </Select> */}
+                 <Input />
               </Form.Item>
             </Form>
           </TabPane>

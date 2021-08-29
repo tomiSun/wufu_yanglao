@@ -262,11 +262,12 @@ const DrugManage = (props) => {
               ></Select>
             </Form.Item>
             <Form.Item label="诊断:" name={'hospitalDiagnosis'}>
-              <Select mode="multiple" style={{ width: 200 }}>
+              {/* <Select mode="multiple" style={{ width: 200 }}>
                 {dictionaryMap?.['0015'].map((item) => {
                   return <Option value={item['dictCode']}>{item['dictName']}</Option>;
                 })}
-              </Select>
+              </Select> */}
+               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="带药日期" name={'takeMedicineDate'} initialValue={moment(new Date())}>
               <DatePicker style={{ width: 200 }} />

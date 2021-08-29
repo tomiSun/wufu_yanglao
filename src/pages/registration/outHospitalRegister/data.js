@@ -41,13 +41,13 @@ const columns = ( dictionaryMap) => {
             dataIndex: 'hospitalDiagnosis',
             key: 'hospitalDiagnosis',
             width: 200,
-            render: (t, r) => {
-                let res = ""
-                t.forEach((element, index) => {
-                    res = res + `${index == 0 ? "" : "、"}` + getDictNameByCode(dictionaryMap, "0015", element)
-                });
-                return res
-            }
+            // render: (t, r) => {
+            //     let res = ""
+            //     t.forEach((element, index) => {
+            //         res = res + `${index == 0 ? "" : "、"}` + getDictNameByCode(dictionaryMap, "0015", element)
+            //     });
+            //     return res
+            // }
         },
         {
             title: '入院时间',
@@ -66,26 +66,26 @@ const columns = ( dictionaryMap) => {
             dataIndex: 'allergy',
             key: 'allergy',
             width: 200,
-            render: (t, r) => {
-                let res = ""
-                t.forEach((element, index) => {
-                    res = res + `${index == 0 ? "" : "、"}` + getDictNameByCode(dictionaryMap, "0008", element)
-                });
-                return res
-            }
+            // render: (t, r) => {
+            //     let res = ""
+            //     t.forEach((element, index) => {
+            //         res = res + `${index == 0 ? "" : "、"}` + getDictNameByCode(dictionaryMap, "0008", element)
+            //     });
+            //     return res
+            // }
         },
         {
             title: '既往史',
             dataIndex: 'previousHistory',
             key: 'previousHistory',
             width: 200,
-            render: (t, r) => {
-                let res = ""
-                t.forEach((element, index) => {
-                    res = res + `${index == 0 ? "" : "、"}` + getDictNameByCode(dictionaryMap, "0009", element)
-                });
-                return res
-            }
+            // render: (t, r) => {
+            //     let res = ""
+            //     t.forEach((element, index) => {
+            //         res = res + `${index == 0 ? "" : "、"}` + getDictNameByCode(dictionaryMap, "0009", element)
+            //     });
+            //     return res
+            // }
         },
         {
             title: '身份证号',
@@ -103,11 +103,11 @@ const columns = ( dictionaryMap) => {
             title: '关系',
             dataIndex: 'relation',
             key: 'relation',
-            width: 100,
-            render: (t, r) => {
-                let res =getDictNameByCode(dictionaryMap, "0010", t)
-                 return res
-             }
+            width: 150,
+            // render: (t, r) => {
+            //     let res =getDictNameByCode(dictionaryMap, "0010", t)
+            //      return res
+            //  }
         },
         {
             title: '联系电话',

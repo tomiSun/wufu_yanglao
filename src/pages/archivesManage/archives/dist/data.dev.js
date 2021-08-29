@@ -52,13 +52,13 @@ var columns = function columns(edit, dictionaryMap) {
     dataIndex: 'relation',
     key: 'relation',
     width: 120,
-    render: function render(t, r) {
-      var data = dictionaryMap["0010"];
-      var res = data.find(function (item) {
-        return item.dictCode == t;
-      });
-      return !!res ? res['dictName'] : t;
-    }
+    // render: function render(t, r) {
+    //   var data = dictionaryMap["0010"];
+    //   var res = data.find(function (item) {
+    //     return item.dictCode == t;
+    //   });
+    //   return !!res ? res['dictName'] : t;
+    // }
   }, {
     title: '创建时间',
     dataIndex: 'createTime',

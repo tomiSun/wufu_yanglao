@@ -30,9 +30,9 @@ var columns = function columns(edit, dictionaryMap) {
     title: '诊断',
     dataIndex: 'hospitalDiagnosis',
     key: 'hospitalDiagnosis',
-    render: function render(t, r) {
-      return (0, _common.getDictNameByCode)(dictionaryMap, "0015", t);
-    }
+    // render: function render(t, r) {
+    //   return (0, _common.getDictNameByCode)(dictionaryMap, "0015", t);
+    // }
   }, {
     title: '带药日期',
     dataIndex: 'takeMedicineDate',

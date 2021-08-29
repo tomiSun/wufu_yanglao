@@ -195,6 +195,7 @@ export default function IndexPage(props) {
       <>
         <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 10 }}>
           <RangePicker
+            allowClear={false}
             defaultValue={[moment(new Date(), dateFormat), moment(new Date(), dateFormat)]}
             picker={pickerType}
             locale={{ default: 'zh-CN' }}

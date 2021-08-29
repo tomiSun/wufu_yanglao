@@ -206,11 +206,12 @@ const Archives = (props) => {
                 <Input />
               </Form.Item>
               <Form.Item name={'relation'} label="关系" initialValue={"0001"}>
-                <Select style={{ width: "100%" }} defaultValue="0001">
+                {/* <Select style={{ width: "100%" }} defaultValue="0001">
                   {dictionaryMap?.['0010'].map(item => {
                     return <Option value={item['dictCode']} >{item['dictName']}</Option>
                   })}
-                </Select>
+                </Select> */}
+                 <Input />
               </Form.Item>
               <Form.Item name={'contactNumber'} label="联系电话" rules={[{ required: true }]}>
                 <Input />

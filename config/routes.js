@@ -113,7 +113,7 @@ export default [
             path: '/archivesManage',
             routes: [
               {
-                name: '老人档案',
+                name: '入院登记',
                 icon: 'smile',
                 path: '/archivesManage/archives/index',
                 component: './archivesManage/archives/index',
@@ -158,7 +158,7 @@ export default [
             path: '/registration',
             routes: [
               {
-                name: '入院办理',
+                name: '入科登记',
                 icon: 'smile',
                 path: '/registration/inHospitalRegister/index',
                 component: './registration/inHospitalRegister/index',

@@ -126,7 +126,7 @@ const InHospitalRegister = (props) => {
   const renderSearch = () => {
     return (
       <div>
-        <Form onFinish={() => {}} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
+        <Form onFinish={() => { }} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
           <Form.Item label="姓名" name={'name'}>
             <Input size={'small'} allowClear />
           </Form.Item>
@@ -322,9 +322,8 @@ const InHospitalRegister = (props) => {
     let resData = res['data'];
     let list = resData?.map((item) => {
       return {
-        label: `${item['buildingName'] || '#'}-${item['floorName'] || '#'}-${
-          item['roomName'] || '#'
-        }-${item['bedName'] || '#'}`,
+        label: `${item['buildingName'] || '#'}-${item['floorName'] || '#'}-${item['roomName'] || '#'
+          }-${item['bedName'] || '#'}`,
         value: `${item['buildingCode']}-${item['floorCode']}-${item['roomCode']}-${item['bedCode']}`,
         disabled: !!item['isUsed'],
       };
@@ -357,7 +356,7 @@ const InHospitalRegister = (props) => {
   const renderMoadl = () => {
     return (
       <Modal
-        title="入院登记"
+        title="入科登记"
         visible={modalVisible}
         onOk={() => {
           setModalVisible(false);
@@ -378,7 +377,7 @@ const InHospitalRegister = (props) => {
             validateMessages={validateMessages}
             style={{ marginRight: 60, marginTop: 20 }}
           >
-            <Form.Item name={'name'} label="姓名" rules={[{ required: true }]}>
+            <Form.Item name={'name'} label="姓名" required>
               <Select
                 showSearch
                 placeholder="姓名"
@@ -484,18 +483,14 @@ const InHospitalRegister = (props) => {
               rules={[{ required: true }]}
               initialValue={'0001'}
             >
-              <Select defaultValue="0001" onChange={() => {}}>
+              <Select defaultValue="0001" onChange={() => { }}>
                 {dictionaryMap?.['0011'].map((item) => {
                   return <Option value={item['dictCode']}>{item['dictName']}</Option>;
                 })}
               </Select>
             </Form.Item>
             <Form.Item name={'hospitalDiagnosis'} label="入院诊断">
-              <Select mode="multiple">
-                {dictionaryMap?.['0015'].map((item) => {
-                  return <Option value={item['dictCode']}>{item['dictName']}</Option>;
-                })}
-              </Select>
+              <Input />
             </Form.Item>
             <Form.Item name={'admissionTime'} label="入院时间" initialValue={moment(new Date())}>
               <DatePicker style={{ width: '100%' }} />
@@ -504,26 +499,28 @@ const InHospitalRegister = (props) => {
               <DatePicker style={{ width: '100%' }} />
             </Form.Item>
             <Form.Item name={'allergy'} label="过敏史">
-              <Select
+              {/* <Select
                 mode="multiple"
                 // defaultValue={["0001", "0002"]}
-                onChange={() => {}}
+                onChange={() => { }}
               >
                 {dictionaryMap?.['0008'].map((item) => {
                   return <Option value={item['dictCode']}>{item['dictName']}</Option>;
                 })}
-              </Select>
+              </Select> */}
+              <Input />
             </Form.Item>
             <Form.Item name={'previousHistory'} label="既往史">
-              <Select
+              {/* <Select
                 mode="multiple"
                 // defaultValue={["0001", "0002"]}
-                onChange={() => {}}
+                onChange={() => { }}
               >
                 {dictionaryMap?.['0009'].map((item) => {
                   return <Option value={item['dictCode']}>{item['dictName']}</Option>;
                 })}
-              </Select>
+              </Select> */}
+               <Input />
             </Form.Item>
             <Form.Item name={'idCard'} label="身份证号" rules={[{ required: true }]}>
               <Input />
@@ -537,11 +534,12 @@ const InHospitalRegister = (props) => {
               rules={[{ required: true }]}
               initialValue={'0001'}
             >
-              <Select defaultValue={'0001'} onChange={() => {}}>
+              {/* <Select defaultValue={'0001'} onChange={() => { }}>
                 {dictionaryMap?.['0010'].map((item) => {
                   return <Option value={item['dictCode']}>{item['dictName']}</Option>;
                 })}
-              </Select>
+              </Select> */}
+               <Input />
             </Form.Item>
             <Form.Item name={'contactNumber'} label="联系电话" rules={[{ required: true }]}>
               <Input />
@@ -644,7 +642,7 @@ const InHospitalRegister = (props) => {
           setModalVisible(false);
         }}
       >
-         修改
+        修改
       </Button>
     );
     let arrEdit = [editBtn];

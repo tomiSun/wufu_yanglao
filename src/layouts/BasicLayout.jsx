@@ -32,7 +32,7 @@ const menuDataRender = (menuList) => {
   // 只有admin账号显示员工信息路由
   if (sessionStorage.getItem('employeeCode') !== 'admin') {
     menuList = menuList.filter(
-      (it) => !['/basicSetting/dictionary', '/basicSetting/staffInfo'].includes(it.path),
+      (it) => !['/basicSetting/dictionary', '/basicSetting/staffInfo','/basicSetting'].includes(it.path),
     );
   }
   return menuList.map((item) => {

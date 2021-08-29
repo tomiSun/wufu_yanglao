@@ -56,13 +56,13 @@ var columns = function columns(edit, dictionaryMap) {
     dataIndex: 'hospitalDiagnosis',
     key: 'hospitalDiagnosis',
     width: 200,
-    render: function render(t, r) {
-      var res = "";
-      t.forEach(function (element, index) {
-        res = res + "".concat(index == 0 ? "" : "、") + (0, _common.getDictNameByCode)(dictionaryMap, "0015", element);
-      });
-      return res;
-    }
+    // render: function render(t, r) {
+    //   var res = "";
+    //   t.forEach(function (element, index) {
+    //     res = res + "".concat(index == 0 ? "" : "、") + (0, _common.getDictNameByCode)(dictionaryMap, "0015", element);
+    //   });
+    //   return res;
+    // }
   }, {
     title: '入院时间',
     dataIndex: 'admissionTime',
@@ -90,25 +90,25 @@ var columns = function columns(edit, dictionaryMap) {
     dataIndex: 'allergy',
     key: 'allergy',
     width: 200,
-    render: function render(t, r) {
-      var res = "";
-      t.forEach(function (element, index) {
-        res = res + "".concat(index == 0 ? "" : "、") + (0, _common.getDictNameByCode)(dictionaryMap, "0008", element);
-      });
-      return res;
-    }
+    // render: function render(t, r) {
+    //   var res = "";
+    //   t.forEach(function (element, index) {
+    //     res = res + "".concat(index == 0 ? "" : "、") + (0, _common.getDictNameByCode)(dictionaryMap, "0008", element);
+    //   });
+    //   return res;
+    // }
   }, {
     title: '既往史',
     dataIndex: 'previousHistory',
     key: 'previousHistory',
     width: 200,
-    render: function render(t, r) {
-      var res = "";
-      t.forEach(function (element, index) {
-        res = res + "".concat(index == 0 ? "" : "、") + (0, _common.getDictNameByCode)(dictionaryMap, "0009", element);
-      });
-      return res;
-    }
+    // render: function render(t, r) {
+    //   var res = "";
+    //   t.forEach(function (element, index) {
+    //     res = res + "".concat(index == 0 ? "" : "、") + (0, _common.getDictNameByCode)(dictionaryMap, "0009", element);
+    //   });
+    //   return res;
+    // }
   }, {
     title: '身份证号',
     dataIndex: 'idCard',
@@ -123,11 +123,11 @@ var columns = function columns(edit, dictionaryMap) {
     title: '关系',
     dataIndex: 'relation',
     key: 'relation',
-    width: 100,
-    render: function render(t, r) {
-      var res = (0, _common.getDictNameByCode)(dictionaryMap, "0010", t);
-      return res;
-    }
+    width: 150,
+    // render: function render(t, r) {
+    //   var res = (0, _common.getDictNameByCode)(dictionaryMap, "0010", t);
+    //   return res;
+    // }
   }, {
     title: '联系电话',
     dataIndex: 'contactNumber',

@@ -67,9 +67,9 @@ const columns = (edit, dictionaryMap) => {
             dataIndex: 'hospitalDiagnosis',
             key: 'hospitalDiagnosis',
             width: 200,
-            render: (t, r) => {
-                return getDictNameByCode(dictionaryMap, "0015", t)
-            }
+            // render: (t, r) => {
+            //     return getDictNameByCode(dictionaryMap, "0015", t)
+            // }
         },
         {
             title: '责任人',

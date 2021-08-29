@@ -67,9 +67,9 @@ var columns = function columns(edit, dictionaryMap) {
     dataIndex: 'hospitalDiagnosis',
     key: 'hospitalDiagnosis',
     width: 200,
-    render: function render(t, r) {
-      return (0, _common.getDictNameByCode)(dictionaryMap, "0015", t);
-    }
+    // render: function render(t, r) {
+    //   return (0, _common.getDictNameByCode)(dictionaryMap, "0015", t);
+    // }
   }, {
     title: '责任人',
     dataIndex: 'personInCharge',

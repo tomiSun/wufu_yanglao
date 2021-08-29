@@ -53,13 +53,13 @@ const columns = (edit, dictionaryMap) => {
             dataIndex: 'relation',
             key: 'relation',
             width: 120,
-            render: (t, r) => {
-                let data = dictionaryMap["0010"]
-                let res = data.find(item => {
-                    return item.dictCode == t
-                })
-                return !!res ? res['dictName'] : t
-            }
+            // render: (t, r) => {
+            //     let data = dictionaryMap["0010"]
+            //     let res = data.find(item => {
+            //         return item.dictCode == t
+            //     })
+            //     return !!res ? res['dictName'] : t
+            // }
         },
         {
             title: '创建时间',

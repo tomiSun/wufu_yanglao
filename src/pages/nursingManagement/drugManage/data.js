@@ -26,9 +26,9 @@ const columns = (edit, dictionaryMap) => {
             title: '诊断',
             dataIndex: 'hospitalDiagnosis',
             key: 'hospitalDiagnosis',
-            render: (t, r) => {
-                return getDictNameByCode(dictionaryMap, "0015", t)
-            }
+            // render: (t, r) => {
+            //     return getDictNameByCode(dictionaryMap, "0015", t)
+            // }
         },
         {
             title: '带药日期',
