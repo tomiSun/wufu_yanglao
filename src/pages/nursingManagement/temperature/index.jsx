@@ -41,12 +41,6 @@ import ReactDOM from 'react-dom';
 import { useReactToPrint } from 'react-to-print';
 export default () => {
   const TemperatureRef = useRef();
-  // const print = () => {
-  //   const dom = ReactDOM.findDOMNode(TemperatureRef.current).innerHTML;
-  //   let printDom = dom;
-  //   console.log('printDom: ', printDom);
-  //   printHtml(printDom, printStyle);
-  // };
   const print = useReactToPrint({
     content: () => TemperatureRef.current,
     pageStyle: printStyle,
@@ -56,10 +50,14 @@ export default () => {
   useEffect(() => {}, []);
   return (
     <div className="temperature">
-      <Temperature data={{}} ref={TemperatureRef} />
-      <Button type={'primary'} onClick={print}>
+      <Button
+        type={'primary'}
+        onClick={print}
+        style={{ position: 'absolute', right: '30px', top: '10px' }}
+      >
         打印
       </Button>
+      <Temperature data={{}} ref={TemperatureRef} />
     </div>
   );
 };
