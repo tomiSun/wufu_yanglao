@@ -237,6 +237,7 @@ export function drawSvgScale(oJson) {
  * 疼痛 tt 红色正方形
  * 口温 kw 蓝色实心圆
  * 腋温 yw 蓝色叉叉
+ * 耳温 ew 蓝色三角形
  * 肛温 gw 蓝色空心圆
  * 降温 jw 红色空心圆
  * 脉搏 mb 红色实心圆
@@ -251,7 +252,7 @@ export function showPointTuglie() {
     );
   }
 
-  let oArray = ['tt', 'kw', 'yw', 'gw', 'jw', 'mb', 'xl'];
+  let oArray = ['tt', 'kw', 'yw', 'ew', 'gw', 'jw', 'mb', 'xl'];
   //初始显示位置
   let initX = 16;
   let initTextX = 26;
@@ -273,6 +274,10 @@ export function showPointTuglie() {
         pTuglie.push(drawCross('yw', { x: initX, y: initY + i * 16 }, 4, 'blue', '腋温'));
         pTuglie.push(showText(initTextX, initTextY, '腋温'));
         break; //腋温
+      case 'ew':
+        pTuglie.push(drawCross('ew', { x: initX, y: initY + i * 16 }, 4, 'blue', '耳温'));
+        pTuglie.push(showText(initTextX, initTextY, '耳温'));
+        break; //耳温
       case 'gw':
         pTuglie.push(drawCircle('gw', { x: initX, y: initY + i * 16 }, 4, 'blue', '肛温', false));
         pTuglie.push(showText(initTextX, initTextY, '肛温'));
@@ -472,21 +477,6 @@ export function parseRePoint(pointData, curDate) {
   let leaveEvents = []; //缓存请假事件
   //绘制点、折线、脉搏短促
   let pointArray = [];
-  // let wdYSection = drawSvgScale({
-  //   markName: 'wd',
-  //   svgId: 'svgLeft',
-  //   x: '0.5',
-  //   beginKD: 35,
-  //   endKD: 42,
-  //   width: 10,
-  //   disKD: 1,
-  //   trRowBegin: 5,
-  //   trRowEnd: 40,
-  //   stepSide: false,
-  //   valueShow: true,
-  //   isShowdemarcate: false,
-  //   martchs: '40-35,15-40',
-  // }).ySection;
   let wdYSection = drawSvgScale({
     markName: 'wd',
     svgId: 'svgLeft',
@@ -502,21 +492,6 @@ export function parseRePoint(pointData, curDate) {
     isShowdemarcate: true,
     // martchs: '40-35,15-40',
   }).ySection;
-  // let mbYSection = drawSvgScale({
-  //   markName: 'mb',
-  //   svgId: 'svgRight',
-  //   x: '0',
-  //   beginKD: 40,
-  //   endKD: 180,
-  //   width: 10,
-  //   disKD: 20,
-  //   trRowBegin: 5,
-  //   trRowEnd: 40,
-  //   stepSide: false,
-  //   valueShow: true,
-  //   isShowdemarcate: false,
-  //   martchs: '140-40,15-40',
-  // }).ySection;
   let mbYSection = drawSvgScale({
     markName: 'mb',
     svgId: 'svgLeft',
@@ -727,6 +702,7 @@ export function parseRePoint(pointData, curDate) {
       let ttY = json[j].tt.y;
       //console.log("mb:"+mbY+"xl:"+xlY+"wd:"+wdY);
       let yw = json[j].wd.type === 'yw'; //腋温
+      let ew = json[j].wd.type === 'ew'; //腋温
       let kw = json[j].wd.type === 'kw'; //口温
       let gw = json[j].wd.type === 'gw'; //肛温
       //判断是否重合
@@ -760,6 +736,18 @@ export function parseRePoint(pointData, curDate) {
           '°C';
         pointArray.push(drawCircle('mb', { x: j, y: xlY }, 7, 'red', title, true));
         pointArray.push(drawCross('yw', { x: j, y: xlY }, 3, 'blue', title));
+      } else if (ismbxlwd && mbY === xlY && xlY === wdY && ew) {
+        //脉搏+心率+腋温[红圆+红圈+蓝叉]：红圈在外围（表示心率）、红圆在中间（表示脉搏）、蓝叉在中间红圆之上（表示腋温）
+        let title =
+          '脉搏：' +
+          json[j].xl.value +
+          '次，心率：' +
+          json[j].xl.value +
+          '次,腋温：' +
+          json[j].wd.value +
+          '°C';
+        pointArray.push(drawCircle('mb', { x: j, y: xlY }, 7, 'red', title, true));
+        pointArray.push(drawCross('ew', { x: j, y: xlY }, 3, 'blue', title));
       } else if (ismbxlwd && mbY === xlY && xlY === wdY && kw) {
         //脉搏+心率+口温[红圆+红圈+蓝圆]：红圈在外围（表示心率）、红圆在中间（表示脉搏）、蓝圆在中间红圆之上（表示口温）
         let title =
@@ -799,6 +787,27 @@ export function parseRePoint(pointData, curDate) {
         if (xlY && wdY) {
           pointArray.push(drawCircle('mb', { x: j, y: xlY }, 7, 'red', title, false));
           pointArray.push(drawCross('yw', { x: j, y: xlY }, 4, 'blue', title));
+        }
+        mbY &&
+          pointArray.push(
+            drawCircle(
+              'mb',
+              {
+                x: j,
+                y: mbY,
+              },
+              4,
+              'red',
+              '脉搏：' + json[j].mb.value + '次',
+              true,
+            ),
+          ); //脉搏
+      } else if (isxlwd && xlY === wdY && ew) {
+        //心率+腋温[红圈+蓝叉]]
+        let title = '心率：' + json[j].xl.value + '次，腋温：' + json[j].wd.value + '°C';
+        if (xlY && wdY) {
+          pointArray.push(drawCircle('mb', { x: j, y: xlY }, 7, 'red', title, false));
+          pointArray.push(drawCross('ew', { x: j, y: xlY }, 4, 'blue', title));
         }
         mbY &&
           pointArray.push(
@@ -862,6 +871,27 @@ export function parseRePoint(pointData, curDate) {
         if (mbY && wdY) {
           pointArray.push(drawCircle('mb', { x: j, y: mbY }, 7, 'red', title, false));
           pointArray.push(drawCross('yw', { x: j, y: mbY }, 4, 'blue', title));
+        }
+        xlY &&
+          pointArray.push(
+            drawCircle(
+              'xl',
+              {
+                x: j,
+                y: xlY,
+              },
+              4,
+              'red',
+              '心率：' + json[j].xl.value + '次',
+              false,
+            ),
+          ); //心率
+      } else if (ismbwd && mbY === wdY && ew) {
+        //脉搏+腋温[红圆+蓝叉]
+        let title = '脉搏：' + json[j].mb.value + '次，腋温：' + json[j].wd.value + '°C';
+        if (mbY && wdY) {
+          pointArray.push(drawCircle('mb', { x: j, y: mbY }, 7, 'red', title, false));
+          pointArray.push(drawCross('ew', { x: j, y: mbY }, 4, 'blue', title));
         }
         xlY &&
           pointArray.push(
@@ -956,6 +986,20 @@ export function parseRePoint(pointData, curDate) {
                   '腋温：' + point.wd.value + '°C',
                 ),
               ); //温度
+          } else if (point.wd.type === 'ew') {
+            wdY &&
+              pointArray.push(
+                drawCross(
+                  'ew',
+                  {
+                    x: j,
+                    y: wdY,
+                  },
+                  4,
+                  'blue',
+                  '耳温：' + point.wd.value + '°C',
+                ),
+              ); //耳度
           } else if (point.wd.type === 'gw') {
             wdY &&
               pointArray.push(
@@ -1297,7 +1341,7 @@ function getXY(point, beginDate, originY, maxY, ySection, type) {
   let yPx = Math.round(Yheight + disTop - Ypxs * (value - originY));
   return {
     x: xPx,
-    y: yPx,
+    y: yPx - 15,
     value: value,
     type: point.type,
     point: point,

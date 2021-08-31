@@ -35,12 +35,31 @@ const { TextArea } = Input;
 import moment from 'moment';
 import { Temperature } from './components/temperatureChart/temperature';
 import './styles/app.less';
+import printHtml from '@/utils/print.js';
+import { printStyle } from './printStyle';
+import ReactDOM from 'react-dom';
+import { useReactToPrint } from 'react-to-print';
 export default () => {
+  const TemperatureRef = useRef();
+  // const print = () => {
+  //   const dom = ReactDOM.findDOMNode(TemperatureRef.current).innerHTML;
+  //   let printDom = dom;
+  //   console.log('printDom: ', printDom);
+  //   printHtml(printDom, printStyle);
+  // };
+  const print = useReactToPrint({
+    content: () => TemperatureRef.current,
+    pageStyle: printStyle,
+  });
+
   // 初始化
   useEffect(() => {}, []);
   return (
     <div className="temperature">
-      <Temperature data={{}} />
+      <Temperature data={{}} ref={TemperatureRef} />
+      <Button type={'primary'} onClick={print}>
+        打印
+      </Button>
     </div>
   );
 };

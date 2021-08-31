@@ -39,7 +39,7 @@ export class PatientInfo extends Component {
           </tr>
           <tr>
             <td colSpan="6">
-              <h3>体温表</h3>
+              <h1>体温表</h1>
             </td>
           </tr>
           <tr className="percent4">

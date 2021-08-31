@@ -1,6 +1,6 @@
 .temperature{
 @border: #BFBFBF;
-@borderB: #888;
+@borderB: #000;
 @size: 11px;
 //定义字体
 @font-family: "microsoft yahei", "Helvetica Neue For Number", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -72,7 +72,7 @@ html,body,#main{
     top: 0;
     left: 0;
     z-index: 100;
-    border: 1px solid @borderB;
+    // border: 1px solid @borderB;
     border-bottom: none;
     overflow: hidden;
   }
@@ -121,12 +121,13 @@ html,body,#main{
     line-height: 12px;
     height: 12px;
     text-indent: 4px;
-    max-width: calc(~"100% - 83px");
+    max-width: calc(~"100% - 56px");
   }
 
   .btitle {
     float: left;
     text-indent: 8px;
+    max-width: 56px;
   }
   tr.percent4 td {
     width: 25%;
@@ -170,7 +171,7 @@ html,body,#main{
     overflow-y: auto;
     overflow-x: hidden;
     border: 1px solid @borderB;
-    border-top: none;
+    // border-top: none;
   }
   .flow_div::-webkit-scrollbar {
     width: 0;
@@ -195,7 +196,7 @@ html,body,#main{
 
   table.tableSvg tr:nth-of-type(1) td:nth-of-type(1),
   table.tableSvg tr:nth-of-type(1) td:last-of-type {
-    border-bottom: 1px solid @borderB;
+    // border-bottom: 1px solid @borderB;
   }
 
   table.tableSvg tr:last-of-type td {
@@ -207,7 +208,7 @@ html,body,#main{
   }
 
   table.tableSvg tr.height td:last-of-type {
-    // border-right: 1px solid red;
+    border-right: 1px solid red;
   }
 
   table.tableSvg tr:nth-of-type(1) td:last-of-type {
@@ -234,15 +235,15 @@ html,body,#main{
   }
 
   tr.height td {
-    border: 1px solid @border;
+    // border: 1px solid @border;
   }
 
   tr td.borderR, tr.height td.borderR {
-    border-right: 1px solid red;
+    border-right: 1px solid @borderB;
   }
 
   tr.height.borderT td, tr.borderT td {
-    border-top: 1px solid red;
+    // border-top: 1px solid red;
   }
 
   tr.height.borderB td,
@@ -261,9 +262,9 @@ html,body,#main{
 
   #svgCenter {
     position: absolute;
-    top: 0;
+    top: 15px;
     left: 100px;
-    width: calc(~"100% - 160px");
+    width: calc(~"100% - 100px");
     height: 100%;
   }
 
@@ -348,5 +349,9 @@ html,body,#main{
   line-height: 15px !important;
   min-height: 15px !important;
   padding: 5px 10px !important;
+}
+@page{
+  margin:0;
+  padding:0;
 }
 }

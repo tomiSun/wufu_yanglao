@@ -143,13 +143,13 @@ export class Temperature extends Component {
         // 脉搏
         mb: [
           {
-            dataTime: '2017-06-29 02:00:00',
-            date: '2017-06-29',
-            hour: 2,
+            dataTime: '2017-06-28 22:00:00',
+            date: '2017-06-28',
+            hour: 22,
             mbValue: '',
             phValue: '',
             type: '',
-            value: '180',
+            value: '88',
             xlValue: '',
           },
           {
@@ -259,12 +259,12 @@ export class Temperature extends Component {
         // 温度
         wd: [
           {
-            dataTime: '2017-06-29 02:00:00',
-            date: '2017-06-29',
-            hour: 2,
+            dataTime: '2017-06-29 22:00:00',
+            date: '2017-06-28',
+            hour: 22,
             mbValue: '',
             phValue: '36.5',
-            type: 'yw', // 肛温
+            type: 'ew', // 肛温
             value: '37.2',
             xlValue: '',
           },
@@ -274,7 +274,7 @@ export class Temperature extends Component {
             hour: 6,
             mbValue: '',
             phValue: '',
-            type: 'yw', // 腋温
+            type: 'ew', // 腋温
             value: '37',
             xlValue: '',
           },
@@ -284,7 +284,7 @@ export class Temperature extends Component {
             hour: 14,
             mbValue: '',
             phValue: '',
-            type: 'yw', // 肛温
+            type: 'ew', // 肛温
             value: '37.5',
             xlValue: '',
           },
@@ -294,7 +294,7 @@ export class Temperature extends Component {
             hour: 18,
             mbValue: '',
             phValue: '',
-            type: 'yw', // 口温
+            type: 'ew', // 口温
             value: '37.4',
             xlValue: '',
           },
@@ -304,7 +304,7 @@ export class Temperature extends Component {
             hour: 22,
             mbValue: '',
             phValue: '',
-            type: 'yw', // 口温
+            type: 'ew', // 口温
             value: '36.8',
             xlValue: '',
           },

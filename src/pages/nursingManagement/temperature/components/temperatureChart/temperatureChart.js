@@ -123,9 +123,8 @@ export class TemperatureChart extends Component {
       dayMap,
       loading,
     } = this.state;
-    console.log('render:' + beginDate);
     return (
-      <div className="temperature-chart" style={{ width: '791px' }}>
+      <div className="temperature-chart" style={{ width: '732px' }}>
         <Spin spinning={loading}>
           {/* <div className="footBtn">
             <DatePicker
@@ -161,6 +160,7 @@ export class TemperatureChart extends Component {
                 <GridTable breathingList={breathingList} xyList={xyList} dayMap={dayMap} />
               </table>
             </div>
+            <div>注：图中“▲”表示耳温</div>
           </div>
         </Spin>
       </div>

@@ -13,31 +13,31 @@ export class SvgCenter extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps, nextState) {
-    if (nextProps.curDate !== nextState.curDate || nextProps.data !== nextState.data) {
-      this.setState({
-        curDate: nextProps.curDate,
-        data: nextProps.data,
-      });
-    }
-  }
+  // componentWillReceiveProps(nextProps, nextState) {
+  //   if (nextProps.curDate !== nextState.curDate || nextProps.data !== nextState.data) {
+  //     this.setState({
+  //       curDate: nextProps.curDate,
+  //       data: nextProps.data,
+  //     });
+  //   }
+  // }
 
   render() {
     let { curDate, data } = this.state;
     return (
       <svg id="svgCenter" style={{ height: 15 * 40 }}>
         {/* 绘制特殊事假（文字） */}
-        {data.eventDatas &&
+        {/* {data.eventDatas &&
           curDate &&
           drawEvent(data.eventDatas, curDate).map((v, i) => {
             return v;
-          })}
+          })} */}
         {/* 绘制呼吸 */}
-        {data.hzfx &&
+        {/* {data.hzfx &&
           curDate &&
           drawHzhx(data.hzfx, curDate).map((v, i) => {
             return v;
-          })}
+          })} */}
         {curDate &&
           parseRePoint(data, curDate).map((v, i) => {
             return v;

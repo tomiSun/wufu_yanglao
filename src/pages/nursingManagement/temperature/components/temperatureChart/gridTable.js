@@ -149,7 +149,7 @@ export class GridTable extends Component {
         {gridArray.map((tr, i) => {
           return (
             <tr
-              className={classNames('height', (i + 1) % 5 === 0 && i < 41 ? 'borderB' : '')}
+              className={classNames('height', (i + 5) % 5 === 0 && i < 41 ? 'borderB' : '')}
               key={i}
             >
               {tr.map((td, j) => {
