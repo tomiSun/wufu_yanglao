@@ -237,6 +237,12 @@ export default [
                 path: '/nursingManagement/leaveManagement/index',
                 component: './nursingManagement/leaveManagement',
               },
+              // {
+              //   name: '三测单', //三测单
+              //   icon: 'smile',
+              //   path: '/nursingManagement/temperature',
+              //   component: './nursingManagement/temperature',
+              // },
             ],
           },
           {

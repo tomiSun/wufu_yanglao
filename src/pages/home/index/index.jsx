@@ -172,15 +172,10 @@ export default () => {
                         </div>
                       </div>
                       <div className={styles.row}>
-                        <div className={styles.item}>
-                          入院诊断：{gethospitalDiagnosiNames(bed?.hospitalDiagnosis)}
-                        </div>
+                        <div className={styles.item}>入院诊断：{bed?.hospitalDiagnosis || ''}</div>
                       </div>
                       <div className={styles.row}>
-                        {/* TODO */}
-                        <div className={styles.itemTwo}>
-                          过敏史：{getAllergyNames(bed?.allergy)}
-                        </div>
+                        <div className={styles.itemTwo}>过敏史：{bed?.allergy || ''}</div>
                       </div>
                     </Panel>
                   ) : (

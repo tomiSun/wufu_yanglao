@@ -79,6 +79,7 @@
     "react-fittext": "^1.0.0",
     "react-helmet-async": "^1.0.4",
     "react-router": "^4.3.1",
+    "react-to-print": "^2.13.0",
     "umi": "^3.5.15",
     "umi-request": "^1.0.8",
     "use-merge-value": "^1.0.1",
@@ -116,7 +117,7 @@
     "puppeteer-core": "^7.0.1",
     "stylelint": "^13.0.0",
     "typescript": "^4.0.3",
-    "yunyi-component": "^0.1.8",
+    "yunyi-component": "^0.1.13",
     "yunyi-convert": "0.0.2"
   },
   "engines": {
