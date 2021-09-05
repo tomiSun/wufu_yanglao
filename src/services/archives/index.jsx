@@ -13,7 +13,6 @@ export async function baseArchiveQuery(params) {
     data: params
   });
 };
-
 export async function baseArchiveUpdate(params) {
   return request('/baseArchive/update', {
     method: 'POST',
@@ -23,6 +22,13 @@ export async function baseArchiveUpdate(params) {
 export async function baseArchiveInsert(params) {
   return request('/baseArchive/add', {
     method: 'POST',
+    data: params
+  });
+};
+//模糊查询
+export async function baseArchiveQueryList(params) {
+  return request(`/baseArchive/baseArchiveList?name=${params['name']}`, {
+    method: 'GET',
     data: params
   });
 };

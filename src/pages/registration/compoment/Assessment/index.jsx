@@ -44,13 +44,13 @@ const Assessment = (props) => {
     const [mode, setMode] = useState("add");//模式是新增还是编辑 
     //form
     const [hearingForm] = Form.useForm();//听力判断
-    const [visualForm] = Form.useForm();//视力判断
-    const [pressureSoreForm] = Form.useForm();//压疮判断
-    const [chokingForm] = Form.useForm();//噎食判断
-    const [communicateForm] = Form.useForm();//沟通 
+    const [visionForm] = Form.useForm();//视力判断
+    const [pressureSoresForm] = Form.useForm();//压疮判断
+    const [chokeFeedForm] = Form.useForm();//噎食判断
+    const [communicationForm] = Form.useForm();//沟通 
     const [fallForm] = Form.useForm();//跌倒风险
-    const [commitSuicideForm] = Form.useForm();//自杀风险
-    const [leaveForm] = Form.useForm();//出走风险
+    const [suicideForm] = Form.useForm();//自杀风险
+    const [runAwayForm] = Form.useForm();//出走风险
     //更新时的ID
     const [updateId, setUpdateId] = useState("")
     useEffect(() => {
@@ -61,17 +61,23 @@ const Assessment = (props) => {
         let resQuery = await assessmentQuery({ "businessNo": selectRowData['businessNo'] })
         if (resQuery['code'] == 200 && !!resQuery['data']) {
             let id = resQuery['data']['id']
-            debugger
             let item1 = formartItems(resQuery['data']['hearingItems'])
-            debugger
+            let item2 = formartItems(resQuery['data']['visionItems'])
+            let item3 = formartItems(resQuery['data']['pressureSoresItems'])
+            let item4 = formartItems(resQuery['data']['communicationItems'])
+            let item5 = formartItems(resQuery['data']['fallItems'])
+            let item6 = formartItems(resQuery['data']['suicideItems'])
+            let item7 = formartItems(resQuery['data']['runAwayItems'])
+            let item8 = formartItems(resQuery['data']['chokeFeedItems'])
+       
             hearingForm.setFieldsValue({ ...resQuery['data'], ...item1 })
-            visualForm.setFieldsValue(resQuery['data'])
-            pressureSoreForm.setFieldsValue(resQuery['data'])
-            chokingForm.setFieldsValue(resQuery['data'])
-            communicateForm.setFieldsValue(resQuery['data'])
-            fallForm.setFieldsValue(resQuery['data'])
-            commitSuicideForm.setFieldsValue(resQuery['data'])
-            leaveForm.setFieldsValue(resQuery['data'])
+            visionForm.setFieldsValue({ ...resQuery['data'], ...item2 })
+            pressureSoresForm.setFieldsValue({ ...resQuery['data'], ...item3 })
+            chokeFeedForm.setFieldsValue({ ...resQuery['data'], ...item8 })
+            communicationForm.setFieldsValue({ ...resQuery['data'], ...item4 })
+            fallForm.setFieldsValue({ ...resQuery['data'], ...item5 })
+            suicideForm.setFieldsValue({ ...resQuery['data'], ...item6 })
+            runAwayForm.setFieldsValue({ ...resQuery['data'], ...item7 })
             setUpdateId(id)
             setMode("edit")
         } else {
@@ -86,7 +92,6 @@ const Assessment = (props) => {
         arr.forEach(element => {
             res[element.name] = Number(element.point)
         });
-        debugger
         return res
     }
     //听力
@@ -105,9 +110,9 @@ const Assessment = (props) => {
                 name: "在大会集中听讲",
                 point: "0",
                 plainOptions: [
-                    { label: '清楚0分', value: 0 },
-                    { label: '困难1分', value: 1 },
-                    { label: '听不到2分', value: 2 }],
+                    { label: '清楚0分', value: 0, },
+                    { label: '困难1分', value: 1, },
+                    { label: '听不到2分', value: 2, }],
                 onChange: (data) => { console.log(data) }
             },
             {
@@ -168,10 +173,10 @@ const Assessment = (props) => {
         }
     }
     //视力
-    const visualInfo = {
+    const visionInfo = {
         title: "视力判断",
         extra: "评判标准：清楚：<4分； 部分清楚：4～8分；完全看不见：>8分",
-        form: visualForm,
+        form: visionForm,
         judge: [4, 8],
         judgeString: ["清楚", "部分清楚", "完全看不见"],
         data: {
@@ -230,7 +235,7 @@ const Assessment = (props) => {
     const pressureInfo = {
         title: "压疮风险",
         extra: "评判标准：低风险：<5分；中度风险：5～10分；高度风险：>10分",
-        form: pressureSoreForm,
+        form: pressureSoresForm,
         judge: [5, 10],
         judgeString: ["低风险", "中度风险", "高度风险"],
         data: {
@@ -295,10 +300,10 @@ const Assessment = (props) => {
         }
     }
     //噎食判断
-    const chokingInfo = {
+    const chokeFeedInfo = {
         title: "噎食风险",
         extra: "评判标准：无：<2分；有：>=2分",
-        form: chokingForm,
+        form: chokeFeedForm,
         judge: [2],
         judgeString: ["无", "有"],
         data: {
@@ -328,19 +333,19 @@ const Assessment = (props) => {
                 name: "口腔情况",
                 point: "0",
                 plainOptions: [{ label: '正常0分', value: 0 },
-                { label: '佩戴义齿2分', value: 2 },
-                { label: '口腔疾患2分', value: 2 },
-                { label: '缺齿、无牙2分', value: 2 },
+                { label: '佩戴义齿2分', value: 21 },
+                { label: '口腔疾患2分', value: 22 },
+                { label: '缺齿、无牙2分', value: 23 },
                 ],
                 onChange: (data) => { console.log(data) }
             }]
         }
     }
     //沟通 
-    const communicateInfo = {
+    const communicationInfo = {
         title: "沟通",
         extra: "评判标准：正常：<5分；沟通障碍：5～10分；完全不能沟通：>10分",
-        form: communicateForm,
+        form: communicationForm,
         judge: [5, 10],
         judgeString: ["正常", "沟通障碍", "完全不能沟通"],
         data: {
@@ -475,10 +480,10 @@ const Assessment = (props) => {
         }
     }
     //自杀
-    const commitSuicideInfo = {
+    const suicideInfo = {
         title: "自杀风险",
         extra: "评判标准：低风险：<4分；中度风险：4～8分；高度风险：>8分",
-        form: commitSuicideForm,
+        form: suicideForm,
         judge: [4, 8],
         judgeString: ["低风险", "中度风险", "高度风险"],
         data: {
@@ -523,10 +528,10 @@ const Assessment = (props) => {
         }
     }
     //出走
-    const leaveInfo = {
+    const runAwayInfo = {
         title: "出走",
         extra: "评判标准：低风险：<3分；中度风险：3～8分；高度风险：>8分",
-        form: leaveForm,
+        form: runAwayForm,
         judge: [3, 8],
         judgeString: ["低风险", "中度风险", "高度风险"],
         data: {
@@ -571,15 +576,7 @@ const Assessment = (props) => {
             ]
         }
     }
-    const isNumber = (val) => {
-        var regPos = /^\d+(\.\d+)?$/; //非负浮点数
-        var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
-        if (regPos.test(val) || regNeg.test(val)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+
     const handleAssessmentChange = (e, item, info, key) => {
         let data = JSON.parse(JSON.stringify(info.form.getFieldsValue()));
         let arr = Object.entries(data).filter((it, value) => {
@@ -587,7 +584,7 @@ const Assessment = (props) => {
                 return it[1]
             }
         })
-        let total = arr.reduce((total, num) => { return total + Number(num[1]) }, 0);
+        let total = arr.reduce((total, num) => { return total + Number(num[1].toString(10).split("")[0]) }, 0);
         const findDegree = (num, arr) => {
             if (arr.length > 1) {
                 if (num < arr[0]) return 0;
@@ -609,7 +606,6 @@ const Assessment = (props) => {
         let itemarr = Object.entries(data).filter(its => {
             if (its[0].indexOf(items) > -1) return its
         })
-        debugger
         let itemRes = itemarr.map(it => {
             return {
                 "name": it[0],
@@ -668,13 +664,13 @@ const Assessment = (props) => {
             >
                 <div style={{ height: 700, overflow: "auto" }}>
                     {renderBasicCard(hearInfo)}
-                    {renderBasicCard(visualInfo)}
+                    {renderBasicCard(visionInfo)}
                     {renderBasicCard(pressureInfo)}
-                    {renderBasicCard(chokingInfo)}
-                    {renderBasicCard(communicateInfo)}
+                    {renderBasicCard(chokeFeedInfo)}
+                    {renderBasicCard(communicationInfo)}
                     {renderBasicCard(fallFInfo)}
-                    {renderBasicCard(commitSuicideInfo)}
-                    {renderBasicCard(leaveInfo)}
+                    {renderBasicCard(suicideInfo)}
+                    {renderBasicCard(runAwayInfo)}
                 </div>
             </Modal >
         )
@@ -694,13 +690,13 @@ const Assessment = (props) => {
                     sex: "男",
                     bedName: "101",
                     ...hearingForm.getFieldsValue(),
-                    ...visualForm.getFieldsValue(),
-                    ...pressureSoreForm.getFieldsValue(),
-                    ...chokingForm.getFieldsValue(),
-                    ...communicateForm.getFieldsValue(),
+                    ...visionForm.getFieldsValue(),
+                    ...pressureSoresForm.getFieldsValue(),
+                    ...chokeFeedForm.getFieldsValue(),
+                    ...communicationForm.getFieldsValue(),
                     ...fallForm.getFieldsValue(),
-                    ...commitSuicideForm.getFieldsValue(),
-                    ...leaveForm.getFieldsValue()
+                    ...suicideForm.getFieldsValue(),
+                    ...runAwayForm.getFieldsValue()
                 }
                 let res3 = await assessmentSave(addParam)
                 message.success("新增成功")
@@ -727,13 +723,13 @@ const Assessment = (props) => {
                     sex: "男",
                     bedName: "101",
                     ...hearingForm.getFieldsValue(),
-                    ...visualForm.getFieldsValue(),
-                    ...pressureSoreForm.getFieldsValue(),
-                    ...chokingForm.getFieldsValue(),
-                    ...communicateForm.getFieldsValue(),
+                    ...visionForm.getFieldsValue(),
+                    ...pressureSoresForm.getFieldsValue(),
+                    ...chokeFeedForm.getFieldsValue(),
+                    ...communicationForm.getFieldsValue(),
                     ...fallForm.getFieldsValue(),
-                    ...commitSuicideForm.getFieldsValue(),
-                    ...leaveForm.getFieldsValue()
+                    ...suicideForm.getFieldsValue(),
+                    ...runAwayForm.getFieldsValue()
                 }
                 let res3 = await assessmentUpdate(updateParam)
                 message.success("修改成功")

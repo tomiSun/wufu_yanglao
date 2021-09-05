@@ -2,25 +2,17 @@ import './index.less';
 import React, { useEffect, useState } from 'react';
 import {
   Button,
-  Card,
-  Col,
   Form,
-  List,
-  Row,
   Select,
-  Tag,
   Table,
   Radio,
   Input,
   DatePicker,
   Modal,
-  InputNumber,
-  Tabs,
   message,
   Pagination,
 } from 'antd';
 import { columns } from './data';
-import { BedTreeSelect } from '@/components/BedTreeSelect';
 import PhysicalExamination from '../compoment/PhysicalExamination/indexbf';
 import ProbationEvaluation from '../compoment/ProbationEvaluation';
 import Assessment from '../compoment/Assessment';
@@ -37,7 +29,6 @@ import {
 } from '@/services/inHospitalRegister';
 import { baseArchiveQuery } from '@/services/archives';
 //床位信息接口
-import { bedQuery } from '@/services/basicSetting/bedInfo';
 import { dictDateSelect } from '@/services/basicSetting/dictionary';
 import moment from 'moment';
 import { ULayout } from '@/utils/common';
@@ -81,9 +72,11 @@ const InHospitalRegister = (props) => {
   useEffect(() => {
     let param = { ...pageInfo, status: 0 };
     getHospitalRegistList(param);
-    handleRoomInit();
   }, []);
 
+  useEffect(() => {
+    handleRoomInit();
+  }, [modalVisible])
   //获取列表信息
   const getHospitalRegistList = async (param) => {
     let res = await queryHospitalRegist(param);
@@ -153,6 +146,7 @@ const InHospitalRegister = (props) => {
               size={'small'}
               onClick={() => {
                 setMode('add');
+                registForm.resetFields()
                 setModalVisible(true);
               }}
             >
@@ -219,7 +213,7 @@ const InHospitalRegister = (props) => {
             setPhysicalExaminationVisible(true);
           }}
         >
-          
+
         </Button>
         <Button
           style={{ marginRight: 10 }}
@@ -304,18 +298,7 @@ const InHospitalRegister = (props) => {
       </>
     );
   };
-  //处理房间号的变更
-  const handleRoomChange = async (value, node) => {
-    setRoomInfo({
-      buildingCode: node['buildingCode'],
-      floorCode: node['floorCode'],
-      roomCode: node['roomCode'],
-    });
-    let res = await bedQuery({ pageNum: 1, pageSize: 10, id: value, keyWords: '' });
-    let resData = res['data']['list'];
-    setBedList(resData);
-    registForm.setFieldsValue({ bedCode: '' });
-  };
+
   const handleRoomInit = async (value, v2) => {
     //bedRoomQuery,
     let res = await queryBed({ keyWords: '' });
@@ -325,7 +308,7 @@ const InHospitalRegister = (props) => {
         label: `${item['buildingName'] || '#'}-${item['floorName'] || '#'}-${item['roomName'] || '#'
           }-${item['bedName'] || '#'}`,
         value: `${item['buildingCode']}-${item['floorCode']}-${item['roomCode']}-${item['bedCode']}`,
-        disabled: !!item['status']==="1",
+        disabled: item['status'] === "1",
       };
     });
     setBedList(list || []);
@@ -333,7 +316,7 @@ const InHospitalRegister = (props) => {
   };
   //姓名搜索框
   const nameSelectChange = async (value) => {
-    let res = await baseArchiveQuery({ businessNo: value, pageSize: 10, pageNum: 1 });
+    let res = await baseArchiveQuery({ archiveId: value, pageSize: 10, pageNum: 1 });
     if (res?.data?.list[0]) {
       let data = res?.data?.list[0];
       setAddBasicInfo({ ...data, archiveId: data.id });
@@ -342,10 +325,10 @@ const InHospitalRegister = (props) => {
   };
   //姓名搜索框
   const nameSelectBlur = async (e, data) => {
-    let res = await patientQuery({ keyWords: e });
+    let res = await baseArchiveQuery({ name: e, pageSize: 10, pageNum: 1 });
     if (!!res['data']) {
-      let data = res['data'].map((item) => {
-        return { label: item['name'], value: item['businessNo'] };
+      let data = res['data']['list'].map((item) => {
+        return { label: item['name'], value: item['id'] };
       });
       setNameSelectList(data);
     } else {
@@ -520,7 +503,7 @@ const InHospitalRegister = (props) => {
                   return <Option value={item['dictCode']}>{item['dictName']}</Option>;
                 })}
               </Select> */}
-               <Input />
+              <Input />
             </Form.Item>
             <Form.Item name={'idCard'} label="身份证号" rules={[{ required: true }]}>
               <Input />
@@ -539,7 +522,7 @@ const InHospitalRegister = (props) => {
                   return <Option value={item['dictCode']}>{item['dictName']}</Option>;
                 })}
               </Select> */}
-               <Input />
+              <Input />
             </Form.Item>
             <Form.Item name={'contactNumber'} label="联系电话" rules={[{ required: true }]}>
               <Input />

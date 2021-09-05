@@ -42,8 +42,8 @@ const columns = (edit, dictionaryMap) => {
         },
         {
             title: '用法',
-            dataIndex: 'usage',
-            key: 'usage',
+            dataIndex: 'useWay',
+            key: 'useWay',
         },
         {
             title: '用量',
@@ -57,8 +57,11 @@ const columns = (edit, dictionaryMap) => {
         },
         {
             title: '自带药',
-            dataIndex: 'l',
-            key: 'bloodGlucose',
+            dataIndex: 'isTaken',
+            key: 'isTaken',
+            render: (t, v) => {
+                return Number(t) === 0 ? "是" : "否"
+            }
         },
         {
             title: '验收人',

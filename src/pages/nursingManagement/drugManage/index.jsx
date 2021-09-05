@@ -267,7 +267,7 @@ const DrugManage = (props) => {
                   return <Option value={item['dictCode']}>{item['dictName']}</Option>;
                 })}
               </Select> */}
-               <Input size="small" style={{ width: 200 }} />
+              <Input size="small" style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="带药日期" name={'takeMedicineDate'} initialValue={moment(new Date())}>
               <DatePicker style={{ width: 200 }} />
@@ -287,8 +287,11 @@ const DrugManage = (props) => {
             <Form.Item label="带药量" name={'acount'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="自带药" name={'isTaken'}>
-              <Input size="small" style={{ width: 200 }} />
+            <Form.Item label="自带药" name={'isTaken'} initialValue={0}>
+              <Select
+                style={{ width: 200 }}
+                options={[{ label: "是", value: 0 }, { label: "否", value: 1 }]}
+              ></Select>
             </Form.Item>
             <Form.Item label="验收人" name={'accepterSign'}>
               <Input size="small" style={{ width: 200 }} />

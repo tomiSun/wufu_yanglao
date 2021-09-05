@@ -17,8 +17,8 @@ var _default = {
   dev: {
     '/api/': {
       // target: 'https://918e91.39nat.com',
-      // target: 'http://120.27.222.210:8081',
-      target: 'https://xuchaojie.39nat.com',
+      target: 'http://120.27.222.210:8081',
+      // target: 'https://xuchaojie.39nat.com',
       // target: 'https://10.0.0.48',
       changeOrigin: true,
       secure: false,
