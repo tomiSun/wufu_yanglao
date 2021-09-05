@@ -61,9 +61,10 @@ const Assessment = (props) => {
         let resQuery = await assessmentQuery({ "businessNo": selectRowData['businessNo'] })
         if (resQuery['code'] == 200 && !!resQuery['data']) {
             let id = resQuery['data']['id']
-            let item1=formartItems(resQuery['data']['hearingItems'])
             debugger
-            hearingForm.setFieldsValue({ ...resQuery['data'], ...item1})
+            let item1 = formartItems(resQuery['data']['hearingItems'])
+            debugger
+            hearingForm.setFieldsValue({ ...resQuery['data'], ...item1 })
             visualForm.setFieldsValue(resQuery['data'])
             pressureSoreForm.setFieldsValue(resQuery['data'])
             chokingForm.setFieldsValue(resQuery['data'])
@@ -81,9 +82,9 @@ const Assessment = (props) => {
         if (!arr || !arr.length > 0) {
             return {}
         }
-        let res ={}
+        let res = {}
         arr.forEach(element => {
-            res[element.name]=element.point
+            res[element.name] = Number(element.point)
         });
         debugger
         return res
@@ -96,49 +97,71 @@ const Assessment = (props) => {
         judge: [5, 10],
         judgeString: ["清楚", "困难", "完全听不到"],
         data: {
-            score: "visionScore",
-            degree: "visionDegree",
-            items: 'visionItems',
+            score: "hearingScore",
+            degree: "hearingDegree",
+            items: 'hearingItems',
+            key: "hearing",
             list: [{
                 name: "在大会集中听讲",
                 point: "0",
-                plainOptions: ['清楚0分', '困难1分', '听不到2分'],
+                plainOptions: [
+                    { label: '清楚0分', value: 0 },
+                    { label: '困难1分', value: 1 },
+                    { label: '听不到2分', value: 2 }],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "在小组中听讲",
                 point: "0",
-                plainOptions: ['清楚0分', '困难1分', '听不到2分'],
+                plainOptions: [
+                    { label: '清楚0分', value: 0 },
+                    { label: '困难1分', value: 1 },
+                    { label: '听不到2分', value: 2 }],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "面对面交谈",
                 point: "0",
-                plainOptions: ['清楚0分', '困难1分', '听不到2分'],
+                plainOptions: [
+                    { label: '清楚0分', value: 0 },
+                    { label: '困难1分', value: 1 },
+                    { label: '听不到2分', value: 2 }],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "听电话",
                 point: "0",
-                plainOptions: ['清楚0分', '困难1分', '听不到2分'],
+                plainOptions: [
+                    { label: '清楚0分', value: 0 },
+                    { label: '困难1分', value: 1 },
+                    { label: '听不到2分', value: 2 }],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "听收音机/电视",
                 point: "0",
-                plainOptions: ['清楚0分', '困难1分', '听不到2分'],
+                plainOptions: [
+                    { label: '清楚0分', value: 0 },
+                    { label: '困难1分', value: 1 },
+                    { label: '听不到2分', value: 2 }],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "听广播/铃声/警号",
                 point: "0",
-                plainOptions: ['清楚0分', '困难1分', '听不到2分'],
+                plainOptions: [
+                    { label: '清楚0分', value: 0 },
+                    { label: '困难1分', value: 1 },
+                    { label: '听不到2分', value: 2 }],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "使用助听器",
                 point: "0",
-                plainOptions: ['无0分', '有5分'],
+                plainOptions: [
+                    { label: '无0分', value: 0 },
+                    { label: '有5分', value: 5 },
+                ],
                 onChange: (data) => { console.log(data) }
             },
             ]
@@ -152,37 +175,53 @@ const Assessment = (props) => {
         judge: [4, 8],
         judgeString: ["清楚", "部分清楚", "完全看不见"],
         data: {
-            score: "hearingScore",
-            degree: "hearingDegree",
-            items: 'hearingItems',
+            score: "visionScore",
+            degree: "visionDegree",
+            items: 'visionItems',
+            key: 'vision',
             list: [{
                 name: "物件（衣服、扣针、发夹）",
                 point: "0",
-                plainOptions: ['清楚0分', '部分1分', '失明2分'],
+                plainOptions: [{ label: '清楚0分', value: 0 },
+                { label: '部分1分', value: 1 },
+                { label: '失明2分', value: 2 }
+                ],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "家具（桌、椅）",
                 point: "0",
-                plainOptions: ['清楚0分', '部分1分', '失明2分'],
+                plainOptions:
+                    [{ label: '清楚0分', value: 0 },
+                    { label: '部分1分', value: 1 },
+                    { label: '失明2分', value: 2 }
+                    ],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "图形（圆形、三角形、正方形）",
                 point: "0",
-                plainOptions: ['清楚0分', '部分1分', '失明2分'],
+                plainOptions: [{ label: '清楚0分', value: 0 },
+                { label: '部分1分', value: 1 },
+                { label: '失明2分', value: 2 }
+                ],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "颜色（红色、绿色、蓝色）",
                 point: "0",
-                plainOptions: ['清楚0分', '部分1分', '失明2分'],
+                plainOptions: [{ label: '清楚0分', value: 0 },
+                { label: '部分1分', value: 1 },
+                { label: '失明2分', value: 2 }
+                ],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "佩戴辅助器",
                 point: "0",
-                plainOptions: ['无0分', '有4分'],
+                plainOptions:
+                    [{ label: '无0分', value: 0 },
+                    { label: '有4分', value: 4 },],
                 onChange: (data) => { console.log(data) }
             }]
         }
@@ -198,32 +237,58 @@ const Assessment = (props) => {
             score: "pressureSoresScore",
             degree: "pressureSoresDegree",
             items: 'pressureSoresItems',
+            key: "pressureSores",
             list: [{
                 name: "营养状况",
                 point: "0",
-                plainOptions: ['良好0分', '一般1分', '差2分', '极坏3分'],
+                plainOptions:
+                    [{ label: '良好0分', value: 0 },
+                    { label: '一般1分', value: 1 },
+                    { label: '差2分', value: 2 },
+                    { label: '极坏3分', value: 3 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }, {
                 name: "精神状况",
                 point: "0",
-                plainOptions: ['清晰0分', '冷漠1分', '混乱2分', '无意识3分'],
+                plainOptions:
+                    [{ label: '清晰0分', value: 0 },
+                    { label: '冷漠1分', value: 1 },
+                    { label: '混乱2分', value: 2 },
+                    { label: '无意识3分', value: 3 },
+                    ],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "活动能力",
                 point: "0",
-                plainOptions: ['自如0分', '协助1分', '只能坐2分', '卧床3分'],
+                plainOptions:
+                    [{ label: '自如0分', value: 0 },
+                    { label: '协助1分', value: 1 },
+                    { label: '只能坐2分', value: 2 },
+                    { label: '卧床3分', value: 3 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }, {
                 name: "移动能力",
                 point: "0",
-                plainOptions: ['独立0分', '轻度限制1分', '很大限制2分', '不能动3分'],
+                plainOptions:
+                    [{ label: '独立0分', value: 0 },
+                    { label: '轻度限制1分', value: 1 },
+                    { label: '很大限制2分', value: 2 },
+                    { label: '不能动3分', value: 3 },
+                    ],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "失禁",
                 point: "0",
-                plainOptions: ['无0分', '偶尔1分', '经常2分', '完全失禁3分'],
+                plainOptions:
+                    [{ label: '无0分', value: 0 },
+                    { label: '偶尔1分', value: 1 },
+                    { label: '经常2分', value: 2 },
+                    { label: '完全失禁3分', value: 3 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }
             ]
@@ -240,20 +305,33 @@ const Assessment = (props) => {
             score: "chokeFeedScore",
             degree: "chokeFeedDegree",
             items: 'chokeFeedItems',
+            key: "chokeFeed",
             list: [{
                 name: "进食或饮水",
                 point: "0",
-                plainOptions: ['正常0分', '快或慢1分', '呛咳2分'],
+                plainOptions:
+                    [{ label: '正常0分', value: 0 },
+                    { label: '快或慢1分', value: 1 },
+                    { label: '呛咳2分', value: 2 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }, {
                 name: "咀嚼",
                 point: "0",
-                plainOptions: ['正常0分', '不咀嚼1分', '直接吞食2分'],
+                plainOptions:
+                    [{ label: '正常0分', value: 0 },
+                    { label: '不咀嚼1分', value: 1 },
+                    { label: '直接吞食2分', value: 2 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }, {
                 name: "口腔情况",
                 point: "0",
-                plainOptions: ['正常0分', '佩戴义齿2分', '口腔疾患2分', '缺齿、无牙2分'],
+                plainOptions: [{ label: '正常0分', value: 0 },
+                { label: '佩戴义齿2分', value: 2 },
+                { label: '口腔疾患2分', value: 2 },
+                { label: '缺齿、无牙2分', value: 2 },
+                ],
                 onChange: (data) => { console.log(data) }
             }]
         }
@@ -269,37 +347,63 @@ const Assessment = (props) => {
             score: "communicationScore",
             degree: "communicationDegree",
             items: 'communicationItems',
+            key: "communication",
             list: [{
                 name: "语速",
                 point: "0",
-                plainOptions: ['正常0分', '快速1分', '迟缓2分'],
+                plainOptions:
+                    [{ label: '正常0分', value: 0 },
+                    { label: '快速1分', value: 1 },
+                    { label: '迟缓2分', value: 2 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }, {
                 name: "音量",
                 point: "0",
-                plainOptions: ['正常0分', '响亮1分', '柔弱2分'],
+                plainOptions:
+                    [{ label: '正常0分', value: 0 },
+                    { label: '响亮1分', value: 1 },
+                    { label: '柔弱2分', value: 2 },
+                    ],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "音调",
                 point: "0",
-                plainOptions: ['清楚0分', '沙哑1分', '喘音2分'],
+                plainOptions:
+                    [{ label: '清楚0分', value: 0 },
+                    { label: '沙哑1分', value: 1 },
+                    { label: '喘音2分', value: 2 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }, {
                 name: "表达方式",
                 point: "0",
-                plainOptions: ['完整句子0分', '简单句子1分', '说话断续2分', '单子3分'],
+                plainOptions:
+                    [{ label: '完整句子0分', value: 0 },
+                    { label: '简单句子1分', value: 1 },
+                    { label: '说话断续2分', value: 2 },
+                    ],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "内容",
                 point: "0",
-                plainOptions: ['清晰到题0分', '重复说话2分', '言语混乱3分', '重复无意义4分'],
+                plainOptions:
+                    [{ label: '清晰到题0分', value: 0 },
+                    { label: '重复说话2分', value: 2 },
+                    { label: '言语混乱3分', value: 3 },
+                    { label: '重复无意义4分', value: 4 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }, {
                 name: "物件",
                 point: "0",
-                plainOptions: ['正常0分', '错误使用1分', '不能辨认2分'],
+                plainOptions:
+                    [{ label: '正常0分', value: 0 },
+                    { label: '错误使用1分', value: 1 },
+                    { label: '不能辨认2分', value: 2 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }]
         }
@@ -315,38 +419,57 @@ const Assessment = (props) => {
             score: "fallcore",
             degree: "fallDegree",
             items: 'fallItems',
+            key: "fall",
             list: [{
                 name: "有无跌倒史",
                 point: "0",
-                plainOptions: ['无0分', '有1分'],
+                plainOptions:
+                    [{ label: '无0分', value: 0 },
+                    { label: '有1分', value: 1 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }, {
                 name: "意识状态",
                 point: "0",
-                plainOptions: ['清醒或深昏迷0分', '有意识障碍1分'],
+                plainOptions:
+                    [{ label: '清醒或深昏迷0分', value: 0 },
+                    { label: '有意识障碍1分', value: 1 },
+                    ],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "行动能力",
                 point: "0",
-                plainOptions: ['稳定自主或完全不能移动0分', '无法稳定行走1分'],
+                plainOptions:
+                    [{ label: '稳定自主或完全不能移动0分', value: 0 },
+                    { label: '无法稳定行走1分', value: 1 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }, {
                 name: "睡眠状态",
                 point: "0",
-                plainOptions: ['正常0分', '睡眠障碍或使用镇静催眠药1分'],
+                plainOptions:
+                    [{ label: '正常0分', value: 0 },
+                    { label: '睡眠障碍或使用镇静催眠药1分', value: 1 },
+                    ],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "有无体位性低血压",
                 point: "0",
-                plainOptions: ['无0分', '有1分'],
+                plainOptions:
+                    [{ label: '无0分', value: 0 },
+                    { label: '有1分', value: 1 },
+                    ],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "排尿排便需他人协助",
                 point: "0",
-                plainOptions: ['不需要0分', '需1分'],
+                plainOptions:
+                    [{ label: '不需要0分', value: 0 },
+                    { label: '需1分', value: 1 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }]
         }
@@ -362,26 +485,39 @@ const Assessment = (props) => {
             score: "suicideScore",
             degree: "suicideDegree",
             items: 'suicideItems',
+            key: "suicide",
             list: [{
                 name: "自杀史",
                 point: "0",
-                plainOptions: ['无0分', '有4分'],
+                plainOptions:
+                    [{ label: '无0分', value: 0 },
+                    { label: '有4分', value: 4 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }, {
                 name: "自杀高危因素（伴有精神障碍、财政、丧偶）",
                 point: "0",
-                plainOptions: ['无0分', '有1分'],
+                plainOptions:
+                    [{ label: '无0分', value: 0 },
+                    { label: '有1分', value: 1 },
+                    ],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "自杀微兆（语言表示、自杀准备等）",
                 point: "0",
-                plainOptions: ['无0分', '有4分'],
+                plainOptions: [{ label: '无0分', value: 0 },
+                { label: '有4分', value: 4 },
+                ],
                 onChange: (data) => { console.log(data) }
             }, {
                 name: "其他",
                 point: "0",
-                plainOptions: ['不存在自杀0分', '觉得生存没有价值1分', '有致死的念头2分'],
+                plainOptions:
+                    [{ label: '不存在自杀0分', value: 0 },
+                    { label: '觉得生存没有价值1分', value: 1 },
+                    { label: '有致死的念头2分', value: 2 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }]
         }
@@ -397,26 +533,39 @@ const Assessment = (props) => {
             score: "runAwayScore",
             degree: "runAwayDegree",
             items: 'runAwayItems',
+            key: "runAway",
             list: [{
                 name: "出走史",
                 point: "0",
-                plainOptions: ['无0分', '有4分'],
+                plainOptions:
+                    [{ label: '无0分', value: 0 },
+                    { label: '有4分', value: 4 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }, {
                 name: "出走念头",
                 point: "0",
-                plainOptions: ['无0分', '有2分'],
+                plainOptions:
+                    [{ label: '无0分', value: 0 },
+                    { label: '有2分', value: 2 },
+                    ],
                 onChange: (data) => { console.log(data) }
             },
             {
                 name: "有严重出走行为",
                 point: "0",
-                plainOptions: ['无0分', '有4分'],
+                plainOptions:
+                    [{ label: '无0分', value: 0 },
+                    { label: '有4分', value: 4 },
+                    ],
                 onChange: (data) => { console.log(data) }
             }, {
                 name: "出走危险因素（不安心养老、想念亲人等）",
                 point: "0",
-                plainOptions: ['无0分', '有2分'],
+                plainOptions:
+                    [{ label: '无0分', value: 0 },
+                    { label: '有2分', value: 2 },
+                    ],
                 onChange: (data) => { console.log(data) }
             },
             ]
@@ -431,18 +580,14 @@ const Assessment = (props) => {
             return false;
         }
     }
-    const handleAssessmentChange = (e, item, info) => {
+    const handleAssessmentChange = (e, item, info, key) => {
         let data = JSON.parse(JSON.stringify(info.form.getFieldsValue()));
-        let arr = Object.values(data).map(it => {
-            it = String(it).replace("部分", "")
-            let indexNum = String(it).indexOf("分") - 1
-            if (!isNumber(indexNum)) {
-                return 0
+        let arr = Object.entries(data).filter((it, value) => {
+            if (it[0] !== `${key}Score` && it[0] !== `${key}Degree` && it[0] !== `${key}Items`) {
+                return it[1]
             }
-            let res = String(it).substring(String(it).indexOf("分") - 1, String(it).indexOf("分")) || 0
-            return res
         })
-        let total = arr.reduce((total, num) => { return total + Number(num) }, 0);
+        let total = arr.reduce((total, num) => { return total + Number(num[1]) }, 0);
         const findDegree = (num, arr) => {
             if (arr.length > 1) {
                 if (num < arr[0]) return 0;
@@ -464,11 +609,11 @@ const Assessment = (props) => {
         let itemarr = Object.entries(data).filter(its => {
             if (its[0].indexOf(items) > -1) return its
         })
+        debugger
         let itemRes = itemarr.map(it => {
-            let res = String(it[1]).substring(String(it[1]).indexOf("分") - 1, String(it[1]).indexOf("分")) || 0
             return {
                 "name": it[0],
-                "point": res
+                "point": it[1]
             }
         })
         let obj = {}
@@ -479,7 +624,7 @@ const Assessment = (props) => {
     }
     const renderBasicCard = (info) => {
         const { title, extra, data, form } = info;
-        const { score, degree, items, list } = data;
+        const { score, degree, items, list, key } = data;
         return (<Card title={title} extra={<h4>{extra}</h4>}>
             <Form
                 form={form}
@@ -488,7 +633,7 @@ const Assessment = (props) => {
                     return <>
                         <Form.Item name={`${items}${index}`} label={item["name"]} {...layout}>
                             <Radio.Group options={item['plainOptions']} onChange={(e) => {
-                                handleAssessmentChange(e, item, info)
+                                handleAssessmentChange(e, item, info, key)
                             }} />
                         </Form.Item>
                     </>

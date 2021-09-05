@@ -21,7 +21,7 @@ import {
 } from 'antd';
 import { columns } from './data';
 import { BedTreeSelect } from '@/components/BedTreeSelect';
-import PhysicalExamination from '../compoment/PhysicalExamination';
+import PhysicalExamination from '../compoment/PhysicalExamination/indexbf';
 import ProbationEvaluation from '../compoment/ProbationEvaluation';
 import Assessment from '../compoment/Assessment';
 import AgreementForm from '../compoment/AgreementForm';
@@ -219,7 +219,7 @@ const InHospitalRegister = (props) => {
             setPhysicalExaminationVisible(true);
           }}
         >
-          体检报告
+          
         </Button>
         <Button
           style={{ marginRight: 10 }}
@@ -325,7 +325,7 @@ const InHospitalRegister = (props) => {
         label: `${item['buildingName'] || '#'}-${item['floorName'] || '#'}-${item['roomName'] || '#'
           }-${item['bedName'] || '#'}`,
         value: `${item['buildingCode']}-${item['floorCode']}-${item['roomCode']}-${item['bedCode']}`,
-        disabled: !!item['isUsed'],
+        disabled: !!item['status']==="1",
       };
     });
     setBedList(list || []);
