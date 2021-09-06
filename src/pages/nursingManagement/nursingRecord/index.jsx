@@ -36,6 +36,11 @@ import { useTableHeight } from '@/utils/tableHeight';
 const { TextArea } = Input;
 import moment from 'moment';
 import { recordAdd } from '../../../services/syntheticModule/record';
+import {
+  batchQueryNursingRecord,
+  batchUpdateNursingRecord,
+  addNursingRecord,
+} from '@/services/nursingManagement/nursingRecord';
 export default () => {
   const timePointOptions = [
     { name: '2', value: '2', lable: '2' },
@@ -65,12 +70,12 @@ export default () => {
     dateArr: [
       {
         label: '时间',
-        name: 'time',
+        name: 'recordTime',
         config: {
           time: moment(),
           showTime: false,
           onChange: (e) => {
-            topFrom.setFieldsValue({ time: moment(e) });
+            topFrom.setFieldsValue({ recordTime: moment(e) });
             getTableData();
           },
         },
@@ -122,7 +127,7 @@ export default () => {
       {
         name: '保存',
         callback: () => {
-          // getTableData();
+          batchUpdate();
         },
         sort: 4,
         style: { marginRight: '15px' },
@@ -140,11 +145,7 @@ export default () => {
     form: topFrom,
     cls: 'opera',
     initialValues: {
-      timeRange: [
-        moment().startOf('day').format('YYYY-MM-DD'),
-        // moment().subtract(90, 'days').format('YYYY-MM-DD'),
-        moment().endOf('day').format('YYYY-MM-DD'),
-      ],
+      recordTime: moment().format('YYYY-MM-DD'),
     },
   };
 
@@ -159,12 +160,12 @@ export default () => {
     table: {
       bordered: true,
       loading: false,
-      dataSource: [{ id: '1', temperature: '1', pulse: '1' }],
+      dataSource: [],
       columns: [
         {
           title: '床位号',
-          dataIndex: 'bedName',
-          key: 'bedName',
+          dataIndex: 'bed',
+          key: 'bed',
           align: 'left',
           ellipsis: true,
           fixed: 'left',
@@ -199,55 +200,18 @@ export default () => {
           render: (text, record) => {
             return (
               // <div className={record.isC && !text ? 'redMark' : ''}>
-              <TimePicker onChange={() => {}} defaultValue={moment()} format={'HH:mm'} />
+              <TimePicker
+                onChange={(e) => {
+                  record.timePoint = e;
+                  setYTable({ ...yTable });
+                }}
+                value={text}
+                format={'HH:mm'}
+              />
               // </div>
             );
           },
         },
-        // {
-        //   title: '脉搏心率(次/分)',
-        //   dataIndex: 'pulse',
-        //   key: 'pulse',
-        //   align: 'left',
-        //   ellipsis: true,
-        //   width: 100,
-        //   render: (text, record) => {
-        //     return <Input />;
-        //   },
-        // },
-        // {
-        //   title: '呼吸(次/分)',
-        //   dataIndex: 'breathing',
-        //   key: 'breathing',
-        //   align: 'left',
-        //   ellipsis: true,
-        //   width: 80,
-        //   render: (text, record) => {
-        //     return <Input />;
-        //   },
-        // },
-        // {
-        //   title: '高压(mmHg)',
-        //   dataIndex: 'highBloodPressure',
-        //   key: 'highBloodPressure',
-        //   align: 'left',
-        //   ellipsis: true,
-        //   width: 80,
-        //   render: (text, record) => {
-        //     return <Input />;
-        //   },
-        // },
-        // {
-        //   title: '低压(mmHg)',
-        //   dataIndex: 'lowBloodPressure',
-        //   key: 'lowBloodPressure',
-        //   align: 'left',
-        //   ellipsis: true,
-        //   width: 80,
-        //   render: (text, record) => {
-        //     return <Input />;
-        //   },
-        // },
         {
           title: '打扫房间',
           dataIndex: 'isCleanRoom',
@@ -256,7 +220,15 @@ export default () => {
           ellipsis: true,
           width: 60,
           render: (text, record) => {
-            return <Checkbox onChange={() => {}} />;
+            return (
+              <Checkbox
+                checked={text}
+                onChange={(e) => {
+                  record.isCleanRoom = e.target.checked;
+                  setYTable({ ...yTable });
+                }}
+              />
+            );
           },
         },
         {
@@ -267,7 +239,15 @@ export default () => {
           ellipsis: true,
           width: 60,
           render: (text, record) => {
-            return <Checkbox onChange={() => {}} />;
+            return (
+              <Checkbox
+                checked={text}
+                onChange={(e) => {
+                  record.isCleanToilet = e.target.checked;
+                  setYTable({ ...yTable });
+                }}
+              />
+            );
           },
         },
         {
@@ -278,7 +258,15 @@ export default () => {
           ellipsis: true,
           width: 60,
           render: (text, record) => {
-            return <Checkbox onChange={() => {}} />;
+            return (
+              <Checkbox
+                checked={text}
+                onChange={(e) => {
+                  record.isHaircut = e.target.checked;
+                  setYTable({ ...yTable });
+                }}
+              />
+            );
           },
         },
         {
@@ -289,7 +277,15 @@ export default () => {
           ellipsis: true,
           width: 60,
           render: (text, record) => {
-            return <Checkbox onChange={() => {}} />;
+            return (
+              <Checkbox
+                checked={text}
+                onChange={(e) => {
+                  record.isHangClothes = e.target.checked;
+                  setYTable({ ...yTable });
+                }}
+              />
+            );
           },
         },
         {
@@ -300,7 +296,15 @@ export default () => {
           ellipsis: true,
           width: 60,
           render: (text, record) => {
-            return <Checkbox onChange={() => {}} />;
+            return (
+              <Checkbox
+                checked={text}
+                onChange={(e) => {
+                  record.isManicure = e.target.checked;
+                  setYTable({ ...yTable });
+                }}
+              />
+            );
           },
         },
         {
@@ -311,9 +315,18 @@ export default () => {
           ellipsis: true,
           width: 60,
           render: (text, record) => {
-            return <Checkbox onChange={() => {}} />;
+            return (
+              <Checkbox
+                checked={text}
+                onChange={(e) => {
+                  record.isMeals = e.target.checked;
+                  setYTable({ ...yTable });
+                }}
+              />
+            );
           },
         },
+        // TODO:
         {
           title: '生活用水',
           dataIndex: 'isMeals',
@@ -322,7 +335,15 @@ export default () => {
           ellipsis: true,
           width: 60,
           render: (text, record) => {
-            return <Checkbox onChange={() => {}} />;
+            return (
+              <Checkbox
+                checked={text}
+                onChange={(e) => {
+                  record.isMeals = e.target.checked;
+                  setYTable({ ...yTable });
+                }}
+              />
+            );
           },
         },
         {
@@ -333,7 +354,17 @@ export default () => {
           ellipsis: true,
           width: 120,
           render: (text, record) => {
-            return <Input.TextArea AUTOCOMPLETE="OFF" rows={1} />;
+            return (
+              <Input.TextArea
+                AUTOCOMPLETE="OFF"
+                rows={1}
+                value={text}
+                onChange={(e) => {
+                  record.physicalAndMentalStatus = e.target.value;
+                  setYTable({ ...yTable });
+                }}
+              />
+            );
           },
         },
         {
@@ -344,26 +375,22 @@ export default () => {
           ellipsis: true,
           width: 120,
           render: (text, record) => {
-            return <Input.TextArea AUTOCOMPLETE="OFF" rows={1} />;
+            return (
+              <Input.TextArea
+                AUTOCOMPLETE="OFF"
+                rows={1}
+                value={text}
+                onChange={(e) => {
+                  record.other = e.target.value;
+                  setYTable({ ...yTable });
+                }}
+              />
+            );
           },
         },
-        // {
-        //   title: '操作',
-        //   key: 'opera',
-        //   align: 'center',
-        //   fixed: 'right',
-        //   width: 60,
-        //   ellipsis: true,
-        //   render: (text, record) => (
-        //     // className={styles.opera}
-        //     <div>
-        //       <a onClick={() => {}}>三测单</a>
-        //     </div>
-        //   ),
-        // },
       ],
       key: Math.random(),
-      // scroll: { x: 1140 },
+      scroll: { x: 1140, y: '100%' },
       // scroll: { x: 1520 },
       //  y: '100%'
       dataRow: {},
@@ -377,10 +404,9 @@ export default () => {
           return `共 ${total} 条`;
         },
         onChange: (page, pageSize) => {
-          console.log('changePage----', page, pageSize);
           yTable.table.pagination.current = page;
           yTable.table.pagination.pageSize = pageSize;
-          // queryTypeDetailsListServices();
+          setYTable({ ...yTable });
         },
       },
       basic: {},
@@ -447,46 +473,65 @@ export default () => {
   };
   // 获取列表Table数据
   const getTableData = () => {
-    const { keyWord, businessNo, timeRange } = topFrom.getFieldsValue();
-    const startTime = timeRange && timeRange[0] ? `${timeRange[0]} 00:00:00` : '';
-    const endTime = timeRange && timeRange[1] ? `${timeRange[1]} 23:59:59` : '';
+    const { timePoint, recordTime } = topFrom.getFieldsValue();
     const params = {
-      name: keyWord,
-      startTime,
-      endTime,
-      pageNum: yTable.table.pagination.current,
-      pageSize: yTable.table.pagination.pageSize,
+      recordTime,
+      timePoint,
     };
+
     yTable.table.loading = true;
     yTable.table.dataSource = [];
     setYTable({ ...yTable });
-    leaveManagementSelect(params)
+    batchQueryNursingRecord(params)
       .then((res) => {
-        yTable.table.dataSource = res?.data?.list || [];
+        yTable.table.dataSource = res?.data || [];
         yTable.table.loading = false;
-        yTable.table.pagination.current = res?.data?.pageNum;
         setYTable({ ...yTable });
       })
       .catch((err) => {
         yTable.table.loading = false;
         setYTable({ ...yTable });
-        console.log('leaveManagementSelect---err', err);
+        console.log('batchQueryVitalSignRecord---err', err);
       });
   };
+  // 批量保存
+  const batchUpdate = () => {
+    if (!yTable.table.dataSource?.length) {
+      message.error('表格数据为空，不允许提交');
+      return;
+    }
+    const { timePoint, recordTime } = topFrom.getFieldsValue();
+    const params = yTable.table.dataSource?.map((it) => {
+      return { ...it, timePoint, recordTime: moment(recordTime)?.format('YYYY-MM-DD') || '' };
+    });
 
+    yTable.table.loading = true;
+    setYTable({ ...yTable });
+    batchUpdateNursingRecord(params)
+      .then((res) => {
+        yTable.table.dataSource = res?.data || [];
+        yTable.table.loading = false;
+        setYTable({ ...yTable });
+      })
+      .catch((err) => {
+        yTable.table.loading = false;
+        setYTable({ ...yTable });
+        console.log('batchQueryVitalSignRecord---err', err);
+      });
+  };
   // 新增 / 修改 提交时触发
   const saveModalInfo = async () => {
     const formData = await modalForm.validateFields();
-    const { leaveStartTime, leaveEndTime } = formData;
-    let query = {
+    const { recordTime, timePoint } = formData;
+    const query = {
       ...modalForm.getFieldsValue(),
-      leaveStartTime: leaveStartTime && moment(leaveStartTime).format('YYYY-MM-DD HH:mm:ss'),
-      leaveEndTime: leaveEndTime && moment(leaveEndTime).format('YYYY-MM-DD HH:mm:ss'),
+      recordTime: recordTime && moment(recordTime).format('YYYY-MM-DD'),
+      timePoint: timePoint && moment(timePoint).format('HH:mm'),
     };
     modeType.loading = true;
     setModeType({ ...modeType });
     if (modeType.type === 'add') {
-      leaveManagementAdd(query)
+      addNursingRecord(query)
         .then((response) => {
           message.success(response.msg);
           modeType.visible = false;
@@ -495,21 +540,7 @@ export default () => {
           getTableData();
         })
         .catch((err) => {
-          console.log('err-leaveManagementAdd: ', err);
-          modeType.loading = false;
-          setModeType({ ...modeType });
-        });
-    } else {
-      leaveManagementUpdate(query)
-        .then((response) => {
-          message.success(response.msg);
-          modeType.visible = false;
-          modeType.loading = false;
-          setModeType({ ...modeType });
-          getTableData();
-        })
-        .catch((err) => {
-          console.log('err-leaveManagementUpdate: ', err);
+          console.log('err-addVitalSignRecord: ', err);
           modeType.loading = false;
           setModeType({ ...modeType });
         });
@@ -527,7 +558,7 @@ export default () => {
     let res = await patientQuery({ keyWords: e || '' });
     if (!!res['data']) {
       let data = res['data'].map((item) => {
-        return { label: item['name'], value: item['businessNo'] };
+        return { ...item, label: item['name'], value: item['businessNo'] };
       });
       setNameSelectList(data);
     } else {
@@ -538,7 +569,7 @@ export default () => {
   useEffect(() => {
     getDictionaryData();
     nameSelectBlur();
-    // getTableData();
+    getTableData();
   }, []);
   return (
     <div>
