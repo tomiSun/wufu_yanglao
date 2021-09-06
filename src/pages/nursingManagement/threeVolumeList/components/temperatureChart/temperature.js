@@ -27,7 +27,7 @@ export class Temperature extends Component {
         '65',
         '66',
         '56',
-        '60',
+        '160',
         '70',
         '60',
         '70',

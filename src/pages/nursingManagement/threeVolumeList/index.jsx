@@ -73,15 +73,16 @@ export default () => {
         name: 'timePoint',
         config: {},
         cld: [
-          { name: '2', value: '2' },
-          { name: '6', value: '6' },
-          { name: '10', value: '10' },
-          { name: '14', value: '14' },
-          { name: '18', value: '18' },
-          { name: '22', value: '22' },
+          { name: '2', value: '02:00' },
+          { name: '6', value: '06:00' },
+          { name: '10', value: '10:00' },
+          { name: '14', value: '14:00' },
+          { name: '18', value: '18:00' },
+          { name: '22', value: '22:00' },
         ],
         change: (e) => {
           console.log('radioArr----', e);
+          getTableData();
         },
         sort: 2,
       },
@@ -116,7 +117,7 @@ export default () => {
     form: topFrom,
     cls: 'opera',
     initialValues: {
-      timePoint: '2',
+      timePoint: '02:00',
       recordTime: moment().format('YYYY-MM-DD'),
     },
   };
@@ -151,7 +152,6 @@ export default () => {
           ellipsis: true,
           fixed: 'left',
           width: 60,
-          render: () => '床位号',
         },
         {
           title: '住院号',
@@ -324,27 +324,26 @@ export default () => {
             );
           },
         },
-        // TODO:
-        // {
-        //   title: '大便(ml)',
-        //   dataIndex: 'urine',
-        //   key: 'urine',
-        //   align: 'left',
-        //   ellipsis: true,
-        //   width: 80,
-        //   render: (text, record) => {
-        //     return (
-        //       <Input
-        //         className={record.isC && !text ? 'redMark' : ''}
-        //         value={text}
-        //         onChange={(e) => {
-        //           record.pulse = e.target.value;
-        //           setYTable({ ...yTable });
-        //         }}
-        //       />
-        //     );
-        //   },
-        // },
+        {
+          title: '大便(ml)',
+          dataIndex: 'defecate',
+          key: 'urine',
+          align: 'left',
+          ellipsis: true,
+          width: 80,
+          render: (text, record) => {
+            return (
+              <Input
+                className={record.isC && !text ? 'redMark' : ''}
+                value={text}
+                onChange={(e) => {
+                  record.defecate = e.target.value;
+                  setYTable({ ...yTable });
+                }}
+              />
+            );
+          },
+        },
         {
           title: '体重(Kg)',
           dataIndex: 'weight',
@@ -365,26 +364,26 @@ export default () => {
             );
           },
         },
-        {
-          title: '血氧饱和度',
-          dataIndex: 'bloodOxygen',
-          key: 'bloodOxygen',
-          align: 'left',
-          ellipsis: true,
-          width: 80,
-          render: (text, record) => {
-            return (
-              <Input
-                className={record.isC && !text ? 'redMark' : ''}
-                value={text}
-                onChange={(e) => {
-                  record.bloodOxygen = e.target.value;
-                  setYTable({ ...yTable });
-                }}
-              />
-            );
-          },
-        },
+        // {
+        //   title: '血氧饱和度',
+        //   dataIndex: 'bloodOxygen',
+        //   key: 'bloodOxygen',
+        //   align: 'left',
+        //   ellipsis: true,
+        //   width: 80,
+        //   render: (text, record) => {
+        //     return (
+        //       <Input
+        //         className={record.isC && !text ? 'redMark' : ''}
+        //         value={text}
+        //         onChange={(e) => {
+        //           record.bloodOxygen = e.target.value;
+        //           setYTable({ ...yTable });
+        //         }}
+        //       />
+        //     );
+        //   },
+        // },
         {
           title: '操作',
           key: 'opera',
@@ -492,11 +491,11 @@ export default () => {
       message.error('表格数据为空，不允许提交');
       return;
     }
-    const { recordTime } = topFrom.getFieldsValue();
+    const { recordTime, timePoint } = topFrom.getFieldsValue();
     const params = yTable.table.dataSource?.map((it) => {
       return {
         ...it,
-        timePoint: moment(it?.timePoint)?.format('HH:mm') || '',
+        timePoint: timePoint || '',
         recordTime: moment(recordTime)?.format('YYYY-MM-DD') || '',
       };
     });
@@ -505,9 +504,9 @@ export default () => {
     setYTable({ ...yTable });
     batchUpdateVitalSignRecord(params)
       .then((res) => {
-        yTable.table.dataSource = res?.data || [];
         yTable.table.loading = false;
         setYTable({ ...yTable });
+        getTableData();
       })
       .catch((err) => {
         yTable.table.loading = false;
@@ -702,7 +701,7 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label=" 大便" name={'k'}>
+              <Form.Item label=" 大便" name={'defecate'}>
                 <Input AUTOCOMPLETE="OFF" addonAfter="ml" />
               </Form.Item>
             </Col>
@@ -711,11 +710,11 @@ export default () => {
                 <Input AUTOCOMPLETE="OFF" addonAfter="Kg" />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            {/* <Col span={12}>
               <Form.Item label=" 血氧饱和度" name={'bloodOxygen'}>
                 <Input AUTOCOMPLETE="OFF" />
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
         </Form>
       </Modal>

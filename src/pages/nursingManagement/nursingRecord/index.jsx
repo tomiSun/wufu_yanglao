@@ -509,9 +509,9 @@ export default () => {
     setYTable({ ...yTable });
     batchUpdateNursingRecord(params)
       .then((res) => {
-        yTable.table.dataSource = res?.data || [];
         yTable.table.loading = false;
         setYTable({ ...yTable });
+        getTableData();
       })
       .catch((err) => {
         yTable.table.loading = false;
