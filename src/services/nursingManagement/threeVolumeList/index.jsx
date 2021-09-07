@@ -43,3 +43,10 @@ export async function wardroundUpdate(params) {
     data: params,
   });
 }
+// 修改
+export async function queryVitalSignRecord(params) {
+  return request('/nursingManage/queryVitalSignRecord', {
+    method: 'POST',
+    data: params,
+  });
+}

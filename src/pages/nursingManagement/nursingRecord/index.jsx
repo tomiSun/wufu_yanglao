@@ -484,7 +484,14 @@ export default () => {
     setYTable({ ...yTable });
     batchQueryNursingRecord(params)
       .then((res) => {
-        yTable.table.dataSource = res?.data || [];
+        yTable.table.dataSource =
+          res?.data?.map((it) => {
+            return {
+              ...it,
+              timePoint: (it.timePoint && moment(it.timePoint, 'HH:mm')) || '',
+              id: !it.id ? Math.random() : it.id,
+            };
+          }) || [];
         yTable.table.loading = false;
         setYTable({ ...yTable });
       })
@@ -500,15 +507,20 @@ export default () => {
       message.error('表格数据为空，不允许提交');
       return;
     }
-    const { timePoint, recordTime } = topFrom.getFieldsValue();
+    const { recordTime } = topFrom.getFieldsValue();
     const params = yTable.table.dataSource?.map((it) => {
-      return { ...it, timePoint, recordTime: moment(recordTime)?.format('YYYY-MM-DD') || '' };
+      return {
+        ...it,
+        timePoint: (it.timePoint && moment(it.timePoint)?.format('HH:mm')) || '',
+        recordTime: (recordTime && moment(recordTime)?.format('YYYY-MM-DD')) || '',
+        id: parseFloat(it.id) > 1 ? it.id : '',
+      };
     });
 
     yTable.table.loading = true;
     setYTable({ ...yTable });
     batchUpdateNursingRecord(params)
-      .then((res) => {
+      .then(() => {
         yTable.table.loading = false;
         setYTable({ ...yTable });
         getTableData();
@@ -552,18 +564,21 @@ export default () => {
       setBasic(response.data);
     });
   };
-  const [nameSelectList, setNameSelectList] = useState([]); //复合搜索的人的集合
-  //姓名搜索框
-  const nameSelectBlur = async (e, data) => {
-    let res = await patientQuery({ keyWords: e || '' });
-    if (!!res['data']) {
-      let data = res['data'].map((item) => {
-        return { ...item, label: item['name'], value: item['businessNo'] };
+  const [nameSelectList, setNameSelectList] = useState([]);
+  // 姓名搜索框
+  const nameSelectBlur = async (e) => {
+    setNameSelectList([]);
+    patientQuery({ keyWords: e || '' })
+      .then((res) => {
+        const data =
+          res?.data?.map((item) => {
+            return { label: item.name, value: item.businessNo, bedName: item.totalName };
+          }) || [];
+        setNameSelectList(data);
+      })
+      .catch((err) => {
+        console.log('err-patientQuery: ', err);
       });
-      setNameSelectList(data);
-    } else {
-      setNameSelectList([]);
-    }
   };
   // 初始化
   useEffect(() => {
@@ -596,13 +611,13 @@ export default () => {
           form={modalForm}
           labelCol={{ flex: '100px' }}
           onFinish={saveModalInfo}
-          initialValues={{}}
+          initialValues={{ recordTime: moment(), timePoint: moment() }}
         >
           <Form.Item name="id" hidden></Form.Item>
           <Form.Item name="name" hidden></Form.Item>
           <Row>
             <Col span={12}>
-              <Form.Item label="床位号" name="businessNo" rules={[{ required: true }]}>
+              <Form.Item label="床位号" name="bedName">
                 <Input placeholder="请输入" disabled />
               </Form.Item>
             </Col>
@@ -616,10 +631,12 @@ export default () => {
                 <Select
                   showSearch
                   placeholder="请输入姓名"
-                  // onSearch={nameSelectBlur}
                   onChange={(value, option) => {
-                    console.log('value,option: ', value, option);
-                    modalForm.setFieldsValue({ businessNo: value, name: option.label });
+                    modalForm.setFieldsValue({
+                      businessNo: value,
+                      name: option.label,
+                      bedName: option.bedName,
+                    });
                   }}
                   options={nameSelectList}
                   filterOption={(inputValue, option) => {
