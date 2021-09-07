@@ -9,9 +9,10 @@ import {
   Table,
   Input,
   DatePicker,
-  Tabs,
+  Modal,
   message,
-  Pagination
+  Pagination,
+  TimePicker
 } from 'antd';
 import { history } from 'umi'
 import { columns } from './data';
@@ -19,10 +20,14 @@ import moment from 'moment';
 import {
   bloodSugarDel,
   bloodSugarQuery,
+  bloodSugarUpdate,
+  bloodSugarInsert,
 } from '@/services/nursingManagement'
 import { dictDateSelect } from '@/services/basicSetting/dictionary'
 import './index.less';
 import { ULayout } from '@/utils/common'
+//登记接口
+import { patientQuery, queryHospitalRegist } from '@/services/inHospitalRegister';
 const validateMessages = {
   required: '${label} 为必填项',
 };
@@ -30,8 +35,18 @@ const validateMessages = {
 const RloodGlucoseRecord = (props) => {
   //列表数据
   const [dataSource, setDataSource] = useState([{ 1: 1 }]);//数据
-  //字典
-  const [samplingStatusMap, setSamplingStatusMap] = useState([]);//血糖采样状态的字典
+  //弹窗
+  const [modalVisible, setModalVisible] = useState(false)
+  //血糖采样状态的字典
+  const [samplingStatusMap, setSamplingStatusMap] = useState([]);
+  //名字选项
+  const [nameSelectList, setNameSelectList] = useState([]);
+  //基本信息
+  const [addBasicInfo, setAddBasicInfo] = useState(null);
+  //血糖记录信息
+  const [nursingRecord, setNursingRecord] = useState(null);
+  // 新增&修改
+  const [ftype, setFtype] = useState("add");
   const [pageInfo, setPageInfo] = useState({
     total: 0,
     pageSize: 10,
@@ -39,6 +54,8 @@ const RloodGlucoseRecord = (props) => {
   })
   //搜索的表单
   const [SForm] = Form.useForm();
+  // 表单
+  const [TForm] = Form.useForm();
   //初始化操作
   useEffect(() => {
     getBloodSugarInfo(pageInfo)
@@ -70,29 +87,23 @@ const RloodGlucoseRecord = (props) => {
     setSamplingStatusMap(res['data']['list'])
     SForm.setFieldsValue({ samplingStatus: "0001" })
   }
+
   // 搜索表单
   const renderSearch = () => {
     return (
       <Form onFinish={() => { }} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
         <Form.Item label="姓名" name={'patientName'}>
-          <Input size={'small'} allowClear/>
+          <Input size={'small'} allowClear />
         </Form.Item>
         <Form.Item label="住院号" name={'businessNo'}>
-          <Input size={'small'} allowClear/>
+          <Input size={'small'} allowClear />
         </Form.Item>
         <Form.Item label="开始日期" name={'startTime'}>
-          <DatePicker size={'small'} allowClear/>
+          <DatePicker size={'small'} allowClear />
         </Form.Item>
         <Form.Item label="结束日期" name={'endTime'}>
-          <DatePicker size={'small'} allowClear/>
+          <DatePicker size={'small'} allowClear />
         </Form.Item>
-        {/* <Form.Item label="采样状态" name={'samplingStatus'}  {...ULayout(12, 16)}>
-          <Select defaultValue="0001" size={'small'}>
-            {samplingStatusMap.map(item => {
-              return <Option value={item['dictCode']}>{item['dictName']}</Option>
-            })}
-          </Select>
-        </Form.Item> */}
         <Form.Item style={{ marginLeft: 20 }}>
           <Button
             type="primary"
@@ -110,7 +121,7 @@ const RloodGlucoseRecord = (props) => {
             type="primary"
             size={'small'}
             style={{ marginTop: 4 }}
-            onClick={() => { handleJumpbatch("3", "add") }}
+            onClick={() => { handAdd() }}
           >
             新增
           </Button>
@@ -128,15 +139,23 @@ const RloodGlucoseRecord = (props) => {
       </Form>
     );
   };
-  //新增或者修改的时候到批量的页面
-  const handleJumpbatch = (key, type, row) => {
-    history.push({
-      pathname: '/nursingManagement/nursingAddRecord/index',
-      query: {
-        selectKey: key,
-        type: type,
-        recordId: row?.id
-      }
+  //新增
+  const handAdd = () => {
+    TForm.resetFields();
+    setModalVisible(true)
+    setFtype("add")
+  }
+  //修改
+  const handEdit = (data) => {
+    setModalVisible(true)
+    setFtype("edit")
+    setNursingRecord(data);
+    debugger
+    TForm.setFieldsValue({
+      ...data,
+      name:data.patientName,
+      samplingTime: moment(data['samplingTime'] || new Date()),
+      bloodSugarRecordDate: moment(data['bloodSugarRecordDate'] || new Date()),
     });
   }
   //操作
@@ -146,7 +165,9 @@ const RloodGlucoseRecord = (props) => {
         <Button
           size={'small'}
           type="link"
-          onClick={() => { handleJumpbatch("3", "edit", record) }}
+          onClick={() => {
+            handEdit(record)
+          }}
         >
           修改
         </Button>
@@ -184,7 +205,138 @@ const RloodGlucoseRecord = (props) => {
             refushList({ total: pageInfo.total, pageNum: page, pageSize });
           }}
           style={{ position: "absolute", bottom: 35, right: 50 }} />
+
       </div>
+    );
+  };
+  //姓名搜索框
+  const nameSelectChange = async (value) => {
+    let res = await queryHospitalRegist({
+      businessNo: value,
+      pageSize: 1000,
+      pageNum: 1,
+      status: 0,
+    });
+    if (res?.data?.list[0]) {
+      let data = res?.data?.list[0];
+      let r = data
+      let bedName = `${r['buildingName'] || "#"}-${r['floorName'] || "#"}-${r['roomName'] || "#"}-${r['bedName'] || "#"}`
+      TForm.setFieldsValue({ ...data, bedName })
+      setAddBasicInfo({ ...data }); //todo 少了诊断
+    }
+  };
+  //姓名搜索框
+  const nameSelectBlur = async (e, data) => {
+    let res = await patientQuery({ keyWords: e });
+    if (!!res['data']) {
+      let data = res['data'].map((item) => {
+        return { label: item['name'], value: item['businessNo'] };
+      });
+      setNameSelectList(data);
+    } else {
+      setNameSelectList([]);
+    }
+  };
+  //弹窗
+  const renderMoadl = () => {
+    return (
+      <Modal
+        title="带药管理"
+        width={500}
+        visible={modalVisible}
+        onOk={() => {
+          setModalVisible(false);
+        }}
+        onCancel={() => {
+          setModalVisible(false);
+        }}
+        footer={null}
+      >
+        <div style={{ paddingTop: 20, paddingLeft: 40, paddingRight: 40 }}>
+          <Form
+            form={TForm}
+            {...ULayout(8, 16)}
+            style={{ marginTop: 20 }}
+            validateMessages={validateMessages}
+          >
+            <Form.Item label="姓名:" name={'name'} rules={[{ required: true }]}>
+              <Select
+                showSearch
+                placeholder="姓名"
+                onSearch={nameSelectBlur}
+                onSelect={(value) => {
+                  nameSelectChange(value);
+                }}
+                options={nameSelectList}
+                filterOption={(inputValue, option) => {
+                  return option.label.indexOf(inputValue) > -1;
+                }}
+              ></Select>
+            </Form.Item>
+            <Form.Item label="住院号" name={'businessNo'} rules={[{ required: true }]}>
+              <Input size={'small'} allowClear disabled={true} />
+            </Form.Item>
+            <Form.Item label="床号" name={'bedName'} rules={[{ required: true }]}>
+              <Input size={'small'} allowClear disabled={true} />
+            </Form.Item>
+            <Form.Item label="采样状态" name={'samplingStatus'} initialValue={'0001'} rules={[{ required: true }]}>
+              <Select style={{ width: '100%' }} defaultValue="0001">
+                {samplingStatusMap.map((item) => {
+                  return <Option value={item['dictCode']}>{item['dictName']}</Option>;
+                })}
+              </Select>
+            </Form.Item>
+            <Form.Item label="采样日期" name={'bloodSugarRecordDate'} initialValue={moment(new Date())} rules={[{ required: true }]}>
+              <DatePicker style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item label="采样时间" name={'samplingTime'} initialValue={moment(new Date())} rules={[{ required: true }]}>
+              <TimePicker style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item label="采样签名" name={'samplingSignature'}>
+              <Input size="small" style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item label="血糖值(单位：mmol)" name={'bloodGlucoseValue'} rules={[{ required: true }]}>
+              <Input size="small" style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item label="医院诊断" name={'hospitalDiagnosis'}>
+              <Input.TextArea AUTOCOMPLETE="OFF" size={'small'} rows={3} />
+            </Form.Item>
+          </Form>
+          <Form.Item>
+            <Button
+              style={{ marginLeft: 200 }}
+              type={'primary'}
+              onClick={async () => {
+                let param = TForm.getFieldsValue();
+                if (ftype == 'add') {
+                  let params = {
+                    ...addBasicInfo,
+                    ...TForm.getFieldsValue(),
+                    patientName: addBasicInfo['name'],
+                  };
+                  let res = await bloodSugarInsert(params);
+                  message.success('添加成功');
+                  setModalVisible(false);
+                  refushList({ pageNum: 1 });
+                }
+                if (ftype == 'edit') {
+                  let param = {
+                    ...nursingRecord,
+                    ...TForm.getFieldsValue(),
+                    patientName: nursingRecord['name'],
+                  };
+                  let res = await bloodSugarUpdate(param);
+                  message.success('修改成功');
+                  setModalVisible(false);
+                  refushList({ pageNum: 1 });
+                }
+              }}
+            >
+              {ftype == 'add' ? '保存' : '修改'}
+            </Button>
+          </Form.Item>
+        </div>
+      </Modal>
     );
   };
   return (
@@ -192,6 +344,7 @@ const RloodGlucoseRecord = (props) => {
       <div class="content">
         {renderSearch()}
         {renderForm()}
+        {renderMoadl()}
       </div>
     </div>
   );
