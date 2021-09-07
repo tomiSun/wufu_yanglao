@@ -26,7 +26,7 @@ export default () => {
           dataIndex: 'dayOfWeek',
           align: 'left',
           ellipsis: true,
-          width: 150,
+          width: 100,
           render: (text, record, index) => {
             return `${record?.dayOfWeek}(${record?.date})`;
           },
@@ -219,8 +219,13 @@ export default () => {
     setYTable({ ...yTable });
     cookbookSelect(params)
       .then((res) => {
-        yTable.table.dataSource = res?.data || [];
-        setYTable({ ...yTable });
+        yTable.table.dataSource =
+          res?.data?.map((it) => {
+            return {
+              ...it,
+              id: !it.id ? Math.random() : it.id,
+            };
+          }) || [];
         yTable.table.loading = false;
         yTable.table.pagination.current = res?.data?.pageNum;
         setYTable({ ...yTable });
@@ -233,8 +238,12 @@ export default () => {
   };
   // 提交
   const cookbookUpdateService = () => {
+    const data =
+      yTable.table.dataSource?.map((it) => {
+        return { ...it, id: parseFloat(it.id) > 1 ? it.id : '' };
+      }) || [];
     cookbookUpdate({
-      busMenuBatchUpdateInfos: yTable.table.dataSource,
+      busMenuBatchUpdateInfos: data,
       startTime: week[0],
       endTime: week[1],
     })
