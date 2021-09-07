@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.less';
 import { SearchForm, YTable } from 'yunyi-component';
-import { Form, Modal, Input, Row, Col, message, DatePicker, TimePicker, Select } from 'antd';
+import { Form, Modal, Input, Row, Col, message, DatePicker, TimePicker, Select, Tabs } from 'antd';
 import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
 import { patientQuery } from '@/services/inHospitalRegister';
 import { useTableHeight } from '@/utils/tableHeight';
@@ -14,113 +14,171 @@ import {
   addVitalSignRecord,
 } from '@/services/nursingManagement/threeVolumeList';
 import { config } from '@/utils/const';
-import { ModalForm } from '@ant-design/pro-form';
 import { Temperature } from './components/temperatureChart/temperature';
 import './styles/app.less';
 import { printStyle } from './printStyle';
 import { useReactToPrint } from 'react-to-print';
+import { excelExport } from '@/utils/ExcelExport';
+
 const { pageSize } = config;
+const { TabPane } = Tabs;
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
   const tableHeight = useTableHeight(tableRef);
   // 上部搜索searchForm模块
   const [topFrom] = Form.useForm();
-  const searchTopForm = {
-    inputArr: [
-      // {
-      //   name: 'keyWord',
-      //   placeholder: '请输入姓名',
-      //   sort: 2,
-      //   style: { width: '200px' },
-      //   pressEnter: (enter) => {
-      //     getTableData();
-      //   },
-      // },
-    ],
-    dateArr: [
-      {
-        label: '时间',
-        name: 'recordTime',
-        config: {
-          time: moment(),
-          showTime: false,
-          onChange: (e) => {
-            topFrom.setFieldsValue({ recordTime: moment(e) });
+  const searchTopForm = [
+    {
+      dateArr: [
+        {
+          label: '时间',
+          name: 'recordTime',
+          config: {
+            time: moment(),
+            showTime: false,
+            onChange: (e) => {
+              topFrom.setFieldsValue({ recordTime: moment(e) });
+              getTableData();
+            },
+          },
+          sort: 1,
+        },
+      ],
+      radioArr: [
+        {
+          label: '',
+          name: 'timePoint',
+          config: {},
+          cld: [
+            { name: '2', value: '02:00' },
+            { name: '6', value: '06:00' },
+            { name: '10', value: '10:00' },
+            { name: '14', value: '14:00' },
+            { name: '18', value: '18:00' },
+            { name: '22', value: '22:00' },
+          ],
+          change: (e) => {
+            getTableData();
+          },
+          sort: 2,
+        },
+      ],
+      btnArr: [
+        {
+          name: '查询',
+          callback: () => {
+            getTableData();
+          },
+          sort: 4,
+          style: { marginRight: '15px' },
+        },
+        {
+          name: '保存',
+          callback: () => {
+            batchUpdate();
+          },
+          sort: 4,
+          style: { marginRight: '15px' },
+        },
+        {
+          name: '新增',
+          type: 'primary',
+          sort: 5,
+          style: { marginRight: '15px' },
+          callback: () => {
+            addOrEdit('add', true);
+          },
+        },
+      ],
+      layout: 'inline',
+      form: topFrom,
+      cls: 'opera',
+      initialValues: {
+        timePoint: '02:00',
+        recordTime: moment().format('YYYY-MM-DD'),
+      },
+    },
+    {
+      inputArr: [
+        {
+          name: 'keyWord',
+          placeholder: '请输入姓名',
+          sort: 2,
+          style: { width: '200px' },
+          pressEnter: (enter) => {
             getTableData();
           },
         },
-        sort: 1,
-      },
-    ],
-    // renderArr: [
-    //   {
-    //     label: '',
-    //     name: 'render',
-    //     renderFun: (
-    //       <TimePicker
-    //         onChange={() => {}}
-    //         defaultValue={moment('00:00', 'HH:mm')}
-    //         format={'HH:mm'}
-    //       />
-    //     ),
-    //     sort: 3,
-    //   },
-    // ],
-    radioArr: [
-      {
-        label: '',
-        name: 'timePoint',
-        config: {},
-        cld: [
-          { name: '2', value: '02:00' },
-          { name: '6', value: '06:00' },
-          { name: '10', value: '10:00' },
-          { name: '14', value: '14:00' },
-          { name: '18', value: '18:00' },
-          { name: '22', value: '22:00' },
+      ],
+      dateArr: [
+        {
+          label: '时间范围',
+          name: 'timeRange',
+          config: {
+            dateType: 'range',
+            timeStart: moment().startOf('day'),
+            timeEnd: moment().endOf('day'),
+            showTime: false,
+            onChange: (e) => {
+              topFrom.setFieldsValue({ timeRange: e });
+            },
+          },
+          style: { width: '220px' },
+          sort: 1,
+        },
+      ],
+      btnArr: [
+        {
+          name: '查询',
+          callback: () => {
+            getTableData();
+          },
+          sort: 4,
+          style: { marginRight: '15px' },
+        },
+        {
+          name: '保存',
+          callback: () => {
+            batchUpdate();
+          },
+          sort: 4,
+          style: { marginRight: '15px' },
+        },
+        {
+          name: '新增',
+          type: 'primary',
+          sort: 5,
+          style: { marginRight: '15px' },
+          callback: () => {
+            addOrEdit('add', true);
+          },
+        },
+        {
+          name: '导出',
+          type: '',
+          sort: 6,
+          callback: () => {
+            excelExport({
+              api: '/blood-sugar/export',
+              ids: '487207946229518336',
+              fileName: '三测单',
+            });
+          },
+        },
+      ],
+      layout: 'inline',
+      form: topFrom,
+      cls: 'opera',
+      initialValues: {
+        timeRange: [
+          moment().startOf('day').format('YYYY-MM-DD'),
+          // moment().subtract(90, 'days').format('YYYY-MM-DD'),
+          moment().endOf('day').format('YYYY-MM-DD'),
         ],
-        change: (e) => {
-          console.log('radioArr----', e);
-          getTableData();
-        },
-        sort: 2,
       },
-    ],
-    btnArr: [
-      {
-        name: '查询',
-        callback: () => {
-          getTableData();
-        },
-        sort: 4,
-        style: { marginRight: '15px' },
-      },
-      {
-        name: '保存',
-        callback: () => {
-          batchUpdate();
-        },
-        sort: 4,
-        style: { marginRight: '15px' },
-      },
-      {
-        name: '新增',
-        type: 'primary',
-        sort: 5,
-        callback: () => {
-          addOrEdit('add', true);
-        },
-      },
-    ],
-    layout: 'inline',
-    form: topFrom,
-    cls: 'opera',
-    initialValues: {
-      timePoint: '02:00',
-      recordTime: moment().format('YYYY-MM-DD'),
     },
-  };
+  ];
 
   // modal配置项
   const [modalForm] = Form.useForm();
@@ -131,6 +189,7 @@ export default () => {
   // table模块
   const [yTable, setYTable] = useState({
     table: {
+      tabKey: '1',
       bordered: true,
       loading: false,
       dataSource: [],
@@ -572,6 +631,11 @@ export default () => {
     temperatureModal.visible = true;
     setTemperatureModal({ ...temperatureModal });
   };
+  const tabChange = (e) => {
+    console.log('e: ', e);
+    yTable.table.tabKey = e;
+    setYTable({ ...yTable });
+  };
   // 初始化
   useEffect(() => {
     getDictionaryData();
@@ -580,7 +644,15 @@ export default () => {
   }, []);
   return (
     <div>
-      <SearchForm searchForm={searchTopForm} />
+      <Tabs onChange={tabChange} type="card">
+        <TabPane tab="批量录入" key="1">
+          <SearchForm searchForm={searchTopForm[0]} />
+        </TabPane>
+        <TabPane tab="个人记录" key="2">
+          <SearchForm searchForm={searchTopForm[1]} />
+        </TabPane>
+      </Tabs>
+
       <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
         <YTable {...yTable} />
       </div>

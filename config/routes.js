@@ -189,12 +189,12 @@ export default [
             icon: 'highlight',
             path: '/nursingManagement',
             routes: [
-              {
-                name: '护理批量录入', //护理记录
-                icon: 'smile',
-                path: '/nursingManagement/nursingAddRecord/index',
-                component: './nursingManagement/nursingAddRecord/index',
-              },
+              // {
+              //   name: '护理批量录入', //护理记录
+              //   icon: 'smile',
+              //   path: '/nursingManagement/nursingAddRecord/index',
+              //   component: './nursingManagement/nursingAddRecord/index',
+              // },
               {
                 name: '血糖记录表', //血糖记录表
                 icon: 'smile',
@@ -231,12 +231,12 @@ export default [
                 path: '/nursingManagement/drugRecord/index',
                 component: './nursingManagement/drugRecord',
               },
-              {
-                name: '请假管理', //请假管理
-                icon: 'smile',
-                path: '/nursingManagement/leaveManagement/index',
-                component: './nursingManagement/leaveManagement',
-              },
+              // {
+              //   name: '请假管理', //请假管理
+              //   icon: 'smile',
+              //   path: '/nursingManagement/leaveManagement/index',
+              //   component: './nursingManagement/leaveManagement',
+              // },
               // {
               //   name: '三测单', //三测单
               //   icon: 'smile',
