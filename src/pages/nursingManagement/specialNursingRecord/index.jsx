@@ -1,6 +1,7 @@
 /**
  * 血糖记录
  *  */
+import './index.less';
 import React, { useEffect, useState } from 'react';
 import {
   Button,
@@ -11,7 +12,9 @@ import {
   DatePicker,
   Tabs,
   message,
-  Pagination
+  Pagination,
+  Modal,
+  Radio
 } from 'antd';
 import { history } from 'umi'
 import { columns } from './data';
@@ -19,10 +22,13 @@ import moment from 'moment';
 import {
   delSpecialNursing,
   pageSpecialNursing,
+  updateSpecialNursing,
+  addSpecialNursing,
 } from '@/services/nursingManagement'
 import { dictDateSelect } from '@/services/basicSetting/dictionary'
-import './index.less';
 import { ULayout } from '@/utils/common'
+//登记接口
+import { patientQuery, queryHospitalRegist } from '@/services/inHospitalRegister';
 const validateMessages = {
   required: '${label} 为必填项',
 };
@@ -33,6 +39,18 @@ const RloodGlucoseRecord = (props) => {
   const [dataSource, setDataSource] = useState([{ 1: 1 }]);//数据
   //搜索的表单
   const [SForm] = Form.useForm();
+  //信息表单
+  const [TForm] = Form.useForm();
+  //弹窗
+  const [modalVisible, setModalVisible] = useState(false)
+  //名字选项
+  const [nameSelectList, setNameSelectList] = useState([]);
+  //基本信息
+  const [addBasicInfo, setAddBasicInfo] = useState(null);
+  //血糖记录信息
+  const [specialRecord, setSpecialRecord] = useState(null);
+  // 新增&修改
+  const [ftype, setFtype] = useState("add");
   //字典
   const [dictionaryMap, setDictionaryMap] = useState(DICT_LSIT)
   const [pageInfo, setPageInfo] = useState({
@@ -85,31 +103,24 @@ const RloodGlucoseRecord = (props) => {
     return (
       <Form onFinish={() => { }} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
         <Form.Item label="姓名" name={'patientName'}>
-          <Input size={'small'} allowClear/>
+          <Input size={'small'} allowClear />
         </Form.Item>
         <Form.Item label="住院号" name={'businessNo'}>
-          <Input size={'small'} allowClear/>
+          <Input size={'small'} allowClear />
         </Form.Item>
         <Form.Item label="开始日期" name={'startTime'}>
-          <DatePicker size={'small'} allowClear/>
+          <DatePicker size={'small'} allowClear />
         </Form.Item>
         <Form.Item label="结束日期" name={'endTime'}>
-          <DatePicker size={'small'} allowClear/>
+          <DatePicker size={'small'} allowClear />
         </Form.Item>
-        {/* <Form.Item label="采样状态" name={'samplingStatus'}  {...ULayout(12, 16)}>
-          <Select defaultValue="0001" size={'small'}>
-            {samplingStatusMap.map(item => {
-              return <Option value={item['dictCode']}>{item['dictName']}</Option>
-            })}
-          </Select>
-        </Form.Item> */}
         <Form.Item style={{ marginLeft: 20 }}>
           <Button
             type="primary"
             size={'small'}
             style={{ marginTop: 4 }}
             onClick={() => {
-              refushList({pageNum:1})
+              refushList({ pageNum: 1 })
             }}
           >
             查询
@@ -120,7 +131,7 @@ const RloodGlucoseRecord = (props) => {
             type="primary"
             size={'small'}
             style={{ marginTop: 4 }}
-            onClick={() => { handleJumpbatch("4", "add") }}
+            onClick={() => { handAdd() }}
           >
             新增记录
           </Button>
@@ -138,15 +149,23 @@ const RloodGlucoseRecord = (props) => {
       </Form>
     );
   };
-  //新增或者修改的时候到批量的页面
-  const handleJumpbatch = (key, type, row) => {
-    history.push({
-      pathname: '/nursingManagement/nursingAddRecord/index',
-      query: {
-        selectKey: key,
-        type: type,
-        recordId: row?.id
-      }
+
+  //新增
+  const handAdd = () => {
+    TForm.resetFields();
+    setModalVisible(true)
+    setFtype("add")
+  }
+  //修改
+  const handEdit = (data) => {
+    setModalVisible(true)
+    setFtype("edit")
+    setSpecialRecord(data);
+    TForm.setFieldsValue({
+      ...data,
+      name: data.patientName,
+      createTime: moment(data['createTime'] || new Date()),
+      nursingTime: moment(data['nursingTime'] || new Date()),
     });
   }
   //操作
@@ -156,7 +175,7 @@ const RloodGlucoseRecord = (props) => {
         <Button
           size={'small'}
           type="link"
-          onClick={() => { handleJumpbatch("4", "edit", record) }}
+          onClick={() => { handEdit(record) }}
         >
           修改
         </Button>
@@ -166,7 +185,7 @@ const RloodGlucoseRecord = (props) => {
           onClick={async () => {
             let res = await delSpecialNursing({ id: record['id'] })
             message.success("成功")
-            refushList({pageNum:1})
+            refushList({ pageNum: 1 })
           }}
         >
           删除
@@ -197,11 +216,180 @@ const RloodGlucoseRecord = (props) => {
       </div>
     );
   };
+  //姓名搜索框
+  const nameSelectChange = async (value) => {
+    let res = await queryHospitalRegist({
+      businessNo: value,
+      pageSize: 1000,
+      pageNum: 1,
+      status: 0,
+    });
+    if (res?.data?.list[0]) {
+      let data = res?.data?.list[0];
+      let r = data
+      let bedName = `${r['buildingName'] || "#"}-${r['floorName'] || "#"}-${r['roomName'] || "#"}-${r['bedName'] || "#"}`
+      TForm.setFieldsValue({ ...data, bedName })
+      setAddBasicInfo({ ...data }); //todo 少了诊断
+    }
+  };
+  //姓名搜索框
+  const nameSelectBlur = async (e, data) => {
+    let res = await patientQuery({ keyWords: e });
+    if (!!res['data']) {
+      let data = res['data'].map((item) => {
+        return { label: item['name'], value: item['businessNo'] };
+      });
+      setNameSelectList(data);
+    } else {
+      setNameSelectList([]);
+    }
+  };
+  //弹窗
+  const renderMoadl = () => {
+    return (
+      <Modal
+        title="特级管理"
+        width={500}
+        visible={modalVisible}
+        onOk={() => {
+          setModalVisible(false);
+        }}
+        onCancel={() => {
+          setModalVisible(false);
+        }}
+        footer={null}
+      >
+        <div style={{ paddingTop: 20, paddingLeft: 40, paddingRight: 40 }}>
+          <Form
+            form={TForm}
+            {...ULayout(8, 16)}
+            style={{ marginTop: 20 }}
+            validateMessages={validateMessages}
+          >
+            <Form.Item label="姓名:" name={'name'} rules={[{ required: true }]}>
+              <Select
+                showSearch
+                placeholder="姓名"
+                onSearch={nameSelectBlur}
+                onSelect={(value) => {
+                  nameSelectChange(value);
+                }}
+                options={nameSelectList}
+                filterOption={(inputValue, option) => {
+                  return option.label.indexOf(inputValue) > -1;
+                }}
+              ></Select>
+            </Form.Item>
+            <Form.Item label="住院号" name={'businessNo'} rules={[{ required: true }]}>
+              <Input size={'small'} allowClear disabled={true} />
+            </Form.Item>
+            <Form.Item label="床号" name={'bedName'} rules={[{ required: true }]}>
+              <Input size={'small'} allowClear disabled={true} />
+            </Form.Item>
+            <Form.Item label="护理时间" name={'nursingTime'} initialValue={moment(new Date())}>
+              <DatePicker style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item label="是否晚间护理" name={'isEveningCare'}>
+              <Radio.Group>
+                <Radio value="0">是</Radio>
+                <Radio value="1">否</Radio>
+              </Radio.Group>
+            </Form.Item>
+            <Form.Item label="是否晨间护理" name={'isMorningCare'}>
+              <Radio.Group>
+                <Radio value="0">是</Radio>
+                <Radio value="1">否</Radio>
+              </Radio.Group>
+            </Form.Item>
+            <Form.Item label="是否有过敏史" name={'allergy'}>
+              <Radio.Group>
+                <Radio value="0">是</Radio>
+                <Radio value="1">否</Radio>
+              </Radio.Group>
+            </Form.Item>
+            <Form.Item label="预防压疮护理" name={'isPressureUlcersCare'}>
+              <Radio.Group>
+                <Radio value="0">是</Radio>
+                <Radio value="1">否</Radio>
+              </Radio.Group>
+            </Form.Item>
+            <Form.Item label="出量记录" name={'output'}>
+              <Input size="small" style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item label="入量记录" name={'input'}>
+              <Input size="small" style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item label="责任人" name={'personInCharge'}>
+              <Input AUTOCOMPLETE="OFF" size={'small'} />
+            </Form.Item>
+            <Form.Item label="医院诊断" name={'hospitalDiagnosis'}>
+              <Input.TextArea AUTOCOMPLETE="OFF" size={'small'} rows={3} />
+            </Form.Item>
+            <Form.Item label="精神状态及其他" name={'mentalState'}>
+              <Input.TextArea AUTOCOMPLETE="OFF" size={'small'} rows={4} />
+            </Form.Item>
+            <Form.Item>
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                  type="primary"
+                  size={'small'}
+                  style={{ position: 'relative', right: 0 }}
+                  onClick={async () => {
+                    if (ftype == 'add') {
+                      let param = {
+                        ...addBasicInfo,
+                        ...TForm.getFieldsValue(),
+                        patientName: addBasicInfo['name'],
+                      };
+                      let params = {
+                        allergy: param?.allergy,
+                        bedName: param?.bedName || '#',
+                        businessNo: param?.businessNo,
+                        hospitalDiagnosis: param?.hospitalDiagnosis,
+                        input: param?.input,
+                        isEveningCare: param?.isEveningCare,
+                        isMorningCare: param?.isMorningCare,
+                        isPressureUlcersCare: param?.isPressureUlcersCare,
+                        mentalState: param?.mentalState,
+                        nursingTime: param?.nursingTime,
+                        output: param?.output,
+                        patientName: param?.name,
+                        personInCharge: param?.personInCharge,
+                        roomName: param?.roomName || '#',
+                      };
+                      let res = await addSpecialNursing(params);
+                      setModalVisible(false);
+                      refushList({ pageNum: 1 });
+                      message.success('新增成功');
+                    }
+                    if (ftype == 'edit') {
+                      let param = {
+                        ...specialRecord,
+                        ...TForm.getFieldsValue(),
+                        patientName: specialRecord['name'],
+                      };
+                      let res = await updateSpecialNursing(param);
+                      setModalVisible(false);
+                      refushList({ pageNum: 1 });
+                      message.success('编辑成功');
+                    }
+                  }}
+                >
+                  {ftype == 'add' ? '保存' : '修改'}
+                </Button>
+              </div>
+            </Form.Item>
+          </Form>
+        </div>
+      </Modal>
+    );
+  };
   return (
     <div class="root">
       <div class="content">
         {renderSearch()}
         {renderForm()}
+        {renderMoadl()}
       </div>
     </div>
   );

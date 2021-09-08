@@ -150,10 +150,9 @@ const RloodGlucoseRecord = (props) => {
     setModalVisible(true)
     setFtype("edit")
     setNursingRecord(data);
-    debugger
     TForm.setFieldsValue({
       ...data,
-      name:data.patientName,
+      name: data.patientName,
       samplingTime: moment(data['samplingTime'] || new Date()),
       bloodSugarRecordDate: moment(data['bloodSugarRecordDate'] || new Date()),
     });
@@ -165,9 +164,7 @@ const RloodGlucoseRecord = (props) => {
         <Button
           size={'small'}
           type="link"
-          onClick={() => {
-            handEdit(record)
-          }}
+          onClick={() => { handEdit(record) }}
         >
           修改
         </Button>
@@ -241,7 +238,7 @@ const RloodGlucoseRecord = (props) => {
   const renderMoadl = () => {
     return (
       <Modal
-        title="带药管理"
+        title="血糖管理"
         width={500}
         visible={modalVisible}
         onOk={() => {
