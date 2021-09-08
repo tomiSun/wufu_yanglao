@@ -29,6 +29,8 @@ import { dictDateSelect } from '@/services/basicSetting/dictionary'
 import { ULayout } from '@/utils/common'
 //登记接口
 import { patientQuery, queryHospitalRegist } from '@/services/inHospitalRegister';
+//导出
+import { excelExport } from '@/utils/ExcelExport';
 const validateMessages = {
   required: '${label} 为必填项',
 };
@@ -51,6 +53,8 @@ const RloodGlucoseRecord = (props) => {
   const [specialRecord, setSpecialRecord] = useState(null);
   // 新增&修改
   const [ftype, setFtype] = useState("add");
+  //列表选中
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   //字典
   const [dictionaryMap, setDictionaryMap] = useState(DICT_LSIT)
   const [pageInfo, setPageInfo] = useState({
@@ -83,7 +87,7 @@ const RloodGlucoseRecord = (props) => {
   const getBloodSugarInfo = async (param) => {
     let res = await pageSpecialNursing(param);
     if (res['code'] === 200) {
-      setDataSource(res['data']['list'])
+      setDataSource(res['data']['list'].map(item => { return { ...item, key: item.id } }))
       setPageInfo({ pageNum: param['pageNum'], pageSize: param['pageSize'], total: res.data.total })
     } else {
       setDataSource([])
@@ -146,6 +150,22 @@ const RloodGlucoseRecord = (props) => {
             清空
           </Button>
         </Form.Item>
+        <Form.Item>
+          <Button
+            type="primary"
+            size={'small'}
+            style={{ marginTop: 4 }}
+            onClick={() => {
+              excelExport({
+                api: '/nursingManage/exportSpecialNursing', //导出接口路径
+                ids: selectedRowKeys.join(","), //勾选的行id数组集合
+                fileName: '特级护理记录', //导出文件名称
+              });
+            }}
+          >
+            导出
+          </Button>
+        </Form.Item>
       </Form>
     );
   };
@@ -193,6 +213,14 @@ const RloodGlucoseRecord = (props) => {
       </div>
     );
   };
+  //选中操作
+  const onSelectChange = (selectedRowKeys, record) => {
+    setSelectedRowKeys(selectedRowKeys)
+  };
+  const rowSelection = {
+    selectedRowKeys: selectedRowKeys,
+    onChange: onSelectChange,
+  };
   //表单
   const renderForm = () => {
     return (
@@ -202,6 +230,7 @@ const RloodGlucoseRecord = (props) => {
           dataSource={dataSource}
           scroll={{ x: 1300 }}
           pagination={false}
+          rowSelection={rowSelection}
         />
         <Pagination
           defaultCurrent={1}
@@ -248,7 +277,7 @@ const RloodGlucoseRecord = (props) => {
   const renderMoadl = () => {
     return (
       <Modal
-        title="特级管理"
+        title="特级护理管理"
         width={500}
         visible={modalVisible}
         onOk={() => {

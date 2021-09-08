@@ -219,18 +219,18 @@ export default [
                 path: '/nursingManagement/threeVolumeList/index',
                 component: './nursingManagement/threeVolumeList',
               },
-              {
-                name: '带药管理', //带药管理
-                icon: 'smile',
-                path: '/nursingManagement/drugManage/index',
-                component: './nursingManagement/drugManage',
-              },
-              {
-                name: '服药记录', //服药记录
-                icon: 'smile',
-                path: '/nursingManagement/drugRecord/index',
-                component: './nursingManagement/drugRecord',
-              },
+              // {
+              //   name: '带药管理', //带药管理
+              //   icon: 'smile',
+              //   path: '/nursingManagement/drugManage/index',
+              //   component: './nursingManagement/drugManage',
+              // },
+              // {
+              //   name: '服药记录', //服药记录
+              //   icon: 'smile',
+              //   path: '/nursingManagement/drugRecord/index',
+              //   component: './nursingManagement/drugRecord',
+              // },
               // {
               //   name: '请假管理', //请假管理
               //   icon: 'smile',
@@ -291,6 +291,18 @@ export default [
                 icon: 'smile',
                 path: '/syntheticModule/examine',
                 component: './syntheticModule/examine',
+              },
+              {
+                name: '带药管理', //带药管理
+                icon: 'smile',
+                path: '/syntheticModule/drugManage/index',
+                component: './syntheticModule/drugManage',
+              },
+              {
+                name: '服药记录', //服药记录
+                icon: 'smile',
+                path: '/syntheticModule/drugRecord/index',
+                component: './syntheticModule/drugRecord',
               },
             ],
           },

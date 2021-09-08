@@ -142,3 +142,21 @@ export const analyzeIDCard = (idcard) => {
   // 返回 性别和年龄
   return sexAndAge;
 };
+
+/**
+ * 判断选中的是否是同一个人
+ * @param data
+ */
+export const isOnePeople = (data) => {
+  if (data.length === 0) {
+    return true
+  }
+  let res = true;
+  let busNo = data[0]['businessNo'];
+  data.forEach(it => {
+    if (it.businessNo !== busNo) {
+      res = false
+    }
+  })
+  return res
+};

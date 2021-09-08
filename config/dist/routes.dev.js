@@ -96,7 +96,7 @@ var _default = [{
       icon: 'highlight',
       path: '/archivesManage',
       routes: [{
-        name: '老人档案',
+        name: '入院登记',
         icon: 'smile',
         path: '/archivesManage/archives/index',
         component: './archivesManage/archives/index'
@@ -138,7 +138,7 @@ var _default = [{
       icon: 'highlight',
       path: '/registration',
       routes: [{
-        name: '入院办理',
+        name: '入科登记',
         icon: 'smile',
         path: '/registration/inHospitalRegister/index',
         component: './registration/inHospitalRegister/index'
@@ -165,13 +165,13 @@ var _default = [{
       name: '护理管理',
       icon: 'highlight',
       path: '/nursingManagement',
-      routes: [{
-        name: '护理批量录入',
-        //护理记录
-        icon: 'smile',
-        path: '/nursingManagement/nursingAddRecord/index',
-        component: './nursingManagement/nursingAddRecord/index'
-      }, {
+      routes: [// {
+      //   name: '护理批量录入', //护理记录
+      //   icon: 'smile',
+      //   path: '/nursingManagement/nursingAddRecord/index',
+      //   component: './nursingManagement/nursingAddRecord/index',
+      // },
+      {
         name: '血糖记录表',
         //血糖记录表
         icon: 'smile',
@@ -195,25 +195,31 @@ var _default = [{
         icon: 'smile',
         path: '/nursingManagement/threeVolumeList/index',
         component: './nursingManagement/threeVolumeList'
-      }, {
-        name: '带药管理',
-        //带药管理
-        icon: 'smile',
-        path: '/nursingManagement/drugManage/index',
-        component: './nursingManagement/drugManage'
-      }, {
-        name: '服药记录',
-        //服药记录
-        icon: 'smile',
-        path: '/nursingManagement/drugRecord/index',
-        component: './nursingManagement/drugRecord'
-      }, {
-        name: '请假管理',
-        //请假管理
-        icon: 'smile',
-        path: '/nursingManagement/leaveManagement/index',
-        component: './nursingManagement/leaveManagement'
-      }]
+      } // {
+      //   name: '带药管理', //带药管理
+      //   icon: 'smile',
+      //   path: '/nursingManagement/drugManage/index',
+      //   component: './nursingManagement/drugManage',
+      // },
+      // {
+      //   name: '服药记录', //服药记录
+      //   icon: 'smile',
+      //   path: '/nursingManagement/drugRecord/index',
+      //   component: './nursingManagement/drugRecord',
+      // },
+      // {
+      //   name: '请假管理', //请假管理
+      //   icon: 'smile',
+      //   path: '/nursingManagement/leaveManagement/index',
+      //   component: './nursingManagement/leaveManagement',
+      // },
+      // {
+      //   name: '三测单', //三测单
+      //   icon: 'smile',
+      //   path: '/nursingManagement/temperature',
+      //   component: './nursingManagement/temperature',
+      // },
+      ]
     }, {
       name: '综合模块',
       icon: 'highlight',
@@ -253,6 +259,18 @@ var _default = [{
         icon: 'smile',
         path: '/syntheticModule/examine',
         component: './syntheticModule/examine'
+      }, {
+        name: '带药管理',
+        //带药管理
+        icon: 'smile',
+        path: '/syntheticModule/drugManage/index',
+        component: './syntheticModule/drugManage'
+      }, {
+        name: '服药记录',
+        //服药记录
+        icon: 'smile',
+        path: '/syntheticModule/drugRecord/index',
+        component: './syntheticModule/drugRecord'
       }]
     }, {
       name: '统计管理',

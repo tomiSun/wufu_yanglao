@@ -1,6 +1,7 @@
 /**
  * 血糖记录
  *  */
+import './index.less';
 import React, { useEffect, useState } from 'react';
 import {
   Button,
@@ -24,14 +25,14 @@ import {
   bloodSugarInsert,
 } from '@/services/nursingManagement'
 import { dictDateSelect } from '@/services/basicSetting/dictionary'
-import './index.less';
-import { ULayout } from '@/utils/common'
+import { ULayout, isOnePeople } from '@/utils/common'
 //登记接口
 import { patientQuery, queryHospitalRegist } from '@/services/inHospitalRegister';
+//导出
+import { excelExport } from '@/utils/ExcelExport';
 const validateMessages = {
   required: '${label} 为必填项',
 };
-
 const RloodGlucoseRecord = (props) => {
   //列表数据
   const [dataSource, setDataSource] = useState([{ 1: 1 }]);//数据
@@ -47,6 +48,11 @@ const RloodGlucoseRecord = (props) => {
   const [nursingRecord, setNursingRecord] = useState(null);
   // 新增&修改
   const [ftype, setFtype] = useState("add");
+  //列表选中
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  //列表选中
+  const [selectedRowData, setSelectedRowData] = useState([]);
+  //分页
   const [pageInfo, setPageInfo] = useState({
     total: 0,
     pageSize: 10,
@@ -66,7 +72,7 @@ const RloodGlucoseRecord = (props) => {
   const getBloodSugarInfo = async (param) => {
     let res = await bloodSugarQuery(param);
     if (res['code'] === 200) {
-      setDataSource(res['data']['list'])
+      setDataSource(res['data']['list'].map(item => { return { ...item, key: item.id } }))
       setPageInfo({ pageNum: param['pageNum'], pageSize: param['pageSize'], total: res.data.total })
     } else {
       setDataSource([])
@@ -136,6 +142,27 @@ const RloodGlucoseRecord = (props) => {
             清空
           </Button>
         </Form.Item>
+        <Form.Item>
+          <Button
+            type="primary"
+            size={'small'}
+            style={{ marginTop: 4 }}
+            onClick={() => {
+              let res = isOnePeople(selectedRowData)
+              if (!res) {
+                message.warn("一次导出一个人的信息")
+                return
+              }
+              excelExport({
+                api: '/blood-sugar/export', //导出接口路径
+                ids: selectedRowKeys.join(","), //勾选的行id数组集合
+                fileName: '血糖记录', //导出文件名称
+              });
+            }}
+          >
+            导出
+          </Button>
+        </Form.Item>
       </Form>
     );
   };
@@ -182,6 +209,15 @@ const RloodGlucoseRecord = (props) => {
       </div>
     );
   };
+  //选中操作
+  const onSelectChange = (selectedRowKeys, record) => {
+    setSelectedRowKeys(selectedRowKeys)
+    setSelectedRowData(record)
+  };
+  const rowSelection = {
+    selectedRowKeys: selectedRowKeys,
+    onChange: onSelectChange,
+  };
   //表单
   const renderForm = () => {
     return (
@@ -191,6 +227,7 @@ const RloodGlucoseRecord = (props) => {
           dataSource={dataSource}
           scroll={{ x: 1300 }}
           pagination={false}
+          rowSelection={rowSelection}
         />
         <Pagination
           defaultCurrent={1}
@@ -239,7 +276,7 @@ const RloodGlucoseRecord = (props) => {
     return (
       <Modal
         title="血糖管理"
-        width={500}
+        width={680}
         visible={modalVisible}
         onOk={() => {
           setModalVisible(false);

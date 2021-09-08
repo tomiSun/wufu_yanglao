@@ -57,3 +57,4 @@ export const getRouteAuthority = (path, routeData) => {
   });
   return authorities;
 };
+
