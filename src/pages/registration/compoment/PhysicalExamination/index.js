@@ -7,6 +7,7 @@ import {
   Modal,
   Tabs,
   message,
+  Upload,
 } from 'antd';
 import {
   examArchiveDel,
@@ -26,7 +27,8 @@ const PhysicalExamination = (props) => {
   const { selectRowData, onPhysicalExaminationVisible, visible } = props;
   //变量
   const [mode, setMode] = useState('add'); //模式是新增还是编辑
-
+  //文件
+  const [examArchiveFile, setExamArchiveFile] = useState({});
   //form
   const [form] = Form.useForm(); //基础与总结
   const [updateId, setUpdateId] = useState('');
@@ -38,9 +40,9 @@ const PhysicalExamination = (props) => {
   const initData = async () => {
     form.setFieldsValue(selectRowData);
     let resQuery = await examArchiveQuery({ businessNo: selectRowData['businessNo'] });
-    if (resQuery['code'] == 200 && !!resQuery['data']) {
+    if (resQuery['code'] == 200 && !!resQuery['data']['id']) {
       //todo
-      let id = resQuery['data']['busExamArchiveQueryVO']['id'];
+      let id = resQuery['data']['id'];
       setUpdateId(id);
       setMode('edit');
     } else {
@@ -50,6 +52,15 @@ const PhysicalExamination = (props) => {
   //清除
   const formReset = () => {
     form.resetFields();
+  };
+  const upProps = {
+    name: 'file',
+    headers: {
+      authorization: 'authorization-text',
+    },
+    onChange(info) {
+      setExamArchiveFile(info.file)
+    },
   };
   //体检弹窗
   const renderModal = () => {
@@ -75,10 +86,13 @@ const PhysicalExamination = (props) => {
           name="nest-messages"
           validateMessages={validateMessages}
         >
-          <Form.Item name={'archiveId'} label="档案ID" {...layout}>
-            <Input disabled />
+          <Form.Item name={'examArchiveFile'} >
+
           </Form.Item>
         </Form>
+        <Upload {...upProps}>
+          <Button>上传图片</Button>
+        </Upload>
       </Modal>
     );
   };
@@ -87,10 +101,24 @@ const PhysicalExamination = (props) => {
     let addBtn = (
       <Button
         onClick={async () => {
-          let addParam = {
-            busExamArchiveInsertPO: form.getFieldsValue(),
-          };
-          let res3 = await examArchiveSave(addParam);
+          let addInfo={
+            age:selectRowData?.age,
+            archiveId:selectRowData?.archiveId,
+            businessNo:selectRowData?.businessNo,
+            contactNumber:selectRowData?.contactNumber,
+            education:selectRowData?.education,
+            mainDoctorSign:selectRowData?.mainDoctorSign,
+            medicalHistoryCode:selectRowData?.medicalHistoryCode,
+            medicalHistoryName:selectRowData?.medicalHistoryName,
+            name:selectRowData?.name,
+            physicalCheck:selectRowData?.physicalCheck,
+            remark:selectRowData?.remark,
+            sex:selectRowData?.sex,
+            signTime:selectRowData?.signTime,
+            examArchiveFile
+          }
+          debugger
+          let res3 = await examArchiveSave(addInfo);
           message.success('新增成功');
           onPhysicalExaminationVisible(false);
           formReset();
@@ -132,21 +160,18 @@ const PhysicalExamination = (props) => {
     let clearBtn = (
       <Button
         onClick={async () => {
-          selectKey == "2" && busExamEyesArchiveForm.resetFields()
+          busExamEyesArchiveForm.resetFields()
         }}
       >
         清空
       </Button>
     );
-    let arrEdit = selectKey == "1" ? [editBtn, delBtn] : [editBtn, clearBtn];
-    let arrAdd = [addBtn];
     if (mode == 'edit') {
-      return arrEdit;
+      return [editBtn, delBtn];
     }
     if (mode == 'add') {
-      return arrAdd;
+      return [addBtn];
     }
-
     return arrAdd;
   };
   return <div>{renderModal

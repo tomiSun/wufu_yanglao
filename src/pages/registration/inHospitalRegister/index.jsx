@@ -13,7 +13,7 @@ import {
   Pagination,
 } from 'antd';
 import { columns } from './data';
-import PhysicalExamination from '../compoment/PhysicalExamination/indexbf';
+import PhysicalExamination from '../compoment/PhysicalExamination/index';
 import ProbationEvaluation from '../compoment/ProbationEvaluation';
 import Assessment from '../compoment/Assessment';
 import AgreementForm from '../compoment/AgreementForm';
@@ -213,7 +213,17 @@ const InHospitalRegister = (props) => {
             setPhysicalExaminationVisible(true);
           }}
         >
-
+        </Button>
+        <Button
+          style={{ marginRight: 10 }}
+          size={'small'}
+          type="link"
+          onClick={() => {
+            setSelectRowData(row);
+            setPhysicalExaminationVisible(true);
+          }}
+        >
+          体检报告
         </Button>
         <Button
           style={{ marginRight: 10 }}
