@@ -9,103 +9,70 @@ import {
   Input,
   Row,
   Col,
-  Radio,
-  InputNumber,
   message,
-  Button,
-  Divider,
   DatePicker,
   TimePicker,
-  Checkbox,
   Select,
+  Tabs,
+  Drawer,
+  Divider,
 } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
 import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
-import {
-  leaveManagementAdd,
-  leaveManagementDel,
-  leaveManagementSelect,
-  leaveManagementUpdate,
-} from '@/services/nursingManagement/leaveManagement';
 import { patientQuery } from '@/services/inHospitalRegister';
-import { baseArchiveQuery } from '@/services/archives';
-import { findValByKey, getDefaultOption } from '@/utils/common';
-import { config } from '@/utils/const';
-const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
-const { TextArea } = Input;
 import moment from 'moment';
-import { recordAdd } from '../../../services/syntheticModule/record';
+import {
+  batchQueryVitalSignRecord,
+  batchUpdateVitalSignRecord,
+  addVitalSignRecord,
+  queryVitalSignRecord,
+} from '@/services/nursingManagement/threeVolumeList';
+import { config } from '@/utils/const';
+import { Temperature } from './components/temperatureChart/temperature';
+import './styles/app.less';
+import { printStyle } from './printStyle';
+import { useReactToPrint } from 'react-to-print';
+import { excelExport } from '@/utils/ExcelExport';
+
+const { pageSize } = config;
+const { TabPane } = Tabs;
 export default () => {
-  const timePointOptions = [
-    { name: '2', value: '2', lable: '2' },
-    { name: '6', value: '6', lable: '6' },
-    { name: '10', value: '10', lable: '10' },
-    { name: '14', value: '14', lable: '14' },
-    { name: '18', value: '18', lable: '18' },
-    { name: '22', value: '22', lable: '22' },
-  ];
   // 获取表格高度
   const tableRef = useRef(null);
   const tableHeight = useTableHeight(tableRef);
   // 上部搜索searchForm模块
   const [topFrom] = Form.useForm();
   const searchTopForm = {
-    inputArr: [
-      // {
-      //   name: 'keyWord',
-      //   placeholder: '请输入姓名',
-      //   sort: 2,
-      //   style: { width: '200px' },
-      //   pressEnter: (enter) => {
-      //     getTableData();
-      //   },
-      // },
-    ],
     dateArr: [
       {
         label: '时间',
-        name: 'time',
+        name: 'recordTime',
         config: {
           time: moment(),
           showTime: false,
           onChange: (e) => {
-            topFrom.setFieldsValue({ time: moment(e) });
+            topFrom.setFieldsValue({ recordTime: moment(e) });
             getTableData();
           },
         },
         sort: 1,
       },
     ],
-    // renderArr: [
-    //   {
-    //     label: '',
-    //     name: 'render',
-    //     renderFun: (
-    //       <TimePicker
-    //         onChange={() => {}}
-    //         defaultValue={moment('00:00', 'HH:mm')}
-    //         format={'HH:mm'}
-    //       />
-    //     ),
-    //     sort: 3,
-    //   },
-    // ],
     radioArr: [
       {
         label: '',
-        name: 'radio',
+        name: 'timePoint',
         config: {},
         cld: [
-          { name: '2', value: '2' },
-          { name: '6', value: '6' },
-          { name: '10', value: '10' },
-          { name: '14', value: '14' },
-          { name: '18', value: '18' },
-          { name: '22', value: '22' },
+          { name: '2', value: '02:00' },
+          { name: '6', value: '06:00' },
+          { name: '10', value: '10:00' },
+          { name: '14', value: '14:00' },
+          { name: '18', value: '18:00' },
+          { name: '22', value: '22:00' },
         ],
         change: (e) => {
-          console.log('radioArr----', e);
+          getTableData();
         },
         sort: 2,
       },
@@ -122,7 +89,7 @@ export default () => {
       {
         name: '保存',
         callback: () => {
-          // getTableData();
+          batchUpdate();
         },
         sort: 4,
         style: { marginRight: '15px' },
@@ -131,8 +98,22 @@ export default () => {
         name: '新增',
         type: 'primary',
         sort: 5,
+        style: { marginRight: '15px' },
         callback: () => {
           addOrEdit('add', true);
+        },
+      },
+      {
+        name: '导出',
+        type: 'primary',
+        sort: 5,
+        style: { marginRight: '15px' },
+        callback: () => {
+          excelExport({
+            api: '/blood-sugar/export', //导出接口路径
+            ids: '487207946229518336', //勾选的行id数组集合
+            fileName: '三测单', //导出文件名称
+          });
         },
       },
     ],
@@ -140,11 +121,8 @@ export default () => {
     form: topFrom,
     cls: 'opera',
     initialValues: {
-      timeRange: [
-        moment().startOf('day').format('YYYY-MM-DD'),
-        // moment().subtract(90, 'days').format('YYYY-MM-DD'),
-        moment().endOf('day').format('YYYY-MM-DD'),
-      ],
+      timePoint: '02:00',
+      recordTime: moment().format('YYYY-MM-DD'),
     },
   };
 
@@ -153,290 +131,609 @@ export default () => {
 
   // 基础字典数据
   const [basic, setBasic] = useState({});
+  const yTableColumnsAll = [
+    {
+      title: '床位号',
+      dataIndex: 'bed',
+      key: 'bed',
+      align: 'left',
+      ellipsis: true,
+      fixed: 'left',
+      width: 100,
+    },
+    {
+      title: '住院号',
+      dataIndex: 'businessNo',
+      key: 'businessNo',
+      align: 'left',
+      ellipsis: true,
+      fixed: 'left',
+      width: 100,
+    },
+    {
+      title: '姓名',
+      dataIndex: 'name',
+      key: 'name',
+      align: 'left',
+      ellipsis: true,
+      fixed: 'left',
+      width: 60,
+    },
+    {
+      title: '体温(°C)',
+      dataIndex: 'temperature',
+      key: 'temperature',
+      align: 'left',
+      ellipsis: true,
+      width: 60,
+      render: (text, record) => {
+        return (
+          // <div className={record.isC && !text ? 'redMark' : ''}>
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.temperature = e.target.value;
+              setYTable({ ...yTable });
+            }}
+          />
+          // </div>
+        );
+      },
+    },
+    {
+      title: '脉搏心率(次/分)',
+      dataIndex: 'pulse',
+      key: 'pulse',
+      align: 'left',
+      ellipsis: true,
+      width: 100,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.pulse = e.target.value;
+              setYTable({ ...yTable });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '呼吸(次/分)',
+      dataIndex: 'breathing',
+      key: 'breathing',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.breathing = e.target.value;
+              setYTable({ ...yTable });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '高压(mmHg)',
+      dataIndex: 'highBloodPressure',
+      key: 'highBloodPressure',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.highBloodPressure = e.target.value;
+              setYTable({ ...yTable });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '低压(mmHg)',
+      dataIndex: 'lowBloodPressure',
+      key: 'lowBloodPressure',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.lowBloodPressure = e.target.value;
+              setYTable({ ...yTable });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '入量(ml)',
+      dataIndex: 'intake',
+      key: 'intake',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.intake = e.target.value;
+              setYTable({ ...yTable });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '出量(ml)',
+      dataIndex: 'output',
+      key: 'output',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.output = e.target.value;
+              setYTable({ ...yTable });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '小便(ml)',
+      dataIndex: 'urine',
+      key: 'urine',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.urine = e.target.value;
+              setYTable({ ...yTable });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '大便(ml)',
+      dataIndex: 'defecate',
+      key: 'urine',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.defecate = e.target.value;
+              setYTable({ ...yTable });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '体重(Kg)',
+      dataIndex: 'weight',
+      key: 'weight',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.weight = e.target.value;
+              setYTable({ ...yTable });
+            }}
+          />
+        );
+      },
+    },
+    // {
+    //   title: '血氧饱和度',
+    //   dataIndex: 'bloodOxygen',
+    //   key: 'bloodOxygen',
+    //   align: 'left',
+    //   ellipsis: true,
+    //   width: 80,
+    //   render: (text, record) => {
+    //     return (
+    //       <Input
+    //         className={record.isC && !text ? 'redMark' : ''}
+    //         value={text}
+    //         onChange={(e) => {
+    //           record.bloodOxygen = e.target.value;
+    //           setYTable({ ...yTable });
+    //         }}
+    //       />
+    //     );
+    //   },
+    // },
+    {
+      title: '操作',
+      key: 'opera',
+      align: 'center',
+      fixed: 'right',
+      width: 120,
+      ellipsis: true,
+      render: (text, record) => (
+        // className={styles.opera}
+        <div>
+          <a
+            onClick={() => {
+              openDrawer(record);
+            }}
+          >
+            个人记录
+          </a>
+          <Divider type="vertical" />
+          <a
+            onClick={() => {
+              openTemperatureModal(record);
+            }}
+          >
+            三测单
+          </a>
+        </div>
+      ),
+    },
+  ];
+  const yTableColumnsPerson = [
+    // {
+    //   title: '床位号',
+    //   dataIndex: 'bed',
+    //   key: 'bed',
+    //   align: 'left',
+    //   ellipsis: true,
+    //   fixed: 'left',
+    //   width: 100,
+    // },
+    // {
+    //   title: '住院号',
+    //   dataIndex: 'businessNo',
+    //   key: 'businessNo',
+    //   align: 'left',
+    //   ellipsis: true,
+    //   fixed: 'left',
+    //   width: 100,
+    // },
+    // {
+    //   title: '姓名',
+    //   dataIndex: 'name',
+    //   key: 'name',
+    //   align: 'left',
+    //   ellipsis: true,
+    //   fixed: 'left',
+    //   width: 60,
+    // },
+    {
+      title: '日期',
+      dataIndex: 'recordTime',
+      key: 'recordTime',
+      align: 'left',
+      ellipsis: true,
+      width: 110,
+      render: (text, record) => {
+        return (
+          // <div className={record.isC && !text ? 'redMark' : ''}>
+          <DatePicker
+            onChange={(e) => {
+              record.recordTime = e;
+              setYTableDrawer({ ...yTableDrawer });
+            }}
+            value={text}
+            format="YYYY-MM-DD"
+          />
 
+          // </div>
+        );
+      },
+    },
+    {
+      title: '时间',
+      dataIndex: 'timePoint',
+      key: 'timePoint',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          // <div className={record.isC && !text ? 'redMark' : ''}>
+          <TimePicker
+            onChange={(e) => {
+              record.timePoint = e;
+              setYTableDrawer({ ...yTableDrawer });
+            }}
+            value={text}
+            format={'HH:mm'}
+          />
+          // </div>
+        );
+      },
+    },
+    {
+      title: '体温(°C)',
+      dataIndex: 'temperature',
+      key: 'temperature',
+      align: 'left',
+      ellipsis: true,
+      width: 60,
+      render: (text, record) => {
+        return (
+          // <div className={record.isC && !text ? 'redMark' : ''}>
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.temperature = e.target.value;
+              setYTableDrawer({ ...yTableDrawer });
+            }}
+          />
+          // </div>
+        );
+      },
+    },
+    {
+      title: '脉搏心率(次/分)',
+      dataIndex: 'pulse',
+      key: 'pulse',
+      align: 'left',
+      ellipsis: true,
+      width: 100,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.pulse = e.target.value;
+              setYTableDrawer({ ...yTableDrawer });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '呼吸(次/分)',
+      dataIndex: 'breathing',
+      key: 'breathing',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.breathing = e.target.value;
+              setYTableDrawer({ ...yTableDrawer });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '高压(mmHg)',
+      dataIndex: 'highBloodPressure',
+      key: 'highBloodPressure',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.highBloodPressure = e.target.value;
+              setYTableDrawer({ ...yTableDrawer });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '低压(mmHg)',
+      dataIndex: 'lowBloodPressure',
+      key: 'lowBloodPressure',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.lowBloodPressure = e.target.value;
+              setYTableDrawer({ ...yTableDrawer });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '入量(ml)',
+      dataIndex: 'intake',
+      key: 'intake',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.intake = e.target.value;
+              setYTableDrawer({ ...yTableDrawer });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '出量(ml)',
+      dataIndex: 'output',
+      key: 'output',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.output = e.target.value;
+              setYTableDrawer({ ...yTableDrawer });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '小便(ml)',
+      dataIndex: 'urine',
+      key: 'urine',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.urine = e.target.value;
+              setYTableDrawer({ ...yTableDrawer });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '大便(ml)',
+      dataIndex: 'defecate',
+      key: 'urine',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.defecate = e.target.value;
+              setYTableDrawer({ ...yTableDrawer });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '体重(Kg)',
+      dataIndex: 'weight',
+      key: 'weight',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.weight = e.target.value;
+              setYTableDrawer({ ...yTableDrawer });
+            }}
+          />
+        );
+      },
+    },
+    // {
+    //   title: '血氧饱和度',
+    //   dataIndex: 'bloodOxygen',
+    //   key: 'bloodOxygen',
+    //   align: 'left',
+    //   ellipsis: true,
+    //   width: 80,
+    //   render: (text, record) => {
+    //     return (
+    //       <Input
+    //         className={record.isC && !text ? 'redMark' : ''}
+    //         value={text}
+    //         onChange={(e) => {
+    //           record.bloodOxygen = e.target.value;
+    //           setYTableDrawer({ ...yTableDrawer });
+    //         }}
+    //       />
+    //     );
+    //   },
+    // },
+    // {
+    //   title: '操作',
+    //   key: 'opera',
+    //   align: 'center',
+    //   fixed: 'right',
+    //   width: 60,
+    //   ellipsis: true,
+    //   render: (text, record) => (
+    //     // className={styles.opera}
+    //     <div>
+    //       <a
+    //         onClick={() => {
+    //           openTemperatureModal(record);
+    //         }}
+    //       >
+    //         三测单
+    //       </a>
+    //     </div>
+    //   ),
+    // },
+  ];
   // table模块
   const [yTable, setYTable] = useState({
     table: {
+      tabKey: '1',
       bordered: true,
       loading: false,
-      dataSource: [{ id: '1', temperature: '1', pulse: '1' }],
-      columns: [
-        {
-          title: '床位号',
-          dataIndex: 'bedName',
-          key: 'bedName',
-          align: 'left',
-          ellipsis: true,
-          fixed: 'left',
-          width: 100,
-        },
-        {
-          title: '姓名',
-          dataIndex: 'name',
-          key: 'name',
-          align: 'left',
-          ellipsis: true,
-          fixed: 'left',
-          width: 60,
-          render: () => '床位号',
-        },
-        {
-          title: '住院号',
-          dataIndex: 'businessNo',
-          key: 'businessNo',
-          align: 'left',
-          ellipsis: true,
-          fixed: 'left',
-          width: 100,
-        },
-        {
-          title: '体温(°C)',
-          dataIndex: 'temperature',
-          key: 'temperature',
-          align: 'left',
-          ellipsis: true,
-          width: 60,
-          render: (text, record) => {
-            return (
-              // <div className={record.isC && !text ? 'redMark' : ''}>
-              <Input
-                className={record.isC && !text ? 'redMark' : ''}
-                value={text}
-                onChange={(e) => {
-                  record.temperature = e.target.value;
-                  setYTable({ ...yTable });
-                }}
-              />
-              // </div>
-            );
-          },
-        },
-        {
-          title: '脉搏心率(次/分)',
-          dataIndex: 'pulse',
-          key: 'pulse',
-          align: 'left',
-          ellipsis: true,
-          width: 100,
-          render: (text, record) => {
-            return <Input />;
-          },
-        },
-        {
-          title: '呼吸(次/分)',
-          dataIndex: 'breathing',
-          key: 'breathing',
-          align: 'left',
-          ellipsis: true,
-          width: 80,
-          render: (text, record) => {
-            return <Input />;
-          },
-        },
-        {
-          title: '高压(mmHg)',
-          dataIndex: 'highBloodPressure',
-          key: 'highBloodPressure',
-          align: 'left',
-          ellipsis: true,
-          width: 80,
-          render: (text, record) => {
-            return <Input />;
-          },
-        },
-        {
-          title: '低压(mmHg)',
-          dataIndex: 'lowBloodPressure',
-          key: 'lowBloodPressure',
-          align: 'left',
-          ellipsis: true,
-          width: 80,
-          render: (text, record) => {
-            return <Input />;
-          },
-        },
-        {
-          title: '入量(ml)',
-          dataIndex: 'intake',
-          key: 'intake',
-          align: 'left',
-          ellipsis: true,
-          width: 80,
-          render: (text, record) => {
-            return <Input />;
-          },
-        },
-        {
-          title: '出量(ml)',
-          dataIndex: 'output',
-          key: 'output',
-          align: 'left',
-          ellipsis: true,
-          width: 80,
-          render: (text, record) => {
-            return <Input />;
-          },
-        },
-        {
-          title: '小便(ml)',
-          dataIndex: 'urine',
-          key: 'urine',
-          align: 'left',
-          ellipsis: true,
-          width: 80,
-          render: (text, record) => {
-            return <Input />;
-          },
-        },
-        {
-          title: '大便(ml)',
-          // TODO:
-          dataIndex: 'urine',
-          key: 'urine',
-          align: 'left',
-          ellipsis: true,
-          width: 80,
-          render: (text, record) => {
-            return <Input />;
-          },
-        },
-        {
-          title: '体重(Kg)',
-          dataIndex: 'weight',
-          key: 'weight',
-          align: 'left',
-          ellipsis: true,
-          width: 80,
-          render: (text, record) => {
-            return <Input />;
-          },
-        },
-        // TODO:
-        {
-          title: '血氧饱和度',
-          dataIndex: 'weight',
-          key: 'weight',
-          align: 'left',
-          ellipsis: true,
-          width: 80,
-          render: (text, record) => {
-            return <Input />;
-          },
-        },
-        // {
-        //   title: '打扫房间',
-        //   dataIndex: 'isCleanRoom',
-        //   key: 'isCleanRoom',
-        //   align: 'center',
-        //   ellipsis: true,
-        //   width: 60,
-        //   render: (text, record) => {
-        //     return <Checkbox onChange={() => {}} />;
-        //   },
-        // },
-        // {
-        //   title: '清洗便池',
-        //   dataIndex: 'isCleanToilet',
-        //   key: 'isCleanToilet',
-        //   align: 'center',
-        //   ellipsis: true,
-        //   width: 60,
-        //   render: (text, record) => {
-        //     return <Checkbox onChange={() => {}} />;
-        //   },
-        // },
-        // {
-        //   title: '洗头理发',
-        //   dataIndex: 'isHaircut',
-        //   key: 'isHaircut',
-        //   align: 'center',
-        //   ellipsis: true,
-        //   width: 60,
-        //   render: (text, record) => {
-        //     return <Checkbox onChange={() => {}} />;
-        //   },
-        // },
-        // {
-        //   title: '晾晒衣服',
-        //   dataIndex: 'isHangClothes',
-        //   key: 'isHangClothes',
-        //   align: 'center',
-        //   ellipsis: true,
-        //   width: 60,
-        //   render: (text, record) => {
-        //     return <Checkbox onChange={() => {}} />;
-        //   },
-        // },
-        // {
-        //   title: '修剪指甲',
-        //   dataIndex: 'isManicure',
-        //   key: 'isManicure',
-        //   align: 'center',
-        //   ellipsis: true,
-        //   width: 60,
-        //   render: (text, record) => {
-        //     return <Checkbox onChange={() => {}} />;
-        //   },
-        // },
-        // {
-        //   title: '进餐送餐',
-        //   dataIndex: 'isMeals',
-        //   key: 'isMeals',
-        //   align: 'center',
-        //   ellipsis: true,
-        //   width: 60,
-        //   render: (text, record) => {
-        //     return <Checkbox onChange={() => {}} />;
-        //   },
-        // },
-        // {
-        //   title: '生活用水',
-        //   dataIndex: 'isMeals',
-        //   key: 'isMeals',
-        //   align: 'center',
-        //   ellipsis: true,
-        //   width: 60,
-        //   render: (text, record) => {
-        //     return <Checkbox onChange={() => {}} />;
-        //   },
-        // },
-        // {
-        //   title: '身心观察记录',
-        //   dataIndex: 'physicalAndMentalStatus',
-        //   key: 'physicalAndMentalStatus',
-        //   align: 'left',
-        //   ellipsis: true,
-        //   width: 120,
-        //   render: (text, record) => {
-        //     return <Input.TextArea AUTOCOMPLETE="OFF"  rows={1} />;
-        //   },
-        // },
-        // {
-        //   title: '其他',
-        //   dataIndex: 'other',
-        //   key: 'other',
-        //   align: 'left',
-        //   ellipsis: true,
-        //   width: 120,
-        //   render: (text, record) => {
-        //     return <Input.TextArea AUTOCOMPLETE="OFF"  rows={1} />;
-        //   },
-        // },
-        {
-          title: '操作',
-          key: 'opera',
-          align: 'center',
-          fixed: 'right',
-          width: 60,
-          ellipsis: true,
-          render: (text, record) => (
-            // className={styles.opera}
-            <div>
-              <a onClick={() => {}}>三测单</a>
-            </div>
-          ),
-        },
-      ],
+      dataSource: [],
+      columns: yTableColumnsAll,
       key: Math.random(),
       scroll: { x: 1140 },
       // scroll: { x: 1580 },
@@ -465,7 +762,132 @@ export default () => {
       },
     },
   });
+  const [topFromDrawer] = Form.useForm();
+  const searchFormDrawer = {
+    inputArr: [
+      {
+        label: '住院号',
+        name: 'businessNo',
+        placeholder: '请输入住院号',
+        sort: 2,
+        style: { width: '200px' },
+        config: { disabled: true },
+        pressEnter: (enter) => {
+          getTableDataPerson();
+        },
+      },
+    ],
+    dateArr: [
+      {
+        label: '时间范围',
+        name: 'timeRange',
+        config: {
+          dateType: 'range',
+          timeStart: moment().startOf('day'),
+          timeEnd: moment().endOf('day'),
+          showTime: false,
+          onChange: (e) => {
+            topFromDrawer.setFieldsValue({ timeRange: e });
+            getTableDataPerson();
+          },
+        },
+        style: { width: '220px' },
+        sort: 1,
+      },
+    ],
+    btnArr: [
+      {
+        name: '查询',
+        callback: () => {
+          getTableDataPerson();
+        },
+        sort: 4,
+        style: { marginRight: '15px' },
+      },
+      {
+        name: '保存',
+        callback: () => {
+          batchUpdateDrawer();
+        },
+        sort: 4,
+        style: { marginRight: '15px' },
+      },
+    ],
+    layout: 'inline',
+    form: topFromDrawer,
+    cls: 'opera',
+    initialValues: {
+      timeRange: [
+        moment().startOf('day').format('YYYY-MM-DD'),
+        // moment().subtract(90, 'days').format('YYYY-MM-DD'),
+        moment().endOf('day').format('YYYY-MM-DD'),
+      ],
+    },
+  };
+  const [yTableDrawer, setYTableDrawer] = useState({
+    table: {
+      tabKey: '1',
+      bordered: true,
+      loading: false,
+      dataSource: [],
+      columns: yTableColumnsPerson,
+      key: Math.random(),
+      scroll: { x: 1140 },
+      // scroll: { x: 1580 },
+      //  y: '100%'
+      dataRow: {},
+      rowKey: 'id',
+      pagination: {
+        current: 1,
+        pageSize: pageSize,
+        showSizeChanger: true,
+        showQuickJumper: true,
+        showTotal: (total) => {
+          return `共 ${total} 条`;
+        },
+        onChange: (page, pageSize) => {
+          console.log('changePage----', page, pageSize);
+          yTableDrawer.table.pagination.current = page;
+          yTableDrawer.table.pagination.pageSize = pageSize;
+          // queryTypeDetailsListServices();
+        },
+      },
+      basic: {},
+      oClick: (count) => {
+        yTableDrawer.table.dataRow = count;
+        setYTableDrawer({ ...yTableDrawer });
+      },
+    },
+  });
+  const batchUpdateDrawer = () => {
+    if (!yTableDrawer.table.dataSource?.length) {
+      message.error('表格数据为空，不允许提交');
+      return;
+    }
+    const params = yTableDrawer.table.dataSource?.map((it) => {
+      return {
+        ...it,
+        timePoint: (it?.timePoint && moment(it.timePoint)?.format('HH:mm')) || '',
+        recordTime: (it?.recordTime && moment(it.recordTime)?.format('YYYY-MM-DD')) || '',
+        id: parseFloat(it.id) > 1 ? it.id : '',
+      };
+    });
 
+    yTableDrawer.table.loading = true;
+    setYTableDrawer({ ...yTableDrawer });
+    batchUpdateVitalSignRecord(params)
+      .then(() => {
+        yTableDrawer.table.loading = false;
+        setYTableDrawer({ ...yTableDrawer });
+        getTableDataPerson();
+        getTableData();
+      })
+      .catch((err) => {
+        yTableDrawer.table.loading = false;
+        setYTableDrawer({ ...yTableDrawer });
+        console.log('batchQueryVitalSignRecord---err', err);
+      });
+  };
   // 判断新增 / 编辑
   const [modeType, setModeType] = useState({
     type: null,
@@ -494,74 +916,110 @@ export default () => {
     modeType.visible = visible;
     setModeType({ ...modeType });
   };
-  // 删除
-  const del = (record) => {
-    if (!!Object.getOwnPropertyNames(record).length) {
-      Modal.confirm({
-        title: '是否要删除该条数据',
-        icon: <DeleteOutlined />,
-        okText: '删除',
-        okType: 'danger',
-        cancelText: '取消',
-        style: { padding: '30px' },
-        onOk() {
-          leaveManagementDel({ id: record.id })
-            .then((res) => {
-              message.success(res.msg);
-              yTable.table.dataRow = {};
-              getTableData();
-            })
-            .catch((err) => {
-              console.log('err-leaveManagementDel: ', err);
-            });
-        },
-      });
-    } else {
-      message.error('请选中行');
-    }
-  };
   // 获取列表Table数据
   const getTableData = () => {
-    const { keyWord, businessNo, timeRange } = topFrom.getFieldsValue();
-    const startTime = timeRange && timeRange[0] ? `${timeRange[0]} 00:00:00` : '';
-    const endTime = timeRange && timeRange[1] ? `${timeRange[1]} 23:59:59` : '';
+    const { timePoint, recordTime } = topFrom.getFieldsValue();
     const params = {
-      name: keyWord,
-      startTime,
-      endTime,
-      pageNum: yTable.table.pagination.current,
-      pageSize: yTable.table.pagination.pageSize,
+      recordTime,
+      timePoint,
     };
+
     yTable.table.loading = true;
     yTable.table.dataSource = [];
     setYTable({ ...yTable });
-    leaveManagementSelect(params)
+    batchQueryVitalSignRecord(params)
       .then((res) => {
-        yTable.table.dataSource = res?.data?.list || [];
+        yTable.table.dataSource =
+          res?.data?.map((it) => {
+            return { ...it, id: !it.id ? Math.random() : it.id };
+          }) || [];
         yTable.table.loading = false;
-        yTable.table.pagination.current = res?.data?.pageNum;
         setYTable({ ...yTable });
       })
       .catch((err) => {
         yTable.table.loading = false;
         setYTable({ ...yTable });
-        console.log('leaveManagementSelect---err', err);
+        console.log('batchQueryVitalSignRecord---err', err);
       });
   };
+  // 根据时间范围和姓名去查询个人记录
+  const getTableDataPerson = () => {
+    const { timeRange, businessNo } = topFromDrawer.getFieldsValue();
+    const startTime = timeRange && timeRange[0] ? `${timeRange[0]} 00:00:00` : '';
+    const endTime = timeRange && timeRange[1] ? `${timeRange[1]} 23:59:59` : '';
+    const params = {
+      startTime,
+      endTime,
+      businessNo,
+    };
+    yTableDrawer.table.loading = true;
+    yTableDrawer.table.dataSource = [];
+    setYTableDrawer({ ...yTableDrawer });
+    queryVitalSignRecord(params)
+      .then((res) => {
+        yTableDrawer.table.dataSource =
+          res?.data?.busVitalSignRecordVOS?.map((it) => {
+            return {
+              ...it,
+              timePoint: (it.timePoint && moment(it.timePoint, 'HH:mm')) || '',
+              recordTime: (it.recordTime && moment(it.recordTime, 'YYYY-MM-DD')) || '',
+              id: !it.id ? Math.random() : it.id,
+            };
+          }) || [];
+        yTableDrawer.table.loading = false;
+        setYTableDrawer({ ...yTableDrawer });
+      })
+      .catch((err) => {
+        yTableDrawer.table.loading = false;
+        setYTableDrawer({ ...yTableDrawer });
+        console.log('queryVitalSignRecord---err', err);
+      });
+  };
+  // 批量保存
+  const batchUpdate = () => {
+    if (!yTable.table.dataSource?.length) {
+      message.error('表格数据为空，不允许提交');
+      return;
+    }
+    const { recordTime, timePoint } = topFrom.getFieldsValue();
+    const params = yTable.table.dataSource?.map((it) => {
+      return {
+        ...it,
+        timePoint: timePoint || '',
+        recordTime: moment(recordTime)?.format('YYYY-MM-DD') || '',
+        id: parseFloat(it.id) > 1 ? it.id : '',
+      };
+    });
 
+    yTable.table.loading = true;
+    setYTable({ ...yTable });
+    batchUpdateVitalSignRecord(params)
+      .then((res) => {
+        yTable.table.loading = false;
+        setYTable({ ...yTable });
+        getTableData();
+      })
+      .catch((err) => {
+        yTable.table.loading = false;
+        setYTable({ ...yTable });
+        console.log('batchQueryVitalSignRecord---err', err);
+      });
+  };
   // 新增 / 修改 提交时触发
   const saveModalInfo = async () => {
     const formData = await modalForm.validateFields();
-    const { leaveStartTime, leaveEndTime } = formData;
-    let query = {
+    const { recordTime, timePoint } = formData;
+    console.log('recordTime, timePoint: ', recordTime, timePoint);
+    const query = {
       ...modalForm.getFieldsValue(),
-      leaveStartTime: leaveStartTime && moment(leaveStartTime).format('YYYY-MM-DD HH:mm:ss'),
-      leaveEndTime: leaveEndTime && moment(leaveEndTime).format('YYYY-MM-DD HH:mm:ss'),
+      recordTime: recordTime && moment(recordTime).format('YYYY-MM-DD'),
+      timePoint: timePoint && moment(timePoint).format('HH:mm'),
     };
     modeType.loading = true;
     setModeType({ ...modeType });
     if (modeType.type === 'add') {
-      leaveManagementAdd(query)
+      console.log('query: ', query);
+      addVitalSignRecord(query)
         .then((response) => {
           message.success(response.msg);
           modeType.visible = false;
@@ -570,21 +1028,7 @@ export default () => {
           getTableData();
         })
         .catch((err) => {
-          console.log('err-leaveManagementAdd: ', err);
-          modeType.loading = false;
-          setModeType({ ...modeType });
-        });
-    } else {
-      leaveManagementUpdate(query)
-        .then((response) => {
-          message.success(response.msg);
-          modeType.visible = false;
-          modeType.loading = false;
-          setModeType({ ...modeType });
-          getTableData();
-        })
-        .catch((err) => {
-          console.log('err-leaveManagementUpdate: ', err);
+          console.log('err-addVitalSignRecord: ', err);
           modeType.loading = false;
           setModeType({ ...modeType });
         });
@@ -597,26 +1041,62 @@ export default () => {
     });
   };
   const [nameSelectList, setNameSelectList] = useState([]); //复合搜索的人的集合
-  //姓名搜索框
-  const nameSelectBlur = async (e, data) => {
-    let res = await patientQuery({ keyWords: e || '' });
-    if (!!res['data']) {
-      let data = res['data'].map((item) => {
-        return { label: item['name'], value: item['businessNo'] };
+  // 姓名搜索框
+  const nameSelectBlur = async (e) => {
+    setNameSelectList([]);
+    patientQuery({ keyWords: e || '' })
+      .then((res) => {
+        const data =
+          res?.data?.map((item) => {
+            return { label: item.name, value: item.businessNo, bedName: item.totalName };
+          }) || [];
+        setNameSelectList(data);
+      })
+      .catch((err) => {
+        console.log('err-patientQuery: ', err);
       });
-      setNameSelectList(data);
-    } else {
-      setNameSelectList([]);
-    }
+  };
+  const TemperatureRef = useRef();
+  const print = useReactToPrint({
+    content: () => TemperatureRef.current,
+    pageStyle: printStyle,
+  });
+  const [temperatureModal, setTemperatureModal] = useState({ loading: false, visible: false });
+  const openTemperatureModal = async (record) => {
+    temperatureModal.visible = true;
+    setTemperatureModal({ ...temperatureModal });
+  };
+  const tabChange = (e) => {
+    yTable.table.tabKey = e;
+    yTable.table.columns = e === '1' ? yTableColumnsAll : yTableColumnsPerson;
+    getTableData();
+    setYTable({ ...yTable });
+  };
+  const [drawerConfig, setDrawerConfig] = useState({ visible: false, loading: false });
+  const openDrawer = async () => {
+    await topFromDrawer.resetFields();
+    await topFromDrawer.setFieldsValue({
+      businessNo: yTable.table.dataRow.businessNo,
+      startTime: moment(),
+      endTime: moment(),
+    });
+    drawerConfig.visible = true;
+    setDrawerConfig({ ...drawerConfig });
+    getTableDataPerson();
+  };
+  const closeDrawer = () => {
+    drawerConfig.visible = false;
+    setDrawerConfig({ ...drawerConfig });
   };
   // 初始化
   useEffect(() => {
     getDictionaryData();
     nameSelectBlur();
-    // getTableData();
+    getTableData();
+    console.log(moment('02:00', 'HH:MM'));
   }, []);
   return (
-    <div>
+    <div style={{ position: 'relative', height: '100%' }}>
       <SearchForm searchForm={searchTopForm} />
       <div ref={tableRef} style={{ height: tableHeight }} className="yTableStyle">
         <YTable {...yTable} />
@@ -640,13 +1120,13 @@ export default () => {
           form={modalForm}
           labelCol={{ flex: '100px' }}
           onFinish={saveModalInfo}
-          initialValues={{}}
+          initialValues={{ recordTime: moment(), timePoint: moment() }}
         >
           <Form.Item name="id" hidden></Form.Item>
           <Form.Item name="name" hidden></Form.Item>
           <Row>
             <Col span={12}>
-              <Form.Item label="床位号" name="businessNo" rules={[{ required: true }]}>
+              <Form.Item label="床位号" name="bedName">
                 <Input placeholder="请输入" disabled />
               </Form.Item>
             </Col>
@@ -660,10 +1140,12 @@ export default () => {
                 <Select
                   showSearch
                   placeholder="请输入姓名"
-                  // onSearch={nameSelectBlur}
                   onChange={(value, option) => {
-                    console.log('value,option: ', value, option);
-                    modalForm.setFieldsValue({ businessNo: value, name: option.label });
+                    modalForm.setFieldsValue({
+                      businessNo: value,
+                      name: option.label,
+                      bedName: option.bedName,
+                    });
                   }}
                   options={nameSelectList}
                   filterOption={(inputValue, option) => {
@@ -694,7 +1176,7 @@ export default () => {
             </Col> */}
             <Col span={12}>
               <Form.Item label="时间" name="timePoint" rules={[{ required: true }]}>
-                <TimePicker onChange={() => {}} defaultValue={moment()} format={'HH:mm'} />
+                <TimePicker format={'HH:mm'} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -738,7 +1220,7 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label=" 大便" name={'k'}>
+              <Form.Item label=" 大便" name={'defecate'}>
                 <Input AUTOCOMPLETE="OFF" addonAfter="ml" />
               </Form.Item>
             </Col>
@@ -747,14 +1229,50 @@ export default () => {
                 <Input AUTOCOMPLETE="OFF" addonAfter="Kg" />
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item label=" 血氧饱和度" name={'m'}>
+            {/* <Col span={12}>
+              <Form.Item label=" 血氧饱和度" name={'bloodOxygen'}>
                 <Input AUTOCOMPLETE="OFF" />
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
         </Form>
       </Modal>
+      <Modal
+        className="temperature"
+        width={900}
+        keyboard={false}
+        maskClosable={false}
+        title={'三测单'}
+        centered
+        visible={temperatureModal.visible}
+        confirmLoading={temperatureModal.loading}
+        okText="打印"
+        onOk={() => {
+          print();
+        }}
+        onCancel={() => {
+          temperatureModal.visible = false;
+          setTemperatureModal({ ...temperatureModal });
+        }}
+      >
+        <style>{printStyle}</style>
+        <div className="temperature">
+          <Temperature data={{}} ref={TemperatureRef} />
+        </div>
+      </Modal>
+      <Drawer
+        style={{ position: 'absolute', overflowY: 'hidden' }}
+        getContainer={false}
+        width="100%"
+        height="100%"
+        title={`个人记录（${yTable.table.dataRow?.name}）`}
+        placement="right"
+        onClose={closeDrawer}
+        visible={drawerConfig.visible}
+      >
+        <SearchForm searchForm={searchFormDrawer} />
+        <YTable {...yTableDrawer} />
+      </Drawer>
     </div>
   );
 };

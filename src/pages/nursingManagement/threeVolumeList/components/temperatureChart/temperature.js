@@ -10,25 +10,24 @@ export class Temperature extends Component {
   componentWillMount() {
     this.state = {
       data: this.props.data || { hspName: '西南医院' },
-      beginDate: '2017-06-28', //开始时间
       patientList: {
         name: '胡定明', //姓名
         sex: '男', //性别
         age: '65', //年龄
-        admissionDateTime: '2017-06-28', //入院时间
         endemicName: '心内科', //科室
         bedNo: '123', //床号
         inpNo: 'Z23456', //住院号
-        medicalHao: 'Z23456', //病案号
       }, //病人信息
-      dayOps: ['1', '2', '3', '4', '5', '6', '7'], //产后/术后天数
+      beginDate: '2017-06-28', //开始时间,按今天倒推7天
+      dayList: ['1', '2', '3', '4', '5', '6', '7'], //住院天数 共七条，没有的那天数据返回''
+      dayOps: ['1', '2', '3', '4', '5', '6', '7'], //产后/术后天数 共七条，没有的那天数据返回''
       breathingList: [
         '60',
         '70',
         '65',
         '66',
         '56',
-        '60',
+        '160',
         '70',
         '60',
         '70',
@@ -65,9 +64,8 @@ export class Temperature extends Component {
         '56',
         '60',
         '70',
-      ], //呼吸
-      xyList: ['60', '70', '65', '66', '56', '60', '70', '60', '70', '65', '66', '56', '60', '70'], //血压
-      dayList: ['1', '2', '3', '4', '5', '6', '7'], //住院天数
+      ], //呼吸 42条数据 某个时间点空值返回''
+      xyList: ['60', '70', '65', '66', '56', '60', '70', '60', '70', '65', '66', '56', '60', '70'], //血压 14条，当天空值返回''
       dayMap: {
         "{name:'入量',units:'ml'}": ['', '', '', '', '', '44', ''],
         "{name:'出量',units:'ml'}": ['', '', '', '', '', '44', ''],
@@ -143,7 +141,7 @@ export class Temperature extends Component {
         // 脉搏
         mb: [
           {
-            dataTime: '2017-06-28 25:59:00',
+            dataTime: '2017-06-28 22:00:00',
             date: '2017-06-28',
             hour: 22,
             mbValue: '',
@@ -259,7 +257,7 @@ export class Temperature extends Component {
         // 温度
         wd: [
           {
-            dataTime: '2017-06-29 22:00:00',
+            dataTime: '2017-06-28 22:00:00',
             date: '2017-06-28',
             hour: 22,
             mbValue: '',
