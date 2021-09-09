@@ -10,7 +10,6 @@ import {
   Row,
   Col,
   Radio,
-  InputNumber,
   message,
   Button,
   Divider,
@@ -326,11 +325,10 @@ export default () => {
             );
           },
         },
-        // TODO:
         {
           title: '生活用水',
-          dataIndex: 'isMeals',
-          key: 'isMeals',
+          dataIndex: 'isWashGargle',
+          key: 'isWashGargle',
           align: 'center',
           ellipsis: true,
           width: 60,
@@ -508,12 +506,20 @@ export default () => {
       return;
     }
     const { recordTime } = topFrom.getFieldsValue();
+
     const params = yTable.table.dataSource?.map((it) => {
       return {
         ...it,
         timePoint: (it.timePoint && moment(it.timePoint)?.format('HH:mm')) || '',
         recordTime: (recordTime && moment(recordTime)?.format('YYYY-MM-DD')) || '',
         id: parseFloat(it.id) > 1 ? it.id : '',
+        isCleanRoom: !!it.isCleanRoom,
+        isCleanToilet: !!it.isCleanToilet,
+        isHaircut: !!it.isHaircut,
+        isHangClothes: !!it.isHangClothes,
+        isManicure: !!it.isManicure,
+        isMeals: !!it.isMeals,
+        isWashGargle: !!it.isWashGargle,
       };
     });
 
@@ -534,11 +540,28 @@ export default () => {
   // 新增 / 修改 提交时触发
   const saveModalInfo = async () => {
     const formData = await modalForm.validateFields();
-    const { recordTime, timePoint } = formData;
+    const {
+      recordTime,
+      timePoint,
+      isCleanRoom,
+      isCleanToilet,
+      isHaircut,
+      isHangClothes,
+      isManicure,
+      isMeals,
+      isWashGargle,
+    } = formData;
     const query = {
       ...modalForm.getFieldsValue(),
       recordTime: recordTime && moment(recordTime).format('YYYY-MM-DD'),
       timePoint: timePoint && moment(timePoint).format('HH:mm'),
+      isCleanRoom: !!isCleanRoom,
+      isCleanToilet: !!isCleanToilet,
+      isHaircut: !!isHaircut,
+      isHangClothes: !!isHangClothes,
+      isManicure: !!isManicure,
+      isMeals: !!isMeals,
+      isWashGargle: !!isWashGargle,
     };
     modeType.loading = true;
     setModeType({ ...modeType });
@@ -611,7 +634,10 @@ export default () => {
           form={modalForm}
           labelCol={{ flex: '100px' }}
           onFinish={saveModalInfo}
-          initialValues={{ recordTime: moment(), timePoint: moment() }}
+          initialValues={{
+            recordTime: moment(),
+            timePoint: moment(),
+          }}
         >
           <Form.Item name="id" hidden></Form.Item>
           <Form.Item name="name" hidden></Form.Item>
@@ -676,6 +702,26 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
+              <Form.Item label="体重" name={'weight'}>
+                <Input AUTOCOMPLETE="OFF" addonAfter="Kg" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="尿量" name={'urine'}>
+                <Input AUTOCOMPLETE="OFF" addonAfter="ml" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="入量" name={'intake'}>
+                <Input AUTOCOMPLETE="OFF" addonAfter="ml" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="出量" name={'output'}>
+                <Input AUTOCOMPLETE="OFF" addonAfter="ml" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item label="脉搏心率" name={'pulse'}>
                 <Input AUTOCOMPLETE="OFF" addonAfter="次/分" />
               </Form.Item>
@@ -685,6 +731,11 @@ export default () => {
                 <Input AUTOCOMPLETE="OFF" addonAfter="次/分" />
               </Form.Item>
             </Col>
+            {/* <Col span={12}>
+              <Form.Item label="血氧饱和度" name={'bloodOxygen'}>
+                <Input AUTOCOMPLETE="OFF"  />
+              </Form.Item>
+            </Col> */}
             <Col span={12}>
               <Form.Item label="高压" name={'highBloodPressure'}>
                 <Input AUTOCOMPLETE="OFF" addonAfter="mmHg" />
@@ -696,38 +747,37 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label="打扫房间" name={'isCleanRoom'} initialValue={'0'}>
+              <Form.Item label="打扫房间" name={'isCleanRoom'} valuePropName="checked">
                 <Checkbox onChange={() => {}} />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label="清洗便池" name={'isCleanToilet'} initialValue={'0'}>
+              <Form.Item label="清洗便池" name={'isCleanToilet'} valuePropName="checked">
                 <Checkbox onChange={() => {}} />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label="洗头理发" name={'isHaircut'} initialValue={'0'}>
+              <Form.Item label="洗头理发" name={'isHaircut'} valuePropName="checked">
                 <Checkbox onChange={() => {}} />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label="晾晒衣服" name={'isHangClothes'} initialValue={'0'}>
+              <Form.Item label="晾晒衣服" name={'isHangClothes'} valuePropName="checked">
                 <Checkbox onChange={() => {}} />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label="修剪指甲" name={'isManicure'} initialValue={'0'}>
+              <Form.Item label="修剪指甲" name={'isManicure'} valuePropName="checked">
                 <Checkbox onChange={() => {}} />
               </Form.Item>
             </Col>
             <Col span={6}>
-              <Form.Item label="进餐送餐" name={'isMeals'} initialValue={'0'}>
+              <Form.Item label="进餐送餐" name={'isMeals'} valuePropName="checked">
                 <Checkbox onChange={() => {}} />
               </Form.Item>
             </Col>
             <Col span={6}>
-              {/* TODO */}
-              <Form.Item label="生活用水" name={'isMeals'} initialValue={'0'}>
+              <Form.Item label="生活用水" name={'isWashGargle'} valuePropName="checked">
                 <Checkbox onChange={() => {}} />
               </Form.Item>
             </Col>
