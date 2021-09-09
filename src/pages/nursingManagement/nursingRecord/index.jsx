@@ -178,7 +178,6 @@ export default () => {
           ellipsis: true,
           fixed: 'left',
           width: 60,
-          render: () => '床位号',
         },
         {
           title: '住院号',
@@ -337,7 +336,7 @@ export default () => {
               <Checkbox
                 checked={text}
                 onChange={(e) => {
-                  record.isMeals = e.target.checked;
+                  record.isWashGargle = e.target.checked;
                   setYTable({ ...yTable });
                 }}
               />
