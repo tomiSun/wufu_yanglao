@@ -26,6 +26,7 @@ import {
   batchUpdateVitalSignRecord,
   addVitalSignRecord,
   queryVitalSignRecord,
+  queryThreeVolume,
 } from '@/services/nursingManagement/threeVolumeList';
 import { config } from '@/utils/const';
 import { Temperature } from './components/temperatureChart/temperature';
@@ -33,7 +34,7 @@ import './styles/app.less';
 import { printStyle } from './printStyle';
 import { useReactToPrint } from 'react-to-print';
 import { excelExport } from '@/utils/ExcelExport';
-
+import { isOnePeople } from '@/utils/common';
 const { pageSize } = config;
 const { TabPane } = Tabs;
 export default () => {
@@ -109,9 +110,15 @@ export default () => {
         sort: 5,
         style: { marginRight: '15px' },
         callback: () => {
+          let res = isOnePeople(yTable?.table?.selectRows);
+          if (!res) {
+            message.warn('一次导出一个人的信息');
+            return;
+          }
+          let ids = yTable?.table?.selectKeys?.join(',') || '';
           excelExport({
             api: '/blood-sugar/export', //导出接口路径
-            ids: '487207946229518336', //勾选的行id数组集合
+            ids: ids, //勾选的行id数组集合
             fileName: '三测单', //导出文件名称
           });
         },
@@ -760,6 +767,17 @@ export default () => {
         yTable.table.dataRow = count;
         setYTable({ ...yTable });
       },
+      selectKeys: [],
+      selectRows: [],
+      rowSelection: {
+        columnWidth: 30,
+        selectedRowKeys: yTable?.table?.selectKeys,
+        onChange: (selectedRowKeys, selectedRows) => {
+          yTable.table.selectKeys = selectedRowKeys;
+          yTable.table.selectRows = selectedRows;
+          setYTable({ ...yTable });
+        },
+      },
     },
   });
   const [topFromDrawer] = Form.useForm();
@@ -1061,9 +1079,21 @@ export default () => {
     content: () => TemperatureRef.current,
     pageStyle: printStyle,
   });
-  const [temperatureModal, setTemperatureModal] = useState({ loading: false, visible: false });
+  const [temperatureModal, setTemperatureModal] = useState({
+    loading: false,
+    visible: false,
+    data: {},
+  });
   const openTemperatureModal = async (record) => {
+    const res = await queryThreeVolume({
+      businessNo: record?.businessNo || '',
+      // endTime: '2021-10-25 00:00:00',
+      // startTime: '2021-10-25 23:59:59',
+    });
+    console.log('res: ', res);
+    temperatureModal.data = res?.data || {};
     temperatureModal.visible = true;
+
     setTemperatureModal({ ...temperatureModal });
   };
   const tabChange = (e) => {
@@ -1257,7 +1287,7 @@ export default () => {
       >
         <style>{printStyle}</style>
         <div className="temperature">
-          <Temperature data={{}} ref={TemperatureRef} />
+          <Temperature data={temperatureModal?.data} ref={TemperatureRef} />
         </div>
       </Modal>
       <Drawer

@@ -40,6 +40,8 @@ import {
   batchUpdateNursingRecord,
   addNursingRecord,
 } from '@/services/nursingManagement/nursingRecord';
+import { excelExport } from '@/utils/ExcelExport';
+import { isOnePeople } from '@/utils/common';
 export default () => {
   const timePointOptions = [
     { name: '2', value: '2', lable: '2' },
@@ -135,8 +137,28 @@ export default () => {
         name: '新增',
         type: 'primary',
         sort: 5,
+        style: { marginRight: '15px' },
         callback: () => {
           addOrEdit('add', true);
+        },
+      },
+      {
+        name: '导出',
+        type: 'primary',
+        sort: 5,
+        style: { marginRight: '15px' },
+        callback: () => {
+          let res = isOnePeople(yTable?.table?.selectRows);
+          if (!res) {
+            message.warn('一次导出一个人的信息');
+            return;
+          }
+          let ids = yTable?.table?.selectKeys?.join(',') || '';
+          excelExport({
+            api: '/blood-sugar/export', //导出接口路径
+            ids: ids, //勾选的行id数组集合
+            fileName: '护理记录', //导出文件名称
+          });
         },
       },
     ],
@@ -410,6 +432,17 @@ export default () => {
       oClick: (count) => {
         yTable.table.dataRow = count;
         setYTable({ ...yTable });
+      },
+      selectKeys: [],
+      selectRows: [],
+      rowSelection: {
+        columnWidth: 30,
+        selectedRowKeys: yTable?.table?.selectKeys,
+        onChange: (selectedRowKeys, selectedRows) => {
+          yTable.table.selectKeys = selectedRowKeys;
+          yTable.table.selectRows = selectedRows;
+          setYTable({ ...yTable });
+        },
       },
     },
   });

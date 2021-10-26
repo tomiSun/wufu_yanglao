@@ -43,9 +43,16 @@ export async function wardroundUpdate(params) {
     data: params,
   });
 }
-// 修改
-export async function queryVitalSignRecord(params) {
+// 三测单
+export async function queryThreeVolume(params) {
   return request('/nursingManage/queryVitalSignRecord', {
+    method: 'POST',
+    data: params,
+  });
+}
+// 个人记录
+export async function queryVitalSignRecord(params) {
+  return request('/nursingManage/queryPatientVitalSignRecord', {
     method: 'POST',
     data: params,
   });
