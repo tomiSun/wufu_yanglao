@@ -148,14 +148,19 @@ export default () => {
         sort: 5,
         style: { marginRight: '15px' },
         callback: () => {
-          let res = isOnePeople(yTable?.table?.selectRows);
+          let realSelectKeys = yTable?.table?.selectKeys.filter((it) => parseFloat(it) > 1);
+          if (!realSelectKeys?.length) {
+            message.warn('未填写信息，不允许导出');
+            return;
+          }
+          let res = isOnePeople(realSelectKeys);
           if (!res) {
             message.warn('一次导出一个人的信息');
             return;
           }
-          let ids = yTable?.table?.selectKeys?.join(',') || '';
+          let ids = realSelectKeys?.join(',') || '';
           excelExport({
-            api: '/blood-sugar/export', //导出接口路径
+            api: '/nursingManage/exportNursingRecord', //导出接口路径
             ids: ids, //勾选的行id数组集合
             fileName: '护理记录', //导出文件名称
           });
@@ -216,7 +221,7 @@ export default () => {
           key: 'timePoint',
           align: 'left',
           ellipsis: true,
-          width: 80,
+          width: 100,
           render: (text, record) => {
             return (
               // <div className={record.isC && !text ? 'redMark' : ''}>
@@ -229,6 +234,128 @@ export default () => {
                 format={'HH:mm'}
               />
               // </div>
+            );
+          },
+        },
+        {
+          title: '体温(°C)',
+          dataIndex: 'temperature',
+          key: 'temperature',
+          align: 'left',
+          ellipsis: true,
+          width: 60,
+          render: (text, record) => {
+            return (
+              // <div className={record.isC && !text ? 'redMark' : ''}>
+              <Input
+                className={record.isC && !text ? 'redMark' : ''}
+                value={text}
+                onChange={(e) => {
+                  record.temperature = e.target.value;
+                  setYTable({ ...yTable });
+                }}
+              />
+              // </div>
+            );
+          },
+        },
+        {
+          title: '脉搏心率(次/分)',
+          dataIndex: 'pulse',
+          key: 'pulse',
+          align: 'left',
+          ellipsis: true,
+          width: 100,
+          render: (text, record) => {
+            return (
+              <Input
+                className={record.isC && !text ? 'redMark' : ''}
+                value={text}
+                onChange={(e) => {
+                  record.pulse = e.target.value;
+                  setYTable({ ...yTable });
+                }}
+              />
+            );
+          },
+        },
+        {
+          title: '呼吸(次/分)',
+          dataIndex: 'breathing',
+          key: 'breathing',
+          align: 'left',
+          ellipsis: true,
+          width: 80,
+          render: (text, record) => {
+            return (
+              <Input
+                className={record.isC && !text ? 'redMark' : ''}
+                value={text}
+                onChange={(e) => {
+                  record.breathing = e.target.value;
+                  setYTable({ ...yTable });
+                }}
+              />
+            );
+          },
+        },
+        {
+          title: '收缩压(mmHg)',
+          dataIndex: 'highBloodPressure',
+          key: 'highBloodPressure',
+          align: 'left',
+          ellipsis: true,
+          width: 100,
+          render: (text, record) => {
+            return (
+              <Input
+                className={record.isC && !text ? 'redMark' : ''}
+                value={text}
+                onChange={(e) => {
+                  record.highBloodPressure = e.target.value;
+                  setYTable({ ...yTable });
+                }}
+              />
+            );
+          },
+        },
+        {
+          title: '舒张压(mmHg)',
+          dataIndex: 'lowBloodPressure',
+          key: 'lowBloodPressure',
+          align: 'left',
+          ellipsis: true,
+          width: 100,
+          render: (text, record) => {
+            return (
+              <Input
+                className={record.isC && !text ? 'redMark' : ''}
+                value={text}
+                onChange={(e) => {
+                  record.lowBloodPressure = e.target.value;
+                  setYTable({ ...yTable });
+                }}
+              />
+            );
+          },
+        },
+        {
+          title: '血氧饱和度(%)',
+          dataIndex: 'bloodOxygen',
+          key: 'bloodOxygen',
+          align: 'left',
+          ellipsis: true,
+          width: 100,
+          render: (text, record) => {
+            return (
+              <Input
+                className={record.isC && !text ? 'redMark' : ''}
+                value={text}
+                onChange={(e) => {
+                  record.bloodOxygen = e.target.value;
+                  setYTable({ ...yTable });
+                }}
+              />
             );
           },
         },
@@ -409,7 +536,7 @@ export default () => {
         },
       ],
       key: Math.random(),
-      scroll: { x: 1140, y: '100%' },
+      scroll: { x: 1800, y: '100%' },
       // scroll: { x: 1520 },
       //  y: '100%'
       dataRow: {},
@@ -505,7 +632,7 @@ export default () => {
   const getTableData = () => {
     const { timePoint, recordTime } = topFrom.getFieldsValue();
     const params = {
-      recordTime,
+      recordTime: (recordTime && moment(recordTime).format('YYYY-MM-DD')) || '',
       timePoint,
     };
 
@@ -734,6 +861,31 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
+              <Form.Item label="脉搏心率" name={'pulse'}>
+                <Input AUTOCOMPLETE="OFF" addonAfter="次/分" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="呼吸" name={'breathing'}>
+                <Input AUTOCOMPLETE="OFF" addonAfter="次/分" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="收缩压" name={'highBloodPressure'}>
+                <Input AUTOCOMPLETE="OFF" addonAfter="mmHg" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="舒张压" name={'lowBloodPressure'}>
+                <Input AUTOCOMPLETE="OFF" addonAfter="mmHg" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="血氧饱和度" name={'bloodOxygen'}>
+                <Input AUTOCOMPLETE="OFF" addonAfter="%" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item label="体重" name={'weight'}>
                 <Input AUTOCOMPLETE="OFF" addonAfter="Kg" />
               </Form.Item>
@@ -751,31 +903,6 @@ export default () => {
             <Col span={12}>
               <Form.Item label="出量" name={'output'}>
                 <Input AUTOCOMPLETE="OFF" addonAfter="ml" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="脉搏心率" name={'pulse'}>
-                <Input AUTOCOMPLETE="OFF" addonAfter="次/分" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="呼吸" name={'breathing'}>
-                <Input AUTOCOMPLETE="OFF" addonAfter="次/分" />
-              </Form.Item>
-            </Col>
-            {/* <Col span={12}>
-              <Form.Item label="血氧饱和度" name={'bloodOxygen'}>
-                <Input AUTOCOMPLETE="OFF"  />
-              </Form.Item>
-            </Col> */}
-            <Col span={12}>
-              <Form.Item label="高压" name={'highBloodPressure'}>
-                <Input AUTOCOMPLETE="OFF" addonAfter="mmHg" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="低压" name={'lowBloodPressure'}>
-                <Input AUTOCOMPLETE="OFF" addonAfter="mmHg" />
               </Form.Item>
             </Col>
             <Col span={6}>
