@@ -13,17 +13,19 @@ export class SvgCenter extends Component {
     };
   }
 
-  // componentWillReceiveProps(nextProps, nextState) {
-  //   if (nextProps.curDate !== nextState.curDate || nextProps.data !== nextState.data) {
-  //     this.setState({
-  //       curDate: nextProps.curDate,
-  //       data: nextProps.data,
-  //     });
-  //   }
-  // }
+  componentWillReceiveProps(nextProps, nextState) {
+    if (nextProps.curDate !== nextState.curDate || nextProps.data !== nextState.data) {
+      this.setState({
+        curDate: nextProps.curDate,
+        data: nextProps.data,
+      });
+    }
+  }
 
   render() {
     let { curDate, data } = this.state;
+    console.log('curDate: ', curDate);
+    console.log('data: ', data);
     return (
       <svg id="svgCenter" style={{ height: 15 * 40 }}>
         {/* 绘制特殊事假（文字） */}

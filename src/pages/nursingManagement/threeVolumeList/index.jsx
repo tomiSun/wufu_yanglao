@@ -41,6 +41,7 @@ export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
   const tableHeight = useTableHeight(tableRef);
+  const [basic, setBasic] = useState({});
   // 上部搜索searchForm模块
   const [topFrom] = Form.useForm();
   const searchTopForm = {
@@ -110,13 +111,19 @@ export default () => {
         sort: 5,
         style: { marginRight: '15px' },
         callback: () => {
+          let realSelectKeys = yTable?.table?.selectKeys.filter((it) => parseFloat(it) > 1);
+          if (!realSelectKeys?.length) {
+            message.warn('未填写信息，不允许导出');
+            return;
+          }
           let res = isOnePeople(yTable?.table?.selectRows);
           if (!res) {
             message.warn('一次导出一个人的信息');
             return;
           }
-          let ids = yTable?.table?.selectKeys?.join(',') || '';
+          let ids = realSelectKeys?.join(',') || '';
           excelExport({
+            // TODO:替换接口路径
             api: '/blood-sugar/export', //导出接口路径
             ids: ids, //勾选的行id数组集合
             fileName: '三测单', //导出文件名称
@@ -135,9 +142,6 @@ export default () => {
 
   // modal配置项
   const [modalForm] = Form.useForm();
-
-  // 基础字典数据
-  const [basic, setBasic] = useState({});
   const yTableColumnsAll = [
     {
       title: '床位号',
@@ -229,12 +233,12 @@ export default () => {
       },
     },
     {
-      title: '高压(mmHg)',
+      title: '收缩压(mmHg)',
       dataIndex: 'highBloodPressure',
       key: 'highBloodPressure',
       align: 'left',
       ellipsis: true,
-      width: 80,
+      width: 100,
       render: (text, record) => {
         return (
           <Input
@@ -249,12 +253,12 @@ export default () => {
       },
     },
     {
-      title: '低压(mmHg)',
+      title: '舒张压(mmHg)',
       dataIndex: 'lowBloodPressure',
       key: 'lowBloodPressure',
       align: 'left',
       ellipsis: true,
-      width: 80,
+      width: 100,
       render: (text, record) => {
         return (
           <Input
@@ -262,6 +266,26 @@ export default () => {
             value={text}
             onChange={(e) => {
               record.lowBloodPressure = e.target.value;
+              setYTable({ ...yTable });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '血氧饱和度(%)',
+      dataIndex: 'bloodOxygen',
+      key: 'bloodOxygen',
+      align: 'left',
+      ellipsis: true,
+      width: 100,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.bloodOxygen = e.target.value;
               setYTable({ ...yTable });
             }}
           />
@@ -329,9 +353,9 @@ export default () => {
       },
     },
     {
-      title: '大便(ml)',
+      title: '大便(次/日)',
       dataIndex: 'defecate',
-      key: 'urine',
+      key: 'defecate',
       align: 'left',
       ellipsis: true,
       width: 80,
@@ -342,6 +366,28 @@ export default () => {
             value={text}
             onChange={(e) => {
               record.defecate = e.target.value;
+              setYTable({ ...yTable });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '大便方式',
+      dataIndex: 'defecatePattern',
+      key: 'defecatePattern',
+      align: 'left',
+      ellipsis: true,
+      width: 100,
+      render: (text, record) => {
+        return (
+          <Select
+            className={record.isC && !text ? 'redMark' : ''}
+            style={{ width: '100%' }}
+            value={text}
+            options={yTable.table.basicData['0018'] || []}
+            onChange={(e) => {
+              record.defecatePattern = e || '';
               setYTable({ ...yTable });
             }}
           />
@@ -368,26 +414,6 @@ export default () => {
         );
       },
     },
-    // {
-    //   title: '血氧饱和度',
-    //   dataIndex: 'bloodOxygen',
-    //   key: 'bloodOxygen',
-    //   align: 'left',
-    //   ellipsis: true,
-    //   width: 80,
-    //   render: (text, record) => {
-    //     return (
-    //       <Input
-    //         className={record.isC && !text ? 'redMark' : ''}
-    //         value={text}
-    //         onChange={(e) => {
-    //           record.bloodOxygen = e.target.value;
-    //           setYTable({ ...yTable });
-    //         }}
-    //       />
-    //     );
-    //   },
-    // },
     {
       title: '操作',
       key: 'opera',
@@ -553,12 +579,12 @@ export default () => {
       },
     },
     {
-      title: '高压(mmHg)',
+      title: '收缩压(mmHg)',
       dataIndex: 'highBloodPressure',
       key: 'highBloodPressure',
       align: 'left',
       ellipsis: true,
-      width: 80,
+      width: 100,
       render: (text, record) => {
         return (
           <Input
@@ -573,12 +599,12 @@ export default () => {
       },
     },
     {
-      title: '低压(mmHg)',
+      title: '舒张压(mmHg)',
       dataIndex: 'lowBloodPressure',
       key: 'lowBloodPressure',
       align: 'left',
       ellipsis: true,
-      width: 80,
+      width: 100,
       render: (text, record) => {
         return (
           <Input
@@ -586,6 +612,26 @@ export default () => {
             value={text}
             onChange={(e) => {
               record.lowBloodPressure = e.target.value;
+              setYTableDrawer({ ...yTableDrawer });
+            }}
+          />
+        );
+      },
+    },
+    {
+      title: '血氧饱和度(%)',
+      dataIndex: 'bloodOxygen',
+      key: 'bloodOxygen',
+      align: 'left',
+      ellipsis: true,
+      width: 100,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.bloodOxygen = e.target.value;
               setYTableDrawer({ ...yTableDrawer });
             }}
           />
@@ -653,7 +699,7 @@ export default () => {
       },
     },
     {
-      title: '大便(ml)',
+      title: '大便(次/日)',
       dataIndex: 'defecate',
       key: 'urine',
       align: 'left',
@@ -692,26 +738,28 @@ export default () => {
         );
       },
     },
-    // {
-    //   title: '血氧饱和度',
-    //   dataIndex: 'bloodOxygen',
-    //   key: 'bloodOxygen',
-    //   align: 'left',
-    //   ellipsis: true,
-    //   width: 80,
-    //   render: (text, record) => {
-    //     return (
-    //       <Input
-    //         className={record.isC && !text ? 'redMark' : ''}
-    //         value={text}
-    //         onChange={(e) => {
-    //           record.bloodOxygen = e.target.value;
-    //           setYTableDrawer({ ...yTableDrawer });
-    //         }}
-    //       />
-    //     );
-    //   },
-    // },
+    {
+      title: '大便方式',
+      dataIndex: 'defecatePattern',
+      key: 'defecatePattern',
+      align: 'left',
+      ellipsis: true,
+      width: 100,
+      render: (text, record) => {
+        return (
+          <Select
+            className={record.isC && !text ? 'redMark' : ''}
+            style={{ width: '100%' }}
+            value={text}
+            options={yTable.table.basicData['0018'] || []}
+            onChange={(e) => {
+              record.defecatePattern = e || '';
+              setYTable({ ...yTable });
+            }}
+          />
+        );
+      },
+    },
     // {
     //   title: '操作',
     //   key: 'opera',
@@ -742,7 +790,7 @@ export default () => {
       dataSource: [],
       columns: yTableColumnsAll,
       key: Math.random(),
-      scroll: { x: 1140 },
+      scroll: { x: 1580 },
       // scroll: { x: 1580 },
       //  y: '100%'
       dataRow: {},
@@ -762,7 +810,7 @@ export default () => {
           // queryTypeDetailsListServices();
         },
       },
-      basic: {},
+      basicData: {},
       oClick: (count) => {
         yTable.table.dataRow = count;
         setYTable({ ...yTable });
@@ -850,7 +898,7 @@ export default () => {
       dataSource: [],
       columns: yTableColumnsPerson,
       key: Math.random(),
-      scroll: { x: 1140 },
+      scroll: { x: 1580 },
       // scroll: { x: 1580 },
       //  y: '100%'
       dataRow: {},
@@ -938,7 +986,7 @@ export default () => {
   const getTableData = () => {
     const { timePoint, recordTime } = topFrom.getFieldsValue();
     const params = {
-      recordTime,
+      recordTime: (recordTime && moment(recordTime).format('YYYY-MM-DD')) || '',
       timePoint,
     };
 
@@ -1054,8 +1102,9 @@ export default () => {
   };
   // 获取字典数据
   const getDictionaryData = () => {
-    dictTypeSelectPullDown(['0005']).then((response) => {
+    dictTypeSelectPullDown(['0005', '0018']).then((response) => {
       setBasic(response.data);
+      yTable.table.basicData = response.data;
     });
   };
   const [nameSelectList, setNameSelectList] = useState([]); //复合搜索的人的集合
@@ -1225,13 +1274,18 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="高压" name={'highBloodPressure'}>
+              <Form.Item label="收缩压" name={'highBloodPressure'}>
                 <Input AUTOCOMPLETE="OFF" addonAfter="mmHg" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="低压" name={'lowBloodPressure'}>
+              <Form.Item label="舒张压" name={'lowBloodPressure'}>
                 <Input AUTOCOMPLETE="OFF" addonAfter="mmHg" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="血氧饱和度" name={'bloodOxygen'}>
+                <Input AUTOCOMPLETE="OFF" addonAfter="%" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -1251,7 +1305,12 @@ export default () => {
             </Col>
             <Col span={12}>
               <Form.Item label=" 大便" name={'defecate'}>
-                <Input AUTOCOMPLETE="OFF" addonAfter="ml" />
+                <Input AUTOCOMPLETE="OFF" addonAfter="次/日" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="大便方式" name={'defecatePattern'}>
+                <Select style={{ width: '100%' }} options={yTable.table.basicData['0018'] || []} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -1259,11 +1318,6 @@ export default () => {
                 <Input AUTOCOMPLETE="OFF" addonAfter="Kg" />
               </Form.Item>
             </Col>
-            {/* <Col span={12}>
-              <Form.Item label=" 血氧饱和度" name={'bloodOxygen'}>
-                <Input AUTOCOMPLETE="OFF" />
-              </Form.Item>
-            </Col> */}
           </Row>
         </Form>
       </Modal>

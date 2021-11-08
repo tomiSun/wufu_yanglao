@@ -45,7 +45,7 @@ export class PatientInfo extends Component {
           <tr className="percent4">
             <td>
               <span className="btitle">姓名：</span>
-              <span className="bline">{patientList.patientName}</span>
+              <span className="bline">{patientList.name}</span>
             </td>
             <td>
               <span className="btitle">床号：</span>
@@ -65,7 +65,7 @@ export class PatientInfo extends Component {
             </td>
             <td>
               <span className="btitle">住院号：</span>
-              <span className="bline">{patientList.inpNo}</span>
+              <span className="bline">{patientList.businessNo}</span>
             </td>
           </tr>
           {/* <tr className="percent4">
