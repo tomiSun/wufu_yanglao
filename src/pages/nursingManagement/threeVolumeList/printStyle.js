@@ -300,6 +300,7 @@ body,
 .ant-tooltip-inner {
   background: #FFF;
   font-size: 11px;
+  color:#000;
   font-family: "microsoft yahei", "Helvetica Neue For Number", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 15px !important;
   min-height: 15px !important;
