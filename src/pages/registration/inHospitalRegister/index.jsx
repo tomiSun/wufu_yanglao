@@ -317,7 +317,7 @@ const InHospitalRegister = (props) => {
       return {
         label: `${item['buildingName'] || '#'}-${item['floorName'] || '#'}-${item['roomName'] || '#'
           }-${item['bedName'] || '#'}`,
-        value: `${item['buildingCode']}-${item['floorCode']}-${item['roomCode']}-${item['bedCode']}`,
+        value: `${item['buildingCode']}-${item['floorCode']}-${item['roomCode']}-${item['bedCode']}-${item['roomType']}`,
         disabled: item['status'] === "1",
       };
     });
@@ -442,7 +442,7 @@ const InHospitalRegister = (props) => {
                   bedList.map((item) => {
                     return (
                       <Option
-                        value={`${item['buildingCode']}-${item['floorCode']}-${item['roomCode']}-${item['bedCode']}`}
+                        value={`${item['buildingCode']}-${item['floorCode']}-${item['roomCode']}-${item['bedCode']}-${item['roomType']}`}
                         data={item}
                       >
                         {item['name']}
@@ -525,7 +525,7 @@ const InHospitalRegister = (props) => {
               name={'relation'}
               label="关系"
               rules={[{ required: true }]}
-              initialValue={'0001'}
+              // initialValue={'0001'}
             >
               {/* <Select defaultValue={'0001'} onChange={() => { }}>
                 {dictionaryMap?.['0010'].map((item) => {
