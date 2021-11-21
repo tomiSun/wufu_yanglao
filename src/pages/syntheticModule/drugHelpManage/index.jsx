@@ -1,5 +1,5 @@
 /**服药管理 */
-import './index.less';
+import './index.module.less';
 import React, { useEffect, useState } from 'react';
 import {
   Button,
