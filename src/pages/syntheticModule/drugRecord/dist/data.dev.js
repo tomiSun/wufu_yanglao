@@ -22,7 +22,7 @@ var columns = function columns(edit, dictionaryMap) {
     dataIndex: 'name',
     key: 'name'
   }, {
-    title: '药品规格',
+    title: '药品名称及规格',
     dataIndex: 'drugSpecification',
     key: 'drugSpecification'
   }, {
@@ -42,7 +42,7 @@ var columns = function columns(edit, dictionaryMap) {
     dataIndex: 'medicationTime',
     key: 'medicationTime',
     render: function render(t, r) {
-      return (0, _common.getDictNameByCode)(dictionaryMap, "0006", t);
+      return (0, _common.getDictNameByCode)(dictionaryMap, "0019", t);
     }
   }, {
     title: '操作',

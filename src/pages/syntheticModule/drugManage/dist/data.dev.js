@@ -38,7 +38,7 @@ var columns = function columns(edit, dictionaryMap) {
     dataIndex: 'takeMedicineDate',
     key: 'takeMedicineDate'
   }, {
-    title: '药品名称',
+    title: '药品名称及规格',
     dataIndex: 'drugName',
     key: 'drugName'
   }, {
@@ -64,6 +64,10 @@ var columns = function columns(edit, dictionaryMap) {
     title: '护士签名',
     dataIndex: 'nursingSign',
     key: 'nursingSign'
+  }, {
+    title: '家属签名',
+    dataIndex: 'familySign',
+    key: 'familySign'
   }, {
     title: '过期时间',
     dataIndex: 'expiryDate',

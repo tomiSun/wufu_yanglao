@@ -44,6 +44,17 @@ var columns = function columns(edit, dictionaryMap) {
       return res;
     }
   }, {
+    title: '房间类型',
+    dataIndex: 'roomTYpe',
+    key: 'roomTYpe',
+    fixed: 'left',
+    width: 120,
+    render: function render(t, r) {
+      console.log("dictionaryMap", dictionaryMap);
+      var text = t || "0001";
+      return (0, _common.getDictNameByCode)(dictionaryMap, "0003", text);
+    }
+  }, {
     title: '护理级别',
     dataIndex: 'nursingLevel',
     key: 'nursingLevel',
@@ -55,14 +66,14 @@ var columns = function columns(edit, dictionaryMap) {
     title: '入院诊断',
     dataIndex: 'hospitalDiagnosis',
     key: 'hospitalDiagnosis',
-    width: 200,
-    // render: function render(t, r) {
-    //   var res = "";
-    //   t.forEach(function (element, index) {
-    //     res = res + "".concat(index == 0 ? "" : "、") + (0, _common.getDictNameByCode)(dictionaryMap, "0015", element);
-    //   });
-    //   return res;
+    width: 200 // render: (t, r) => {
+    //     let res = ""
+    //     t.forEach((element, index) => {
+    //         res = res + `${index == 0 ? "" : "、"}` + getDictNameByCode(dictionaryMap, "0015", element)
+    //     });
+    //     return res
     // }
+
   }, {
     title: '入院时间',
     dataIndex: 'admissionTime',
@@ -89,26 +100,26 @@ var columns = function columns(edit, dictionaryMap) {
     title: '过敏史',
     dataIndex: 'allergy',
     key: 'allergy',
-    width: 200,
-    // render: function render(t, r) {
-    //   var res = "";
-    //   t.forEach(function (element, index) {
-    //     res = res + "".concat(index == 0 ? "" : "、") + (0, _common.getDictNameByCode)(dictionaryMap, "0008", element);
-    //   });
-    //   return res;
+    width: 200 // render: (t, r) => {
+    //     let res = ""
+    //     t.forEach((element, index) => {
+    //         res = res + `${index == 0 ? "" : "、"}` + getDictNameByCode(dictionaryMap, "0008", element)
+    //     });
+    //     return res
     // }
+
   }, {
     title: '既往史',
     dataIndex: 'previousHistory',
     key: 'previousHistory',
-    width: 200,
-    // render: function render(t, r) {
-    //   var res = "";
-    //   t.forEach(function (element, index) {
-    //     res = res + "".concat(index == 0 ? "" : "、") + (0, _common.getDictNameByCode)(dictionaryMap, "0009", element);
-    //   });
-    //   return res;
+    width: 200 // render: (t, r) => {
+    //     let res = ""
+    //     t.forEach((element, index) => {
+    //         res = res + `${index == 0 ? "" : "、"}` + getDictNameByCode(dictionaryMap, "0009", element)
+    //     });
+    //     return res
     // }
+
   }, {
     title: '身份证号',
     dataIndex: 'idCard',
@@ -123,11 +134,11 @@ var columns = function columns(edit, dictionaryMap) {
     title: '关系',
     dataIndex: 'relation',
     key: 'relation',
-    width: 150,
-    // render: function render(t, r) {
-    //   var res = (0, _common.getDictNameByCode)(dictionaryMap, "0010", t);
-    //   return res;
+    width: 100 // render: (t, r) => {
+    //    let res =getDictNameByCode(dictionaryMap, "0010", t)
+    //     return res
     // }
+
   }, {
     title: '联系电话',
     dataIndex: 'contactNumber',

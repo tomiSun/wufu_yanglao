@@ -77,6 +77,13 @@ var data1 = [{
       id: '0-3',
       temp: 23,
       programId: "0008"
+    }, {
+      level: 3,
+      span: 6,
+      vheight: 24,
+      id: '0-3',
+      temp: 23,
+      programId: "0011"
     }]
   }, {
     level: 2,

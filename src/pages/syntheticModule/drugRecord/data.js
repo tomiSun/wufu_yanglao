@@ -17,7 +17,7 @@ const columns = (edit, dictionaryMap) => {
             key: 'name',
         },
         {
-            title: '药品规格',
+            title: '药品名称及规格',
             dataIndex: 'drugSpecification',
             key: 'drugSpecification',
         },
@@ -41,7 +41,7 @@ const columns = (edit, dictionaryMap) => {
             dataIndex: 'medicationTime',
             key: 'medicationTime',
             render: (t, r) => {
-                return getDictNameByCode(dictionaryMap, "0006", t)
+                return getDictNameByCode(dictionaryMap, "0019", t)
             }
         },
         {

@@ -56,17 +56,22 @@ const columns = (edit, dictionaryMap) => {
             key: 'measure',
         },
         {
-            title: '自带药',
+            title: '代配药',
             dataIndex: 'isTaken',
             key: 'isTaken',
             render: (t, v) => {
-                return Number(t) === 0 ? "是" : "否"
+                return Number(t) === 0 ? "否" : "是"
             }
         },
         {
             title: '护士签名',
             dataIndex: 'nursingSign',
             key: 'nursingSign',
+        },
+        {
+            title: '家属签名',
+            dataIndex: 'familySign',
+            key: 'familySign',
         },
         {
             title: '过期时间',

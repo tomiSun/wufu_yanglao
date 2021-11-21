@@ -34,7 +34,7 @@ import moment from 'moment';
 import { ULayout } from '@/utils/common';
 
 const DICT_LSIT = { '0008': [], '0009': [], '0010': [], '0011': [], '0015': [] };
-const DICT_ARR = ['0008', '0009', '0010', '0011', '0015'];
+const DICT_ARR = ['0008', '0009', '0010', '0011', '0015','0003'];
 const validateMessages = {
   required: '${label} is required!',
 };
@@ -536,6 +536,9 @@ const InHospitalRegister = (props) => {
             </Form.Item>
             <Form.Item name={'contactNumber'} label="联系电话" rules={[{ required: true }]}>
               <Input />
+            </Form.Item>
+            <Form.Item name={'contactAddress'} label="家庭住址">
+              <Input.TextArea />
             </Form.Item>
             <Form.Item name={'contactAddress'} label="家庭住址">
               <Input.TextArea />

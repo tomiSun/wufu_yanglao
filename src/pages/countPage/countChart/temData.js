@@ -12,7 +12,6 @@ const data1 = [
                 vheight: 12,
                 id: '0-0',
                 children: [
-
                     {
                         level: 3,
                         span: 6,
@@ -85,6 +84,14 @@ const data1 = [
                         id: '0-3',
                         temp: 23,
                         programId: "0008"
+                    },
+                    {
+                        level: 3,
+                        span: 6,
+                        vheight: 24,
+                        id: '0-3',
+                        temp: 23,
+                        programId: "0011"
                     }
                 ],
             },

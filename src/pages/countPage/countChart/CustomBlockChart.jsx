@@ -138,6 +138,7 @@ export default function IndexPage(props) {
       disabilityNum,
       partialDisability,
       provideForOneself,
+      takeMedicalNum
     } = res['data'];
     setChartData({
       '0001': String(originalNum),
@@ -148,6 +149,7 @@ export default function IndexPage(props) {
       '0006': String(disabilityNum),
       '0007': String(partialDisability),
       '0008': String(provideForOneself),
+      '0011': String(takeMedicalNum),
       '0009': [
         {
           type: '来源于社会人数',

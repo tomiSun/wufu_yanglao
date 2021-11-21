@@ -9,6 +9,7 @@ const mapTitle = {
     "0006": "实际失能老人数",
     "0007": "部分失能人数",
     "0008": "自理老人人数",
+    "0011": "代配药人数",
 }
 export default function Demo(props) {
     const { programId, chartData } = props

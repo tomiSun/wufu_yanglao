@@ -102,10 +102,13 @@ export const ULayout = (x, y, labelAlign, layout) => {
 };
 //根据dictCode 获取dictName
 export const getDictNameByCode = (dict, key, code) => {
-  let item = dict[key].find((item) => {
-    if (item.dictCode == code) return item;
-  });
-  return !!item ? item['dictName'] : '-';
+  if (!!dict[key]) {
+    let item = dict[key].find((item) => {
+      if (item.dictCode == code) return item;
+    });
+    return !!item ? item['dictName'] : '-';
+  }
+ 
 };
 export const analyzeIDCard = (idcard) => {
   const sexAndAge = {};

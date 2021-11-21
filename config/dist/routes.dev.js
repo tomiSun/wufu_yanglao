@@ -266,6 +266,12 @@ var _default = [{
         path: '/syntheticModule/drugManage/index',
         component: './syntheticModule/drugManage'
       }, {
+        name: '代配药管理',
+        //带药管理
+        icon: 'smile',
+        path: '/syntheticModule/drugHelpManage/index',
+        component: './syntheticModule/drugHelpManage'
+      }, {
         name: '服药记录',
         //服药记录
         icon: 'smile',

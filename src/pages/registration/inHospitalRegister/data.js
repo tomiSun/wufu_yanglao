@@ -1,5 +1,5 @@
 
-import { getDictNameByCode } from '@/utils/common.js'
+import { getDictNameByCode, findValByKey, } from '@/utils/common.js'
 const columns = (edit, dictionaryMap) => {
     return [
         {
@@ -36,6 +36,18 @@ const columns = (edit, dictionaryMap) => {
             render: (t, r) => {
                 let res = `${r['buildingName'] || "#"}-${r['floorName'] || "#"}-${r['roomName'] || "#"}-${r['bedName'] || "#"}`
                 return res
+            }
+        },
+        {
+            title: '房间类型',
+            dataIndex: 'roomTYpe',
+            key: 'roomTYpe',
+            fixed: 'left',
+            width: 120,
+            render: (t, r) => {
+                console.log("dictionaryMap", dictionaryMap)
+                let text = t || "0001"
+                return getDictNameByCode(dictionaryMap, "0003", text)
             }
         },
         {

@@ -280,7 +280,7 @@ const DrugRecord = (props) => {
               >
               </Select>
             </Form.Item>
-            <Form.Item label="采样时间段" name={'medicationTime'}>
+            <Form.Item label="用药时间" name={'medicationTime'}>
               <Select style={{ width: 200 }}>
                 {dictionaryMap?.["0006"].map(item => {
                   return <Option value={item['dictCode']}>{item['dictName']}</Option>

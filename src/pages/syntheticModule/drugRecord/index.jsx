@@ -30,8 +30,8 @@ import {
 import moment from 'moment';
 //导出
 import { excelExport } from '@/utils/ExcelExport';
-const DICT_LSIT = { "0006": [] }
-const DICT_ARR = ["0006"]
+const DICT_LSIT = { "0019": [] }
+const DICT_ARR = ["0019"]
 //通用校验提醒
 const validateMessages = {
   required: '${label} 为必填项',
@@ -89,6 +89,7 @@ const DrugRecord = (props) => {
       let key = param['typeCode']
       resMap[key] = res['data']['list']
       if (idx == dList.length - 1) {
+        debugger
         setDictionaryMap(resMap)
       }
     }
@@ -280,9 +281,9 @@ const DrugRecord = (props) => {
               >
               </Select>
             </Form.Item>
-            <Form.Item label="采样时间段" name={'medicationTime'}>
+            <Form.Item label="用药时间" name={'medicationTime'}>
               <Select style={{ width: 200 }}>
-                {dictionaryMap?.["0006"].map(item => {
+                {dictionaryMap?.["0019"].map(item => {
                   return <Option value={item['dictCode']}>{item['dictName']}</Option>
                 })}
               </Select>
