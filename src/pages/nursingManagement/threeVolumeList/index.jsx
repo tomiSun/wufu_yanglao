@@ -105,31 +105,31 @@ export default () => {
           addOrEdit('add', true);
         },
       },
-      {
-        name: '导出',
-        type: 'primary',
-        sort: 5,
-        style: { marginRight: '15px' },
-        callback: () => {
-          let realSelectKeys = yTable?.table?.selectKeys.filter((it) => parseFloat(it) > 1);
-          if (!realSelectKeys?.length) {
-            message.warn('未填写信息，不允许导出');
-            return;
-          }
-          let res = isOnePeople(yTable?.table?.selectRows);
-          if (!res) {
-            message.warn('一次导出一个人的信息');
-            return;
-          }
-          let ids = realSelectKeys?.join(',') || '';
-          excelExport({
-            // TODO:替换接口路径
-            api: '/blood-sugar/export', //导出接口路径
-            ids: ids, //勾选的行id数组集合
-            fileName: '三测单', //导出文件名称
-          });
-        },
-      },
+      // {
+      //   name: '导出',
+      //   type: 'primary',
+      //   sort: 5,
+      //   style: { marginRight: '15px' },
+      //   callback: () => {
+      //     let realSelectKeys = yTable?.table?.selectKeys.filter((it) => parseFloat(it) > 1);
+      //     if (!realSelectKeys?.length) {
+      //       message.warn('未填写信息，不允许导出');
+      //       return;
+      //     }
+      //     let res = isOnePeople(yTable?.table?.selectRows);
+      //     if (!res) {
+      //       message.warn('一次导出一个人的信息');
+      //       return;
+      //     }
+      //     let ids = realSelectKeys?.join(',') || '';
+      //     excelExport({
+      //       // TODO:替换接口路径
+      //       api: '/blood-sugar/export', //导出接口路径
+      //       ids: ids, //勾选的行id数组集合
+      //       fileName: '三测单', //导出文件名称
+      //     });
+      //   },
+      // },
     ],
     layout: 'inline',
     form: topFrom,
@@ -1024,7 +1024,7 @@ export default () => {
     queryVitalSignRecord(params)
       .then((res) => {
         yTableDrawer.table.dataSource =
-          res?.data?.busVitalSignRecordVOS?.map((it) => {
+          res?.data?.map((it) => {
             return {
               ...it,
               timePoint: (it.timePoint && moment(it.timePoint, 'HH:mm')) || '',
