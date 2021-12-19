@@ -16,7 +16,6 @@ import {
 } from 'antd';
 import 'moment/locale/zh-cn';
 import locale from 'antd/es/date-picker/locale/zh_CN';
-debugger;
 import {
   takeMedicineInsert,
   takeMedicineQuery,
