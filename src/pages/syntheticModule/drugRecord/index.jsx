@@ -89,7 +89,6 @@ const DrugRecord = (props) => {
       let key = param['typeCode']
       resMap[key] = res['data']['list']
       if (idx == dList.length - 1) {
-        debugger
         setDictionaryMap(resMap)
       }
     }

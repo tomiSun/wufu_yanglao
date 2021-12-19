@@ -10,13 +10,14 @@ export default defineConfig({
   dva: {
     hmr: true,
   },
-  mfsu: {},
+  // mfsu: {},
   webpack5: {},
   // mfsu: { production: { output: '.mfsu-production' } },
   history: {
     type: 'browser',
   },
   locale: {
+    
     // default zh-CN
     default: 'zh-CN',
     antd: true,

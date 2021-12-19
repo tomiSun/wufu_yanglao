@@ -64,7 +64,7 @@ const DrugManage = (props) => {
   });
   //初始化操作
   useEffect(() => {
-    getmedicineRecordQuery({ ...pageInfo, isTaken: 0 });
+    getmedicineRecordQuery({ ...pageInfo, isTaken: 1});
     //获取字典
     getDictDataSelect(DICT_ARR); //过敏史
   }, []);
@@ -141,19 +141,8 @@ const DrugManage = (props) => {
         <Form.Item label="住院号" name={'businessNo'}>
           <Input size={'small'} allowClear />
         </Form.Item>
-        <Form.Item label="带药日期" name={'takeMedicineDate'}>
+        <Form.Item label="代配药日期" name={'takeMedicineDate'}>
           <DatePicker AUTOCOMPLETE="OFF" size={'small'} allowClear />
-        </Form.Item>
-        <Form.Item label="类型" name={'isTaken'} initialValue={0}>
-          <Select
-            style={{ width: 100 }}
-            placeholder="请选择" options={[{
-              label: "自带药", value: 0
-            },
-            {
-              label: "代配药", value: 1
-            }
-            ]} ></Select>
         </Form.Item>
         <Form.Item>
           <Button
@@ -178,11 +167,10 @@ const DrugManage = (props) => {
             新增记录
           </Button>
         </Form.Item>
-        <Form.Item>
+        {/* <Form.Item>
           <Button
             type="primary"
             size={'small'}
-            disabled={SForm.getFieldsValue().isTaken === 1}
             style={{ marginTop: 4 }}
             onClick={() => {
               excelExport({
@@ -192,14 +180,13 @@ const DrugManage = (props) => {
               });
             }}
           >
-            导出自带药
+            导出自代配药
           </Button>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item>
           <Button
             type="primary"
             size={'small'}
-            disabled={SForm.getFieldsValue().isTaken === 0}
             style={{ marginTop: 4 }}
             onClick={() => {
               excelExport({
@@ -292,7 +279,7 @@ const DrugManage = (props) => {
   const renderMoadl = () => {
     return (
       <Modal
-        title="带药管理"
+        title="代配药管理"
         width={500}
         visible={modalVisible}
         onOk={() => {
@@ -328,7 +315,7 @@ const DrugManage = (props) => {
               </Select> */}
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="带药日期" name={'takeMedicineDate'} initialValue={moment(new Date())}>
+            <Form.Item label="代配药日期" name={'takeMedicineDate'} initialValue={moment(new Date())}>
               <DatePicker style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="药品名称及规格" name={'drugName'}>
@@ -343,10 +330,10 @@ const DrugManage = (props) => {
             {/* <Form.Item label="剂量" name={'measure'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item> */}
-            <Form.Item label="带药量" name={'acount'}>
+            <Form.Item label="代配药量" name={'acount'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="自带药" name={'isTaken'} initialValue={0}>
+            <Form.Item label="自代配药" name={'isTaken'} initialValue={1}>
               <Select
                 style={{ width: 200 }}
                 options={[{ label: "是", value: 0 }, { label: "否", value: 1 }]}
