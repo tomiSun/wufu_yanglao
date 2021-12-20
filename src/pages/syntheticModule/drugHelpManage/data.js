@@ -31,7 +31,7 @@ const columns = (edit, dictionaryMap) => {
             // }
         },
         {
-            title: '带药日期',
+            title: '代配药日期',
             dataIndex: 'takeMedicineDate',
             key: 'takeMedicineDate',
         },
@@ -51,7 +51,7 @@ const columns = (edit, dictionaryMap) => {
             key: 'dosage',
         },
         {
-            title: '带药量',
+            title: '代配药量',
             dataIndex: 'measure',
             key: 'measure',
         },

@@ -14,6 +14,8 @@ import { getMatchMenu } from '@umijs/route-utils';
 import { getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logo.svg';
 import styles from './BasicLayout.less';
+import zhCN from 'antd/lib/locale/zh_CN';
+
 const noMatch = (
   <Result
     status={403}
@@ -108,12 +110,10 @@ const BasicLayout = (props) => {
   const authorized = getAuthorityFromRouter(props.route.routes, location.pathname || '/') || {
     authority: undefined,
   };
-  const { formatMessage } = useIntl();
   return (
     <>
       <ProLayout
         logo={logo}
-        formatMessage={formatMessage}
         {...props}
         {...settings}
         onCollapse={handleMenuCollapse}
@@ -132,9 +132,9 @@ const BasicLayout = (props) => {
         breadcrumbRender={(routers = []) => [
           {
             path: '/',
-            breadcrumbName: formatMessage({
+            breadcrumbName: {
               id: 'menu.home',
-            }),
+            },
           },
           ...routers,
         ]}
@@ -161,7 +161,7 @@ const BasicLayout = (props) => {
         }}
       >
         <Authorized authority={authorized.authority} noMatch={noMatch}>
-          <ConfigProvider componentSize="middle">
+          <ConfigProvider componentSize="middle" locale={zhCN}>
             <div className={styles.globalContent}>{children}</div>
           </ConfigProvider>
         </Authorized>

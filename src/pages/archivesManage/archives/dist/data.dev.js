@@ -28,15 +28,15 @@ var columns = function columns(edit, dictionaryMap) {
       return t == "1" ? "男" : "女";
     }
   }, {
-    title: '年龄',
-    dataIndex: 'age',
-    key: 'age',
-    width: 50
-  }, {
     title: '身份证号',
     dataIndex: 'idCard',
     key: 'idCard',
     width: 200
+  }, {
+    title: '年龄',
+    dataIndex: 'age',
+    key: 'age',
+    width: 50
   }, {
     title: '联系电话',
     dataIndex: 'contactNumber',
@@ -48,17 +48,22 @@ var columns = function columns(edit, dictionaryMap) {
     key: 'guardianName',
     width: 120
   }, {
+    title: '联系人身份证号',
+    dataIndex: 'guardianIdCard',
+    key: 'guardianIdCard',
+    width: 120
+  }, {
     title: '关系',
     dataIndex: 'relation',
     key: 'relation',
-    width: 120,
-    // render: function render(t, r) {
-    //   var data = dictionaryMap["0010"];
-    //   var res = data.find(function (item) {
-    //     return item.dictCode == t;
-    //   });
-    //   return !!res ? res['dictName'] : t;
+    width: 120 // render: (t, r) => {
+    //     let data = dictionaryMap["0010"]
+    //     let res = data.find(item => {
+    //         return item.dictCode == t
+    //     })
+    //     return !!res ? res['dictName'] : t
     // }
+
   }, {
     title: '创建时间',
     dataIndex: 'createTime',

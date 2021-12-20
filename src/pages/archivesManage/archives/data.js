@@ -25,16 +25,16 @@ const columns = (edit, dictionaryMap) => {
             }
         },
         {
-            title: '年龄',
-            dataIndex: 'age',
-            key: 'age',
-            width: 50,
-        },
-        {
             title: '身份证号',
             dataIndex: 'idCard',
             key: 'idCard',
             width: 200,
+        },
+        {
+            title: '年龄',
+            dataIndex: 'age',
+            key: 'age',
+            width: 50,
         },
         {
             title: '联系电话',
@@ -46,6 +46,12 @@ const columns = (edit, dictionaryMap) => {
             title: '联系人姓名',
             dataIndex: 'guardianName',
             key: 'guardianName', 
+            width: 120,
+        },
+        {
+            title: '联系人身份证号',
+            dataIndex: 'guardianIdCard',
+            key: 'guardianIdCard', 
             width: 120,
         },
         {

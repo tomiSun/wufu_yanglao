@@ -136,6 +136,12 @@ const columns = (edit, dictionaryMap) => {
             width: 100,
         },
         {
+            title: '联系人身份证号',
+            dataIndex: 'guardianIdCard',
+            key: 'guardianIdCard',
+            width: 100,
+        },
+        {
             title: '关系',
             dataIndex: 'relation',
             key: 'relation',

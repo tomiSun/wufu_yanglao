@@ -117,7 +117,6 @@ const PhysicalExamination = (props) => {
             signTime:selectRowData?.signTime,
             examArchiveFile
           }
-          debugger
           let res3 = await examArchiveSave(addInfo);
           message.success('新增成功');
           onPhysicalExaminationVisible(false);

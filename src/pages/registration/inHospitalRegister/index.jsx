@@ -317,7 +317,7 @@ const InHospitalRegister = (props) => {
       return {
         label: `${item['buildingName'] || '#'}-${item['floorName'] || '#'}-${item['roomName'] || '#'
           }-${item['bedName'] || '#'}`,
-        value: `${item['buildingCode']}-${item['floorCode']}-${item['roomCode']}-${item['bedCode']}-${item['roomType']}`,
+        value: `${item['buildingCode']}-${item['floorCode']}-${item['roomCode']}-${item['bedCode']}`,
         disabled: item['status'] === "1",
       };
     });
@@ -519,6 +519,9 @@ const InHospitalRegister = (props) => {
               <Input />
             </Form.Item>
             <Form.Item name={'relationName'} label="联系人姓名" rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name={'guardianIdCard'} label="联系人身份证号" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
             <Form.Item

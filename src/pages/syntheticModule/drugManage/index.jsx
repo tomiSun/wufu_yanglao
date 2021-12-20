@@ -14,6 +14,8 @@ import {
   message,
   Pagination,
 } from 'antd';
+import 'moment/locale/zh-cn';
+import locale from 'antd/es/date-picker/locale/zh_CN';
 import {
   takeMedicineInsert,
   takeMedicineQuery,
@@ -94,7 +96,11 @@ const DrugManage = (props) => {
   const getmedicineRecordQuery = async (param) => {
     let res = await takeMedicineQuery(param);
     if (res['code'] === 200) {
-      setDataSource(res['data']['list'].map(item => { return { ...item, key: item.id } }))
+      setDataSource(
+        res['data']['list'].map((item) => {
+          return { ...item, key: item.id };
+        }),
+      );
       setPageInfo({
         pageNum: param['pageNum'],
         pageSize: param['pageSize'],
@@ -142,18 +148,7 @@ const DrugManage = (props) => {
           <Input size={'small'} allowClear />
         </Form.Item>
         <Form.Item label="带药日期" name={'takeMedicineDate'}>
-          <DatePicker AUTOCOMPLETE="OFF" size={'small'} allowClear />
-        </Form.Item>
-        <Form.Item label="类型" name={'isTaken'} initialValue={0}>
-          <Select
-            style={{ width: 100 }}
-            placeholder="请选择" options={[{
-              label: "自带药", value: 0
-            },
-            {
-              label: "代配药", value: 1
-            }
-            ]} ></Select>
+          <DatePicker locale={locale} AUTOCOMPLETE="OFF" size={'small'} allowClear />
         </Form.Item>
         <Form.Item>
           <Button
@@ -182,12 +177,11 @@ const DrugManage = (props) => {
           <Button
             type="primary"
             size={'small'}
-            disabled={SForm.getFieldsValue().isTaken === 1}
             style={{ marginTop: 4 }}
             onClick={() => {
               excelExport({
                 api: '/medicine/exportTakeMedicine', //导出接口路径
-                ids: selectedRowKeys.join(","), //勾选的行id数组集合
+                ids: selectedRowKeys.join(','), //勾选的行id数组集合
                 fileName: '服药管理记录', //导出文件名称
               });
             }}
@@ -195,7 +189,7 @@ const DrugManage = (props) => {
             导出自带药
           </Button>
         </Form.Item>
-        <Form.Item>
+        {/* <Form.Item>
           <Button
             type="primary"
             size={'small'}
@@ -204,14 +198,14 @@ const DrugManage = (props) => {
             onClick={() => {
               excelExport({
                 api: '/medicine/exportDispensing', //导出接口路径
-                ids: selectedRowKeys.join(","), //勾选的行id数组集合
+                ids: selectedRowKeys.join(','), //勾选的行id数组集合
                 fileName: '服药管理记录', //导出文件名称
               });
             }}
           >
             导出代配药
           </Button>
-        </Form.Item>
+        </Form.Item> */}
       </Form>
     );
   };
@@ -257,7 +251,7 @@ const DrugManage = (props) => {
   };
   //选中操作
   const onSelectChange = (selectedRowKeys, record) => {
-    setSelectedRowKeys(selectedRowKeys)
+    setSelectedRowKeys(selectedRowKeys);
   };
   const rowSelection = {
     selectedRowKeys: selectedRowKeys,
@@ -349,7 +343,10 @@ const DrugManage = (props) => {
             <Form.Item label="自带药" name={'isTaken'} initialValue={0}>
               <Select
                 style={{ width: 200 }}
-                options={[{ label: "是", value: 0 }, { label: "否", value: 1 }]}
+                options={[
+                  { label: '是', value: 0 },
+                  { label: '否', value: 1 },
+                ]}
               ></Select>
             </Form.Item>
             <Form.Item label="护士签名" name={'nursingSign'}>
