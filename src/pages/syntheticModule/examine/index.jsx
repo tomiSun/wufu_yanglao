@@ -215,7 +215,7 @@ export default () => {
         current: 1,
         pageSize: pageSize,
         showSizeChanger: true,
-        showQuickJumper: true,
+        showQuickJumper: false,
         showTotal: (total) => {
           return `共 ${total} 条`;
         },
@@ -223,7 +223,7 @@ export default () => {
           console.log('changePage----', page, pageSize);
           yTable.table.pagination.current = page;
           yTable.table.pagination.pageSize = pageSize;
-          // queryTypeDetailsListServices();
+          getTableData();
         },
       },
       basic: {},
@@ -263,7 +263,7 @@ export default () => {
   };
   // 删除
   const del = (record) => {
-    if (!!Object.getOwnPropertyNames(record).length) {
+    if (Object.getOwnPropertyNames(record).length) {
       Modal.confirm({
         title: '是否要删除该条数据',
         icon: <DeleteOutlined />,
@@ -307,6 +307,8 @@ export default () => {
         yTable.table.dataSource = res?.data?.list || [];
         yTable.table.loading = false;
         yTable.table.pagination.current = res?.data?.pageNum;
+        yTable.table.pagination.total = res?.data?.total;
+        yTable.table.pagination.pageSize = res?.data?.pageSize;
         setYTable({ ...yTable });
       })
       .catch((err) => {

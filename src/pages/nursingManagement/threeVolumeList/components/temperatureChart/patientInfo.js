@@ -7,8 +7,8 @@ import React, { Component } from 'react';
 export class PatientInfo extends Component {
   componentWillMount() {
     this.state = {
-      hospital: this.props.hospital, //医院
-      patientList: this.props.patientList, //患者基本信息
+      hospital: this.props.hospital, // 医院
+      patientList: this.props.patientList, // 患者基本信息
     };
   }
 
@@ -21,24 +21,24 @@ export class PatientInfo extends Component {
       nextProps.patientList !== nextState.patientList
     ) {
       this.setState({
-        hospital: nextProps.hospital, //医院
-        patientList: nextProps.patientList, //患者基本信息
+        hospital: nextProps.hospital, // 医院
+        patientList: nextProps.patientList, // 患者基本信息
       });
     }
   }
 
   render() {
-    let { hospital, patientList } = this.state;
+    const { hospital, patientList } = this.state;
     return (
       <table className="patInfo">
         <tbody>
           <tr>
-            <td colSpan="6">
+            <td colSpan="5">
               <h1>{hospital}</h1>
             </td>
           </tr>
           <tr>
-            <td colSpan="6">
+            <td colSpan="5">
               <h1>体温表</h1>
             </td>
           </tr>
@@ -49,7 +49,7 @@ export class PatientInfo extends Component {
             </td>
             <td>
               <span className="btitle">床号：</span>
-              <span className="bline">{patientList.bedNo}</span>
+              <span className="bline">{patientList.bedName}</span>
             </td>
             <td>
               <span className="btitle">性别：</span>
@@ -59,10 +59,10 @@ export class PatientInfo extends Component {
               <span className="btitle">年龄：</span>
               <span className="bline">{patientList.age}</span>
             </td>
-            <td>
+            {/* <td>
               <span className="btitle">科室：</span>
               <span className="bline">{patientList.endemicName}</span>
-            </td>
+            </td> */}
             <td>
               <span className="btitle">住院号：</span>
               <span className="bline">{patientList.businessNo}</span>

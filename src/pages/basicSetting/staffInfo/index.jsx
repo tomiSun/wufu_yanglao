@@ -16,7 +16,6 @@ import {
   Checkbox,
   Select,
 } from 'antd';
-const { confirm } = Modal;
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
 import {
@@ -29,9 +28,11 @@ import {
 import { findValByKey, getDefaultOption } from '@/utils/common';
 import { makeWb, pinyin } from 'yunyi-convert';
 import { config } from '@/utils/const';
-const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
 import moment from 'moment';
+
+const { confirm } = Modal;
+const { pageSize, pageNum } = config;
 const { TextArea } = Input;
 export default () => {
   // 获取表格高度
@@ -201,9 +202,9 @@ export default () => {
       rowKey: 'id',
       pagination: {
         current: 1,
-        pageSize: pageSize,
+        pageSize,
         showSizeChanger: true,
-        showQuickJumper: true,
+        showQuickJumper: false,
         showTotal: (total) => {
           return `共 ${total} 条`;
         },
@@ -235,7 +236,7 @@ export default () => {
     modalForm.resetFields();
     setModalConfig({
       ...modalConfig,
-      visible: visible,
+      visible,
       title:
         type === 'add'
           ? '新增员工信息'
@@ -244,7 +245,7 @@ export default () => {
           : type === 'detail'
           ? '查看员工信息'
           : '员工信息',
-      type: type,
+      type,
     });
     if (type === 'add') {
       modalForm.setFieldsValue({
@@ -304,8 +305,8 @@ export default () => {
   // 获取右侧表格数据
   const getTableData = () => {
     const { keyWord } = topFrom.getFieldsValue();
-    let params = {
-      keyWord: keyWord,
+    const params = {
+      keyWord,
       pageNum: yTable.table.pagination.current,
       pageSize: yTable.table.pagination.pageSize,
     };
@@ -316,7 +317,9 @@ export default () => {
       .then((res) => {
         yTable.table.dataSource = res?.data?.list || [];
         yTable.table.loading = false;
-        // yTable.table.pagination.current = res?.data?.pageNum;
+        yTable.table.pagination.current = res?.data?.pageNum;
+        yTable.table.pagination.total = res?.data?.total;
+        yTable.table.pagination.pageSize = res?.data?.pageSize;
         setYTable({ ...yTable });
       })
       .catch((err) => {
@@ -352,7 +355,7 @@ export default () => {
   };
   // 重置密码
   const resetPassWord = (record) => {
-    if (!!Object.getOwnPropertyNames(record).length) {
+    if (Object.getOwnPropertyNames(record).length) {
       Modal.confirm({
         title: '您确定要重置密码为000000吗？',
         okText: '确定',
@@ -360,7 +363,7 @@ export default () => {
         cancelText: '取消',
         style: { padding: '30px' },
         onOk() {
-          let query = { employeeCode: record.employeeCode };
+          const query = { employeeCode: record.employeeCode };
           employeeesetPassword(query)
             .then((res) => {
               message.success(res?.msg);

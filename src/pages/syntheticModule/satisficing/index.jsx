@@ -27,8 +27,9 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { findValByKey, getDefaultOption } from '@/utils/common';
 import { makeWb, pinyin } from 'yunyi-convert';
 import { config } from '@/utils/const';
-const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
+
+const { pageSize, pageNum } = config;
 const { TextArea } = Input;
 export default () => {
   // 获取表格高度
@@ -186,7 +187,7 @@ export default () => {
         current: 1,
         pageSize: 10,
         showSizeChanger: true,
-        showQuickJumper: true,
+        showQuickJumper: false,
         showTotal: (total) => {
           return `共 ${total} 条`;
         },
@@ -225,8 +226,8 @@ export default () => {
     if (type === 'edit') {
       modalForm.setFieldsValue({
         ...record,
-        isCross: !!record.isCross ? true : false,
-        isMelt: !!record.isMelt ? true : false,
+        isCross: !!record.isCross,
+        isMelt: !!record.isMelt,
       });
     } else {
       // 选择框默认值
@@ -246,7 +247,7 @@ export default () => {
   };
   // 删除
   const del = (record) => {
-    if (!!Object.getOwnPropertyNames(record).length) {
+    if (Object.getOwnPropertyNames(record).length) {
       Modal.confirm({
         title: '是否要删除该条数据',
         icon: <DeleteOutlined />,
@@ -296,7 +297,7 @@ export default () => {
 
   // 新增 / 修改 提交时触发
   const saveModalInfo = () => {
-    let query = {
+    const query = {
       ...modalForm.getFieldsValue(),
       typeCode: findValByKey(basic['1041'], 'name', modalForm.getFieldsValue().typeName, 'key'),
     };

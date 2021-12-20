@@ -17,10 +17,6 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { SearchForm, YTable } from 'yunyi-component';
 import styles from './index.less';
 import { useTableHeight } from '@/utils/tableHeight';
-
-const { confirm } = Modal;
-const { TextArea } = Input;
-const { DirectoryTree } = Tree;
 import {
   dictTypeAdd,
   dictTypeDel,
@@ -31,6 +27,10 @@ import {
   dictDateSelect,
   dictDateUpdate,
 } from '@/services/basicSetting/dictionary';
+
+const { confirm } = Modal;
+const { TextArea } = Input;
+const { DirectoryTree } = Tree;
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
@@ -60,9 +60,9 @@ export default () => {
     modalFormSort.resetFields();
     setModalSortConfig({
       ...modalSortConfig,
-      visible: visible,
+      visible,
       title: type === 'add' ? '新增字典类别' : type === 'edit' ? '编辑字典类别' : '字典类别',
-      type: type,
+      type,
     });
     if (type === 'edit' && visible) {
       modalFormSort.setFieldsValue({ ...yTable.table.selectedNode });
@@ -109,10 +109,10 @@ export default () => {
   // 获取字典类别
   const getTreeData = () => {
     setTreeData([]);
-    let { keyWord } = treeSearchForm.getFieldsValue();
+    const { keyWord } = treeSearchForm.getFieldsValue();
     dictTypeSelect({ keyWord: keyWord || '' })
       .then((res) => {
-        let tree =
+        const tree =
           res?.data?.map((it) => {
             return {
               title: it.dictTypeName,
@@ -168,7 +168,7 @@ export default () => {
         current: 1,
         pageSize: 20,
         showSizeChanger: true,
-        showQuickJumper: true,
+        showQuickJumper: false,
         showTotal: (total) => {
           return `共 ${total} 条`;
         },
@@ -318,7 +318,7 @@ export default () => {
     modalForm.resetFields();
     setModalConfig({
       ...modalConfig,
-      visible: visible,
+      visible,
       title:
         type === 'add'
           ? '新增字典明细'
@@ -327,7 +327,7 @@ export default () => {
           : type === 'detail'
           ? '查看字典明细'
           : '字典明细',
-      type: type,
+      type,
     });
     if (type === 'add') {
       modalForm.setFieldsValue({
@@ -385,7 +385,7 @@ export default () => {
       return;
     }
     const { keyWord } = formTopRight.getFieldsValue();
-    let params = {
+    const params = {
       search: keyWord,
       typeCode: yTable.table.selectedNode?.dictTypeCode,
       pageNum: yTable.table.pagination.current,
@@ -399,7 +399,8 @@ export default () => {
         yTable.table.dataSource = res?.data?.list || [];
         yTable.table.loading = false;
         yTable.table.pagination.current = res?.data?.pageNum;
-        // yTable.table.pagination.pageSize = res?.data?.pageSize;
+        yTable.table.pagination.total = res?.data?.total;
+        yTable.table.pagination.pageSize = res?.data?.pageSize;
         setYTable({ ...yTable });
       })
       .catch((err) => {
@@ -490,7 +491,7 @@ export default () => {
         </Col>
       </Row>
 
-      {/*新增字典类别*/}
+      {/* 新增字典类别 */}
       <Modal
         width={720}
         maskClosable={false}
@@ -513,7 +514,7 @@ export default () => {
           initialValues={{ useFlag: 1 }}
         >
           <Row>
-            {/*隐藏数据字段*/}
+            {/* 隐藏数据字段 */}
             <Form.Item name="id" hidden></Form.Item>
             <Col span={12}>
               <Form.Item label="类别编码" name="dictTypeCode" rules={[{ required: true }]}>
@@ -570,7 +571,7 @@ export default () => {
         </Form>
       </Modal>
 
-      {/*新增字典明细*/}
+      {/* 新增字典明细 */}
       <Modal
         width={720}
         maskClosable={false}
@@ -593,7 +594,7 @@ export default () => {
           initialValues={{ useFlag: 1 }}
         >
           <Row>
-            {/*隐藏数据字段*/}
+            {/* 隐藏数据字段 */}
             <Form.Item name="id" hidden></Form.Item>
 
             <Col span={12}>

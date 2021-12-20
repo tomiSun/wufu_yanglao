@@ -17,8 +17,6 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { SearchForm, YTable } from 'yunyi-component';
 import styles from './index.less';
 import { useTableHeight } from '@/utils/tableHeight';
-const { confirm } = Modal;
-const { TextArea } = Input;
 import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
 import {
   bedAdd,
@@ -43,6 +41,9 @@ import {
   bedTree,
 } from '@/services/basicSetting/bedInfo';
 import { findValByKey, getDefaultOption } from '@/utils/common';
+
+const { confirm } = Modal;
+const { TextArea } = Input;
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
@@ -91,9 +92,9 @@ export default () => {
   const treeSelect = async (selectedKeys, info) => {
     console.log('selectedKeys, info: ', selectedKeys, info);
     formTopRight.resetFields();
-    let pos = info.node.pos.split('-');
+    const pos = info.node.pos.split('-');
     // 0 养老院 1 楼宇 2 楼层 3 房间
-    let editType = pos.length - 2;
+    const editType = pos.length - 2;
     modalSortConfig.editType = editType;
     setModalSortConfig({ ...modalSortConfig });
     yTable.table.selectedNode = info.node;
@@ -110,7 +111,7 @@ export default () => {
   const columns = (modalSortConfig) => {
     const { editType } = modalSortConfig;
     let mergeArr = [];
-    let baseBefore = [
+    const baseBefore = [
       // {
       //   title: '排序号',
       //   dataIndex: 'sort',
@@ -120,7 +121,7 @@ export default () => {
       //   render: (text, record, index) => index + 1,
       // },
     ];
-    let baseAfter = [
+    const baseAfter = [
       {
         title: '操作',
         key: 'opera',
@@ -316,9 +317,9 @@ export default () => {
       scroll: { y: '100%' },
       pagination: {
         current: 1,
-        pageSize: 10,
+        pageSize: 20,
         showSizeChanger: true,
-        showQuickJumper: true,
+        showQuickJumper: false,
         showTotal: (total) => {
           return `共 ${total} 条`;
         },
@@ -410,7 +411,7 @@ export default () => {
     getTreeData();
     const editType = key || modalSortConfig.editType;
     const { keyWords } = formTopRight.getFieldsValue();
-    let params = {
+    const params = {
       keyWords,
       pageNum: yTable.table.pagination.current,
       pageSize: yTable.table.pagination.pageSize,
@@ -424,7 +425,9 @@ export default () => {
           .then((res) => {
             yTable.table.dataSource = res?.data?.list || [];
             yTable.table.loading = false;
-            // yTable.table.pagination.current = res?.data?.pageNum;
+            yTable.table.pagination.current = res?.data?.pageNum;
+            yTable.table.pagination.total = res?.data?.total;
+            yTable.table.pagination.pageSize = res?.data?.pageSize;
             setYTable({ ...yTable });
           })
           .catch((err) => {
@@ -438,7 +441,9 @@ export default () => {
           .then((res) => {
             yTable.table.dataSource = res?.data?.list || [];
             yTable.table.loading = false;
-            // yTable.table.pagination.current = res?.data?.pageNum;
+            yTable.table.pagination.current = res?.data?.pageNum;
+            yTable.table.pagination.total = res?.data?.total;
+            yTable.table.pagination.pageSize = res?.data?.pageSize;
             setYTable({ ...yTable });
           })
           .catch((err) => {
@@ -452,7 +457,9 @@ export default () => {
           .then((res) => {
             yTable.table.dataSource = res?.data?.list || [];
             yTable.table.loading = false;
-            // yTable.table.pagination.current = res?.data?.pageNum;
+            yTable.table.pagination.current = res?.data?.pageNum;
+            yTable.table.pagination.total = res?.data?.total;
+            yTable.table.pagination.pageSize = res?.data?.pageSize;
             setYTable({ ...yTable });
           })
           .catch((err) => {
@@ -466,7 +473,9 @@ export default () => {
           .then((res) => {
             yTable.table.dataSource = res?.data?.list || [];
             yTable.table.loading = false;
-            // yTable.table.pagination.current = res?.data?.pageNum;
+            yTable.table.pagination.current = res?.data?.pageNum;
+            yTable.table.pagination.total = res?.data?.total;
+            yTable.table.pagination.pageSize = res?.data?.pageSize;
             setYTable({ ...yTable });
           })
           .catch((err) => {
@@ -483,12 +492,12 @@ export default () => {
 
   // 编辑类别
   const detailSortInfo = () => {
-    let query = {
+    const query = {
       id: yTable.table.selectedNode.id,
     };
     queryTypeDetails(query)
       .then((res) => {
-        let value = {
+        const value = {
           ...res.data,
           isAllowChild: Number(res.data?.isAllowChild),
           isCustom: Number(res.data?.isCustom),
@@ -518,7 +527,7 @@ export default () => {
       centered: true,
       icon: <ExclamationCircleOutlined />,
       onOk() {
-        let query = {
+        const query = {
           id: record.id,
         };
         switch (editType) {
@@ -610,14 +619,14 @@ export default () => {
     await modalFormSort.resetFields();
     setModalSortConfig({
       ...modalSortConfig,
-      visible: visible,
+      visible,
       title:
         type === 'add'
           ? `新增${addOptions[modalSortConfig.editType]}`
           : type === 'edit'
           ? `编辑${addOptions[modalSortConfig.editType]}`
           : '',
-      type: type,
+      type,
     });
     if (type === 'add') {
       switch (editType) {
@@ -917,7 +926,7 @@ export default () => {
         </Col>
       </Row>
 
-      {/*新增编辑*/}
+      {/* 新增编辑 */}
       <Modal
         width={690}
         maskClosable={false}

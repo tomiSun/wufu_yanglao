@@ -35,6 +35,7 @@ import { printStyle } from './printStyle';
 import { useReactToPrint } from 'react-to-print';
 import { excelExport } from '@/utils/ExcelExport';
 import { isOnePeople } from '@/utils/common';
+
 const { pageSize } = config;
 const { TabPane } = Tabs;
 export default () => {
@@ -797,9 +798,9 @@ export default () => {
       rowKey: 'id',
       pagination: {
         current: 1,
-        pageSize: pageSize,
+        pageSize,
         showSizeChanger: true,
-        showQuickJumper: true,
+        showQuickJumper: false,
         showTotal: (total) => {
           return `共 ${total} 条`;
         },
@@ -905,9 +906,9 @@ export default () => {
       rowKey: 'id',
       pagination: {
         current: 1,
-        pageSize: pageSize,
+        pageSize,
         showSizeChanger: true,
-        showQuickJumper: true,
+        showQuickJumper: false,
         showTotal: (total) => {
           return `共 ${total} 条`;
         },
@@ -1107,7 +1108,7 @@ export default () => {
       yTable.table.basicData = response.data;
     });
   };
-  const [nameSelectList, setNameSelectList] = useState([]); //复合搜索的人的集合
+  const [nameSelectList, setNameSelectList] = useState([]); // 复合搜索的人的集合
   // 姓名搜索框
   const nameSelectBlur = async (e) => {
     setNameSelectList([]);

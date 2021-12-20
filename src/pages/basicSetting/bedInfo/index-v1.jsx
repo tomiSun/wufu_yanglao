@@ -89,7 +89,7 @@ export default () => {
         current: 1,
         pageSize: 10,
         showSizeChanger: true,
-        showQuickJumper: true,
+        showQuickJumper: false,
         showTotal: (total) => {
           return `共 ${total} 条`;
         },
@@ -257,12 +257,12 @@ export default () => {
 
   // 编辑类别
   const detailSortInfo = () => {
-    let query = {
+    const query = {
       id: yTable.table.selectedNodes.id,
     };
     queryTypeDetails(query)
       .then((res) => {
-        let value = {
+        const value = {
           ...res.data,
           isAllowChild: Number(res.data?.isAllowChild),
           isCustom: Number(res.data?.isCustom),
@@ -291,7 +291,7 @@ export default () => {
       centered: true,
       icon: <ExclamationCircleOutlined />,
       onOk() {
-        let query = {
+        const query = {
           id: yTable.table.selectedNodes.id,
         };
         deleteType(query)
@@ -426,7 +426,7 @@ export default () => {
         </Col>
       </Row>
 
-      {/*新增编辑*/}
+      {/* 新增编辑 */}
       <Modal
         width={690}
         maskClosable={false}
@@ -638,7 +638,7 @@ export default () => {
         </Form>
       </Modal>
 
-      {/*新增床位信息*/}
+      {/* 新增床位信息 */}
       <Modal
         width={690}
         maskClosable={false}
