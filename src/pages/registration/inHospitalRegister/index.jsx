@@ -27,7 +27,7 @@ import {
   patientQuery,
   queryBed,
 } from '@/services/inHospitalRegister';
-import { baseArchiveQuery } from '@/services/archives';
+import { baseArchiveQuery ,baseArchiveQueryOut} from '@/services/archives';
 //床位信息接口
 import { dictDateSelect } from '@/services/basicSetting/dictionary';
 import moment from 'moment';
@@ -335,7 +335,7 @@ const InHospitalRegister = (props) => {
   };
   //姓名搜索框
   const nameSelectBlur = async (e, data) => {
-    let res = await baseArchiveQuery({ name: e, pageSize: 10, pageNum: 1 });
+    let res = await baseArchiveQueryOut({ name: e, pageSize: 10, pageNum: 1 });
     if (!!res['data']) {
       let data = res['data']['list'].map((item) => {
         return { label: item['name'], value: item['id'] };

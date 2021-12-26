@@ -388,6 +388,21 @@ export default () => {
     getDictionaryData();
     getTableData();
   }, []);
+    //根据身份证号 计算年龄
+    const hanleAge = (UUserCard) => {
+      //获取年龄
+      var myDate = new Date();
+      var month = myDate.getMonth() + 1;
+      var day = myDate.getDate();
+      var age = myDate.getFullYear() - UUserCard.substring(6, 10) - 1;
+      if (
+        UUserCard.substring(10, 12) < month ||
+        (UUserCard.substring(10, 12) == month && UUserCard.substring(12, 14) <= day)
+      ) {
+        age++;
+      }
+      return age;
+    };
   return (
     <div>
       <SearchForm searchForm={searchTopForm} />
@@ -453,11 +468,6 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="年龄" name="age">
-                <Input placeholder="请输入" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
               <Form.Item
                 label="身份证号"
                 name="idCard"
@@ -472,6 +482,17 @@ export default () => {
                   },
                 ]}
               >
+                <Input placeholder="请输入" 
+                 onBlur={(e) => {
+                  console.log('e: ', e);
+                  let age = hanleAge(e.target.value);
+                  modalForm.setFieldsValue({ age: age });
+                }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="年龄" name="age">
                 <Input placeholder="请输入" />
               </Form.Item>
             </Col>

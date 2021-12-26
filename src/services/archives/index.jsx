@@ -7,6 +7,12 @@ export async function baseArchiveDel(params) {
     data: params
   });
 };
+export async function baseArchiveQueryOut(params) {
+  return request('/baseArchive/baseArchivePageOut', {
+    method: 'POST',
+    data: params
+  });
+};
 export async function baseArchiveQuery(params) {
   return request('/baseArchive/baseArchivePage', {
     method: 'POST',
