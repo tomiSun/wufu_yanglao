@@ -38,18 +38,18 @@ const columns = (edit, dictionaryMap) => {
                 return res
             }
         },
-        {
-            title: '房间类型',
-            dataIndex: 'roomTYpe',
-            key: 'roomTYpe',
-            fixed: 'left',
-            width: 120,
-            render: (t, r) => {
-                console.log("dictionaryMap", dictionaryMap)
-                let text = t || "0001"
-                return getDictNameByCode(dictionaryMap, "0003", text)
-            }
-        },
+        // {
+        //     title: '房间类型',
+        //     dataIndex: 'roomType',
+        //     key: 'roomType',
+        //     fixed: 'left',
+        //     width: 120,
+        //     render: (t, r) => {
+        //         console.log("dictionaryMap", dictionaryMap)
+        //         let text = t || "0001"
+        //         return getDictNameByCode(dictionaryMap, "0003", text)
+        //     }
+        // },
         {
             title: '护理级别',
             dataIndex: 'nursingLevel',

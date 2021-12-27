@@ -442,7 +442,7 @@ const InHospitalRegister = (props) => {
                   bedList.map((item) => {
                     return (
                       <Option
-                        value={`${item['buildingCode']}-${item['floorCode']}-${item['roomCode']}-${item['bedCode']}-${item['roomType']}`}
+                        value={`${item['buildingCode']}-${item['floorCode']}-${item['roomCode']}-${item['bedCode']}`}
                         data={item}
                       >
                         {item['name']}
