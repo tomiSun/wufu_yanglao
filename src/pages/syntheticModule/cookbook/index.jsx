@@ -48,7 +48,17 @@ export default () => {
                   <Select
                     value={record.breakfastStapleFood}
                     mode="multiple"
-                    showArrow={false}
+                    showArrow={true}
+                    showSearch={true}
+                    notFoundContent={null}
+                    filterOption={(inputValue, option) => {
+                      return (
+                        option?.label?.includes(inputValue) ||
+                        option?.value?.includes(inputValue) ||
+                        option?.pinyinCode?.includes(inputValue?.toUpperCase()) ||
+                        option?.wubiCode?.includes(inputValue?.toUpperCase())
+                      );
+                    }}
                     tagRender={tagRender}
                     defaultValue={['2']}
                     style={{ width: '100%' }}
@@ -71,7 +81,17 @@ export default () => {
                   <Select
                     mode="multiple"
                     value={record.breakfastMenu}
-                    showArrow={false}
+                    showArrow={true}
+                    showSearch={true}
+                    notFoundContent={null}
+                    filterOption={(inputValue, option) => {
+                      return (
+                        option?.label?.includes(inputValue) ||
+                        option?.value?.includes(inputValue) ||
+                        option?.pinyinCode?.includes(inputValue?.toUpperCase()) ||
+                        option?.wubiCode?.includes(inputValue?.toUpperCase())
+                      );
+                    }}
                     tagRender={tagRender}
                     defaultValue={['4']}
                     style={{ width: '100%' }}
@@ -103,7 +123,17 @@ export default () => {
                   <Select
                     mode="multiple"
                     value={record.lunchStapleFood}
-                    showArrow={false}
+                    showArrow={true}
+                    showSearch={true}
+                    notFoundContent={null}
+                    filterOption={(inputValue, option) => {
+                      return (
+                        option?.label?.includes(inputValue) ||
+                        option?.value?.includes(inputValue) ||
+                        option?.pinyinCode?.includes(inputValue?.toUpperCase()) ||
+                        option?.wubiCode?.includes(inputValue?.toUpperCase())
+                      );
+                    }}
                     tagRender={tagRender}
                     defaultValue={['1']}
                     style={{ width: '100%' }}
@@ -126,7 +156,17 @@ export default () => {
                   <Select
                     mode="multiple"
                     value={record.lunchMenu}
-                    showArrow={false}
+                    showArrow={true}
+                    showSearch={true}
+                    notFoundContent={null}
+                    filterOption={(inputValue, option) => {
+                      return (
+                        option?.label?.includes(inputValue) ||
+                        option?.value?.includes(inputValue) ||
+                        option?.pinyinCode?.includes(inputValue?.toUpperCase()) ||
+                        option?.wubiCode?.includes(inputValue?.toUpperCase())
+                      );
+                    }}
                     tagRender={tagRender}
                     defaultValue={['3']}
                     style={{ width: '100%' }}
@@ -158,7 +198,17 @@ export default () => {
                   <Select
                     mode="multiple"
                     value={record.dinnerStapleFood}
-                    showArrow={false}
+                    showArrow={true}
+                    showSearch={true}
+                    notFoundContent={null}
+                    filterOption={(inputValue, option) => {
+                      return (
+                        option?.label?.includes(inputValue) ||
+                        option?.value?.includes(inputValue) ||
+                        option?.pinyinCode?.includes(inputValue?.toUpperCase()) ||
+                        option?.wubiCode?.includes(inputValue?.toUpperCase())
+                      );
+                    }}
                     tagRender={tagRender}
                     defaultValue={['1']}
                     style={{ width: '100%' }}
@@ -181,7 +231,17 @@ export default () => {
                   <Select
                     mode="multiple"
                     value={record.dinnerMeun}
-                    showArrow={false}
+                    showArrow={true}
+                    showSearch={true}
+                    notFoundContent={null}
+                    filterOption={(inputValue, option) => {
+                      return (
+                        option?.label?.includes(inputValue) ||
+                        option?.value?.includes(inputValue) ||
+                        option?.pinyinCode?.includes(inputValue?.toUpperCase()) ||
+                        option?.wubiCode?.includes(inputValue?.toUpperCase())
+                      );
+                    }}
                     tagRender={tagRender}
                     defaultValue={['3']}
                     style={{ width: '100%' }}
