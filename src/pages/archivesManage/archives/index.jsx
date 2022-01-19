@@ -169,7 +169,6 @@ const Archives = (props) => {
     );
   };
   //根据身份证号 计算年龄
-
   const hanleAge = (UUserCard) => {
     //获取年龄
     var myDate = new Date();
