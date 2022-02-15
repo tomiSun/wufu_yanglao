@@ -38,7 +38,7 @@ import {
   batchUpdateNursingRecord,
   addNursingRecord,
 } from '@/services/nursingManagement/nursingRecord';
-import { excelExport } from '@/utils/ExcelExport';
+import { excelExport, openModal } from '@/utils/ExcelExport';
 import { isOnePeople } from '@/utils/common';
 
 const { pageSize, pageNum } = config;
@@ -149,21 +149,24 @@ export default () => {
         sort: 5,
         style: { marginRight: '15px' },
         callback: () => {
-          const realSelectKeys = yTable?.table?.selectKeys.filter((it) => parseFloat(it) > 1);
-          if (!realSelectKeys?.length) {
-            message.warn('未填写信息，不允许导出');
-            return;
-          }
-          const res = isOnePeople(realSelectKeys);
-          if (!res) {
-            message.warn('一次导出一个人的信息');
-            return;
-          }
-          const ids = realSelectKeys?.join(',') || '';
-          excelExport({
-            api: '/nursingManage/exportNursingRecord', // 导出接口路径
-            ids, // 勾选的行id数组集合
-            fileName: '护理记录', // 导出文件名称
+          // const realSelectKeys = yTable?.table?.selectKeys.filter((it) => parseFloat(it) > 1);
+          // if (!realSelectKeys?.length) {
+          //   message.warn('未填写信息，不允许导出');
+          //   return;
+          // }
+          // const res = isOnePeople(realSelectKeys);
+          // if (!res) {
+          //   message.warn('一次导出一个人的信息');
+          //   return;
+          // }
+          // const ids = realSelectKeys?.join(',') || '';
+          // excelExport({
+          //   api: '/nursingManage/exportNursingRecord', // 导出接口路径
+          //   ids, // 勾选的行id数组集合
+          //   fileName: '护理记录', // 导出文件名称
+          // });
+          openModal({
+            url: 'http://192.168.1.160:8082/jmreport/view/653397562424610816',
           });
         },
       },
