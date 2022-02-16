@@ -27,10 +27,12 @@ import {
 } from '@/services/syntheticModule/wardround';
 import { findValByKey, getDefaultOption } from '@/utils/common';
 import { config } from '@/utils/const';
-const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
-const { TextArea } = Input;
 import moment from 'moment';
+
+const { pageSize, pageNum } = config;
+const { TextArea } = Input;
+
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
@@ -306,9 +308,9 @@ export default () => {
       rowKey: 'id',
       pagination: {
         current: 1,
-        pageSize: pageSize,
+        pageSize,
         showSizeChanger: true,
-        showQuickJumper: true,
+        showQuickJumper: false,
         showTotal: (total) => {
           return `共 ${total} 条`;
         },
@@ -316,7 +318,7 @@ export default () => {
           console.log('changePage----', page, pageSize);
           yTable.table.pagination.current = page;
           yTable.table.pagination.pageSize = pageSize;
-          // queryTypeDetailsListServices();
+          getTableData();
         },
       },
       basic: {},
@@ -361,7 +363,7 @@ export default () => {
   };
   // 删除
   const del = (record) => {
-    if (!!Object.getOwnPropertyNames(record).length) {
+    if (Object.getOwnPropertyNames(record).length) {
       Modal.confirm({
         title: '是否要删除该条数据',
         icon: <DeleteOutlined />,
@@ -405,6 +407,8 @@ export default () => {
         yTable.table.dataSource = res?.data?.list || [];
         yTable.table.loading = false;
         yTable.table.pagination.current = res?.data?.pageNum;
+        yTable.table.pagination.total = res?.data?.total;
+        yTable.table.pagination.pageSize = res?.data?.pageSize;
         setYTable({ ...yTable });
       })
       .catch((err) => {
@@ -418,7 +422,7 @@ export default () => {
   const saveModalInfo = async () => {
     const formData = await modalForm.validateFields();
     const { wardRoundTime } = formData;
-    let query = {
+    const query = {
       ...modalForm.getFieldsValue(),
       wardRoundTime: wardRoundTime && moment(wardRoundTime).format('YYYY-MM-DD HH:mm:ss'),
     };

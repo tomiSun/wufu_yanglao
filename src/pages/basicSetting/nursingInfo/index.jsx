@@ -16,17 +16,18 @@ import {
   Checkbox,
   Select,
 } from 'antd';
-const { confirm } = Modal;
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
 import { careAdd, careDel, careSelect, careUpdate } from '@/services/basicSetting/nursingInfo';
 import { findValByKey, analyzeIDCard } from '@/utils/common';
 import { makeWb, pinyin } from 'yunyi-convert';
 import { config } from '@/utils/const';
-const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
-const { TextArea } = Input;
 import moment from 'moment';
+
+const { confirm } = Modal;
+const { pageSize, pageNum } = config;
+const { TextArea } = Input;
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
@@ -180,17 +181,16 @@ export default () => {
       rowKey: 'id',
       pagination: {
         current: 1,
-        pageSize: pageSize || 20,
+        pageSize: 2,
         showSizeChanger: true,
-        showQuickJumper: true,
+        showQuickJumper: false,
         showTotal: (total) => {
           return `共 ${total} 条`;
         },
         onChange: (page, pageSize) => {
-          console.log('changePage----', page, pageSize);
           yTable.table.pagination.current = page;
           yTable.table.pagination.pageSize = pageSize;
-          // queryTypeDetailsListServices();
+          getTableData();
         },
       },
       basic: {},
@@ -218,7 +218,7 @@ export default () => {
     modalForm.resetFields();
     setModalConfig({
       ...modalConfig,
-      visible: visible,
+      visible,
       title:
         type === 'add'
           ? '新增护工信息'
@@ -227,7 +227,7 @@ export default () => {
           : type === 'detail'
           ? '查看护工信息'
           : '护工信息',
-      type: type,
+      type,
     });
     if (type === 'add') {
       modalForm.setFieldsValue({
@@ -287,7 +287,7 @@ export default () => {
   // 获取右侧表格数据
   const getTableData = () => {
     const { keyWord } = topFrom.getFieldsValue();
-    let params = {
+    const params = {
       keyWord: keyWord || '',
       pageNum: yTable.table.pagination.current,
       pageSize: yTable.table.pagination.pageSize,
@@ -299,7 +299,9 @@ export default () => {
       .then((res) => {
         yTable.table.dataSource = res?.data?.list || [];
         yTable.table.loading = false;
-        // yTable.table.pagination.current = res?.data?.pageNum;
+        yTable.table.pagination.current = res?.data?.pageNum;
+        yTable.table.pagination.total = res?.data?.total;
+        yTable.table.pagination.pageSize = res?.data?.pageSize;
         setYTable({ ...yTable });
       })
       .catch((err) => {

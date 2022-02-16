@@ -24,10 +24,11 @@ import {
 } from '@/services/syntheticModule/complain';
 import { findValByKey, getDefaultOption } from '@/utils/common';
 import { config } from '@/utils/const';
-const { pageSize, pageNum } = config;
 import { useTableHeight } from '@/utils/tableHeight';
-const { TextArea } = Input;
 import moment from 'moment';
+
+const { pageSize, pageNum } = config;
+const { TextArea } = Input;
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
@@ -85,7 +86,7 @@ export default () => {
     table: {
       bordered: true,
       loading: false,
-      dataSource: [{ id: 1 }],
+      dataSource: [],
       columns: [
         {
           title: '会议（投诉）日期',
@@ -183,9 +184,9 @@ export default () => {
       rowKey: 'id',
       pagination: {
         current: 1,
-        pageSize: pageSize,
+        pageSize,
         showSizeChanger: true,
-        showQuickJumper: true,
+        showQuickJumper: false,
         showTotal: (total) => {
           return `共 ${total} 条`;
         },
@@ -193,7 +194,7 @@ export default () => {
           console.log('changePage----', page, pageSize);
           yTable.table.pagination.current = page;
           yTable.table.pagination.pageSize = pageSize;
-          // queryTypeDetailsListServices();
+          getTableData();
         },
       },
       basic: {},
@@ -233,7 +234,7 @@ export default () => {
   };
   // 删除
   const del = (record) => {
-    if (!!Object.getOwnPropertyNames(record).length) {
+    if (Object.getOwnPropertyNames(record).length) {
       Modal.confirm({
         title: '是否要删除该条数据',
         icon: <DeleteOutlined />,
@@ -260,7 +261,7 @@ export default () => {
   // 获取列表Table数据
   const getTableData = () => {
     const { keyWord } = topFrom.getFieldsValue();
-    let params = {
+    const params = {
       search: keyWord,
       pageNum: yTable.table.pagination.current,
       pageSize: yTable.table.pagination.pageSize,
@@ -272,7 +273,9 @@ export default () => {
       .then((res) => {
         yTable.table.dataSource = res?.data?.list || [];
         yTable.table.loading = false;
-        // yTable.table.pagination.current = res?.data?.pageNum;
+        yTable.table.pagination.current = res?.data?.pageNum;
+        yTable.table.pagination.total = res?.data?.total;
+        yTable.table.pagination.pageSize = res?.data?.pageSize;
         setYTable({ ...yTable });
       })
       .catch((err) => {
@@ -286,7 +289,7 @@ export default () => {
   const saveModalInfo = async () => {
     const formData = await modalForm.validateFields();
     const { complaintDate } = formData;
-    let query = {
+    const query = {
       ...modalForm.getFieldsValue(),
       complaintDate: complaintDate && moment(complaintDate).format('YYYY-MM-DD'),
     };
