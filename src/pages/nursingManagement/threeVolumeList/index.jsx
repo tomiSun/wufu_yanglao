@@ -1115,7 +1115,11 @@ export default () => {
       .then((res) => {
         const data =
           res?.data?.map((item) => {
-            return { label: item.name, value: item.businessNo, bedName: item.totalName };
+            return {
+              label: `${item.name}-${item.businessNo}`,
+              value: item.businessNo,
+              bedName: item.totalName,
+            };
           }) || [];
         setNameSelectList(data);
       })

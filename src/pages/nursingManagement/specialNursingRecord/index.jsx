@@ -14,9 +14,9 @@ import {
   message,
   Pagination,
   Modal,
-  Radio
+  Radio,
 } from 'antd';
-import { history } from 'umi'
+import { history } from 'umi';
 import { columns } from './data';
 import moment from 'moment';
 import {
@@ -24,9 +24,9 @@ import {
   pageSpecialNursing,
   updateSpecialNursing,
   addSpecialNursing,
-} from '@/services/nursingManagement'
-import { dictDateSelect } from '@/services/basicSetting/dictionary'
-import { ULayout } from '@/utils/common'
+} from '@/services/nursingManagement';
+import { dictDateSelect } from '@/services/basicSetting/dictionary';
+import { ULayout } from '@/utils/common';
 //登记接口
 import { patientQuery, queryHospitalRegist } from '@/services/inHospitalRegister';
 //导出
@@ -34,17 +34,17 @@ import { excelExport } from '@/utils/ExcelExport';
 const validateMessages = {
   required: '${label} 为必填项',
 };
-const DICT_LSIT = { "0006": [], "0015": [] }
-const DICT_ARR = ["0006", "0015"]
+const DICT_LSIT = { '0006': [], '0015': [] };
+const DICT_ARR = ['0006', '0015'];
 const RloodGlucoseRecord = (props) => {
   //列表数据
-  const [dataSource, setDataSource] = useState([{ 1: 1 }]);//数据
+  const [dataSource, setDataSource] = useState([{ 1: 1 }]); //数据
   //搜索的表单
   const [SForm] = Form.useForm();
   //信息表单
   const [TForm] = Form.useForm();
   //弹窗
-  const [modalVisible, setModalVisible] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false);
   //名字选项
   const [nameSelectList, setNameSelectList] = useState([]);
   //基本信息
@@ -52,60 +52,71 @@ const RloodGlucoseRecord = (props) => {
   //血糖记录信息
   const [specialRecord, setSpecialRecord] = useState(null);
   // 新增&修改
-  const [ftype, setFtype] = useState("add");
+  const [ftype, setFtype] = useState('add');
   //列表选中
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   //字典
-  const [dictionaryMap, setDictionaryMap] = useState(DICT_LSIT)
+  const [dictionaryMap, setDictionaryMap] = useState(DICT_LSIT);
   const [pageInfo, setPageInfo] = useState({
     total: 0,
     pageSize: 10,
-    pageNum: 1
-  })
+    pageNum: 1,
+  });
   //初始化操作
   useEffect(() => {
-    getBloodSugarInfo(pageInfo)
+    getBloodSugarInfo(pageInfo);
     //获取字典
-    getDictDataSelect(DICT_ARR);//过敏史
+    getDictDataSelect(DICT_ARR); //过敏史
   }, []);
 
   //获取字典
   const getDictDataSelect = async (dList) => {
-    let resMap = {}
+    let resMap = {};
     for (const [idx, it] of dList.entries()) {
-      let param = { pageNum: 1, pageSize: 20, typeCode: String(it) }
+      let param = { pageNum: 1, pageSize: 20, typeCode: String(it) };
       const res = await dictDateSelect(param);
-      let key = param['typeCode']
-      resMap[key] = res['data']['list']
+      let key = param['typeCode'];
+      resMap[key] = res['data']['list'];
       if (idx == dList.length - 1) {
-        setDictionaryMap(resMap)
+        setDictionaryMap(resMap);
       }
     }
-  }
+  };
 
   //获取血糖列表信息
   const getBloodSugarInfo = async (param) => {
     let res = await pageSpecialNursing(param);
     if (res['code'] === 200) {
-      setDataSource(res['data']['list'].map(item => { return { ...item, key: item.id } }))
-      setPageInfo({ pageNum: param['pageNum'], pageSize: param['pageSize'], total: res.data.total })
+      setDataSource(
+        res['data']['list'].map((item) => {
+          return { ...item, key: item.id };
+        }),
+      );
+      setPageInfo({
+        pageNum: param['pageNum'],
+        pageSize: param['pageSize'],
+        total: res.data.total,
+      });
     } else {
-      setDataSource([])
+      setDataSource([]);
     }
-  }
+  };
   //刷新操作
   const refushList = (pageParam) => {
     let search = SForm.getFieldsValue();
-    let pageInfoCopy = { ...pageInfo, ...pageParam }
-    let startTime = search?.['startTime'] && moment(search?.['startTime']).startOf('day').format('YYYY-MM-DD HH:mm:ss');
-    let endTime = search?.['endTime'] && moment(search?.['endTime']).endOf('day').format('YYYY-MM-DD HH:mm:ss');
-    let param = { ...SForm.getFieldsValue(), ...pageInfoCopy, startTime, endTime }
-    getBloodSugarInfo(param)
-  }
+    let pageInfoCopy = { ...pageInfo, ...pageParam };
+    let startTime =
+      search?.['startTime'] &&
+      moment(search?.['startTime']).startOf('day').format('YYYY-MM-DD HH:mm:ss');
+    let endTime =
+      search?.['endTime'] && moment(search?.['endTime']).endOf('day').format('YYYY-MM-DD HH:mm:ss');
+    let param = { ...SForm.getFieldsValue(), ...pageInfoCopy, startTime, endTime };
+    getBloodSugarInfo(param);
+  };
   // 搜索表单
   const renderSearch = () => {
     return (
-      <Form onFinish={() => { }} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
+      <Form onFinish={() => {}} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
         <Form.Item label="姓名" name={'patientName'}>
           <Input size={'small'} allowClear />
         </Form.Item>
@@ -124,7 +135,7 @@ const RloodGlucoseRecord = (props) => {
             size={'small'}
             style={{ marginTop: 4 }}
             onClick={() => {
-              refushList({ pageNum: 1 })
+              refushList({ pageNum: 1 });
             }}
           >
             查询
@@ -135,7 +146,9 @@ const RloodGlucoseRecord = (props) => {
             type="primary"
             size={'small'}
             style={{ marginTop: 4 }}
-            onClick={() => { handAdd() }}
+            onClick={() => {
+              handAdd();
+            }}
           >
             新增记录
           </Button>
@@ -145,7 +158,9 @@ const RloodGlucoseRecord = (props) => {
             type="primary"
             size={'small'}
             style={{ marginTop: 4 }}
-            onClick={() => { SForm.resetFields() }}
+            onClick={() => {
+              SForm.resetFields();
+            }}
           >
             清空
           </Button>
@@ -158,7 +173,7 @@ const RloodGlucoseRecord = (props) => {
             onClick={() => {
               excelExport({
                 api: '/nursingManage/exportSpecialNursing', //导出接口路径
-                ids: selectedRowKeys.join(","), //勾选的行id数组集合
+                ids: selectedRowKeys.join(','), //勾选的行id数组集合
                 fileName: '特级护理记录', //导出文件名称
               });
             }}
@@ -173,13 +188,13 @@ const RloodGlucoseRecord = (props) => {
   //新增
   const handAdd = () => {
     TForm.resetFields();
-    setModalVisible(true)
-    setFtype("add")
-  }
+    setModalVisible(true);
+    setFtype('add');
+  };
   //修改
   const handEdit = (data) => {
-    setModalVisible(true)
-    setFtype("edit")
+    setModalVisible(true);
+    setFtype('edit');
     setSpecialRecord(data);
     TForm.setFieldsValue({
       ...data,
@@ -187,7 +202,7 @@ const RloodGlucoseRecord = (props) => {
       createTime: moment(data['createTime'] || new Date()),
       nursingTime: moment(data['nursingTime'] || new Date()),
     });
-  }
+  };
   //操作
   const editButton = (record) => {
     return (
@@ -195,7 +210,9 @@ const RloodGlucoseRecord = (props) => {
         <Button
           size={'small'}
           type="link"
-          onClick={() => { handEdit(record) }}
+          onClick={() => {
+            handEdit(record);
+          }}
         >
           修改
         </Button>
@@ -203,9 +220,9 @@ const RloodGlucoseRecord = (props) => {
           size={'small'}
           type="link"
           onClick={async () => {
-            let res = await delSpecialNursing({ id: record['id'] })
-            message.success("成功")
-            refushList({ pageNum: 1 })
+            let res = await delSpecialNursing({ id: record['id'] });
+            message.success('成功');
+            refushList({ pageNum: 1 });
           }}
         >
           删除
@@ -215,7 +232,7 @@ const RloodGlucoseRecord = (props) => {
   };
   //选中操作
   const onSelectChange = (selectedRowKeys, record) => {
-    setSelectedRowKeys(selectedRowKeys)
+    setSelectedRowKeys(selectedRowKeys);
   };
   const rowSelection = {
     selectedRowKeys: selectedRowKeys,
@@ -238,10 +255,11 @@ const RloodGlucoseRecord = (props) => {
           defaultPageSize={pageInfo['pageSize']}
           total={pageInfo['total']}
           onChange={(page, pageSize) => {
-            setPageInfo({ total: pageInfo.total, pageNum: page, pageSize })
+            setPageInfo({ total: pageInfo.total, pageNum: page, pageSize });
             refushList({ total: pageInfo.total, pageNum: page, pageSize });
           }}
-          style={{ position: "absolute", bottom: 35, right: 50 }} />
+          style={{ position: 'absolute', bottom: 35, right: 50 }}
+        />
       </div>
     );
   };
@@ -255,9 +273,11 @@ const RloodGlucoseRecord = (props) => {
     });
     if (res?.data?.list[0]) {
       let data = res?.data?.list[0];
-      let r = data
-      let bedName = `${r['buildingName'] || "#"}-${r['floorName'] || "#"}-${r['roomName'] || "#"}-${r['bedName'] || "#"}`
-      TForm.setFieldsValue({ ...data, bedName })
+      let r = data;
+      let bedName = `${r['buildingName'] || '#'}-${r['floorName'] || '#'}-${r['roomName'] || '#'}-${
+        r['bedName'] || '#'
+      }`;
+      TForm.setFieldsValue({ ...data, bedName });
       setAddBasicInfo({ ...data }); //todo 少了诊断
     }
   };
@@ -266,7 +286,7 @@ const RloodGlucoseRecord = (props) => {
     let res = await patientQuery({ keyWords: e });
     if (!!res['data']) {
       let data = res['data'].map((item) => {
-        return { label: item['name'], value: item['businessNo'] };
+        return { label: `${item['name']}-${item['businessNo']}`, value: item['businessNo'] };
       });
       setNameSelectList(data);
     } else {

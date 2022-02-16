@@ -8,6 +8,7 @@ import {
   Radio,
   Input,
   DatePicker,
+  TimePicker,
   Modal,
   message,
   Pagination,
@@ -27,14 +28,14 @@ import {
   patientQuery,
   queryBed,
 } from '@/services/inHospitalRegister';
-import { baseArchiveQuery ,baseArchiveQueryOut} from '@/services/archives';
+import { baseArchiveQuery, baseArchiveQueryOut } from '@/services/archives';
 //床位信息接口
 import { dictDateSelect } from '@/services/basicSetting/dictionary';
 import moment from 'moment';
 import { ULayout } from '@/utils/common';
 
 const DICT_LSIT = { '0008': [], '0009': [], '0010': [], '0011': [], '0015': [] };
-const DICT_ARR = ['0008', '0009', '0010', '0011', '0015','0003'];
+const DICT_ARR = ['0008', '0009', '0010', '0011', '0015', '0003'];
 const validateMessages = {
   required: '${label} is required!',
 };
@@ -76,7 +77,7 @@ const InHospitalRegister = (props) => {
 
   useEffect(() => {
     handleRoomInit();
-  }, [modalVisible])
+  }, [modalVisible]);
   //获取列表信息
   const getHospitalRegistList = async (param) => {
     let res = await queryHospitalRegist(param);
@@ -119,7 +120,7 @@ const InHospitalRegister = (props) => {
   const renderSearch = () => {
     return (
       <div>
-        <Form onFinish={() => { }} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
+        <Form onFinish={() => {}} {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
           <Form.Item label="姓名" name={'name'}>
             <Input size={'small'} allowClear />
           </Form.Item>
@@ -146,7 +147,7 @@ const InHospitalRegister = (props) => {
               size={'small'}
               onClick={() => {
                 setMode('add');
-                registForm.resetFields()
+                registForm.resetFields();
                 setModalVisible(true);
               }}
             >
@@ -212,8 +213,7 @@ const InHospitalRegister = (props) => {
             setSelectRowData(row);
             setPhysicalExaminationVisible(true);
           }}
-        >
-        </Button>
+        ></Button>
         <Button
           style={{ marginRight: 10 }}
           size={'small'}
@@ -315,10 +315,11 @@ const InHospitalRegister = (props) => {
     let resData = res['data'];
     let list = resData?.map((item) => {
       return {
-        label: `${item['buildingName'] || '#'}-${item['floorName'] || '#'}-${item['roomName'] || '#'
-          }-${item['bedName'] || '#'}`,
+        label: `${item['buildingName'] || '#'}-${item['floorName'] || '#'}-${
+          item['roomName'] || '#'
+        }-${item['bedName'] || '#'}`,
         value: `${item['buildingCode']}-${item['floorCode']}-${item['roomCode']}-${item['bedCode']}`,
-        disabled: item['status'] === "1",
+        disabled: item['status'] === '1',
       };
     });
     setBedList(list || []);
@@ -338,7 +339,7 @@ const InHospitalRegister = (props) => {
     let res = await baseArchiveQueryOut({ name: e, pageSize: 10, pageNum: 1 });
     if (!!res['data']) {
       let data = res['data']['list'].map((item) => {
-        return { label: item['name'], value: item['id'] };
+        return { label: `${item['name']}-${item['id']}`, value: item['id'] };
       });
       setNameSelectList(data);
     } else {
@@ -476,7 +477,7 @@ const InHospitalRegister = (props) => {
               rules={[{ required: true }]}
               initialValue={'0001'}
             >
-              <Select defaultValue="0001" onChange={() => { }}>
+              <Select defaultValue="0001" onChange={() => {}}>
                 {dictionaryMap?.['0011'].map((item) => {
                   return <Option value={item['dictCode']}>{item['dictName']}</Option>;
                 })}
@@ -486,7 +487,11 @@ const InHospitalRegister = (props) => {
               <Input />
             </Form.Item>
             <Form.Item name={'admissionTime'} label="入院时间" initialValue={moment(new Date())}>
-              <DatePicker style={{ width: '100%' }} />
+              <DatePicker
+                format="YYYY-MM-DD HH:mm:ss"
+                style={{ width: '100%' }}
+                showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
+              />
             </Form.Item>
             <Form.Item name={'feesDueDate'} label="费用到期时间" rules={[{ required: true }]}>
               <DatePicker style={{ width: '100%' }} />
