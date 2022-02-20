@@ -29,7 +29,7 @@ import { ULayout, isOnePeople } from '@/utils/common';
 //登记接口
 import { patientQuery, queryHospitalRegist } from '@/services/inHospitalRegister';
 //导出
-import { excelExport } from '@/utils/ExcelExport';
+import { excelExport, openModal } from '@/utils/ExcelExport';
 const validateMessages = {
   required: '${label} 为必填项',
 };
@@ -168,14 +168,17 @@ const RloodGlucoseRecord = (props) => {
                 message.warn('一次导出一个人的信息');
                 return;
               }
-              excelExport({
-                api: '/blood-sugar/export', //导出接口路径
-                ids: selectedRowKeys.join(','), //勾选的行id数组集合
-                fileName: '血糖记录', //导出文件名称
+              // excelExport({
+              //   api: '/blood-sugar/export', //导出接口路径
+              //   ids: selectedRowKeys.join(','), //勾选的行id数组集合
+              //   fileName: '血糖记录', //导出文件名称
+              // });
+              openModal({
+                url: '/jmreport/view/653397562424610816',
               });
             }}
           >
-            导出
+            打印
           </Button>
         </Form.Item>
       </Form>
