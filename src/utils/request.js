@@ -5,19 +5,19 @@ import envConfig from '../../config/env';
 import { history } from 'umi';
 // request拦截器, 改变url 或 options.
 request.interceptors.request.use(async (url, options) => {
-  if (!options.headers['Authorization']) {
-    options.headers['Authorization'] = sessionStorage.getItem('Authorization');
+  if (!options.headers.Authorization) {
+    options.headers.Authorization = sessionStorage.getItem('Authorization');
   }
   !!options.data &&
     Object.keys(options.data).map((item) => {
-      typeof options.data[item] == 'string' && (options.data[item] = options.data[item].trim());
+      typeof options.data[item] === 'string' && (options.data[item] = options.data[item].trim());
       if (options.data[item] == undefined || options.data[item] == null) {
         delete options.data[item];
       }
     });
   !!options.params &&
     Object.keys(options.params).map((item) => {
-      typeof options.params[item] == 'string' &&
+      typeof options.params[item] === 'string' &&
         (options.params[item] = options.params[item].trim());
       if (options.params[item] == undefined || options.params[item] == null) {
         delete options.params[item];
@@ -26,10 +26,11 @@ request.interceptors.request.use(async (url, options) => {
   if (options.method === 'get') {
     url = url.replace(/undefined|null/g, '');
   }
+  console.log('envConfig[process.env.API_ENV]: ', envConfig[process.env.API_ENV]);
   if (envConfig[process.env.API_ENV]) {
     url = envConfig[process.env.API_ENV].BASE_API + url;
   } else {
-    url = '/api' + url;
+    url = `/api${url}`;
   }
   return { url, options };
 });
@@ -47,7 +48,8 @@ request.interceptors.response.use(async (response, options) => {
     data.code === 11021
   ) {
     return data;
-  } else if (data.code != 200) {
+  }
+  if (data.code != 200) {
     message.error(data.msg);
     // Modal.confirm({
     //   title: '提示',
@@ -65,9 +67,8 @@ request.interceptors.response.use(async (response, options) => {
       history.push('/user/login');
     }
     return Promise.reject(data.message);
-  } else {
-    return data;
   }
+  return data;
 });
 
 export default request;

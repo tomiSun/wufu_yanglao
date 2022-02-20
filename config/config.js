@@ -10,6 +10,11 @@ export default defineConfig({
   dva: {
     hmr: true,
   },
+  define: {
+    'process.env': {
+      API_ENV: API_ENV,
+    },
+  },
   // mfsu: {},
   webpack5: {},
   // mfsu: { production: { output: '.mfsu-production' } },
@@ -17,7 +22,6 @@ export default defineConfig({
     type: 'browser',
   },
   locale: {
-    
     // default zh-CN
     default: 'zh-CN',
     antd: true,
