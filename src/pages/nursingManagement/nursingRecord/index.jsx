@@ -144,7 +144,7 @@ export default () => {
         },
       },
       {
-        name: '导出',
+        name: '打印',
         type: 'primary',
         sort: 5,
         style: { marginRight: '15px' },
@@ -166,7 +166,7 @@ export default () => {
           //   fileName: '护理记录', // 导出文件名称
           // });
           openModal({
-            url: 'http://192.168.1.160:8082/jmreport/view/653397562424610816',
+            url: '/jmreport/view/655288045090426880',
           });
         },
       },

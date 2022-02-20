@@ -47,6 +47,8 @@ export const excelExport = async ({ api, ids, fileName }) => {
  */
 export const openModal = (props) => {
   const { url, type = 'info' } = props;
+  const urlPre = `${window.location.hostname}:8082`;
+  // const urlPre = `https://xuchaojie.39nat.com:8082`;
   const config = {
     title: '打印预览',
     icon: null,
@@ -57,7 +59,7 @@ export const openModal = (props) => {
           scrolling="yes"
           frameBorder="0"
           style={{ width: '100%', height: '100%', overflow: 'visible' }}
-          src={url}
+          src={`${urlPre}${url}`}
         />
       </div>
     ),
@@ -70,4 +72,7 @@ export const openModal = (props) => {
   Modal[type](config);
 };
 // 使用示例
-
+// import { excelExport,openModal } from '@/utils/ExcelExport';
+// openModal({
+//   url: '/report/jmreport/view/563206615924539392?start=2022/02/15&end=2022/02/15',//拼接后的报表地址
+// });
