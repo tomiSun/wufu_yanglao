@@ -173,7 +173,7 @@ const RloodGlucoseRecord = (props) => {
             style={{ marginTop: 4 }}
             onClick={() => {
               openModal({
-                url: 'https://xxx/api/report/jmreport/view/563206615924539392?start=2022/02/15&end=2022/02/15', //拼接后的报表地址
+                url: '/jmreport/view/655304448950456320', //拼接后的报表地址
               });
               // excelExport({
               //   api: '/nursingManage/exportSpecialNursing', //导出接口路径
@@ -182,7 +182,7 @@ const RloodGlucoseRecord = (props) => {
               // });
             }}
           >
-            导出
+            打印
           </Button>
         </Form.Item>
       </Form>

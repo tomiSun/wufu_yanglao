@@ -94,7 +94,11 @@ const DrugManage = (props) => {
   const getmedicineRecordQuery = async (param) => {
     let res = await takeMedicineQuery(param);
     if (res['code'] === 200) {
-      setDataSource(res['data']['list'].map(item => { return { ...item, key: item.id } }))
+      setDataSource(
+        res['data']['list'].map((item) => {
+          return { ...item, key: item.id };
+        }),
+      );
       setPageInfo({
         pageNum: param['pageNum'],
         pageSize: param['pageSize'],
@@ -147,13 +151,18 @@ const DrugManage = (props) => {
         <Form.Item label="类型" name={'isTaken'} initialValue={0}>
           <Select
             style={{ width: 100 }}
-            placeholder="请选择" options={[{
-              label: "自带药", value: 0
-            },
-            {
-              label: "代配药", value: 1
-            }
-            ]} ></Select>
+            placeholder="请选择"
+            options={[
+              {
+                label: '自带药',
+                value: 0,
+              },
+              {
+                label: '代配药',
+                value: 1,
+              },
+            ]}
+          ></Select>
         </Form.Item>
         <Form.Item>
           <Button
@@ -187,7 +196,7 @@ const DrugManage = (props) => {
             onClick={() => {
               excelExport({
                 api: '/medicine/exportTakeMedicine', //导出接口路径
-                ids: selectedRowKeys.join(","), //勾选的行id数组集合
+                ids: selectedRowKeys.join(','), //勾选的行id数组集合
                 fileName: '服药管理记录', //导出文件名称
               });
             }}
@@ -204,7 +213,7 @@ const DrugManage = (props) => {
             onClick={() => {
               excelExport({
                 api: '/medicine/exportDispensing', //导出接口路径
-                ids: selectedRowKeys.join(","), //勾选的行id数组集合
+                ids: selectedRowKeys.join(','), //勾选的行id数组集合
                 fileName: '服药管理记录', //导出文件名称
               });
             }}
@@ -257,7 +266,7 @@ const DrugManage = (props) => {
   };
   //选中操作
   const onSelectChange = (selectedRowKeys, record) => {
-    setSelectedRowKeys(selectedRowKeys)
+    setSelectedRowKeys(selectedRowKeys);
   };
   const rowSelection = {
     selectedRowKeys: selectedRowKeys,
@@ -349,7 +358,10 @@ const DrugManage = (props) => {
             <Form.Item label="自带药" name={'isTaken'} initialValue={0}>
               <Select
                 style={{ width: 200 }}
-                options={[{ label: "是", value: 0 }, { label: "否", value: 1 }]}
+                options={[
+                  { label: '是', value: 0 },
+                  { label: '否', value: 1 },
+                ]}
               ></Select>
             </Form.Item>
             <Form.Item label="护士签名" name={'nursingSign'}>

@@ -27,7 +27,7 @@ import { ULayout } from '@/utils/common';
 import { patientQuery, queryHospitalRegist } from '@/services/inHospitalRegister';
 import moment from 'moment';
 //导出
-import { excelExport } from '@/utils/ExcelExport';
+import { excelExport, openModal } from '@/utils/ExcelExport';
 const DICT_LSIT = { '0015': [] };
 const DICT_ARR = ['0015'];
 //通用校验提醒
@@ -64,7 +64,7 @@ const DrugManage = (props) => {
   });
   //初始化操作
   useEffect(() => {
-    getmedicineRecordQuery({ ...pageInfo, isTaken: 1});
+    getmedicineRecordQuery({ ...pageInfo, isTaken: 1 });
     //获取字典
     getDictDataSelect(DICT_ARR); //过敏史
   }, []);
@@ -94,7 +94,11 @@ const DrugManage = (props) => {
   const getmedicineRecordQuery = async (param) => {
     let res = await takeMedicineQuery(param);
     if (res['code'] === 200) {
-      setDataSource(res['data']['list'].map(item => { return { ...item, key: item.id } }))
+      setDataSource(
+        res['data']['list'].map((item) => {
+          return { ...item, key: item.id };
+        }),
+      );
       setPageInfo({
         pageNum: param['pageNum'],
         pageSize: param['pageSize'],
@@ -189,14 +193,17 @@ const DrugManage = (props) => {
             size={'small'}
             style={{ marginTop: 4 }}
             onClick={() => {
-              excelExport({
-                api: '/medicine/exportDispensing', //导出接口路径
-                ids: selectedRowKeys.join(","), //勾选的行id数组集合
-                fileName: '服药管理记录', //导出文件名称
+              openModal({
+                url: '/jmreport/view/653851718767546368',
               });
+              // excelExport({
+              //   api: '/medicine/exportDispensing', //导出接口路径
+              //   ids: selectedRowKeys.join(","), //勾选的行id数组集合
+              //   fileName: '服药管理记录', //导出文件名称
+              // });
             }}
           >
-            导出代配药
+            打印代配药
           </Button>
         </Form.Item>
       </Form>
@@ -244,7 +251,7 @@ const DrugManage = (props) => {
   };
   //选中操作
   const onSelectChange = (selectedRowKeys, record) => {
-    setSelectedRowKeys(selectedRowKeys)
+    setSelectedRowKeys(selectedRowKeys);
   };
   const rowSelection = {
     selectedRowKeys: selectedRowKeys,
@@ -315,7 +322,11 @@ const DrugManage = (props) => {
               </Select> */}
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="代配药日期" name={'takeMedicineDate'} initialValue={moment(new Date())}>
+            <Form.Item
+              label="代配药日期"
+              name={'takeMedicineDate'}
+              initialValue={moment(new Date())}
+            >
               <DatePicker style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="药品名称及规格" name={'drugName'}>
@@ -336,7 +347,10 @@ const DrugManage = (props) => {
             <Form.Item label="自代配药" name={'isTaken'} initialValue={1}>
               <Select
                 style={{ width: 200 }}
-                options={[{ label: "是", value: 0 }, { label: "否", value: 1 }]}
+                options={[
+                  { label: '是', value: 0 },
+                  { label: '否', value: 1 },
+                ]}
               ></Select>
             </Form.Item>
             <Form.Item label="护士签名" name={'nursingSign'}>

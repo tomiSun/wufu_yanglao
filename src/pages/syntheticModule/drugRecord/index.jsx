@@ -26,7 +26,7 @@ import { ULayout } from '@/utils/common';
 import { patientQuery, queryHospitalRegist } from '@/services/inHospitalRegister';
 import moment from 'moment';
 //导出
-import { excelExport } from '@/utils/ExcelExport';
+import { excelExport, openModal } from '@/utils/ExcelExport';
 const DICT_LSIT = { '0019': [] };
 const DICT_ARR = ['0019'];
 //通用校验提醒
@@ -181,14 +181,17 @@ const DrugRecord = (props) => {
             size={'small'}
             style={{ marginTop: 4 }}
             onClick={() => {
-              excelExport({
-                api: '/medicine/exportMedicationRecord', //导出接口路径
-                ids: selectedRowKeys.join(','), //勾选的行id数组集合
-                fileName: '服药管理记录', //导出文件名称
+              openModal({
+                url: '/jmreport/view/655287228417380352',
               });
+              // excelExport({
+              //   api: '/medicine/exportMedicationRecord', //导出接口路径
+              //   ids: selectedRowKeys.join(','), //勾选的行id数组集合
+              //   fileName: '服药管理记录', //导出文件名称
+              // });
             }}
           >
-            导出
+            打印
           </Button>
         </Form.Item>
       </Form>
