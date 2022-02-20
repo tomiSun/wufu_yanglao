@@ -48,13 +48,13 @@ export const excelExport = async ({ api, ids, fileName }) => {
 export const openModal = (props) => {
   const { url, type = 'info' } = props;
   const urlPre = `${window.location.hostname}:8082`;
-  // const urlPre = `https://xuchaojie.39nat.com:8082`;
+  // const urlPre = `http://120.27.222.210:8082`;
   const config = {
     title: '打印预览',
     icon: null,
     closable: true,
     content: (
-      <div style={{ width: '794px', height: '500px', overflow: 'auto' }}>
+      <div style={{ width: '794px', height: '500px', overflow: 'hidden' }}>
         <iframe
           scrolling="yes"
           frameBorder="0"
