@@ -29,11 +29,12 @@ import { dictDateSelect } from '@/services/basicSetting/dictionary';
 import { ULayout } from '@/utils/common';
 //登记接口
 import { patientQuery, queryHospitalRegist } from '@/services/inHospitalRegister';
-//导出
-import { excelExport } from '@/utils/ExcelExport';
+//导出 打印
+import { excelExport, openModal } from '@/utils/ExcelExport';
 const validateMessages = {
   required: '${label} 为必填项',
 };
+
 const DICT_LSIT = { '0006': [], '0015': [] };
 const DICT_ARR = ['0006', '0015'];
 const RloodGlucoseRecord = (props) => {
@@ -171,11 +172,14 @@ const RloodGlucoseRecord = (props) => {
             size={'small'}
             style={{ marginTop: 4 }}
             onClick={() => {
-              excelExport({
-                api: '/nursingManage/exportSpecialNursing', //导出接口路径
-                ids: selectedRowKeys.join(','), //勾选的行id数组集合
-                fileName: '特级护理记录', //导出文件名称
+              openModal({
+                url: 'https://xxx/api/report/jmreport/view/563206615924539392?start=2022/02/15&end=2022/02/15', //拼接后的报表地址
               });
+              // excelExport({
+              //   api: '/nursingManage/exportSpecialNursing', //导出接口路径
+              //   ids: selectedRowKeys.join(','), //勾选的行id数组集合
+              //   fileName: '特级护理记录', //导出文件名称
+              // });
             }}
           >
             导出

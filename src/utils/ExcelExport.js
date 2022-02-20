@@ -70,7 +70,4 @@ export const openModal = (props) => {
   Modal[type](config);
 };
 // 使用示例
-// import { excelExport,openModal } from '@/utils/ExcelExport';
-// openModal({
-//   url: 'https://xxx/api/report/jmreport/view/563206615924539392?start=2022/02/15&end=2022/02/15',//拼接后的报表地址
-// });
+
