@@ -10,11 +10,6 @@ export default defineConfig({
   dva: {
     hmr: true,
   },
-  define: {
-    'process.env': {
-      API_ENV: API_ENV,
-    },
-  },
   // mfsu: {},
   webpack5: {},
   // mfsu: { production: { output: '.mfsu-production' } },

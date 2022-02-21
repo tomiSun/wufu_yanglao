@@ -47,7 +47,7 @@ export const excelExport = async ({ api, ids, fileName }) => {
  */
 export const openModal = (props) => {
   const { url, type = 'info' } = props;
-  const urlPre = `${window.location.hostname}:8082`;
+  const urlPre = `${window.location.protocol}//${window.location.hostname}:8082`;
   // const urlPre = `http://120.27.222.210:8082`;
   const config = {
     title: '打印预览',
