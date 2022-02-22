@@ -1,71 +1,62 @@
 import './index.less';
 import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Col,
-  Form,
-  Row,
-  Select,
-  Table,
-  Input,
-  Pagination
-} from 'antd';
+import { Button, Col, Form, Row, Select, Table, Input, Pagination } from 'antd';
 import { columns } from './data';
 import moment from 'moment';
-import { ULayout } from '@/utils/common'
-import {
-  contractQueryList
-} from '@/services/inHospitalRegister'
+import { ULayout } from '@/utils/common';
+import { contractQueryList } from '@/services/inHospitalRegister';
 const RiskNotification = (props) => {
   const [modalVisible, setModalVisible] = useState(false); //基本信息
-  const [dataSource, setDataSource] = useState([]);//数据
+  const [dataSource, setDataSource] = useState([]); //数据
   const [pageInfo, setPageInfo] = useState({
     total: 0,
     pageSize: 10,
-    pageNum: 1
-  })
+    pageNum: 1,
+  });
   const [SForm] = Form.useForm();
   useEffect(() => {
-    let param = pageInfo
+    let param = pageInfo;
     getList(param);
-  }, [])
+  }, []);
   //获取数据
   const getList = async (param) => {
     let res = await contractQueryList(param);
-    setDataSource(res['data']['list'])
+    setDataSource(res['data']['list']);
     setPageInfo({
       pageSize: param.pageSize,
       pageNum: param.pageNum,
-      total: res.data.total
-    })
-  }
+      total: res.data.total,
+    });
+  };
   //刷新
-  const refushList = async (pageParam) => {
+  const refushList = async (pageParam = {}) => {
     let search = SForm.getFieldsValue();
-    let pageInfoCopy = { ...pageInfo, ...pageParam }
+    let pageInfoCopy = { ...pageInfo, ...pageParam };
     let param = {
       ...search,
       pageSize: pageInfoCopy.pageSize,
       pageNum: pageInfoCopy.pageNum,
-      status: 0
-    }
-    getList(param)
-  }
+      status: 0,
+    };
+    getList(param);
+  };
   // 搜索部分
   const renderSearch = () => {
     return (
-      <Form {...ULayout(8, 16, "left", "inline")} form={SForm}>
+      <Form {...ULayout(8, 16, 'left', 'inline')} form={SForm}>
         <Form.Item label="姓名" name={'name'}>
-          <Input size={'small'} allowClear/>
+          <Input size={'small'} allowClear />
         </Form.Item>
         <Form.Item label="住院号" name={'businessNo'}>
-          <Input size={'small'} allowClear/>
+          <Input size={'small'} allowClear />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" size={'small'}
+          <Button
+            type="primary"
+            size={'small'}
             style={{ marginLeft: 20 }}
             onClick={() => {
-              refushList({pageNum:1})
+              refushList();
             }}
           >
             查询
@@ -108,22 +99,23 @@ const RiskNotification = (props) => {
           defaultPageSize={pageInfo['pageSize']}
           total={pageInfo['total']}
           onChange={(page, pageSize) => {
-            setPageInfo({ total: pageInfo.total, pageNum: page, pageSize })
+            setPageInfo({ total: pageInfo.total, pageNum: page, pageSize });
             refushList({ total: pageInfo.total, pageNum: page, pageSize });
           }}
-          style={{ position: "absolute", bottom: 35, right: 50 }} />
-      </div >
+          style={{ position: 'absolute', bottom: 35, right: 50 }}
+        />
+      </div>
     );
   };
 
-return (
-  <div class="archives">
-    <div class="content">
-      {renderSearch()}
-      {renderForm()}
+  return (
+    <div class="archives">
+      <div class="content">
+        {renderSearch()}
+        {renderForm()}
+      </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default RiskNotification;

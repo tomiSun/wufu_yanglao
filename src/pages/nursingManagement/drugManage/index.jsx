@@ -82,7 +82,7 @@ const DrugManage = (props) => {
     }
   };
   //刷新操作
-  const refushList = (pageParam) => {
+  const refushList = (pageParam = {}) => {
     let search = SForm.getFieldsValue();
     let pageInfoCopy = { ...pageInfo, ...pageParam };
     // let startTime = search?.['startTime'] && moment(search?.['startTime']).startOf('day').format('YYYY-MM-DD HH:mm:ss');
@@ -169,7 +169,7 @@ const DrugManage = (props) => {
             type="primary"
             size={'small'}
             onClick={() => {
-              refushList({ pageNum: 1 });
+              refushList();
             }}
           >
             查询
@@ -254,7 +254,7 @@ const DrugManage = (props) => {
               onClick={async () => {
                 let res = await takeMedicineDel({ ids: record.id });
                 message.success('删除成功');
-                refushList({ pageNum: 1 });
+                refushList();
               }}
             >
               删除
@@ -400,7 +400,7 @@ const DrugManage = (props) => {
                   let res = await takeMedicineInsert(params);
                   message.success('添加成功');
                   setModalVisible(false);
-                  refushList({ pageNum: 1 });
+                  refushList();
                 }
                 if (ftype == 'edit') {
                   let params = {
@@ -414,7 +414,7 @@ const DrugManage = (props) => {
                   let res = await takeMedicineUpdate(params);
                   message.success('修改成功');
                   setModalVisible(false);
-                  refushList({ pageNum: 1 });
+                  refushList();
                 }
               }}
             >

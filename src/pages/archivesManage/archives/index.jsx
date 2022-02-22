@@ -38,7 +38,7 @@ const Archives = (props) => {
     refushList(pageInfo);
     getDictDataSelect(['0010']); //过敏史
   }, []);
-  const refushList = async (pageParam) => {
+  const refushList = async (pageParam = {}) => {
     let param = SFrom.getFieldsValue();
     let pageInfoCopy = { ...pageInfo, ...pageParam };
     let res = await baseArchiveQuery({
@@ -90,7 +90,7 @@ const Archives = (props) => {
             type="primary"
             size={'small'}
             onClick={async () => {
-              refushList({ pageNum: 1 });
+              refushList();
             }}
           >
             查询
@@ -134,7 +134,7 @@ const Archives = (props) => {
           onClick={async () => {
             let res = await baseArchiveDel({ id: row['id'] });
             message.success('删除成功');
-            refushList({ pageNum: 1 });
+            refushList();
           }}
           size="small"
         >

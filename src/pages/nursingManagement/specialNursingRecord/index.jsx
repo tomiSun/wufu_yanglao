@@ -103,7 +103,7 @@ const RloodGlucoseRecord = (props) => {
     }
   };
   //刷新操作
-  const refushList = (pageParam) => {
+  const refushList = (pageParam = {}) => {
     let search = SForm.getFieldsValue();
     let pageInfoCopy = { ...pageInfo, ...pageParam };
     let startTime =
@@ -136,7 +136,7 @@ const RloodGlucoseRecord = (props) => {
             size={'small'}
             style={{ marginTop: 4 }}
             onClick={() => {
-              refushList({ pageNum: 1 });
+              refushList();
             }}
           >
             查询
@@ -226,7 +226,7 @@ const RloodGlucoseRecord = (props) => {
           onClick={async () => {
             let res = await delSpecialNursing({ id: record['id'] });
             message.success('成功');
-            refushList({ pageNum: 1 });
+            refushList();
           }}
         >
           删除
@@ -412,7 +412,7 @@ const RloodGlucoseRecord = (props) => {
                       };
                       let res = await addSpecialNursing(params);
                       setModalVisible(false);
-                      refushList({ pageNum: 1 });
+                      refushList();
                       message.success('新增成功');
                     }
                     if (ftype == 'edit') {
@@ -423,7 +423,7 @@ const RloodGlucoseRecord = (props) => {
                       };
                       let res = await updateSpecialNursing(param);
                       setModalVisible(false);
-                      refushList({ pageNum: 1 });
+                      refushList();
                       message.success('编辑成功');
                     }
                   }}

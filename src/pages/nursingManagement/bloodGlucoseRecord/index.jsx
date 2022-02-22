@@ -87,7 +87,7 @@ const RloodGlucoseRecord = (props) => {
     }
   };
   //刷新操作
-  const refushList = (pageParam) => {
+  const refushList = (pageParam = {}) => {
     let search = SForm.getFieldsValue();
     let pageInfoCopy = { ...pageInfo, ...pageParam, ...search };
     let startTime =
@@ -127,7 +127,7 @@ const RloodGlucoseRecord = (props) => {
             size={'small'}
             style={{ marginTop: 4 }}
             onClick={() => {
-              refushList({ pageNum: 1 });
+              refushList();
             }}
           >
             查询
@@ -221,7 +221,7 @@ const RloodGlucoseRecord = (props) => {
           onClick={async () => {
             let res = await bloodSugarDel({ id: record['id'] });
             message.success('成功');
-            refushList({ pageNum: 1 });
+            refushList();
           }}
         >
           删除
@@ -392,7 +392,7 @@ const RloodGlucoseRecord = (props) => {
                   let res = await bloodSugarInsert(params);
                   message.success('添加成功');
                   setModalVisible(false);
-                  refushList({ pageNum: 1 });
+                  refushList();
                 }
                 if (ftype == 'edit') {
                   let param = {
@@ -403,7 +403,7 @@ const RloodGlucoseRecord = (props) => {
                   let res = await bloodSugarUpdate(param);
                   message.success('修改成功');
                   setModalVisible(false);
-                  refushList({ pageNum: 1 });
+                  refushList();
                 }
               }}
             >

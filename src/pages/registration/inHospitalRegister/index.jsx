@@ -90,7 +90,7 @@ const InHospitalRegister = (props) => {
   };
 
   //获取信息
-  const refushList = (pageParam) => {
+  const refushList = (pageParam = {}) => {
     let data = SForm.getFieldsValue();
     let pageInfoCopy = { ...pageInfo, ...pageParam };
     let param = {
@@ -135,7 +135,7 @@ const InHospitalRegister = (props) => {
               type="primary"
               size={'small'}
               onClick={() => {
-                refushList({ pageNum: 1 });
+                refushList();
               }}
             >
               查询
