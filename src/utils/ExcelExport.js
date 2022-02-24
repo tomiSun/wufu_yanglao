@@ -1,10 +1,10 @@
+import { AutoComplete, message, Modal } from 'antd';
 /**
  * Excel导出
  * @param {api} 接口路径
  * @param {ids} 勾选行的id数组
  * @param {fileName} 导出excel的名字
  */
-import { AutoComplete, message, Modal } from 'antd';
 
 export const excelExport = async ({ api, ids, fileName }) => {
   if (!ids?.length) {
@@ -40,15 +40,31 @@ export const excelExport = async ({ api, ids, fileName }) => {
 //   ids: '487207946229518336',//勾选的行id数组集合
 //   fileName: '三测单',//导出文件名称
 // });
+const paramsToUrl = (obj) => {
+  const keys = Object.keys(obj);
+  return (
+    keys?.reduce((res, key, index) => {
+      if (index === 0) {
+        res += `?${key}=${obj[key] || ''}`;
+      } else {
+        res += `&${key}=${obj[key] || ''}`;
+      }
+      return res;
+    }, '') || ''
+  );
+};
 /**
  * 打开模态框
  * @param {object} data 表单数据
  * @param {object} emitFormData dva state
  */
 export const openModal = (props) => {
-  const { url, type = 'info' } = props;
+  const { url, params, type = 'info' } = props;
   const urlPre = `${window.location.protocol}//${window.location.hostname}:8082`;
   // const urlPre = `http://120.27.222.210:8082`;
+  // const urlPre = `http://192.168.1.160:8082`;
+  const urlLast = (params && paramsToUrl(params)) || '';
+  console.log('realUrl: ', `${urlPre}${url}${urlLast}`);
   const config = {
     title: '打印预览',
     icon: null,
@@ -59,7 +75,7 @@ export const openModal = (props) => {
           scrolling="yes"
           frameBorder="0"
           style={{ width: '100%', height: '100%', overflow: 'visible' }}
-          src={`${urlPre}${url}`}
+          src={`${urlPre}${url}${urlLast}`}
         />
       </div>
     ),

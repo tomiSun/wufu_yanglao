@@ -10,7 +10,7 @@ export default defineConfig({
   dva: {
     hmr: true,
   },
-  // mfsu: {},
+  mfsu: {},
   webpack5: {},
   // mfsu: { production: { output: '.mfsu-production' } },
   history: {

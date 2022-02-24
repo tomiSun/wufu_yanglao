@@ -165,8 +165,13 @@ export default () => {
           //   ids, // 勾选的行id数组集合
           //   fileName: '护理记录', // 导出文件名称
           // });
+          if (!yTable.table.selectRows?.length) {
+            message.warn('请勾选要打印的记录');
+            return;
+          }
           openModal({
             url: '/jmreport/view/655288045090426880',
+            params: { businessNo: yTable.table.selectRows[0].businessNo || '' },
           });
         },
       },
@@ -567,6 +572,7 @@ export default () => {
       selectKeys: [],
       selectRows: [],
       rowSelection: {
+        type: 'radio',
         columnWidth: 30,
         selectedRowKeys: yTable?.table?.selectKeys,
         onChange: (selectedRowKeys, selectedRows) => {

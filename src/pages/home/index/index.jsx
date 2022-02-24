@@ -133,7 +133,7 @@ export default () => {
                       src="https://via.placeholder.com/300.png/09f/fff"
                     /> */}
                           <div className={styles.name}>{bed?.name}</div>
-                          <div className={styles.sex}>{bed?.sex}</div>
+                          <div className={styles.sex}>{bed?.sexName}</div>
                           <div className={styles.age}>{bed?.age}岁</div>
                           <div className={styles.age}>{bed?.nursingLevelName}</div>
                         </div>
