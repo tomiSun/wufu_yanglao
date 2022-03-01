@@ -59,6 +59,7 @@ const DrugRecord = (props) => {
   const [dictionaryMap, setDictionaryMap] = useState(DICT_LSIT);
   // 列表选中
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRowData, setSelectedRowData] = useState([]);
   const [pageInfo, setPageInfo] = useState({
     total: 0,
     pageSize: 10,
@@ -212,9 +213,16 @@ const DrugRecord = (props) => {
             size={'small'}
             style={{ marginTop: 4 }}
             onClick={() => {
+              if (!selectedRowData?.length) {
+                message.warn('请勾选要打印的记录');
+                return;
+              }
+              const businessNos = selectedRowData.map((it) => {
+                return it.businessNo;
+              });
               openModal({
                 url: '/jmreport/view/655287228417380352',
-                params: SForm.getFieldsValue(),
+                params: { businessNo: businessNos?.join(',') || '' },
               });
               // excelExport({
               //   api: '/medicine/exportMedicationRecord', //导出接口路径
@@ -268,6 +276,7 @@ const DrugRecord = (props) => {
   // 选中操作
   const onSelectChange = (selectedRowKeys, record) => {
     setSelectedRowKeys(selectedRowKeys);
+    setSelectedRowData(record);
   };
   const rowSelection = {
     selectedRowKeys,
@@ -282,10 +291,12 @@ const DrugRecord = (props) => {
           dataSource={dataSource}
           scroll={{ x: 1300 }}
           pagination={false}
-          // rowSelection={rowSelection}
+          rowSelection={rowSelection}
         />
         <Pagination
           defaultCurrent={1}
+          showSizeChanger={true}
+          showTotal={(total) => `共 ${total} 条`}
           current={pageInfo.pageNum}
           defaultPageSize={pageInfo.pageSize}
           total={pageInfo.total}

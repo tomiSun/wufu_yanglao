@@ -12,7 +12,7 @@ export default {
       // target: 'https://918e91.39nat.com',
       target: 'http://120.27.222.210:8081',
       // target: 'https://xuchaojie.39nat.com',
-      // target: 'http://192.168.1.160:8081',
+      // target: 'http://192.168.1.60:8081',
       changeOrigin: true,
       secure: false,
       pathRewrite: {
