@@ -258,17 +258,11 @@ const RloodGlucoseRecord = (props) => {
         />
         <Pagination
           defaultCurrent={1}
-<<<<<<< HEAD
           showSizeChanger
           pageSizeOptions={[10, 20, 50, 100, 200]}
           current={pageInfo['pageNum']}
           defaultPageSize={pageInfo['pageSize']}
           total={pageInfo['total']}
-=======
-          current={pageInfo.pageNum}
-          defaultPageSize={pageInfo.pageSize}
-          total={pageInfo.total}
->>>>>>> 8a4dffd38bbecac3c8e912fc27fdaf250a30d5ff
           onChange={(page, pageSize) => {
             setPageInfo({ total: pageInfo.total, pageNum: page, pageSize });
             refushList({ total: pageInfo.total, pageNum: page, pageSize });
