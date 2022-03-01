@@ -808,7 +808,7 @@ export default () => {
           console.log('changePage----', page, pageSize);
           yTable.table.pagination.current = page;
           yTable.table.pagination.pageSize = pageSize;
-          // queryTypeDetailsListServices();
+          setYTable({ ...yTable });
         },
       },
       basicData: {},

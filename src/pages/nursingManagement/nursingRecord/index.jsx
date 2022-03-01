@@ -37,10 +37,12 @@ import {
   batchQueryNursingRecord,
   batchUpdateNursingRecord,
   addNursingRecord,
+  delNursingRecord,
 } from '@/services/nursingManagement/nursingRecord';
 import { excelExport, openModal } from '@/utils/ExcelExport';
 import { isOnePeople } from '@/utils/common';
-
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+const { confirm } = Modal;
 const { pageSize, pageNum } = config;
 const { TextArea } = Input;
 export default () => {
@@ -144,9 +146,18 @@ export default () => {
         },
       },
       {
+        name: '删除',
+        type: 'danger',
+        sort: 6,
+        style: { marginRight: '15px' },
+        callback: () => {
+          delItems();
+        },
+      },
+      {
         name: '打印',
         type: 'primary',
-        sort: 5,
+        sort: 7,
         style: { marginRight: '15px' },
         callback: () => {
           // const realSelectKeys = yTable?.table?.selectKeys.filter((it) => parseFloat(it) > 1);
@@ -167,6 +178,10 @@ export default () => {
           // });
           if (!yTable.table.selectRows?.length) {
             message.warn('请勾选要打印的记录');
+            return;
+          }
+          if (yTable.table.selectRows?.length > 1) {
+            message.warn('每次只能勾选一条记录！');
             return;
           }
           openModal({
@@ -572,7 +587,6 @@ export default () => {
       selectKeys: [],
       selectRows: [],
       rowSelection: {
-        type: 'radio',
         columnWidth: 30,
         selectedRowKeys: yTable?.table?.selectKeys,
         onChange: (selectedRowKeys, selectedRows) => {
@@ -605,6 +619,34 @@ export default () => {
       });
     }
     changeModal(type, visible);
+  };
+  const delItems = () => {
+    if (!yTable.table.selectRows?.length) {
+      message.warn('请勾选要删除的记录');
+    }
+    const ids = yTable.table.selectRows.map((it) => it.id);
+    confirm({
+      title: '删除',
+      okText: '删除',
+      okType: 'danger',
+      cancelText: '取消',
+      content: `您确定删除吗？`,
+      centered: true,
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        delNursingRecord({ ids: ids?.join(',') || '' })
+          .then((res) => {
+            message.success(res?.msg);
+            getTableData();
+          })
+          .catch((err) => {
+            console.log('deleteType---err', err);
+          });
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
   };
   // 修改弹窗配置
   const changeModal = (type, visible) => {

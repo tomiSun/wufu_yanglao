@@ -211,7 +211,6 @@ const DrugRecord = (props) => {
           <Button
             type="primary"
             size={'small'}
-            style={{ marginTop: 4 }}
             onClick={() => {
               if (!selectedRowData?.length) {
                 message.warn('请勾选要打印的记录');
@@ -222,7 +221,11 @@ const DrugRecord = (props) => {
               });
               openModal({
                 url: '/jmreport/view/655287228417380352',
-                params: { businessNo: businessNos?.join(',') || '' },
+                params: {
+                  businessNo: businessNos?.join(',') || '',
+                  buildingCode: SForm.getFieldValue('buildingCode') || '',
+                  floorCode: SForm.getFieldValue('floorCode') || '',
+                },
               });
               // excelExport({
               //   api: '/medicine/exportMedicationRecord', //导出接口路径
