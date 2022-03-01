@@ -26,82 +26,82 @@ import {
 } from '@/services/nursingManagement';
 import { dictDateSelect } from '@/services/basicSetting/dictionary';
 import { ULayout, isOnePeople } from '@/utils/common';
-//登记接口
+// 登记接口
 import { patientQuery, queryHospitalRegist } from '@/services/inHospitalRegister';
-//导出
+// 导出
 import { excelExport, openModal } from '@/utils/ExcelExport';
+
 const validateMessages = {
   required: '${label} 为必填项',
 };
 const RloodGlucoseRecord = (props) => {
-  //列表数据
-  const [dataSource, setDataSource] = useState([{ 1: 1 }]); //数据
-  //弹窗
+  // 列表数据
+  const [dataSource, setDataSource] = useState([{ 1: 1 }]); // 数据
+  // 弹窗
   const [modalVisible, setModalVisible] = useState(false);
-  //血糖采样状态的字典
+  // 血糖采样状态的字典
   const [samplingStatusMap, setSamplingStatusMap] = useState([]);
-  //名字选项
+  // 名字选项
   const [nameSelectList, setNameSelectList] = useState([]);
-  //基本信息
+  // 基本信息
   const [addBasicInfo, setAddBasicInfo] = useState(null);
-  //血糖记录信息
+  // 血糖记录信息
   const [nursingRecord, setNursingRecord] = useState(null);
   // 新增&修改
   const [ftype, setFtype] = useState('add');
-  //列表选中
+  // 列表选中
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  //列表选中
+  // 列表选中
   const [selectedRowData, setSelectedRowData] = useState([]);
-  //分页
+  // 分页
   const [pageInfo, setPageInfo] = useState({
     total: 0,
     pageSize: 10,
     pageNum: 1,
   });
-  //搜索的表单
+  // 搜索的表单
   const [SForm] = Form.useForm();
   // 表单
   const [TForm] = Form.useForm();
-  //初始化操作
+  // 初始化操作
   useEffect(() => {
     getBloodSugarInfo(pageInfo);
-    //获取字典
+    // 获取字典
     getDictDataSelect({ pageNum: 1, pageSize: 20, typeCode: '0006' });
   }, []);
-  //获取血糖列表信息
+  // 获取血糖列表信息
   const getBloodSugarInfo = async (param) => {
-    let res = await bloodSugarQuery(param);
-    if (res['code'] === 200) {
+    const res = await bloodSugarQuery(param);
+    if (res.code === 200) {
       setDataSource(
-        res['data']['list'].map((item) => {
+        res.data.list.map((item) => {
           return { ...item, key: item.id };
         }),
       );
       setPageInfo({
-        pageNum: param['pageNum'],
-        pageSize: param['pageSize'],
+        pageNum: param.pageNum,
+        pageSize: param.pageSize,
         total: res.data.total,
       });
     } else {
       setDataSource([]);
     }
   };
-  //刷新操作
+  // 刷新操作
   const refushList = (pageParam = {}) => {
-    let search = SForm.getFieldsValue();
-    let pageInfoCopy = { ...pageInfo, ...pageParam, ...search };
-    let startTime =
-      search?.['startTime'] &&
-      moment(search?.['startTime']).startOf('day').format('YYYY-MM-DD HH:mm:ss');
-    let endTime =
-      search?.['endTime'] && moment(search?.['endTime']).endOf('day').format('YYYY-MM-DD HH:mm:ss');
-    let param = { ...SForm.getFieldsValue(), ...pageInfoCopy, startTime, endTime };
+    const search = SForm.getFieldsValue();
+    const pageInfoCopy = { ...pageInfo, ...pageParam, ...search };
+    const startTime =
+      search?.startTime && moment(search?.startTime).startOf('day').format('YYYY-MM-DD HH:mm:ss');
+    const endTime =
+      search?.endTime && moment(search?.endTime).endOf('day').format('YYYY-MM-DD HH:mm:ss');
+    const param = { ...SForm.getFieldsValue(), ...pageInfoCopy, startTime, endTime };
     getBloodSugarInfo(param);
   };
-  //获取字典
+  // 获取字典
   const getDictDataSelect = async (param) => {
-    let res = await dictDateSelect(param);
-    setSamplingStatusMap(res['data']['list']);
+    const res = await dictDateSelect(param);
+    setSamplingStatusMap(res.data.list);
     SForm.setFieldsValue({ samplingStatus: '0001' });
   };
 
@@ -163,18 +163,24 @@ const RloodGlucoseRecord = (props) => {
             size={'small'}
             style={{ marginTop: 4 }}
             onClick={() => {
-              let res = isOnePeople(selectedRowData);
-              if (!res) {
-                message.warn('一次导出一个人的信息');
-                return;
-              }
+              // const res = isOnePeople(selectedRowData);
+              // console.log('selectedRowData: ', selectedRowData);
+              // if (!res) {
+              //   message.warn('一次导出一个人的信息');
+              //   return;
+              // }
               // excelExport({
               //   api: '/blood-sugar/export', //导出接口路径
               //   ids: selectedRowKeys.join(','), //勾选的行id数组集合
               //   fileName: '血糖记录', //导出文件名称
               // });
+              if (!selectedRowData?.length) {
+                message.warn('请勾选要打印的记录');
+                return;
+              }
               openModal({
                 url: '/jmreport/view/653397562424610816',
+                params: { businessNo: selectedRowData[0].businessNo || '' },
               });
             }}
           >
@@ -184,13 +190,13 @@ const RloodGlucoseRecord = (props) => {
       </Form>
     );
   };
-  //新增
+  // 新增
   const handAdd = () => {
     TForm.resetFields();
     setModalVisible(true);
     setFtype('add');
   };
-  //修改
+  // 修改
   const handEdit = (data) => {
     setModalVisible(true);
     setFtype('edit');
@@ -198,11 +204,11 @@ const RloodGlucoseRecord = (props) => {
     TForm.setFieldsValue({
       ...data,
       name: data.patientName,
-      samplingTime: moment(data['samplingTime'] || new Date()),
-      bloodSugarRecordDate: moment(data['bloodSugarRecordDate'] || new Date()),
+      samplingTime: moment(data.samplingTime || new Date()),
+      bloodSugarRecordDate: moment(data.bloodSugarRecordDate || new Date()),
     });
   };
-  //操作
+  // 操作
   const editButton = (record) => {
     return (
       <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
@@ -219,7 +225,7 @@ const RloodGlucoseRecord = (props) => {
           size={'small'}
           type="link"
           onClick={async () => {
-            let res = await bloodSugarDel({ id: record['id'] });
+            const res = await bloodSugarDel({ id: record.id });
             message.success('成功');
             refushList();
           }}
@@ -229,16 +235,17 @@ const RloodGlucoseRecord = (props) => {
       </div>
     );
   };
-  //选中操作
+  // 选中操作
   const onSelectChange = (selectedRowKeys, record) => {
     setSelectedRowKeys(selectedRowKeys);
     setSelectedRowData(record);
   };
   const rowSelection = {
-    selectedRowKeys: selectedRowKeys,
+    type: 'radio',
+    selectedRowKeys,
     onChange: onSelectChange,
   };
-  //表单
+  // 表单
   const renderForm = () => {
     return (
       <div>
@@ -251,11 +258,17 @@ const RloodGlucoseRecord = (props) => {
         />
         <Pagination
           defaultCurrent={1}
+<<<<<<< HEAD
           showSizeChanger
           pageSizeOptions={[10, 20, 50, 100, 200]}
           current={pageInfo['pageNum']}
           defaultPageSize={pageInfo['pageSize']}
           total={pageInfo['total']}
+=======
+          current={pageInfo.pageNum}
+          defaultPageSize={pageInfo.pageSize}
+          total={pageInfo.total}
+>>>>>>> 8a4dffd38bbecac3c8e912fc27fdaf250a30d5ff
           onChange={(page, pageSize) => {
             setPageInfo({ total: pageInfo.total, pageNum: page, pageSize });
             refushList({ total: pageInfo.total, pageNum: page, pageSize });
@@ -265,37 +278,37 @@ const RloodGlucoseRecord = (props) => {
       </div>
     );
   };
-  //姓名搜索框
+  // 姓名搜索框
   const nameSelectChange = async (value) => {
-    let res = await queryHospitalRegist({
+    const res = await queryHospitalRegist({
       businessNo: value,
       pageSize: 1000,
       pageNum: 1,
       status: 0,
     });
     if (res?.data?.list[0]) {
-      let data = res?.data?.list[0];
-      let r = data;
-      let bedName = `${r['buildingName'] || '#'}-${r['floorName'] || '#'}-${r['roomName'] || '#'}-${
-        r['bedName'] || '#'
+      const data = res?.data?.list[0];
+      const r = data;
+      const bedName = `${r.buildingName || '#'}-${r.floorName || '#'}-${r.roomName || '#'}-${
+        r.bedName || '#'
       }`;
       TForm.setFieldsValue({ ...data, bedName });
-      setAddBasicInfo({ ...data }); //todo 少了诊断
+      setAddBasicInfo({ ...data }); // todo 少了诊断
     }
   };
-  //姓名搜索框
+  // 姓名搜索框
   const nameSelectBlur = async (e, data) => {
-    let res = await patientQuery({ keyWords: e });
-    if (!!res['data']) {
-      let data = res['data'].map((item) => {
-        return { label: `${item['name']}-${item['businessNo']}`, value: item['businessNo'] };
+    const res = await patientQuery({ keyWords: e });
+    if (res.data) {
+      const data = res.data.map((item) => {
+        return { label: `${item.name}-${item.businessNo}`, value: item.businessNo };
       });
       setNameSelectList(data);
     } else {
       setNameSelectList([]);
     }
   };
-  //弹窗
+  // 弹窗
   const renderMoadl = () => {
     return (
       <Modal
@@ -345,7 +358,7 @@ const RloodGlucoseRecord = (props) => {
             >
               <Select style={{ width: '100%' }} defaultValue="0001">
                 {samplingStatusMap.map((item) => {
-                  return <Option value={item['dictCode']}>{item['dictName']}</Option>;
+                  return <Option value={item.dictCode}>{item.dictName}</Option>;
                 })}
               </Select>
             </Form.Item>
@@ -384,25 +397,25 @@ const RloodGlucoseRecord = (props) => {
               style={{ marginLeft: 200 }}
               type={'primary'}
               onClick={async () => {
-                let param = TForm.getFieldsValue();
+                const param = TForm.getFieldsValue();
                 if (ftype == 'add') {
-                  let params = {
+                  const params = {
                     ...addBasicInfo,
                     ...TForm.getFieldsValue(),
-                    patientName: addBasicInfo['name'],
+                    patientName: addBasicInfo.name,
                   };
-                  let res = await bloodSugarInsert(params);
+                  const res = await bloodSugarInsert(params);
                   message.success('添加成功');
                   setModalVisible(false);
                   refushList();
                 }
                 if (ftype == 'edit') {
-                  let param = {
+                  const param = {
                     ...nursingRecord,
                     ...TForm.getFieldsValue(),
-                    patientName: nursingRecord['name'],
+                    patientName: nursingRecord.name,
                   };
-                  let res = await bloodSugarUpdate(param);
+                  const res = await bloodSugarUpdate(param);
                   message.success('修改成功');
                   setModalVisible(false);
                   refushList();
@@ -417,8 +430,8 @@ const RloodGlucoseRecord = (props) => {
     );
   };
   return (
-    <div class="root">
-      <div class="content">
+    <div className="root">
+      <div className="content">
         {renderSearch()}
         {renderForm()}
         {renderMoadl()}

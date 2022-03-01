@@ -1120,6 +1120,7 @@ export default () => {
               label: `${item.name}-${item.businessNo}`,
               value: item.businessNo,
               bedName: item.totalName,
+              name: item.name,
             };
           }) || [];
         setNameSelectList(data);
@@ -1207,7 +1208,6 @@ export default () => {
           initialValues={{ recordTime: moment(), timePoint: moment() }}
         >
           <Form.Item name="id" hidden></Form.Item>
-          <Form.Item name="name" hidden></Form.Item>
           <Row>
             <Col span={12}>
               <Form.Item label="床位号" name="bedName">
@@ -1220,14 +1220,14 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="姓名" name="businessNo" rules={[{ required: true }]}>
+              <Form.Item label="姓名" name="name" rules={[{ required: true }]}>
                 <Select
                   showSearch
                   placeholder="请输入姓名"
                   onChange={(value, option) => {
                     modalForm.setFieldsValue({
                       businessNo: value,
-                      name: option.label,
+                      name: option.name,
                       bedName: option.bedName,
                     });
                   }}
