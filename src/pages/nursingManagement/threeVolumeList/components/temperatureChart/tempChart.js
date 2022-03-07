@@ -12,24 +12,24 @@ import { Tooltip } from 'antd';
  * @return
  * */
 export function parseMapData(mapData) {
-  let titleArray = [];
-  let valueArray = [];
-  for (let i in mapData) {
-    let title = eval('(' + i + ')');
-    let value = mapData[i];
+  const titleArray = [];
+  const valueArray = [];
+  for (const i in mapData) {
+    const title = eval(`(${i})`);
+    const value = mapData[i];
     titleArray.push(title);
     valueArray.push(value);
   }
-  //排序，name长的排在前面
-  //使用快速排序
+  // 排序，name长的排在前面
+  // 使用快速排序
   function bubbleSort(arr, aboutarr) {
     for (let i = 0; i < arr.length - 1; i++) {
       for (let j = 0; j < arr.length - 1 - i; j++) {
         if (arr[j].name.length < arr[j + 1].name.length) {
-          let temp = arr[j];
+          const temp = arr[j];
           arr[j] = arr[j + 1];
           arr[j + 1] = temp;
-          let aboutTemp = aboutarr[j];
+          const aboutTemp = aboutarr[j];
           aboutarr[j] = aboutarr[j + 1];
           aboutarr[j + 1] = aboutTemp;
         }
@@ -45,8 +45,8 @@ export function parseMapData(mapData) {
   // let newValueArray = bubbleSort(titleArray, valueArray).newAboutArr;
 
   return {
-    titleArray: titleArray,
-    valueArray: valueArray,
+    titleArray,
+    valueArray,
   };
 }
 
@@ -56,32 +56,32 @@ export function parseMapData(mapData) {
  * @param {Number} dis 改变规则 ，-1为前一天，1为后一天，依次类推
  */
 export function getNewDate(dateStr, dis) {
-  //判断是否Date()对象，如果不是转为Date对象
+  // 判断是否Date()对象，如果不是转为Date对象
   let newDate;
   if (dateStr instanceof Date) {
     newDate = dateStr;
   } else {
-    //将字符串时间转化成Date对象
+    // 将字符串时间转化成Date对象
     newDate = new Date(dateStr.replace(/-/g, '/'));
   }
 
-  let type = dis || 0;
-  //判断是否是合法的时间对象
-  let dateParse = Date.parse(newDate);
+  const type = dis || 0;
+  // 判断是否是合法的时间对象
+  const dateParse = Date.parse(newDate);
   if (isNaN(dateParse)) {
-    //日期是否合法
+    // 日期是否合法
     console.log('日期格式不合法');
-    return; //不合法时返回false
+    return; // 不合法时返回false
   }
-  let year = newDate.getFullYear();
-  let month = newDate.getMonth();
-  let day = newDate.getDate();
-  let finalDate = new Date(year, month, day + type);
-  let finalYear = finalDate.getFullYear();
-  let finalMonth =
-    finalDate.getMonth() < 9 ? '0' + (finalDate.getMonth() + 1) : finalDate.getMonth() + 1;
-  let finalDay = finalDate.getDate() < 10 ? '0' + finalDate.getDate() : finalDate.getDate();
-  return finalYear + '-' + finalMonth + '-' + finalDay;
+  const year = newDate.getFullYear();
+  const month = newDate.getMonth();
+  const day = newDate.getDate();
+  const finalDate = new Date(year, month, day + type);
+  const finalYear = finalDate.getFullYear();
+  const finalMonth =
+    finalDate.getMonth() < 9 ? `0${finalDate.getMonth() + 1}` : finalDate.getMonth() + 1;
+  const finalDay = finalDate.getDate() < 10 ? `0${finalDate.getDate()}` : finalDate.getDate();
+  return `${finalYear}-${finalMonth}-${finalDay}`;
 }
 
 /*
@@ -90,42 +90,42 @@ export function getNewDate(dateStr, dis) {
  * @return svgArray
  * */
 export function drawSvgScale(oJson) {
-  let scaleArray = [];
-  let markName = oJson.markName; //显示类型
-  let x = oJson.x; //标定线相对于SVG容器的x坐标
-  let beginKD = oJson.beginKD; //开始刻度
-  let unit = oJson.unit; //刻度单位
-  let title = oJson.title; //刻度标题
-  let endKD = oJson.endKD; //结束刻度
-  let width = oJson.width; // 标线宽度
-  let disKD = oJson.disKD; // 刻度差
-  let stepValue = oJson.stepValue; //一刻度表示的值
-  let isShowLittle = oJson.isShowLittle; //是否显示小刻度,默认不显示
-  let isShowdemarcate = oJson.isShowdemarcate; //是否显示标定线,默认显示，
-  let demarcateId = oJson.demarcateId; //不显示时可以传入已存在标定线id，也可以不传
-  let trRowBegin = oJson.trRowBegin; //相对于tr的开始行数
-  let trRowEnd = oJson.trRowEnd; //相对于tr的结束行数
-  let valueShow = oJson.valueShow; // 是否隐藏刻度,默认不隐藏
-  let stepSide = oJson.stepSide; //刻度画在标定线左边还是右边,true为左边，false为右边，默认true
-  let martchs = oJson.martchs; //匹配对齐
-  let svgW = 100;
-  let svgH = 15 * 40;
-  let tdB = 1;
-  let tdH = 15;
-  let disRow = trRowEnd - trRowBegin;
-  let disPX = (disRow * tdH) / ((endKD - beginKD) / disKD); //一刻度需要多少像素px
+  const scaleArray = [];
+  const { markName } = oJson; // 显示类型
+  let { x } = oJson; // 标定线相对于SVG容器的x坐标
+  const { beginKD } = oJson; // 开始刻度
+  const { unit } = oJson; // 刻度单位
+  const { title } = oJson; // 刻度标题
+  const { endKD } = oJson; // 结束刻度
+  const { width } = oJson; // 标线宽度
+  const { disKD } = oJson; // 刻度差
+  const { stepValue } = oJson; // 一刻度表示的值
+  const { isShowLittle } = oJson; // 是否显示小刻度,默认不显示
+  const { isShowdemarcate } = oJson; // 是否显示标定线,默认显示，
+  const { demarcateId } = oJson; // 不显示时可以传入已存在标定线id，也可以不传
+  const { trRowBegin } = oJson; // 相对于tr的开始行数
+  const { trRowEnd } = oJson; // 相对于tr的结束行数
+  const { valueShow } = oJson; // 是否隐藏刻度,默认不隐藏
+  const { stepSide } = oJson; // 刻度画在标定线左边还是右边,true为左边，false为右边，默认true
+  const { martchs } = oJson; // 匹配对齐
+  const svgW = 100;
+  const svgH = 15 * 40;
+  const tdB = 1;
+  const tdH = 15;
+  const disRow = trRowEnd - trRowBegin;
+  let disPX = (disRow * tdH) / ((endKD - beginKD) / disKD); // 一刻度需要多少像素px
   let endY = parseFloat(trRowEnd * tdH);
   x = typeof x === 'string' ? svgW * parseFloat(x) : x;
   if (martchs !== undefined) {
-    //华氏温度和摄氏温度换算时需要
-    let scale = martchs.split(',')[0];
-    let tdRegion = martchs.split(',')[1];
-    let tdBegin = parseInt(tdRegion.split('-')[0]);
-    let tdEnd = parseInt(tdRegion.split('-')[1]);
-    let scale1 = parseInt(scale.split('-')[0]);
-    let scale2 = parseInt(scale.split('-')[1]);
-    let y1 = tdBegin * tdH;
-    let y2 = tdEnd * tdH;
+    // 华氏温度和摄氏温度换算时需要
+    const scale = martchs.split(',')[0];
+    const tdRegion = martchs.split(',')[1];
+    const tdBegin = parseInt(tdRegion.split('-')[0]);
+    const tdEnd = parseInt(tdRegion.split('-')[1]);
+    const scale1 = parseInt(scale.split('-')[0]);
+    const scale2 = parseInt(scale.split('-')[1]);
+    const y1 = tdBegin * tdH;
+    const y2 = tdEnd * tdH;
     disPX = parseFloat((y1 - y2) / ((scale2 - scale1) / disKD)).toFixed(2);
     if (scale1 > beginKD) {
       endY = parseFloat(y1) + parseFloat(((scale1 - beginKD) / disKD) * disPX);
@@ -133,10 +133,10 @@ export function drawSvgScale(oJson) {
       endY = y1;
     }
   }
-  //当需要画标定线时
+  // 当需要画标定线时
   if (isShowdemarcate) {
-    let y1 = parseFloat(trRowEnd * tdH + parseFloat(disPX)).toFixed(2);
-    let y2 = parseFloat(trRowBegin * tdH - 10).toFixed(2);
+    const y1 = parseFloat(trRowEnd * tdH + parseFloat(disPX)).toFixed(2);
+    const y2 = parseFloat(trRowBegin * tdH - 10).toFixed(2);
     scaleArray.push(
       <line
         key={0}
@@ -152,7 +152,7 @@ export function drawSvgScale(oJson) {
   scaleArray.push(
     <text
       key={'title'}
-      type={markName + '_line'}
+      type={`${markName}_line`}
       style={{ display: title ? '' : 'none' }}
       x={20}
       y={15}
@@ -163,7 +163,7 @@ export function drawSvgScale(oJson) {
     </text>,
   );
   for (let i = 0; i <= (endKD - beginKD) / disKD; i++) {
-    let len = (i + beginKD).toString().length;
+    const len = (i + beginKD).toString().length;
     if (isShowLittle) {
       if (i % 5 === 0) {
         scaleArray.push(
@@ -171,7 +171,7 @@ export function drawSvgScale(oJson) {
             key={i + 1}
             max={beginKD}
             min={endKD}
-            type={markName + '_line'}
+            type={`${markName}_line`}
             x1={stepSide ? x - width : x + width}
             y1={parseFloat(endY - disPX * i).toFixed(2)}
             x2={x}
@@ -185,7 +185,7 @@ export function drawSvgScale(oJson) {
             key={i + 1}
             max={beginKD}
             min={endKD}
-            type={markName + '_line'}
+            type={`${markName}_line`}
             x1={stepSide ? x - width : x + width}
             y1={parseFloat(endY - disPX * i).toFixed(2)}
             x2={x}
@@ -200,7 +200,7 @@ export function drawSvgScale(oJson) {
           key={i + 1}
           max={beginKD}
           min={endKD}
-          type={markName + '_line'}
+          type={`${markName}_line`}
           x1={stepSide ? x - width : x + width}
           y1={parseFloat(endY - disPX * i).toFixed(2)}
           x2={x}
@@ -211,8 +211,8 @@ export function drawSvgScale(oJson) {
     }
     scaleArray.push(
       <text
-        key={i + 1 + 'markName'}
-        type={markName + '_line'}
+        key={`${i + 1}markName`}
+        type={`${markName}_line`}
         style={{ display: valueShow ? '' : 'none' }}
         x={stepSide ? x - (width + len * 8) : x + (width + 2)}
         y={parseFloat(endY - disPX * i + 4.5).toFixed(2)}
@@ -224,10 +224,10 @@ export function drawSvgScale(oJson) {
       </text>,
     );
   }
-  let b = 0;
-  let e = (endKD - beginKD) / disKD;
+  const b = 0;
+  const e = (endKD - beginKD) / disKD;
   return {
-    scaleArray: scaleArray,
+    scaleArray,
     ySection: [parseFloat(endY - disPX * b).toFixed(2), parseFloat(endY - disPX * e).toFixed(2)],
   };
 }
@@ -242,7 +242,7 @@ export function drawSvgScale(oJson) {
  * 降温 jw 红色空心圆
  * 脉搏 mb 红色实心圆
  * 心率 xl 红色空心圆
- **/
+ * */
 export function showPointTuglie() {
   function showText(x, y, text, key) {
     return (
@@ -252,48 +252,48 @@ export function showPointTuglie() {
     );
   }
 
-  let oArray = ['tt', 'kw', 'yw', 'ew', 'gw', 'jw', 'mb', 'xl'];
-  //初始显示位置
-  let initX = 16;
-  let initTextX = 26;
-  let initY = 15 * 1 + 30;
-  let pTuglie = [];
-  let textArray = [];
+  const oArray = ['tt', 'kw', 'yw', 'ew', 'gw', 'jw', 'mb', 'xl'];
+  // 初始显示位置
+  const initX = 16;
+  const initTextX = 26;
+  const initY = 15 * 1 + 30;
+  const pTuglie = [];
+  const textArray = [];
   for (let i = 0; i < oArray.length; i++) {
-    let initTextY = initY + i * 16 + 4;
+    const initTextY = initY + i * 16 + 4;
     switch (oArray[i]) {
       case 'tt':
         pTuglie.push(drawSquare('tt', { x: initX, y: initY + i * 16 }, 4, 'red', '疼痛', true));
         pTuglie.push(showText(initTextX, initTextY, '疼痛'));
-        break; //疼痛
+        break; // 疼痛
       case 'kw':
         pTuglie.push(drawCircle('hx', { x: initX, y: initY + i * 16 }, 4, 'blue', '口温', true));
         pTuglie.push(showText(initTextX, initTextY, '口温'));
-        break; //口温
+        break; // 口温
       case 'yw':
         pTuglie.push(drawCross('yw', { x: initX, y: initY + i * 16 }, 4, 'blue', '腋温'));
         pTuglie.push(showText(initTextX, initTextY, '腋温'));
-        break; //腋温
+        break; // 腋温
       case 'ew':
         pTuglie.push(drawCross('ew', { x: initX, y: initY + i * 16 }, 4, 'blue', '耳温'));
         pTuglie.push(showText(initTextX, initTextY, '耳温'));
-        break; //耳温
+        break; // 耳温
       case 'gw':
         pTuglie.push(drawCircle('gw', { x: initX, y: initY + i * 16 }, 4, 'blue', '肛温', false));
         pTuglie.push(showText(initTextX, initTextY, '肛温'));
-        break; //肛温
+        break; // 肛温
       case 'jw':
         pTuglie.push(drawCircle('jw', { x: initX, y: initY + i * 16 }, 4, 'red', '降温', false));
         pTuglie.push(showText(initTextX, initTextY, '降温'));
-        break; //降温
+        break; // 降温
       case 'mb':
         pTuglie.push(drawCircle('mb', { x: initX, y: initY + i * 16 }, 4, 'red', '脉搏', true));
         pTuglie.push(showText(initTextX, initTextY, '脉搏'));
-        break; //脉搏
+        break; // 脉搏
       case 'xl':
         pTuglie.push(drawCircle('xl', { x: initX, y: initY + i * 16 }, 4, 'red', '心率', false));
         pTuglie.push(showText(initTextX, initTextY, '心率'));
-        break; //心率
+        break; // 心率
       default:
         break;
     }
@@ -309,19 +309,19 @@ export function drawEvent(evenArray, curDate) {
   if (evenArray === undefined || evenArray.length === 0) {
     return;
   }
-  let svgW = 15 * 42;
-  let svgH = 15 * 40;
-  let tdW = 15; //获取td的宽度
-  let daysW = 15 * 6; //一天的显示的宽度
-  let chinese = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
-  let height = 15;
-  //按时间分组，显示在同一时间段
-  let timeArray = {};
-  let otherArray = [];
+  const svgW = 15 * 42;
+  const svgH = 15 * 40;
+  const tdW = 15; // 获取td的宽度
+  const daysW = 15 * 6; // 一天的显示的宽度
+  const chinese = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+  const height = 15;
+  // 按时间分组，显示在同一时间段
+  const timeArray = {};
+  const otherArray = [];
   for (let i = 0; i < evenArray.length; i++) {
-    let value = evenArray[i].value;
-    //let dataTime = evenArray[i].dataTime;
-    let dataTime = evenArray[i].date + ' ' + evenArray[i].hour + ':00';
+    const { value } = evenArray[i];
+    // let dataTime = evenArray[i].dataTime;
+    const dataTime = `${evenArray[i].date} ${evenArray[i].hour}:00`;
     if (value !== '开呼吸机' && value !== '关呼吸机' && value !== '不升') {
       if (timeArray[dataTime] === undefined) {
         timeArray[dataTime] = [];
@@ -333,52 +333,48 @@ export function drawEvent(evenArray, curDate) {
       otherArray.push(evenArray[i]);
     }
   }
-  //生成HTML
-  let showArray = [];
-  let xPxArray = [];
-  for (let time in timeArray) {
-    let evens = timeArray[time];
-    let xPx = getDisDays(curDate, time) * daysW - 5.5;
+  // 生成HTML
+  const showArray = [];
+  const xPxArray = [];
+  for (const time in timeArray) {
+    const evens = timeArray[time];
+    const xPx = getDisDays(curDate, time) * daysW - 5.5;
     let show = '';
     let k = 0;
     for (let j = 0; j < evens.length; j++) {
-      let curEven = evens[j];
-      let value = curEven.value;
-      let hour = parseInt(moment(curEven.dataTime).format('HH'));
-      let minute = parseInt(moment(curEven.dataTime).format('ss'));
-      let hourStr = hour.toString();
-      let minuteStr = minute.toString();
+      const curEven = evens[j];
+      const { value } = curEven;
+      const hour = parseInt(moment(curEven.dataTime).format('HH'));
+      const minute = parseInt(moment(curEven.dataTime).format('ss'));
+      const hourStr = hour.toString();
+      const minuteStr = minute.toString();
       let finalValue = '';
-      let isLeave = value === '请假';
+      const isLeave = value === '请假';
       if (minute > 0) {
         finalValue =
           value +
           (isLeave
             ? ''
-            : '||' +
-              numToChinese(hourStr, chinese) +
-              '时' +
-              numToChinese(minuteStr, chinese) +
-              '分');
+            : `||${numToChinese(hourStr, chinese)}时${numToChinese(minuteStr, chinese)}分`);
       } else {
-        finalValue = value + (isLeave ? '' : '||' + numToChinese(hourStr, chinese) + '时整');
+        finalValue = value + (isLeave ? '' : `||${numToChinese(hourStr, chinese)}时整`);
       }
       if (k === 0) {
         show += finalValue;
       } else {
-        show += ' ' + finalValue;
+        show += ` ${finalValue}`;
       }
       k++;
     }
     showArray.push(show);
     xPxArray.push(xPx);
   }
-  //绘制事件
-  let reShowArray = [];
+  // 绘制事件
+  const reShowArray = [];
   for (let i = 0; i < showArray.length; i++) {
-    //绘制path
-    let xPx = xPxArray[i];
-    let textArray = showArray[i].split('');
+    // 绘制path
+    const xPx = xPxArray[i];
+    const textArray = showArray[i].split('');
     reShowArray.push(
       <svg key={i}>
         {textArray.map((v, i) => {
@@ -397,34 +393,34 @@ export function drawEvent(evenArray, curDate) {
       </svg>,
     );
   }
-  //绘制其他事件
+  // 绘制其他事件
   for (let i = 0; i < otherArray.length; i++) {
-    let value = otherArray[i].value;
-    let time = otherArray[i].dataTime;
-    //console.log("绘制其他事件"+curDate)
-    let xPx = getDisDays(curDate, time) * daysW;
+    const { value } = otherArray[i];
+    const time = otherArray[i].dataTime;
+    // console.log("绘制其他事件"+curDate)
+    const xPx = getDisDays(curDate, time) * daysW;
     if (value === '开呼吸机') {
-      //绘制向上的箭头
+      // 绘制向上的箭头
       reShowArray.push(drawArrow({ x: xPx, y: 40 * height }, 3 * height, true, 'blue'));
-      //在箭头旁边绘制呼吸机三字
-      let textArray = ['呼', '吸', '机'];
+      // 在箭头旁边绘制呼吸机三字
+      const textArray = ['呼', '吸', '机'];
       for (let j = 0; j < textArray.length; j++) {
         reShowArray.push(
-          <text key={'j' + j} x={xPx - 14} y={43 * height + j * 15 - 2} fill="blue">
+          <text key={`j${j}`} x={xPx - 14} y={43 * height + j * 15 - 2} fill="blue">
             {textArray[j]}
           </text>,
         );
       }
     } else if (value === '关呼吸机') {
-      //绘制向下的箭头
+      // 绘制向下的箭头
       reShowArray.push(drawArrow({ x: xPx, y: 40 * height }, 3 * height, false, 'blue'));
     } else if (value === '不升') {
-      let valueArray = value.split('');
-      //显示在35度下面
-      let cy = 40 * height;
+      const valueArray = value.split('');
+      // 显示在35度下面
+      const cy = 40 * height;
       for (let k = 0; k < valueArray.length; k++) {
         reShowArray.push(
-          <text key={xPx + 'bs' + k} x={xPx - 5.5} y={cy + height * k + 12} fill="#000">
+          <text key={`${xPx}bs${k}`} x={xPx - 5.5} y={cy + height * k + 12} fill="#000">
             {valueArray[k]}
           </text>,
         );
@@ -439,24 +435,24 @@ export function drawEvent(evenArray, curDate) {
  * @param {Array} hzhxData 疼痛数组
  * */
 export function drawHzhx(hzhxData, curDate) {
-  let svgW = 15 * 42;
-  let svgH = 15 * 40;
-  let tdW = 15; //td的宽度
-  let tdH = 15; //td的高度
-  let daysW = 15 * 6; //一天的显示的宽度
+  const svgW = 15 * 42;
+  const svgH = 15 * 40;
+  const tdW = 15; // td的宽度
+  const tdH = 15; // td的高度
+  const daysW = 15 * 6; // 一天的显示的宽度
 
-  //以疼痛刻度10为基准
-  let cy1 = 15 * 40 - 2;
-  let cy2 = 15 * 42 + 12;
-  let hxArray = [];
+  // 以疼痛刻度10为基准
+  const cy1 = 15 * 40 - 2;
+  const cy2 = 15 * 42 + 12;
+  const hxArray = [];
   for (let i = 0; i < hzhxData.length; i++) {
-    let endDate = hzhxData[i].dataTime;
-    let value = hzhxData[i].value;
-    let title = '辅助呼吸：' + value + '次';
-    let y = i % 2 === 0 ? cy1 : cy2;
+    const endDate = hzhxData[i].dataTime;
+    const { value } = hzhxData[i];
+    const title = `辅助呼吸：${value}次`;
+    const y = i % 2 === 0 ? cy1 : cy2;
     // console.log("辅助呼吸"+curDate)
-    let xPx = getDisDays(curDate, endDate) * daysW;
-    hxArray.push(drawText({ x: xPx, y: y }, 'blue', value, title));
+    const xPx = getDisDays(curDate, endDate) * daysW;
+    hxArray.push(drawText({ x: xPx, y }, 'blue', value, title));
   }
   return hxArray;
 }
@@ -468,16 +464,16 @@ export function drawHzhx(hzhxData, curDate) {
  * @return
  */
 export function parseRePoint(pointData, curDate) {
-  let height = 15;
-  let mb = pointData.mb || []; //脉搏
-  let xl = pointData.xl || []; //心率
-  let wd = pointData.wd || []; //温度
-  let tt = pointData.tt || []; //疼痛
-  let events = pointData.evenDatas || []; //事件
-  let leaveEvents = []; //缓存请假事件
-  //绘制点、折线、脉搏短促
-  let pointArray = [];
-  let wdYSection = drawSvgScale({
+  const height = 15;
+  const mb = pointData.mb?.filter((it) => !!it.value) || []; // 脉搏
+  const xl = pointData.xl || []; // 心率
+  const wd = pointData.wd?.filter((it) => !!it.value) || []; // 温度
+  const tt = pointData.tt || []; // 疼痛
+  const events = pointData.evenDatas || []; // 事件
+  const leaveEvents = []; // 缓存请假事件
+  // 绘制点、折线、脉搏短促
+  const pointArray = [];
+  const wdYSection = drawSvgScale({
     markName: 'wd',
     svgId: 'svgLeft',
     x: '0.5',
@@ -492,7 +488,7 @@ export function parseRePoint(pointData, curDate) {
     isShowdemarcate: true,
     // martchs: '40-35,15-40',
   }).ySection;
-  let mbYSection = drawSvgScale({
+  const mbYSection = drawSvgScale({
     markName: 'mb',
     svgId: 'svgLeft',
     x: '0.5',
@@ -508,7 +504,7 @@ export function parseRePoint(pointData, curDate) {
     isShowdemarcate: true,
     // martchs: '140-40,15-40',
   }).ySection;
-  let ttYSection = drawSvgScale({
+  const ttYSection = drawSvgScale({
     markName: 'tk',
     x: '1',
     stepSide: true,
@@ -522,53 +518,54 @@ export function parseRePoint(pointData, curDate) {
     isShowdemarcate: false,
   }).ySection;
 
-  //统计请假事件
+  // 统计请假事件
   for (let i = 0; i < events.length; i++) {
-    let value = events[i].value;
-    let dataTime = events[i].dataTime;
+    const { value } = events[i];
+    const { dataTime } = events[i];
     if (value === '请假') {
       leaveEvents.push(dataTime);
     }
   }
-  let mbGroup = splitGroup(leaveEvents, mb);
-  let xlGroup = splitGroup(leaveEvents, xl);
-  let wdGroup = splitGroup(leaveEvents, wd);
-  let ttGroup = splitGroup(leaveEvents, tt);
+  const mbGroup = splitGroup(leaveEvents, mb);
+  const xlGroup = splitGroup(leaveEvents, xl);
+  const wdGroup = splitGroup(leaveEvents, wd);
+  console.log('wdGroup: ', wdGroup);
+  const ttGroup = splitGroup(leaveEvents, tt);
 
-  //计算脉搏点
-  let mbPoints = [];
-  let xlPoints = [];
-  let wdPoints = [];
-  let ttPoints = [];
+  // 计算脉搏点
+  const mbPoints = [];
+  const xlPoints = [];
+  const wdPoints = [];
+  const ttPoints = [];
   for (let i = 0; i < mbGroup.length; i++) {
-    let mbArray = mbGroup[i];
-    let xlArray = xlGroup[i];
-    let wdArray = wdGroup[i];
-    let ttArray = ttGroup[i];
+    const mbArray = mbGroup[i];
+    const xlArray = xlGroup[i];
+    const wdArray = wdGroup[i];
+    const ttArray = ttGroup[i];
     mbPoints[i] = [];
     xlPoints[i] = [];
     wdPoints[i] = [];
     ttPoints[i] = [];
     for (let j = 0; j < mbArray.length; j++) {
-      let xy = getXY(mbArray[j], curDate, 40, 180, mbYSection);
+      const xy = getXY(mbArray[j], curDate, 40, 180, mbYSection);
       mbPoints[i].push(xy);
     }
     for (let j = 0; j < xlArray.length; j++) {
-      let xy = getXY(xlArray[j], curDate, 40, 180, mbYSection);
+      const xy = getXY(xlArray[j], curDate, 40, 180, mbYSection);
       xlPoints[i].push(xy);
     }
     for (let j = 0; j < wdArray.length; j++) {
-      let xy = getXY(wdArray[j], curDate, 35, 42, wdYSection);
+      const xy = getXY(wdArray[j], curDate, 35, 42, wdYSection);
       wdPoints[i].push(xy);
     }
     for (let j = 0; j < ttArray.length; j++) {
-      let xy = getXY(ttArray[j], curDate, 1, 10, ttYSection);
+      const xy = getXY(ttArray[j], curDate, 1, 10, ttYSection);
       ttPoints[i].push(xy);
     }
   }
-  //获取 温度等于42°C时的y轴值，如果温度大于42°,即y值小于wdMax，则绘制向上的箭头
-  let wdMax = wdYSection[1];
-  //绘制物理降温
+  // 获取 温度等于42°C时的y轴值，如果温度大于42°,即y值小于wdMax，则绘制向上的箭头
+  const wdMax = wdYSection[1];
+  // 绘制物理降温
   // for (let i = 0; i < wdPoints.length; i++) {
   //   let wdPoint = wdPoints[i];
   //   for (let j = 0; j < wdPoint.length; j++) {
@@ -610,79 +607,79 @@ export function parseRePoint(pointData, curDate) {
   //   }
   // }
   // 绘制折线图
-  //判断点是否重合
-  let coor = [];
+  // 判断点是否重合
+  const coor = [];
   for (let i = 0; i < mbPoints.length; i++) {
-    let xlPoint = xlPoints[i];
-    let mbPoint = mbPoints[i];
-    let wdPoint = wdPoints[i];
-    let ttPoint = ttPoints[i];
-    //定义折线path
+    const xlPoint = xlPoints[i];
+    const mbPoint = mbPoints[i];
+    const wdPoint = wdPoints[i];
+    const ttPoint = ttPoints[i];
+    // 定义折线path
     let xlPath = '';
     let mbPath = '';
     let wdPath = '';
     let ttPath = '';
     coor[i] = {};
     for (let j = 0; j < xlPoint.length; j++) {
-      let x = xlPoint[j].x;
-      let y = xlPoint[j].y;
+      const { x } = xlPoint[j];
+      const { y } = xlPoint[j];
       coor[i][x] = coor[i][x] || {};
-      coor[i][x]['xl'] = xlPoint[j];
+      coor[i][x].xl = xlPoint[j];
       if (xlPath === '') {
-        xlPath += 'M' + x + ',' + y;
+        xlPath += `M${x},${y}`;
       } else {
-        xlPath += 'L' + x + ',' + y;
+        xlPath += `L${x},${y}`;
       }
     }
     for (let j = 0; j < mbPoint.length; j++) {
-      let x = mbPoint[j].x;
-      let y = mbPoint[j].y;
+      const { x } = mbPoint[j];
+      const { y } = mbPoint[j];
       coor[i][x] = coor[i][x] || {};
-      coor[i][x]['mb'] = mbPoint[j];
+      coor[i][x].mb = mbPoint[j];
       if (mbPath === '') {
-        mbPath += 'M' + x + ',' + y;
+        mbPath += `M${x},${y}`;
       } else {
-        mbPath += 'L' + x + ',' + y;
+        mbPath += `L${x},${y}`;
       }
     }
     for (let j = 0; j < wdPoint.length; j++) {
-      let x = wdPoint[j].x;
-      let y = wdPoint[j].y;
+      const { x } = wdPoint[j];
+      const { y } = wdPoint[j];
       coor[i][x] = coor[i][x] || {};
-      coor[i][x]['wd'] = wdPoint[j];
+      coor[i][x].wd = wdPoint[j];
       if (wdPath === '') {
-        wdPath += 'M' + x + ',' + y;
+        wdPath += `M${x},${y}`;
       } else {
-        wdPath += 'L' + x + ',' + y;
+        wdPath += `L${x},${y}`;
       }
     }
     for (let j = 0; j < ttPoint.length; j++) {
-      let x = ttPoint[j].x;
-      let y = ttPoint[j].y;
+      const { x } = ttPoint[j];
+      const { y } = ttPoint[j];
       coor[i][x] = coor[i][x] || {};
-      coor[i][x]['tt'] = ttPoint[j];
+      coor[i][x].tt = ttPoint[j];
       if (ttPath === '') {
-        ttPath += 'M' + x + ',' + y;
+        ttPath += `M${x},${y}`;
       } else {
-        ttPath += 'L' + x + ',' + y;
+        ttPath += `L${x},${y}`;
       }
     }
     pointArray.push(
-      <path key={'pathXL' + i} stroke="red" strokeWidth="2" fill="none" d={xlPath} />,
+      <path key={`pathXL${i}`} stroke="red" strokeWidth="2" fill="none" d={xlPath} />,
     );
     pointArray.push(
-      <path key={'pathMB' + i} stroke="red" strokeWidth="2" fill="none" d={mbPath} />,
+      <path key={`pathMB${i}`} stroke="red" strokeWidth="2" fill="none" d={mbPath} />,
     );
     pointArray.push(
-      <path key={'pathWD' + i} stroke="blue" strokeWidth="2" fill="none" d={wdPath} />,
+      <path key={`pathWD${i}`} stroke="blue" strokeWidth="2" fill="none" d={wdPath} />,
     );
     pointArray.push(
-      <path key={'pathTT' + i} stroke="blue" strokeWidth="2" fill="none" d={ttPath} />,
+      <path key={`pathTT${i}`} stroke="blue" strokeWidth="2" fill="none" d={ttPath} />,
     );
   }
   for (let i = 0; i < coor.length; i++) {
-    let json = coor[i];
-    for (let j in json) {
+    const json = coor[i];
+    for (const j in json) {
       if (!json[j].mb) {
         json[j].mb = {};
       }
@@ -695,74 +692,46 @@ export function parseRePoint(pointData, curDate) {
       if (!json[j].tt) {
         json[j].tt = {};
       }
-      //console.log(json[j].wd)
-      let mbY = json[j].mb.y;
-      let xlY = json[j].xl.y;
-      let wdY = json[j].wd.y;
-      let ttY = json[j].tt.y;
-      //console.log("mb:"+mbY+"xl:"+xlY+"wd:"+wdY);
-      let yw = json[j].wd.type === 'yw'; //腋温
-      let ew = json[j].wd.type === 'ew'; //腋温
-      let kw = json[j].wd.type === 'kw'; //口温
-      let gw = json[j].wd.type === 'gw'; //肛温
-      //判断是否重合
-      let ismbxlwd = mbY && xlY; //脉搏+心率+温度点都存在
-      let ismbxl = mbY && xlY; //脉搏+心率点都存在
-      let ismbwd = mbY && wdY; //脉搏+温度点都存在
-      let isxlwd = xlY && wdY; //心率+温度点都存在
-      let istt = ttY;
-      let iswd = wdY;
+      // console.log(json[j].wd)
+      const mbY = json[j].mb.y;
+      const xlY = json[j].xl.y;
+      const wdY = json[j].wd.y;
+      const ttY = json[j].tt.y;
+      // console.log("mb:"+mbY+"xl:"+xlY+"wd:"+wdY);
+      const yw = json[j].wd.type === 'yw'; // 腋温
+      const ew = json[j].wd.type === 'ew'; // 腋温
+      const kw = json[j].wd.type === 'kw'; // 口温
+      const gw = json[j].wd.type === 'gw'; // 肛温
+      // 判断是否重合
+      const ismbxlwd = mbY && xlY; // 脉搏+心率+温度点都存在
+      const ismbxl = mbY && xlY; // 脉搏+心率点都存在
+      const ismbwd = mbY && wdY; // 脉搏+温度点都存在
+      const isxlwd = xlY && wdY; // 心率+温度点都存在
+      const istt = ttY;
+      const iswd = wdY;
       if (ismbxlwd && mbY === xlY && xlY === wdY && gw) {
-        //脉搏+心率+肛温[红圆+红圈+蓝圈]：两个圈在外围（红圈在最外层表示心率，篮圈在里层表示肛温）、一个圆在中间（红圆表示脉搏）
-        let title =
-          '脉搏：' +
-          json[j].xl.value +
-          '次，心率：' +
-          json[j].xl.value +
-          '次,肛温：' +
-          json[j].wd.value +
-          '°C';
+        // 脉搏+心率+肛温[红圆+红圈+蓝圈]：两个圈在外围（红圈在最外层表示心率，篮圈在里层表示肛温）、一个圆在中间（红圆表示脉搏）
+        const title = `脉搏：${json[j].xl.value}次，心率：${json[j].xl.value}次,肛温：${json[j].wd.value}°C`;
         pointArray.push(drawCircle('gw', { x: j, y: xlY }, 7, 'blue', title, false));
         pointArray.push(drawCircle('mb', { x: j, y: xlY }, 3, 'red', title, true));
       } else if (ismbxlwd && mbY === xlY && xlY === wdY && yw) {
-        //脉搏+心率+腋温[红圆+红圈+蓝叉]：红圈在外围（表示心率）、红圆在中间（表示脉搏）、蓝叉在中间红圆之上（表示腋温）
-        let title =
-          '脉搏：' +
-          json[j].xl.value +
-          '次，心率：' +
-          json[j].xl.value +
-          '次,腋温：' +
-          json[j].wd.value +
-          '°C';
+        // 脉搏+心率+腋温[红圆+红圈+蓝叉]：红圈在外围（表示心率）、红圆在中间（表示脉搏）、蓝叉在中间红圆之上（表示腋温）
+        const title = `脉搏：${json[j].xl.value}次，心率：${json[j].xl.value}次,腋温：${json[j].wd.value}°C`;
         pointArray.push(drawCircle('mb', { x: j, y: xlY }, 7, 'red', title, true));
         pointArray.push(drawCross('yw', { x: j, y: xlY }, 3, 'blue', title));
       } else if (ismbxlwd && mbY === xlY && xlY === wdY && ew) {
-        //脉搏+心率+腋温[红圆+红圈+蓝叉]：红圈在外围（表示心率）、红圆在中间（表示脉搏）、蓝叉在中间红圆之上（表示腋温）
-        let title =
-          '脉搏：' +
-          json[j].xl.value +
-          '次，心率：' +
-          json[j].xl.value +
-          '次,腋温：' +
-          json[j].wd.value +
-          '°C';
+        // 脉搏+心率+腋温[红圆+红圈+蓝叉]：红圈在外围（表示心率）、红圆在中间（表示脉搏）、蓝叉在中间红圆之上（表示腋温）
+        const title = `脉搏：${json[j].xl.value}次，心率：${json[j].xl.value}次,腋温：${json[j].wd.value}°C`;
         pointArray.push(drawCircle('mb', { x: j, y: xlY }, 7, 'red', title, true));
         pointArray.push(drawCross('ew', { x: j, y: xlY }, 3, 'blue', title));
       } else if (ismbxlwd && mbY === xlY && xlY === wdY && kw) {
-        //脉搏+心率+口温[红圆+红圈+蓝圆]：红圈在外围（表示心率）、红圆在中间（表示脉搏）、蓝圆在中间红圆之上（表示口温）
-        let title =
-          '脉搏：' +
-          json[j].xl.value +
-          '次，心率：' +
-          json[j].xl.value +
-          '次,口温：' +
-          json[j].wd.value +
-          '°C';
+        // 脉搏+心率+口温[红圆+红圈+蓝圆]：红圈在外围（表示心率）、红圆在中间（表示脉搏）、蓝圆在中间红圆之上（表示口温）
+        const title = `脉搏：${json[j].xl.value}次，心率：${json[j].xl.value}次,口温：${json[j].wd.value}°C`;
         pointArray.push(drawCircle('mb', { x: j, y: xlY }, 7, 'red', title, true));
         pointArray.push(drawCircle('kw', { x: j, y: xlY }, 3, 'blue', title, true));
       } else if (isxlwd && xlY === wdY && gw) {
-        //心率+肛温[红圈+蓝圈]
-        let title = '心率：' + json[j].xl.value + '次，肛温：' + json[j].wd.value + '°C';
+        // 心率+肛温[红圈+蓝圈]
+        const title = `心率：${json[j].xl.value}次，肛温：${json[j].wd.value}°C`;
         if (xlY && wdY) {
           pointArray.push(drawCircle('gw', { x: j, y: xlY }, 7, 'red', title, false));
           pointArray.push(drawCircle('mb', { x: j, y: xlY }, 3, 'blue', title, false));
@@ -777,13 +746,13 @@ export function parseRePoint(pointData, curDate) {
               },
               4,
               'red',
-              '脉搏：' + json[j].mb.value + '次',
+              `脉搏：${json[j].mb.value}次`,
               true,
             ),
-          ); //脉搏
+          ); // 脉搏
       } else if (isxlwd && xlY === wdY && yw) {
-        //心率+腋温[红圈+蓝叉]]
-        let title = '心率：' + json[j].xl.value + '次，腋温：' + json[j].wd.value + '°C';
+        // 心率+腋温[红圈+蓝叉]]
+        const title = `心率：${json[j].xl.value}次，腋温：${json[j].wd.value}°C`;
         if (xlY && wdY) {
           pointArray.push(drawCircle('mb', { x: j, y: xlY }, 7, 'red', title, false));
           pointArray.push(drawCross('yw', { x: j, y: xlY }, 4, 'blue', title));
@@ -798,13 +767,13 @@ export function parseRePoint(pointData, curDate) {
               },
               4,
               'red',
-              '脉搏：' + json[j].mb.value + '次',
+              `脉搏：${json[j].mb.value}次`,
               true,
             ),
-          ); //脉搏
+          ); // 脉搏
       } else if (isxlwd && xlY === wdY && ew) {
-        //心率+腋温[红圈+蓝叉]]
-        let title = '心率：' + json[j].xl.value + '次，腋温：' + json[j].wd.value + '°C';
+        // 心率+腋温[红圈+蓝叉]]
+        const title = `心率：${json[j].xl.value}次，腋温：${json[j].wd.value}°C`;
         if (xlY && wdY) {
           pointArray.push(drawCircle('mb', { x: j, y: xlY }, 7, 'red', title, false));
           pointArray.push(drawCross('ew', { x: j, y: xlY }, 4, 'blue', title));
@@ -819,13 +788,13 @@ export function parseRePoint(pointData, curDate) {
               },
               4,
               'red',
-              '脉搏：' + json[j].mb.value + '次',
+              `脉搏：${json[j].mb.value}次`,
               true,
             ),
-          ); //脉搏
+          ); // 脉搏
       } else if (isxlwd && xlY === wdY && kw) {
-        //心率+口温[红圈+蓝圆]
-        let title = '心率：' + json[j].xl.value + '次，口温：' + json[j].wd.value + '°C';
+        // 心率+口温[红圈+蓝圆]
+        const title = `心率：${json[j].xl.value}次，口温：${json[j].wd.value}°C`;
         if (xlY && wdY) {
           pointArray.push(drawCircle('xl', { x: j, y: xlY }, 7, 'red', title, false));
           pointArray.push(drawCircle('kw', { x: j, y: xlY }, 3, 'blue', title, true));
@@ -840,13 +809,13 @@ export function parseRePoint(pointData, curDate) {
               },
               4,
               'red',
-              '脉搏：' + json[j].mb.value + '次',
+              `脉搏：${json[j].mb.value}次`,
               true,
             ),
-          ); //脉搏
+          ); // 脉搏
       } else if (ismbwd && mbY === wdY && gw) {
-        //脉搏+肛温[红圆+蓝圈]
-        let title = '脉搏：' + json[j].mb.value + '次，肛温：' + json[j].wd.value + '°C';
+        // 脉搏+肛温[红圆+蓝圈]
+        const title = `脉搏：${json[j].mb.value}次，肛温：${json[j].wd.value}°C`;
         if (mbY && wdY) {
           pointArray.push(drawCircle('gw', { x: j, y: mbY }, 7, 'red', title, false));
           pointArray.push(drawCircle('mb', { x: j, y: mbY }, 3, 'blue', title, false));
@@ -861,13 +830,13 @@ export function parseRePoint(pointData, curDate) {
               },
               4,
               'red',
-              '心率：' + json[j].xl.value + '次',
+              `心率：${json[j].xl.value}次`,
               false,
             ),
-          ); //心率
+          ); // 心率
       } else if (ismbwd && mbY === wdY && yw) {
-        //脉搏+腋温[红圆+蓝叉]
-        let title = '脉搏：' + json[j].mb.value + '次，腋温：' + json[j].wd.value + '°C';
+        // 脉搏+腋温[红圆+蓝叉]
+        const title = `脉搏：${json[j].mb.value}次，腋温：${json[j].wd.value}°C`;
         if (mbY && wdY) {
           pointArray.push(drawCircle('mb', { x: j, y: mbY }, 7, 'red', title, false));
           pointArray.push(drawCross('yw', { x: j, y: mbY }, 4, 'blue', title));
@@ -882,13 +851,13 @@ export function parseRePoint(pointData, curDate) {
               },
               4,
               'red',
-              '心率：' + json[j].xl.value + '次',
+              `心率：${json[j].xl.value}次`,
               false,
             ),
-          ); //心率
+          ); // 心率
       } else if (ismbwd && mbY === wdY && ew) {
-        //脉搏+腋温[红圆+蓝叉]
-        let title = '脉搏：' + json[j].mb.value + '次，腋温：' + json[j].wd.value + '°C';
+        // 脉搏+腋温[红圆+蓝叉]
+        const title = `脉搏：${json[j].mb.value}次，腋温：${json[j].wd.value}°C`;
         if (mbY && wdY) {
           pointArray.push(drawCircle('mb', { x: j, y: mbY }, 7, 'red', title, false));
           pointArray.push(drawCross('ew', { x: j, y: mbY }, 4, 'blue', title));
@@ -903,13 +872,13 @@ export function parseRePoint(pointData, curDate) {
               },
               4,
               'red',
-              '心率：' + json[j].xl.value + '次',
+              `心率：${json[j].xl.value}次`,
               false,
             ),
-          ); //心率
+          ); // 心率
       } else if (ismbwd && mbY === wdY && kw) {
-        //脉搏+口温[红圆+蓝圆]
-        let title = '脉搏：' + json[j].mb.value + '次，口温：' + json[j].wd.value + '°C';
+        // 脉搏+口温[红圆+蓝圆]
+        const title = `脉搏：${json[j].mb.value}次，口温：${json[j].wd.value}°C`;
         if (mbY && wdY) {
           pointArray.push(drawCircle('mb', { x: j, y: mbY }, 7, 'red', title, false));
           pointArray.push(drawCircle('kw', { x: j, y: mbY }, 3, 'blue', title, true));
@@ -924,17 +893,17 @@ export function parseRePoint(pointData, curDate) {
               },
               4,
               'red',
-              '心率：' + json[j].xl.value + '次',
+              `心率：${json[j].xl.value}次`,
               false,
             ),
-          ); //心率
+          ); // 心率
       } else if (ismbxl && mbY === xlY) {
-        //脉搏+心率[红圆]
-        let title = '脉搏：' + json[j].mb.value + '次，心率' + json[j].mb.value + '次';
+        // 脉搏+心率[红圆]
+        const title = `脉搏：${json[j].mb.value}次，心率${json[j].mb.value}次`;
         mbY && xlY && pointArray.push(drawCircle('mb', { x: j, y: mbY }, 4, 'red', title, true));
         drawWd(json[j], j, wdY);
       } else {
-        //正常绘制
+        // 正常绘制
         xlY &&
           pointArray.push(
             drawCircle(
@@ -945,10 +914,10 @@ export function parseRePoint(pointData, curDate) {
               },
               4,
               'red',
-              '心率：' + json[j].xl.value + '次',
+              `心率：${json[j].xl.value}次`,
               false,
             ),
-          ); //心率
+          ); // 心率
         mbY &&
           pointArray.push(
             drawCircle(
@@ -959,107 +928,105 @@ export function parseRePoint(pointData, curDate) {
               },
               4,
               'red',
-              '脉搏：' + json[j].mb.value + '次',
+              `脉搏：${json[j].mb.value}次`,
               true,
             ),
-          ); //脉搏
+          ); // 脉搏
         drawWd(json[j], j, wdY);
       }
 
-      //绘制温度
+      // 绘制温度
       function drawWd(point, j, wdY) {
         if (wdY && wdY < wdMax) {
-          //绘制向上的箭头
+          // 绘制向上的箭头
           pointArray.push(drawArrow({ x: j, y: wdMax }, 2 * height, true, 'blue'));
-        } else {
-          if (point.wd.type === 'yw') {
-            wdY &&
-              pointArray.push(
-                drawCross(
-                  'yw',
-                  {
-                    x: j,
-                    y: wdY,
-                  },
-                  4,
-                  'blue',
-                  '腋温：' + point.wd.value + '°C',
-                ),
-              ); //温度
-          } else if (point.wd.type === 'ew') {
-            wdY &&
-              pointArray.push(
-                drawCross(
-                  'ew',
-                  {
-                    x: j,
-                    y: wdY,
-                  },
-                  4,
-                  'blue',
-                  '耳温：' + point.wd.value + '°C',
-                ),
-              ); //耳度
-          } else if (point.wd.type === 'gw') {
-            wdY &&
-              pointArray.push(
-                drawCircle(
-                  'gw',
-                  {
-                    x: j,
-                    y: wdY,
-                  },
-                  4,
-                  'blue',
-                  '肛温：' + point.wd.value + '°C',
-                  false,
-                ),
-              );
-          } else if (point.wd.type === 'kw') {
-            wdY &&
-              pointArray.push(
-                drawCircle(
-                  'yw',
-                  {
-                    x: j,
-                    y: wdY,
-                  },
-                  4,
-                  'blue',
-                  '口温：' + point.wd.value + '°C',
-                  true,
-                ),
-              );
-          }
+        } else if (point.wd.type === 'yw') {
+          wdY &&
+            pointArray.push(
+              drawCross(
+                'yw',
+                {
+                  x: j,
+                  y: wdY,
+                },
+                4,
+                'blue',
+                `腋温：${point.wd.value}°C`,
+              ),
+            ); // 温度
+        } else if (point.wd.type === 'ew') {
+          wdY &&
+            pointArray.push(
+              drawCross(
+                'ew',
+                {
+                  x: j,
+                  y: wdY,
+                },
+                4,
+                'blue',
+                `耳温：${point.wd.value}°C`,
+              ),
+            ); // 耳度
+        } else if (point.wd.type === 'gw') {
+          wdY &&
+            pointArray.push(
+              drawCircle(
+                'gw',
+                {
+                  x: j,
+                  y: wdY,
+                },
+                4,
+                'blue',
+                `肛温：${point.wd.value}°C`,
+                false,
+              ),
+            );
+        } else if (point.wd.type === 'kw') {
+          wdY &&
+            pointArray.push(
+              drawCircle(
+                'yw',
+                {
+                  x: j,
+                  y: wdY,
+                },
+                4,
+                'blue',
+                `口温：${point.wd.value}°C`,
+                true,
+              ),
+            );
         }
       }
 
-      //绘制疼痛
-      let title = '疼痛：' + json[j].tt.value;
+      // 绘制疼痛
+      const title = `疼痛：${json[j].tt.value}`;
       istt && pointArray.push(drawSquare('tt', { x: j, y: ttY }, 4, 'blue', title, true));
     }
   }
 
   for (let i = 0; i < mbPoints.length; i++) {
     for (let j = 0; j < mbPoints[i].length; j++) {
-      let x = mbPoints[i][j].x;
-      let y = mbPoints[i][j].y;
-      //pointArray.push(drawCircle("mb",{"x":x,"y":y},4,"red","脉搏",true));
+      const { x } = mbPoints[i][j];
+      const { y } = mbPoints[i][j];
+      // pointArray.push(drawCircle("mb",{"x":x,"y":y},4,"red","脉搏",true));
     }
     for (let j = 0; j < xlPoints[i].length; j++) {
-      let x = xlPoints[i][j].x;
-      let y = xlPoints[i][j].y;
-      //pointArray.push(drawCircle("xl",{"x":x,"y":y},4,"red","心率",false));
+      const { x } = xlPoints[i][j];
+      const { y } = xlPoints[i][j];
+      // pointArray.push(drawCircle("xl",{"x":x,"y":y},4,"red","心率",false));
     }
   }
   // 根据心率和脉搏点，绘制多边形（脉搏短促）
-  //统计出现的多边形
-  let polygonArray = getPolygon(mbPoints, xlPoints);
-  //console.log("多边形")
-  //console.log(polygonArray)
-  //绘制多边形
+  // 统计出现的多边形
+  const polygonArray = getPolygon(mbPoints, xlPoints);
+  // console.log("多边形")
+  // console.log(polygonArray)
+  // 绘制多边形
   for (let i = 0; i < polygonArray.length; i++) {
-    let polygon = polygonArray[i];
+    const polygon = polygonArray[i];
     pointArray.push(drawBlueLine(polygon));
   }
   return pointArray;
@@ -1072,42 +1039,42 @@ export function parseRePoint(pointData, curDate) {
  * 脉搏短绌即在同一单位时间内，脉率少于心率
  */
 function getPolygon(mbPoints, xlPoints) {
-  let polygonArray = [];
-  let intersectionArray = []; //缓存交点数组
+  const polygonArray = [];
+  const intersectionArray = []; // 缓存交点数组
   for (let i = 0; i < mbPoints.length; i++) {
     intersectionArray[i] = [];
-    let mbArray = mbPoints[i];
-    let xlArray = xlPoints[i];
-    //如果不存在脉搏大于心率的点则不绘制多边形
+    const mbArray = mbPoints[i];
+    const xlArray = xlPoints[i];
+    // 如果不存在脉搏大于心率的点则不绘制多边形
     if (mbArray.length === 0 || xlArray.length === 0) {
       return polygonArray;
     }
     for (let j = 0; j < mbArray.length; j++) {
-      let curMbX = getParseFloat(mbArray[j].x, 4);
-      let curMbY = getParseFloat(mbArray[j].y, 4);
+      const curMbX = getParseFloat(mbArray[j].x, 4);
+      const curMbY = getParseFloat(mbArray[j].y, 4);
       if (mbArray[j + 1] !== undefined) {
-        let nextMbX = getParseFloat(mbArray[j + 1].x, 4);
-        let nextMbY = getParseFloat(mbArray[j + 1].y, 4);
-        let line1 = lineX({ x: curMbX, y: curMbY }, { x: nextMbX, y: nextMbY });
+        const nextMbX = getParseFloat(mbArray[j + 1].x, 4);
+        const nextMbY = getParseFloat(mbArray[j + 1].y, 4);
+        const line1 = lineX({ x: curMbX, y: curMbY }, { x: nextMbX, y: nextMbY });
         for (let h = 0; h < xlArray.length; h++) {
-          let curXlX = getParseFloat(xlArray[h].x, 4);
-          let curXlY = getParseFloat(xlArray[h].y, 4);
+          const curXlX = getParseFloat(xlArray[h].x, 4);
+          const curXlY = getParseFloat(xlArray[h].y, 4);
           if (xlArray[h + 1] !== undefined) {
-            let nextXlX = getParseFloat(xlArray[h + 1].x, 4);
-            let nextXlY = getParseFloat(xlArray[h + 1].y, 4);
-            let line2 = lineX({ x: curXlX, y: curXlY }, { x: nextXlX, y: nextXlY });
-            let interX = segmentsIntr(line1, line2).x;
-            let interY = segmentsIntr(line1, line2).y;
-            //交点在心率线段上
+            const nextXlX = getParseFloat(xlArray[h + 1].x, 4);
+            const nextXlY = getParseFloat(xlArray[h + 1].y, 4);
+            const line2 = lineX({ x: curXlX, y: curXlY }, { x: nextXlX, y: nextXlY });
+            const interX = segmentsIntr(line1, line2).x;
+            const interY = segmentsIntr(line1, line2).y;
+            // 交点在心率线段上
             if (h === xlArray.length - 2 && j === xlArray.length - 2) {
-              //console.log(segmentsIntr(line1,line2))
+              // console.log(segmentsIntr(line1,line2))
             }
-            let xlBool =
+            const xlBool =
               interX >= curXlX &&
               interX <= nextXlX &&
               ((interY >= curXlY && interY <= nextXlY) || (interY <= curXlY && interY >= nextXlY));
-            //交点在脉搏线段上
-            let mbBool =
+            // 交点在脉搏线段上
+            const mbBool =
               interX >= curMbX &&
               interX <= nextMbX &&
               ((interY >= curMbY && interY <= nextMbY) || (interY <= curMbY && interY >= nextMbY));
@@ -1119,29 +1086,29 @@ function getPolygon(mbPoints, xlPoints) {
       }
     }
   }
-  //根据交点计算多边形
+  // 根据交点计算多边形
   for (let i = 0; i < intersectionArray.length; i++) {
-    let interArray = intersectionArray[i];
-    let xlPoint = xlPoints[i];
-    let mbPoint = mbPoints[i];
+    const interArray = intersectionArray[i];
+    const xlPoint = xlPoints[i];
+    const mbPoint = mbPoints[i];
     if (interArray.length === 0) {
-      //不存在交点
-      //判断是否所有脉搏小于心率的点,按x坐标分组
-      let coor = {};
+      // 不存在交点
+      // 判断是否所有脉搏小于心率的点,按x坐标分组
+      const coor = {};
       for (let j = 0; j < xlPoint.length; j++) {
-        let x = xlPoint[j].x;
-        let y = xlPoint[j].y;
+        const { x } = xlPoint[j];
+        const { y } = xlPoint[j];
         coor[x] = coor[x] || [];
-        coor[x]['xl'] = y;
+        coor[x].xl = y;
       }
       for (let j = 0; j < mbPoint.length; j++) {
-        let x = mbPoint[j].x;
-        let y = mbPoint[j].y;
+        const { x } = mbPoint[j];
+        const { y } = mbPoint[j];
         coor[x] = coor[x] || [];
-        coor[x]['mb'] = y;
+        coor[x].mb = y;
       }
       let isMore = true;
-      for (let j in coor) {
+      for (const j in coor) {
         if (coor[j].xl && coor[j].mb) {
           if (coor[j].xl > coor[j].mb) {
             isMore = false;
@@ -1150,9 +1117,9 @@ function getPolygon(mbPoints, xlPoints) {
         }
       }
       if (isMore) {
-        //存在脉搏短促
-        let newXlpoint = xlPoint;
-        let newMbpoint = mbPoint;
+        // 存在脉搏短促
+        const newXlpoint = xlPoint;
+        const newMbpoint = mbPoint;
         let newPoint;
         newXlpoint.reverse();
         newPoint = newMbpoint.concat(newXlpoint);
@@ -1160,22 +1127,22 @@ function getPolygon(mbPoints, xlPoints) {
         polygonArray.push(newPoint);
       }
     }
-    //存在交点，绘制交点前的多边形
-    //console.log(intersectionArray)
+    // 存在交点，绘制交点前的多边形
+    // console.log(intersectionArray)
     if (interArray.length > 0 && mbPoint.length > 0) {
-      //获取第一个交点前脉搏、心率点
+      // 获取第一个交点前脉搏、心率点
       let mbArray = [];
-      let xlArray = [];
-      let firstInter = interArray[0];
-      let firstInterX = interArray[0].x;
+      const xlArray = [];
+      const firstInter = interArray[0];
+      const firstInterX = interArray[0].x;
       for (let k = 0; k < mbPoint.length; k++) {
-        let moreX = mbPoint[k].x;
+        const moreX = mbPoint[k].x;
         if (moreX <= firstInterX) {
           mbArray.push(mbPoint[k]);
         }
       }
       for (let k = 0; k < xlPoint.length; k++) {
-        let moreX = xlPoint[k].x;
+        const moreX = xlPoint[k].x;
         if (moreX <= firstInterX) {
           xlArray.push(xlPoint[k]);
         }
@@ -1188,27 +1155,27 @@ function getPolygon(mbPoints, xlPoints) {
         polygonArray.push(mbArray);
       }
     }
-    //存在多个交点
+    // 存在多个交点
     for (let f = 0; f < interArray.length; f++) {
       if (interArray[f] && interArray[f + 1] !== undefined) {
-        let enterX = interArray[f].x;
-        let enterNextX = interArray[f + 1].x;
-        let morePointArray = []; //保存相邻的两个 交点（心率）
-        let lessPointArray = []; //保存相邻的两个 交点（脉搏）
+        const enterX = interArray[f].x;
+        const enterNextX = interArray[f + 1].x;
+        let morePointArray = []; // 保存相邻的两个 交点（心率）
+        const lessPointArray = []; // 保存相邻的两个 交点（脉搏）
         for (let j = 0; j < mbPoint.length; j++) {
-          let moreX = mbPoint[j].x;
+          const moreX = mbPoint[j].x;
           if (moreX >= enterX && moreX <= enterNextX) {
             morePointArray.push(mbPoint[j]);
           }
         }
         for (let j = 0; j < xlPoint.length; j++) {
-          let moreX = xlPoint[j].x;
+          const moreX = xlPoint[j].x;
           if (moreX >= enterX && moreX <= enterNextX) {
             lessPointArray.push(xlPoint[j]);
           }
         }
         if (morePointArray.length > 0) {
-          //存在心率大于脉搏的点
+          // 存在心率大于脉搏的点
           morePointArray.unshift(interArray[f]);
           lessPointArray.reverse();
           morePointArray.push(interArray[f + 1]);
@@ -1217,24 +1184,24 @@ function getPolygon(mbPoints, xlPoints) {
           polygonArray.push(morePointArray);
         }
       } else if (interArray[f] && interArray[f + 1] === undefined) {
-        //获取最后的节点
-        let morePointArray = []; //保存相邻的两个 交点（心率）
-        let lessPointArray = []; //保存相邻的两个 交点（脉搏）
-        let enterX = interArray[f].x;
+        // 获取最后的节点
+        let morePointArray = []; // 保存相邻的两个 交点（心率）
+        const lessPointArray = []; // 保存相邻的两个 交点（脉搏）
+        const enterX = interArray[f].x;
         for (let j = 0; j < mbPoint.length; j++) {
-          let moreX = mbPoint[j].x;
+          const moreX = mbPoint[j].x;
           if (moreX > enterX) {
             morePointArray.push(mbPoint[j]);
           }
         }
         for (let j = 0; j < xlPoint.length; j++) {
-          let moreX = xlPoint[j].x;
+          const moreX = xlPoint[j].x;
           if (moreX > enterX) {
             lessPointArray.push(xlPoint[j]);
           }
         }
         if (morePointArray.length > 0 && lessPointArray.length > 0) {
-          //存在心率大于脉搏的点
+          // 存在心率大于脉搏的点
           morePointArray.unshift(interArray[f]);
           lessPointArray.reverse();
           morePointArray = morePointArray.concat(lessPointArray);
@@ -1253,14 +1220,14 @@ function getPolygon(mbPoints, xlPoints) {
  * @param {Array} point 录入信息
  */
 function splitGroup(leaveEvent, point) {
-  //没有请假事件
+  // 没有请假事件
   if (leaveEvent.length === 0) {
     return [point];
   }
-  //按请假事件分组 根据请假事件的数量，判断分组数量
-  let groupArray = [];
-  let groupRule = []; //缓存分组规则
-  let groupNum = leaveEvent.length + 1; //分组数量
+  // 按请假事件分组 根据请假事件的数量，判断分组数量
+  const groupArray = [];
+  const groupRule = []; // 缓存分组规则
+  const groupNum = leaveEvent.length + 1; // 分组数量
   for (let i = 0; i < groupNum; i++) {
     // 计算分组规则
     groupRule[i] = {};
@@ -1273,13 +1240,13 @@ function splitGroup(leaveEvent, point) {
       groupRule[i].max = leaveEvent[i];
     }
   }
-  //将录入信息根据请假事件分组
+  // 将录入信息根据请假事件分组
   for (let i = 0; i < groupRule.length; i++) {
-    let min = groupRule[i].min;
-    let max = groupRule[i].max;
-    groupArray[i] = []; //初始化
+    const { min } = groupRule[i];
+    const { max } = groupRule[i];
+    groupArray[i] = []; // 初始化
     for (let j = 0; j < point.length; j++) {
-      let time = point[j].dataTime;
+      const time = point[j].dataTime;
       if (judgeIn(time, min, max)) {
         groupArray[i].push(point[j]);
       }
@@ -1300,7 +1267,7 @@ function judgeIn(curTime, minTime, maxTime) {
   minTime = minTime ? new Date(minTime.replace(/-/g, '/')) : 0;
   maxTime = maxTime ? new Date(maxTime.replace(/-/g, '/')) : 0;
   if (!minTime && maxTime) {
-    //最小时间未定义，则返回是否大于最大值
+    // 最小时间未定义，则返回是否大于最大值
     if (curTime > maxTime) {
       return true;
     }
@@ -1327,24 +1294,24 @@ function judgeIn(curTime, minTime, maxTime) {
  * @param {Boolean} type ture 返回phVlaue(物理降温)对应的xy,false value值 返回对应的xy,默认为true
  */
 function getXY(point, beginDate, originY, maxY, ySection, type) {
-  //let curDate = point.dataTime;
-  let curDate = point.date + ' ' + point.hour + ':00';
-  let value = type ? parseFloat(point.phValue) : parseFloat(point.value);
-  let height = 15;
-  let daysW = height * 6;
-  let Yheight = Math.abs(ySection[0] - ySection[1]);
-  //一刻度是几个像素，y轴
-  let Ypxs = Yheight / (maxY - originY); //原点为(0,0)
-  let disTop = parseFloat(ySection[1]);
-  //console.log("getXY:"+beginDate)
-  let xPx = getDisDays(beginDate, curDate) * daysW;
-  let yPx = Math.round(Yheight + disTop - Ypxs * (value - originY));
+  // let curDate = point.dataTime;
+  const curDate = `${point.date} ${point.hour}:00`;
+  const value = type ? parseFloat(point.phValue) : parseFloat(point.value);
+  const height = 15;
+  const daysW = height * 6;
+  const Yheight = Math.abs(ySection[0] - ySection[1]);
+  // 一刻度是几个像素，y轴
+  const Ypxs = Yheight / (maxY - originY); // 原点为(0,0)
+  const disTop = parseFloat(ySection[1]);
+  // console.log("getXY:"+beginDate)
+  const xPx = getDisDays(beginDate, curDate) * daysW;
+  const yPx = Math.round(Yheight + disTop - Ypxs * (value - originY));
   return {
     x: xPx,
     y: yPx - 15,
-    value: value,
+    value,
     type: point.type,
-    point: point,
+    point,
   };
 }
 
@@ -1359,22 +1326,19 @@ function numToChinese(numArray, chineseArray) {
   if (numArray.length === 1) {
     finalStr = chineseArray[parseInt(numArray[0])];
     return finalStr;
-  } else {
-    if (numArray[0] === '1') {
-      if (numArray[1] === '0') {
-        finalStr += '十';
-      } else {
-        finalStr += '十' + chineseArray[parseInt(numArray[1])];
-      }
-    } else {
-      if (numArray[1] === '0') {
-        finalStr += chineseArray[parseInt(numArray[0])] + '十';
-      } else {
-        finalStr +=
-          chineseArray[parseInt(numArray[0])] + '十' + chineseArray[parseInt(numArray[1])];
-      }
-    }
   }
+  if (numArray[0] === '1') {
+    if (numArray[1] === '0') {
+      finalStr += '十';
+    } else {
+      finalStr += `十${chineseArray[parseInt(numArray[1])]}`;
+    }
+  } else if (numArray[1] === '0') {
+    finalStr += `${chineseArray[parseInt(numArray[0])]}十`;
+  } else {
+    finalStr += `${chineseArray[parseInt(numArray[0])]}十${chineseArray[parseInt(numArray[1])]}`;
+  }
+
   return finalStr;
 }
 
@@ -1386,9 +1350,9 @@ function numToChinese(numArray, chineseArray) {
  * @return
  */
 function getDisDays(beginDate, endDate, beginHour) {
-  //console.log(beginDate)
+  // console.log(beginDate)
   beginHour = beginHour || 2;
-  //判断是否是Date对象
+  // 判断是否是Date对象
   if (!(beginDate instanceof Date)) {
     console.log('beginDate: ', beginDate);
     beginDate = new Date(beginDate.replace(/-/g, '/'));
@@ -1422,9 +1386,9 @@ function drawSquare(type, xy, size, color, title, fill) {
   if (title === null || title === undefined) {
     return '';
   }
-  let width = 1; //定义正方形的宽度
+  const width = 1; // 定义正方形的宽度
   return (
-    <Tooltip className="oak-tooltip" key={'tt' + xy.y + xy.x} title={title}>
+    <Tooltip className="oak-tooltip" key={`tt${xy.y}${xy.x}`} title={title}>
       <rect
         title={title}
         x={xy.x - size}
@@ -1451,10 +1415,10 @@ function drawCircle(type, xy, r, color, title, fill) {
   if (title === null || title === undefined) {
     return '';
   }
-  let width = 2; //定义圆环的宽度
+  const width = 2; // 定义圆环的宽度
   let circleHtml = '';
   if (fill) {
-    //实心
+    // 实心
     circleHtml = (
       <Tooltip className="oak-tooltip" key={type + xy.y + xy.x} title={title}>
         <circle
@@ -1469,7 +1433,7 @@ function drawCircle(type, xy, r, color, title, fill) {
       </Tooltip>
     );
   } else {
-    //空心
+    // 空心
     circleHtml = (
       <Tooltip className="oak-tooltip" key={type + xy.y + xy.x} title={title}>
         <circle
@@ -1498,12 +1462,12 @@ function drawCircle(type, xy, r, color, title, fill) {
  * @return
  * */
 function drawCross(type, xy, halfSize, color, title) {
-  let html = [];
+  const html = [];
   if (title === null || title === undefined) {
     return html;
   }
-  let x = parseFloat(xy.x);
-  let y = parseFloat(xy.y);
+  const x = parseFloat(xy.x);
+  const y = parseFloat(xy.y);
   html.push(
     <Tooltip className="oak-tooltip" key={0} title={title}>
       <line
@@ -1581,28 +1545,11 @@ function drawFiveStar(type, xy, size, color, title) {
   if (title === null || title === undefined) {
     return '';
   }
-  //已值点为中心,进行算法来形成五角星
-  let disX = size / 2; //左右差值
-  let points =
-    xy.x +
-    ',' +
-    (xy.y - (size + disX)) +
-    ' ' +
-    (xy.x - size) +
-    ',' +
-    (xy.y + (size + disX)) +
-    '  ' +
-    (xy.x + (size + disX)) +
-    ' ,' +
-    (xy.y - disX) +
-    ' ' +
-    (xy.x - (size + disX)) +
-    ',' +
-    (xy.y - disX) +
-    ', ' +
-    (xy.x + size) +
-    ',' +
-    (xy.y + (size + disX));
+  // 已值点为中心,进行算法来形成五角星
+  const disX = size / 2; // 左右差值
+  const points = `${xy.x},${xy.y - (size + disX)} ${xy.x - size},${xy.y + (size + disX)}  ${
+    xy.x + (size + disX)
+  } ,${xy.y - disX} ${xy.x - (size + disX)},${xy.y - disX}, ${xy.x + size},${xy.y + (size + disX)}`;
   return <polygon key={xy.y} type={type} points={points} title={title} fill={color} />;
 }
 
@@ -1614,7 +1561,7 @@ function drawFiveStar(type, xy, size, color, title) {
  * @param {String} color 箭头颜色
  */
 function drawArrow(xy, length, type, color, title) {
-  let x = xy.x;
+  let { x } = xy;
   let y1 = xy.y - length;
   let y2 = xy.y - 3;
   if (type) {
@@ -1637,7 +1584,7 @@ function drawArrow(xy, length, type, color, title) {
           <path
             d="M1.62,1.62 L1.62,7.92 L7.2,4.32 L1.62,1.62"
             style={{ fill: color }}
-            title={title ? title : ''}
+            title={title || ''}
           />
         </marker>
       </defs>
@@ -1653,8 +1600,8 @@ function drawArrow(xy, length, type, color, title) {
  * @param {Object} title 鼠标放上去显示的title
  */
 function drawText(xy, color, value, title) {
-  let x = xy.x;
-  let y = xy.y;
+  const { x } = xy;
+  const { y } = xy;
   return (
     <text key={x + y} fill={color} x={x - 6} y={y} title={title}>
       {value}
@@ -1674,28 +1621,28 @@ function drawPolygon(points, color, key) {
     return '';
   }
   color = color || '#000';
-  let polygonLinear = [];
+  const polygonLinear = [];
   let pointStr;
-  let pointStrArray = [];
-  let point = [];
+  const pointStrArray = [];
+  const point = [];
   for (let i = 0; i < points.length; i++) {
-    pointStr = points[i].x + ',' + points[i].y;
-    //根据两点求方程
+    pointStr = `${points[i].x},${points[i].y}`;
+    // 根据两点求方程
     if (points[i + 1] !== undefined) {
-      let linear = lineX(points[i], points[i + 1]);
+      const linear = lineX(points[i], points[i + 1]);
       polygonLinear.push(linear);
       point.push([points[i], points[i + 1]]);
     }
     pointStrArray.push(pointStr);
   }
   pointStr = pointStrArray.join(' ');
-  let polygonHtml = (
+  const polygonHtml = (
     <polygon key={key} points={pointStr} style={{ fill: 'none', stroke: color, strokeWidth: 1 }} />
   );
   return {
     html: polygonHtml,
     linear: polygonLinear,
-    point: point,
+    point,
   };
 }
 
@@ -1706,23 +1653,23 @@ function drawPolygon(points, color, key) {
  * @return {JSON} a为常数，b为系数, 返回x为垂直于x轴的直线，返回Y为垂直于y轴的直线
  * */
 function lineX(point1, point2) {
-  let x1 = point1.x;
-  let x2 = point2.x;
-  let y1 = point1.y;
-  let y2 = point2.y;
+  const x1 = point1.x;
+  const x2 = point2.x;
+  const y1 = point1.y;
+  const y2 = point2.y;
   if (x2 - x1 === 0) {
     return { x: x1 };
   }
-  /*if(y1 - y2 === 0){
+  /* if(y1 - y2 === 0){
      return {y : y1}
-     }*/
-  //求系数
-  let b = (y2 - y1) / (x2 - x1);
-  //求常数
-  let a = y1 - b * x1;
+     } */
+  // 求系数
+  const b = (y2 - y1) / (x2 - x1);
+  // 求常数
+  const a = y1 - b * x1;
   return {
-    a: a,
-    b: b,
+    a,
+    b,
   };
 }
 
@@ -1733,11 +1680,12 @@ function lineX(point1, point2) {
  * @return 交点
  * */
 function segmentsIntr(line1, line2) {
-  let a1 = line1.a;
-  let a2 = line2.a;
-  let b1 = line1.b;
-  let b2 = line2.b;
-  let x, y;
+  const a1 = line1.a;
+  const a2 = line2.a;
+  const b1 = line1.b;
+  const b2 = line2.b;
+  let x;
+  let y;
   if (a2 === undefined || b2 === undefined) {
     x = line2.x;
     y = a1 + b1 * x;
@@ -1748,8 +1696,8 @@ function segmentsIntr(line1, line2) {
   x = parseFloat(parseFloat(x).toFixed(4));
   y = parseFloat(parseFloat(y).toFixed(4));
   return {
-    x: x,
-    y: y,
+    x,
+    y,
   };
 }
 
@@ -1765,8 +1713,8 @@ function getDoundary(point) {
   let maxY = +point[0].y;
   let minY = +point[0].y;
   for (let i = 0; i < point.length; i++) {
-    let pointX = +point[i].x;
-    let pointY = +point[i].y;
+    const pointX = +point[i].x;
+    const pointY = +point[i].y;
     if (pointX > maxX) {
       maxX = pointX;
     }
@@ -1795,23 +1743,23 @@ function getDoundary(point) {
  */
 function getBlueLineFuncs(b) {
   b = b || -4;
-  let blueLineFuncs = [];
-  //计算蓝斜线可能显示的最大区域，即根据系数，计算常数的最小值，和最大值
-  let svgW = 15 * 42;
-  let svgH = 15 * 40;
-  let disI = parseInt(b) * 3;
+  const blueLineFuncs = [];
+  // 计算蓝斜线可能显示的最大区域，即根据系数，计算常数的最小值，和最大值
+  const svgW = 15 * 42;
+  const svgH = 15 * 40;
+  const disI = parseInt(b) * 3;
   if (b < 0) {
-    let a1 = 0;
-    let a2 = svgH - b * svgW;
-    for (let i = a1; i < a2; i = i + 16) {
+    const a1 = 0;
+    const a2 = svgH - b * svgW;
+    for (let i = a1; i < a2; i += 16) {
       //
-      blueLineFuncs.push({ a: i, b: b });
+      blueLineFuncs.push({ a: i, b });
     }
   } else {
-    let a1 = -(svgW / b);
-    let a2 = svgH;
-    for (let i = a1; i < a2; i = i + 16) {
-      blueLineFuncs.push({ a: i, b: b });
+    const a1 = -(svgW / b);
+    const a2 = svgH;
+    for (let i = a1; i < a2; i += 16) {
+      blueLineFuncs.push({ a: i, b });
     }
   }
   return blueLineFuncs;
@@ -1824,27 +1772,27 @@ function getBlueLineFuncs(b) {
  * @return
  */
 function drawBlueLine(polygonArray, key) {
-  let htmlArray = [];
-  let polygonline = drawPolygon(polygonArray, 'red').linear;
-  let htmlde = drawPolygon(polygonArray, 'red', 'polygon').html;
-  let point = drawPolygon(polygonArray, 'red').point;
-  let totalPoints = [];
-  let blueLineFuncs = getBlueLineFuncs();
+  const htmlArray = [];
+  const polygonline = drawPolygon(polygonArray, 'red').linear;
+  const htmlde = drawPolygon(polygonArray, 'red', 'polygon').html;
+  const { point } = drawPolygon(polygonArray, 'red');
+  const totalPoints = [];
+  const blueLineFuncs = getBlueLineFuncs();
   for (let i = 0; i < blueLineFuncs.length; i++) {
-    let pointArray = [];
+    const pointArray = [];
     for (let j = 0; j < polygonline.length; j++) {
-      let pointNow = point[j];
-      let maxX = getDoundary(pointNow).maxX;
-      let minX = getDoundary(pointNow).minX;
-      let maxY = getDoundary(pointNow).maxY;
-      let minY = getDoundary(pointNow).minY;
-      //一条边与斜线的交点
-      //计算交点
-      let line1 = blueLineFuncs[i];
-      let line2 = polygonline[j];
-      let points = segmentsIntr(line1, line2);
+      const pointNow = point[j];
+      const { maxX } = getDoundary(pointNow);
+      const { minX } = getDoundary(pointNow);
+      const { maxY } = getDoundary(pointNow);
+      const { minY } = getDoundary(pointNow);
+      // 一条边与斜线的交点
+      // 计算交点
+      const line1 = blueLineFuncs[i];
+      const line2 = polygonline[j];
+      const points = segmentsIntr(line1, line2);
       // 判断交点是否在线段上，即在多边形内
-      //console.log(minX+"~"+maxX+"~"+minY+"~"+maxY)
+      // console.log(minX+"~"+maxX+"~"+minY+"~"+maxY)
       if (points.x >= minX && points.x <= maxX && points.y >= minY && points.y <= maxY) {
         pointArray.push(points);
       }
@@ -1854,11 +1802,11 @@ function drawBlueLine(polygonArray, key) {
     }
   }
   for (let j = 0; j < totalPoints.length; j++) {
-    let points = totalPoints[j];
+    const points = totalPoints[j];
     if (points.length === 2) {
       htmlArray.push(
         <line
-          key={j + 'points'}
+          key={`${j}points`}
           x1={points[0].x}
           y1={points[0].y}
           x2={points[1].x}
@@ -1867,24 +1815,24 @@ function drawBlueLine(polygonArray, key) {
         />,
       );
     } else if (points.length > 2 && points.length % 2 === 0) {
-      //根据x值大小排序（升序）冒泡排序
+      // 根据x值大小排序（升序）冒泡排序
       for (let i = 0; i < points.length - 1; i++) {
-        //取数组中任意两点匹配
+        // 取数组中任意两点匹配
         for (let k = 0; k < points.length - 1 - i; k++) {
-          let pointX = points[k].x;
-          let nextPointX = points[k + 1].x;
+          const pointX = points[k].x;
+          const nextPointX = points[k + 1].x;
           if (pointX > nextPointX) {
-            let temp = points[k];
+            const temp = points[k];
             points[k] = points[k + 1];
             points[k + 1] = temp;
           }
         }
       }
-      //相邻两点生成一条线段
-      for (let i = 0; i < points.length; i = i + 2) {
+      // 相邻两点生成一条线段
+      for (let i = 0; i < points.length; i += 2) {
         htmlArray.push(
           <line
-            key={'xiangling' + i}
+            key={`xiangling${i}`}
             x1={points[i].x}
             y1={points[i].y}
             x2={points[i + 1].x}

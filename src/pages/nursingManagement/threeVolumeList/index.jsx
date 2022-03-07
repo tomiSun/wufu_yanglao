@@ -1335,6 +1335,7 @@ export default () => {
         centered
         visible={temperatureModal.visible}
         confirmLoading={temperatureModal.loading}
+        destroyOnClose={true}
         okText="打印"
         onOk={() => {
           print();

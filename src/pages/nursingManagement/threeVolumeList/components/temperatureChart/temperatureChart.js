@@ -58,11 +58,11 @@ export class TemperatureChart extends Component {
    * @param disDays 传入Number类型时为与当前时间相差天数，字符串为其他类型"first"为第一周，"last"最后一周
    */
   changeBeginDay = (curDate, disDays) => {
-    let admissionDateTime = this.state.patientList.admissionDateTime; //入院时间
-    let dischargeDateTime =
+    const admissionDateTime = this.state.patientList.admissionDateTime; //入院时间
+    const dischargeDateTime =
       this.state.patientList.dischargeDateTime || moment(new Date()).format('YYYY-MM-DD'); //出院时间，如果还未出院，则默认为当前时间
-    let admissionDay = new Date(moment(admissionDateTime).format('YYYY-MM-DD'));
-    let dischargeDay = new Date(moment(dischargeDateTime).format('YYYY-MM-DD'));
+    const admissionDay = new Date(moment(admissionDateTime).format('YYYY-MM-DD'));
+    const dischargeDay = new Date(moment(dischargeDateTime).format('YYYY-MM-DD'));
     let newDate;
     if (typeof disDays === 'string') {
       if (disDays === 'first') {
@@ -75,11 +75,12 @@ export class TemperatureChart extends Component {
     } else {
       newDate = getNewDate(curDate, disDays);
     }
-    let beginDate = new Date(moment(newDate).format('YYYY-MM-DD'));
+    const beginDate = new Date(moment(newDate).format('YYYY-MM-DD'));
     if (beginDate < admissionDay) {
       message.info('开始时间不能小于入院时间');
       return;
-    } else if (beginDate > dischargeDay) {
+    }
+    if (beginDate > dischargeDay) {
       message.info('开始时间不能小于出院时间');
       return;
     }
@@ -101,17 +102,17 @@ export class TemperatureChart extends Component {
    * @param currentDate
    */
   disabledDate = (currentDate) => {
-    let curDate = new Date(moment(currentDate).format('YYYY-MM-DD'));
-    let admissionDateTime = this.state.patientList.admissionDateTime; //入院时间
-    let dischargeDateTime =
+    const curDate = new Date(moment(currentDate).format('YYYY-MM-DD'));
+    const admissionDateTime = this.state.patientList.admissionDateTime; //入院时间
+    const dischargeDateTime =
       this.state.patientList.dischargeDateTime || moment(new Date()).format('YYYY-MM-DD'); //出院时间，如果还未出院，则默认为当前时间
-    let admissionDay = new Date(moment(admissionDateTime).format('YYYY-MM-DD'));
-    let dischargeDay = new Date(moment(dischargeDateTime).format('YYYY-MM-DD'));
+    const admissionDay = new Date(moment(admissionDateTime).format('YYYY-MM-DD'));
+    const dischargeDay = new Date(moment(dischargeDateTime).format('YYYY-MM-DD'));
     return curDate < admissionDay || curDate > dischargeDay;
   };
 
   render() {
-    let {
+    const {
       beginDate,
       patientList,
       hospital,
@@ -153,7 +154,7 @@ export class TemperatureChart extends Component {
                 <TableInfo beginDate={beginDate} dayOps={dayOps} dayList={dayList} />
               </table>
               <div className="svgCenter">
-                <SvgCenter data={pointTime} curDate={beginDate} />
+                {beginDate && <SvgCenter data={pointTime} curDate={beginDate} />}
               </div>
               <table className="tableSvg">
                 <Colgroup />
