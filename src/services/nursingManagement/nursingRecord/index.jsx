@@ -20,3 +20,10 @@ export async function addNursingRecord(params) {
     data: params,
   });
 }
+// 删除护理记录
+export async function delNursingRecord(params) {
+  return request('/nursingManage/delNursingRecord', {
+    method: 'GET',
+    params,
+  });
+}
