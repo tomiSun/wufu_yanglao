@@ -296,7 +296,7 @@ const DrugRecord = (props) => {
         <Pagination
           defaultCurrent={1}
           showSizeChanger
-          pageSizeOptions={[10, 20, 50, 100, 200]}
+          pageSizeOptions={[10, 20, 50, 100, 200, 500, 1000, 1500, 5000, 10000]}
           current={pageInfo['pageNum']}
           defaultPageSize={pageInfo['pageSize']}
           total={pageInfo['total']}
@@ -313,14 +313,12 @@ const DrugRecord = (props) => {
   const renderMoadl = () => {
     return (
       <Modal
-        title="服药记录"
+        title="服药记录1"
         width={500}
         visible={modalVisible}
-        onOk={() => {
-          setModalVisible(false);
-        }}
         onCancel={() => {
           setModalVisible(false);
+          TForm.resetFields();
           refushList();
         }}
         footer={null}

@@ -156,7 +156,7 @@ const Archives = (props) => {
         />
         <Pagination
           showSizeChanger
-          pageSizeOptions={[10, 20, 50, 100, 200]}
+          pageSizeOptions={[10, 20, 50, 100, 200, 500, 1000, 1500, 5000, 10000]}
           defaultCurrent={1}
           current={pageInfo['pageNum']}
           defaultPageSize={pageInfo['pageSize']}

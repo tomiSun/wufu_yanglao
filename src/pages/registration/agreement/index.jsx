@@ -99,7 +99,7 @@ const RiskNotification = (props) => {
           defaultPageSize={pageInfo['pageSize']}
           total={pageInfo['total']}
           showSizeChanger
-          pageSizeOptions={[10, 20, 50, 100, 200]}
+          pageSizeOptions={[10, 20, 50, 100, 200, 500, 1000, 1500, 5000, 10000]}
           onChange={(page, pageSize) => {
             setPageInfo({ total: pageInfo.total, pageNum: page, pageSize });
             refushList({ total: pageInfo.total, pageNum: page, pageSize });
