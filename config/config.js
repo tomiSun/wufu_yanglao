@@ -3,40 +3,7 @@ import { defineConfig } from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 const { REACT_APP_ENV } = process.env;
-console.log('process.env: ', process.env.NODE_ENV === 'production');
 import routes from './routes';
-const otherConfig =
-  process.env.NODE_ENV === 'production'
-    ? {
-        nodeModulesTransform: {
-          type: 'none',
-          exclude: [],
-        },
-        chunks: ['vendors', 'umi'],
-        chainWebpack: function (config, { webpack }) {
-          config.merge({
-            optimization: {
-              minimize: true,
-              splitChunks: {
-                chunks: 'all',
-                minSize: 30000,
-                minChunks: 3,
-                automaticNameDelimiter: '.',
-                cacheGroups: {
-                  vendor: {
-                    name: 'vendors',
-                    test({ resource }) {
-                      return /[\\/]node_modules[\\/]/.test(resource);
-                    },
-                    priority: 10,
-                  },
-                },
-              },
-            },
-          });
-        },
-      }
-    : { fastRefresh: {} };
 export default defineConfig({
   hash: true,
   antd: {},
@@ -70,6 +37,27 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
-  ...otherConfig,
+  chunks: ['vendors', 'umi'],
+  chainWebpack: function (config, { webpack }) {
+    config.merge({
+      optimization: {
+        splitChunks: {
+          chunks: 'all',
+          minSize: 30000,
+          minChunks: 3,
+          automaticNameDelimiter: '.',
+          cacheGroups: {
+            vendor: {
+              name: 'vendors',
+              test({ resource }) {
+                return /[\\/]node_modules[\\/]/.test(resource);
+              },
+              priority: 10,
+            },
+          },
+        },
+      },
+    });
+  },
   // esbuild: {},
 });

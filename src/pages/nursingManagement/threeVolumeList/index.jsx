@@ -53,6 +53,7 @@ export default () => {
         config: {
           time: moment(),
           showTime: false,
+          allowClear: false,
           onChange: (e) => {
             topFrom.setFieldsValue({ recordTime: moment(e) });
             getTableData();
@@ -1140,10 +1141,12 @@ export default () => {
     data: {},
   });
   const openTemperatureModal = async (record) => {
+    const { recordTime } = topFrom.getFieldsValue();
+    console.log('recordTime: ', recordTime);
     const res = await queryThreeVolume({
       businessNo: record?.businessNo || '',
-      // endTime: '2021-10-25 00:00:00',
-      // startTime: '2021-10-25 23:59:59',
+      endTime: (recordTime && moment(recordTime)?.add(6, 'd')?.format('YYYY-MM-DD')) || undefined,
+      startTime: (recordTime && moment(recordTime)?.format('YYYY-MM-DD')) || undefined,
     });
     console.log('res: ', res);
     temperatureModal.data = res?.data || {};
@@ -1178,7 +1181,6 @@ export default () => {
     getDictionaryData();
     nameSelectBlur();
     getTableData();
-    console.log(moment('02:00', 'HH:MM'));
   }, []);
   return (
     <div style={{ position: 'relative', height: '100%' }}>
