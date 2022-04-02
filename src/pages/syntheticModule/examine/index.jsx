@@ -19,7 +19,7 @@ import {
 import { config } from '@/utils/const';
 import { useTableHeight } from '@/utils/tableHeight';
 import moment from 'moment';
-
+import { excelExport, openModal } from '@/utils/ExcelExport';
 const { pageSize } = config;
 const { TextArea } = Input;
 export default () => {
@@ -89,10 +89,31 @@ export default () => {
       {
         name: '新增',
         type: 'primary',
-        // style: {  },
-        sort: 2,
+        style: { marginRight: '15px' },
+        sort: 4,
         callback: () => {
           addOrEdit('add', true);
+        },
+      },
+      {
+        name: '打印',
+        type: 'primary',
+        sort: 5,
+        style: { marginRight: '15px' },
+        callback: () => {
+          // TODO:
+          // if (!yTable.table.selectRows?.length) {
+          //   message.warn('请勾选要打印的记录');
+          //   return;
+          // }
+          // if (yTable.table.selectRows?.length > 1) {
+          //   message.warn('每次只能勾选一条记录！');
+          //   return;
+          // }
+          // openModal({
+          //   url: '/jmreport/view/655288045090426880',
+          //   params: { businessNo: yTable.table.selectRows[0].businessNo || '' },
+          // });
         },
       },
     ],

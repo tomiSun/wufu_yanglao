@@ -28,7 +28,7 @@ import { findValByKey, getDefaultOption } from '@/utils/common';
 import { makeWb, pinyin } from 'yunyi-convert';
 import { config } from '@/utils/const';
 import { useTableHeight } from '@/utils/tableHeight';
-
+import { excelExport, openModal } from '@/utils/ExcelExport';
 const { pageSize, pageNum } = config;
 const { TextArea } = Input;
 export default () => {
@@ -56,10 +56,31 @@ export default () => {
       {
         name: '新增',
         type: 'primary',
-        // style: {  },
-        sort: 2,
+        style: { marginRight: '15px' },
+        sort: 3,
         callback: () => {
           addOrEdit('add', true);
+        },
+      },
+      {
+        name: '打印',
+        type: 'primary',
+        sort: 4,
+        style: { marginRight: '15px' },
+        callback: () => {
+          // TODO:
+          // if (!yTable.table.selectRows?.length) {
+          //   message.warn('请勾选要打印的记录');
+          //   return;
+          // }
+          // if (yTable.table.selectRows?.length > 1) {
+          //   message.warn('每次只能勾选一条记录！');
+          //   return;
+          // }
+          // openModal({
+          //   url: '/jmreport/view/655288045090426880',
+          //   params: { businessNo: yTable.table.selectRows[0].businessNo || '' },
+          // });
         },
       },
     ],

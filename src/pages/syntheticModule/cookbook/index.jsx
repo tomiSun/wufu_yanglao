@@ -6,7 +6,7 @@ import { cookbookUpdate, cookbookSelect } from '@/services/syntheticModule/cookb
 import { useTableHeight } from '@/utils/tableHeight';
 import moment from 'moment';
 import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
-
+import { excelExport, openModal } from '@/utils/ExcelExport';
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
@@ -372,6 +372,22 @@ export default () => {
         />
         <Button type="primary" style={{ marginLeft: '15px' }} onClick={cookbookUpdateService}>
           保存
+        </Button>
+        <Button
+          type="primary"
+          style={{ marginLeft: '15px' }}
+          onClick={() => {
+            // openModal({
+            //   url: '/jmreport/view/655287228417380352',
+            //   params: {
+            //     businessNo: businessNos?.join(',') || '',
+            //     buildingCode: SForm.getFieldValue('buildingCode') || '',
+            //     floorCode: SForm.getFieldValue('floorCode') || '',
+            //   },
+            // });
+          }}
+        >
+          打印
         </Button>
       </div>
 
