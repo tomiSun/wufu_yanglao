@@ -416,6 +416,27 @@ export default () => {
         );
       },
     },
+    // TODO:修改字段
+    {
+      title: '护士签名',
+      dataIndex: 'weight',
+      key: 'weight',
+      align: 'left',
+      ellipsis: true,
+      width: 80,
+      render: (text, record) => {
+        return (
+          <Input
+            className={record.isC && !text ? 'redMark' : ''}
+            value={text}
+            onChange={(e) => {
+              record.weight = e.target.value;
+              setYTable({ ...yTable });
+            }}
+          />
+        );
+      },
+    },
     {
       title: '操作',
       key: 'opera',
@@ -1301,17 +1322,17 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label=" 出量" name={'output'}>
+              <Form.Item label="出量" name={'output'}>
                 <Input AUTOCOMPLETE="OFF" addonAfter="ml" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label=" 小便" name={'urine'}>
+              <Form.Item label="小便" name={'urine'}>
                 <Input AUTOCOMPLETE="OFF" addonAfter="ml" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label=" 大便" name={'defecate'}>
+              <Form.Item label="大便" name={'defecate'}>
                 <Input AUTOCOMPLETE="OFF" addonAfter="次/日" />
               </Form.Item>
             </Col>
@@ -1321,8 +1342,14 @@ export default () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label=" 体重" name={'weight'}>
+              <Form.Item label="体重" name={'weight'}>
                 <Input AUTOCOMPLETE="OFF" addonAfter="Kg" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              {/* TODO:修改字段 */}
+              <Form.Item label="护士签名" name={'weight'}>
+                <Input />
               </Form.Item>
             </Col>
           </Row>

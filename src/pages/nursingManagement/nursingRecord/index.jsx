@@ -42,6 +42,7 @@ import {
 import { excelExport, openModal } from '@/utils/ExcelExport';
 import { isOnePeople } from '@/utils/common';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+
 const { confirm } = Modal;
 const { pageSize, pageNum } = config;
 const { TextArea } = Input;
@@ -239,150 +240,150 @@ export default () => {
           fixed: 'left',
           width: 100,
         },
-        {
-          title: '时间',
-          dataIndex: 'timePoint',
-          key: 'timePoint',
-          align: 'left',
-          ellipsis: true,
-          width: 100,
-          render: (text, record) => {
-            return (
-              // <div className={record.isC && !text ? 'redMark' : ''}>
-              <TimePicker
-                onChange={(e) => {
-                  record.timePoint = e;
-                  setYTable({ ...yTable });
-                }}
-                value={text}
-                format={'HH:mm'}
-              />
-              // </div>
-            );
-          },
-        },
-        {
-          title: '体温(°C)',
-          dataIndex: 'temperature',
-          key: 'temperature',
-          align: 'left',
-          ellipsis: true,
-          width: 60,
-          render: (text, record) => {
-            return (
-              // <div className={record.isC && !text ? 'redMark' : ''}>
-              <Input
-                className={record.isC && !text ? 'redMark' : ''}
-                value={text}
-                onChange={(e) => {
-                  record.temperature = e.target.value;
-                  setYTable({ ...yTable });
-                }}
-              />
-              // </div>
-            );
-          },
-        },
-        {
-          title: '脉搏心率(次/分)',
-          dataIndex: 'pulse',
-          key: 'pulse',
-          align: 'left',
-          ellipsis: true,
-          width: 100,
-          render: (text, record) => {
-            return (
-              <Input
-                className={record.isC && !text ? 'redMark' : ''}
-                value={text}
-                onChange={(e) => {
-                  record.pulse = e.target.value;
-                  setYTable({ ...yTable });
-                }}
-              />
-            );
-          },
-        },
-        {
-          title: '呼吸(次/分)',
-          dataIndex: 'breathing',
-          key: 'breathing',
-          align: 'left',
-          ellipsis: true,
-          width: 80,
-          render: (text, record) => {
-            return (
-              <Input
-                className={record.isC && !text ? 'redMark' : ''}
-                value={text}
-                onChange={(e) => {
-                  record.breathing = e.target.value;
-                  setYTable({ ...yTable });
-                }}
-              />
-            );
-          },
-        },
-        {
-          title: '收缩压(mmHg)',
-          dataIndex: 'highBloodPressure',
-          key: 'highBloodPressure',
-          align: 'left',
-          ellipsis: true,
-          width: 100,
-          render: (text, record) => {
-            return (
-              <Input
-                className={record.isC && !text ? 'redMark' : ''}
-                value={text}
-                onChange={(e) => {
-                  record.highBloodPressure = e.target.value;
-                  setYTable({ ...yTable });
-                }}
-              />
-            );
-          },
-        },
-        {
-          title: '舒张压(mmHg)',
-          dataIndex: 'lowBloodPressure',
-          key: 'lowBloodPressure',
-          align: 'left',
-          ellipsis: true,
-          width: 100,
-          render: (text, record) => {
-            return (
-              <Input
-                className={record.isC && !text ? 'redMark' : ''}
-                value={text}
-                onChange={(e) => {
-                  record.lowBloodPressure = e.target.value;
-                  setYTable({ ...yTable });
-                }}
-              />
-            );
-          },
-        },
-        {
-          title: '血氧饱和度(%)',
-          dataIndex: 'bloodOxygen',
-          key: 'bloodOxygen',
-          align: 'left',
-          ellipsis: true,
-          width: 100,
-          render: (text, record) => {
-            return (
-              <Input
-                className={record.isC && !text ? 'redMark' : ''}
-                value={text}
-                onChange={(e) => {
-                  record.bloodOxygen = e.target.value;
-                  setYTable({ ...yTable });
-                }}
-              />
-            );
-          },
-        },
+        // {
+        //   title: '时间',
+        //   dataIndex: 'timePoint',
+        //   key: 'timePoint',
+        //   align: 'left',
+        //   ellipsis: true,
+        //   width: 100,
+        //   render: (text, record) => {
+        //     return (
+        //       // <div className={record.isC && !text ? 'redMark' : ''}>
+        //       <TimePicker
+        //         onChange={(e) => {
+        //           record.timePoint = e;
+        //           setYTable({ ...yTable });
+        //         }}
+        //         value={text}
+        //         format={'HH:mm'}
+        //       />
+        //       // </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   title: '体温(°C)',
+        //   dataIndex: 'temperature',
+        //   key: 'temperature',
+        //   align: 'left',
+        //   ellipsis: true,
+        //   width: 60,
+        //   render: (text, record) => {
+        //     return (
+        //       // <div className={record.isC && !text ? 'redMark' : ''}>
+        //       <Input
+        //         className={record.isC && !text ? 'redMark' : ''}
+        //         value={text}
+        //         onChange={(e) => {
+        //           record.temperature = e.target.value;
+        //           setYTable({ ...yTable });
+        //         }}
+        //       />
+        //       // </div>
+        //     );
+        //   },
+        // },
+        // {
+        //   title: '脉搏心率(次/分)',
+        //   dataIndex: 'pulse',
+        //   key: 'pulse',
+        //   align: 'left',
+        //   ellipsis: true,
+        //   width: 100,
+        //   render: (text, record) => {
+        //     return (
+        //       <Input
+        //         className={record.isC && !text ? 'redMark' : ''}
+        //         value={text}
+        //         onChange={(e) => {
+        //           record.pulse = e.target.value;
+        //           setYTable({ ...yTable });
+        //         }}
+        //       />
+        //     );
+        //   },
+        // },
+        // {
+        //   title: '呼吸(次/分)',
+        //   dataIndex: 'breathing',
+        //   key: 'breathing',
+        //   align: 'left',
+        //   ellipsis: true,
+        //   width: 80,
+        //   render: (text, record) => {
+        //     return (
+        //       <Input
+        //         className={record.isC && !text ? 'redMark' : ''}
+        //         value={text}
+        //         onChange={(e) => {
+        //           record.breathing = e.target.value;
+        //           setYTable({ ...yTable });
+        //         }}
+        //       />
+        //     );
+        //   },
+        // },
+        // {
+        //   title: '收缩压(mmHg)',
+        //   dataIndex: 'highBloodPressure',
+        //   key: 'highBloodPressure',
+        //   align: 'left',
+        //   ellipsis: true,
+        //   width: 100,
+        //   render: (text, record) => {
+        //     return (
+        //       <Input
+        //         className={record.isC && !text ? 'redMark' : ''}
+        //         value={text}
+        //         onChange={(e) => {
+        //           record.highBloodPressure = e.target.value;
+        //           setYTable({ ...yTable });
+        //         }}
+        //       />
+        //     );
+        //   },
+        // },
+        // {
+        //   title: '舒张压(mmHg)',
+        //   dataIndex: 'lowBloodPressure',
+        //   key: 'lowBloodPressure',
+        //   align: 'left',
+        //   ellipsis: true,
+        //   width: 100,
+        //   render: (text, record) => {
+        //     return (
+        //       <Input
+        //         className={record.isC && !text ? 'redMark' : ''}
+        //         value={text}
+        //         onChange={(e) => {
+        //           record.lowBloodPressure = e.target.value;
+        //           setYTable({ ...yTable });
+        //         }}
+        //       />
+        //     );
+        //   },
+        // },
+        // {
+        //   title: '血氧饱和度(%)',
+        //   dataIndex: 'bloodOxygen',
+        //   key: 'bloodOxygen',
+        //   align: 'left',
+        //   ellipsis: true,
+        //   width: 100,
+        //   render: (text, record) => {
+        //     return (
+        //       <Input
+        //         className={record.isC && !text ? 'redMark' : ''}
+        //         value={text}
+        //         onChange={(e) => {
+        //           record.bloodOxygen = e.target.value;
+        //           setYTable({ ...yTable });
+        //         }}
+        //       />
+        //     );
+        //   },
+        // },
         {
           title: '打扫房间',
           dataIndex: 'isCleanRoom',
@@ -906,7 +907,7 @@ export default () => {
                 ></Select>
               </Form.Item>
             </Col> */}
-            <Col span={12}>
+            {/* <Col span={12}>
               <Form.Item label="时间" name="timePoint" rules={[{ required: true }]}>
                 <TimePicker onChange={() => {}} defaultValue={moment()} format={'HH:mm'} />
               </Form.Item>
@@ -940,7 +941,7 @@ export default () => {
               <Form.Item label="血氧饱和度" name={'bloodOxygen'}>
                 <Input AUTOCOMPLETE="OFF" addonAfter="%" />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={12}>
               <Form.Item label="体重" name={'weight'}>
                 <Input AUTOCOMPLETE="OFF" addonAfter="Kg" />
