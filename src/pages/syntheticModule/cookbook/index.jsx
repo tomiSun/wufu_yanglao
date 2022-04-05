@@ -7,6 +7,7 @@ import { useTableHeight } from '@/utils/tableHeight';
 import moment from 'moment';
 import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
 import { excelExport, openModal } from '@/utils/ExcelExport';
+
 export default () => {
   // 获取表格高度
   const tableRef = useRef(null);
@@ -377,14 +378,13 @@ export default () => {
           type="primary"
           style={{ marginLeft: '15px' }}
           onClick={() => {
-            // openModal({
-            //   url: '/jmreport/view/655287228417380352',
-            //   params: {
-            //     businessNo: businessNos?.join(',') || '',
-            //     buildingCode: SForm.getFieldValue('buildingCode') || '',
-            //     floorCode: SForm.getFieldValue('floorCode') || '',
-            //   },
-            // });
+            openModal({
+              url: '/jmreport/view/671186229733937152',
+              params: {
+                startTime: week[0],
+                endTime: week[1],
+              },
+            });
           }}
         >
           打印

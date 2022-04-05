@@ -104,10 +104,9 @@ export default () => {
           //   message.warn('每次只能勾选一条记录！');
           //   return;
           // }
-          // openModal({
-          //   url: '/jmreport/view/655288045090426880',
-          //   params: { businessNo: yTable.table.selectRows[0].businessNo || '' },
-          // });
+          openModal({
+            url: '/jmreport/view/671204086391820288',
+          });
         },
       },
     ],

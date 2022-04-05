@@ -416,11 +416,10 @@ export default () => {
         );
       },
     },
-    // TODO:修改字段
     {
       title: '护士签名',
-      dataIndex: 'weight',
-      key: 'weight',
+      dataIndex: 'nurseSign',
+      key: 'nurseSign',
       align: 'left',
       ellipsis: true,
       width: 80,
@@ -430,7 +429,7 @@ export default () => {
             className={record.isC && !text ? 'redMark' : ''}
             value={text}
             onChange={(e) => {
-              record.weight = e.target.value;
+              record.nurseSign = e.target.value;
               setYTable({ ...yTable });
             }}
           />
@@ -1348,7 +1347,7 @@ export default () => {
             </Col>
             <Col span={12}>
               {/* TODO:修改字段 */}
-              <Form.Item label="护士签名" name={'weight'}>
+              <Form.Item label="护士签名" name={'nurseSign'}>
                 <Input />
               </Form.Item>
             </Col>

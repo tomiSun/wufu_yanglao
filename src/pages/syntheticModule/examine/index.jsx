@@ -20,6 +20,7 @@ import { config } from '@/utils/const';
 import { useTableHeight } from '@/utils/tableHeight';
 import moment from 'moment';
 import { excelExport, openModal } from '@/utils/ExcelExport';
+
 const { pageSize } = config;
 const { TextArea } = Input;
 export default () => {
@@ -101,19 +102,13 @@ export default () => {
         sort: 5,
         style: { marginRight: '15px' },
         callback: () => {
-          // TODO:
-          // if (!yTable.table.selectRows?.length) {
-          //   message.warn('请勾选要打印的记录');
-          //   return;
-          // }
-          // if (yTable.table.selectRows?.length > 1) {
-          //   message.warn('每次只能勾选一条记录！');
-          //   return;
-          // }
-          // openModal({
-          //   url: '/jmreport/view/655288045090426880',
-          //   params: { businessNo: yTable.table.selectRows[0].businessNo || '' },
-          // });
+          const { timeRange } = topFrom.getFieldsValue();
+          const startTime = timeRange && timeRange[0] ? `${timeRange[0]} 00:00:00` : '';
+          const endTime = timeRange && timeRange[1] ? `${timeRange[1]} 23:59:59` : '';
+          openModal({
+            url: '/jmreport/view/671213856670666752',
+            params: { startTime, endTime },
+          });
         },
       },
     ],

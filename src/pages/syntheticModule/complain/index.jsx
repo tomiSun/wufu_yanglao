@@ -27,6 +27,7 @@ import { config } from '@/utils/const';
 import { useTableHeight } from '@/utils/tableHeight';
 import moment from 'moment';
 import { excelExport, openModal } from '@/utils/ExcelExport';
+
 const { pageSize, pageNum } = config;
 const { TextArea } = Input;
 export default () => {
@@ -80,10 +81,9 @@ export default () => {
           //   message.warn('每次只能勾选一条记录！');
           //   return;
           // }
-          // openModal({
-          //   url: '/jmreport/view/655288045090426880',
-          //   params: { businessNo: yTable.table.selectRows[0].businessNo || '' },
-          // });
+          openModal({
+            url: '/jmreport/view/671207939786985472',
+          });
         },
       },
     ],
