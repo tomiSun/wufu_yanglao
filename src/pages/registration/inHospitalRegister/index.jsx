@@ -547,8 +547,8 @@ const InHospitalRegister = (props) => {
             <Form.Item name={'contactNumber'} label="联系电话" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-            <Form.Item name={'contactAddress'} label="家庭住址">
-              <Input.TextArea />
+            <Form.Item name={'nursingSign'} label="护士签名">
+              <Input />
             </Form.Item>
             <Form.Item name={'contactAddress'} label="家庭住址">
               <Input.TextArea />

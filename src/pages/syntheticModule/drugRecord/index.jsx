@@ -317,7 +317,7 @@ const DrugRecord = (props) => {
   const renderMoadl = () => {
     return (
       <Modal
-        title="服药记录1"
+        title="服药记录"
         width={500}
         visible={modalVisible}
         onCancel={() => {
@@ -361,6 +361,9 @@ const DrugRecord = (props) => {
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="频次" name={'frequency'}>
+              <Input size="small" style={{ width: 200 }} />
+            </Form.Item>
+            <Form.Item label="护士签名" name={'nurseSign'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
           </Form>

@@ -36,9 +36,8 @@ const columns = (edit, dictionaryMap) => {
       fixed: 'left',
       width: 120,
       render: (t, r) => {
-        const res = `${r.buildingName || '#'}-${r.floorName || '#'}-${r.roomName || '#'}-${
-          r.bedName || '#'
-        }`;
+        const res = `${r.buildingName || '#'}-${r.floorName || '#'}-${r.roomName || '#'}-${r.bedName || '#'
+          }`;
         return res;
       },
     },
@@ -166,6 +165,12 @@ const columns = (edit, dictionaryMap) => {
       dataIndex: 'contactAddress',
       key: 'contactAddress',
       width: 220,
+    },
+    {
+      title: '护士签名',
+      dataIndex: 'nursingSign',
+      key: 'nursingSign',
+      width: 120,
     },
     {
       title: '操作',

@@ -45,6 +45,11 @@ const columns = (edit, dictionaryMap) => {
             }
         },
         {
+            title: '护士签名',
+            dataIndex: 'nurseSign',
+            key: 'nurseSign',
+        },
+        {
             title: '操作',
             render: edit
         }
