@@ -60,10 +60,10 @@ const paramsToUrl = (obj) => {
  */
 export const openModal = (props) => {
   const { url, params, type = 'info' } = props;
-  // const urlPre = `${window.location.protocol}//${window.location.hostname}:8082`;
+  const urlPre = `${window.location.protocol}//${window.location.hostname}:8082`;
   // const urlPre = `http://120.27.222.210:8082`;
   // const urlPre = `http://192.168.1.60:8082`;
-  const urlPre = `https://report.39nat.com`;
+  // const urlPre = `https://report.39nat.com`;
   const urlLast = (params && paramsToUrl(params)) || '';
   console.log('realUrl: ', `${urlPre}${url}${urlLast}`);
   const config = {
