@@ -383,17 +383,27 @@ export default () => {
       width: 100,
       render: (text, record) => {
         return (
-          <Select
+          <Input
             className={record.isC && !text ? 'redMark' : ''}
-            style={{ width: '100%' }}
             value={text}
-            options={yTable.table.basicData['0018'] || []}
             onChange={(e) => {
-              record.defecatePattern = e || '';
+              record.defecatePattern = e.target.value;
               setYTable({ ...yTable });
             }}
           />
         );
+        // return (
+        //   <Select
+        //     className={record.isC && !text ? 'redMark' : ''}
+        //     style={{ width: '100%' }}
+        //     value={text}
+        //     options={yTable.table.basicData['0018'] || []}
+        //     onChange={(e) => {
+        //       record.defecatePattern = e || '';
+        //       setYTable({ ...yTable });
+        //     }}
+        //   />
+        // );
       },
     },
     {
@@ -769,17 +779,27 @@ export default () => {
       width: 100,
       render: (text, record) => {
         return (
-          <Select
+          <Input
             className={record.isC && !text ? 'redMark' : ''}
-            style={{ width: '100%' }}
             value={text}
-            options={yTable.table.basicData['0018'] || []}
             onChange={(e) => {
-              record.defecatePattern = e || '';
+              record.defecatePattern = e.target.value;
               setYTable({ ...yTable });
             }}
           />
         );
+        // return (
+        //   <Select
+        //     className={record.isC && !text ? 'redMark' : ''}
+        //     style={{ width: '100%' }}
+        //     value={text}
+        //     options={yTable.table.basicData['0018'] || []}
+        //     onChange={(e) => {
+        //       record.defecatePattern = e || '';
+        //       setYTable({ ...yTable });
+        //     }}
+        //   />
+        // );
       },
     },
     // {
@@ -1229,7 +1249,7 @@ export default () => {
           onFinish={saveModalInfo}
           initialValues={{ recordTime: moment(), timePoint: moment() }}
         >
-          <Form.Item name="id" hidden></Form.Item>
+          <Form.Item name="id" hidden />
           <Row>
             <Col span={12}>
               <Form.Item label="床位号" name="bedName">
@@ -1257,7 +1277,7 @@ export default () => {
                   filterOption={(inputValue, option) => {
                     return option.label.indexOf(inputValue) > -1;
                   }}
-                ></Select>
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -1337,7 +1357,8 @@ export default () => {
             </Col>
             <Col span={12}>
               <Form.Item label="大便方式" name={'defecatePattern'}>
-                <Select style={{ width: '100%' }} options={yTable.table.basicData['0018'] || []} />
+                <Input AUTOCOMPLETE="OFF" />
+                {/* <Select style={{ width: '100%' }} options={yTable.table.basicData['0018'] || []} /> */}
               </Form.Item>
             </Col>
             <Col span={12}>
