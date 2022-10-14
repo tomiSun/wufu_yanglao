@@ -70,14 +70,14 @@ export default () => {
         history.push('/nursingManagement/bloodGlucoseRecord/index?businesNo=businesNo');
         break;
       case 5:
-        history.push('/nursingManagement/drugManage/index?businesNo=businesNo');
+        history.push('/syntheticModule/drugManage/index?businesNo=businesNo');
         break;
       case 6:
-        history.push('/nursingManagement/drugRecord/index?businesNo=businesNo');
+        history.push('/syntheticModule/drugRecord/index?businesNo=businesNo');
         break;
-      case 7:
-        history.push('/nursingManagement/leaveManagement/index?businesNo=businesNo');
-        break;
+      // case 7:
+      //   history.push('/nursingManagement/leaveManagement/index?businesNo=businesNo');
+      //   break;
 
       default:
         break;
@@ -102,7 +102,7 @@ export default () => {
                     { name: '血糖记录', key: 4 },
                     { name: '药品管理', key: 5 },
                     { name: '服药记录', key: 6 },
-                    { name: '请假', key: 7 },
+                    // { name: '请假', key: 7 },
                   ]}
                   renderItem={(item) => (
                     <List.Item>
@@ -179,7 +179,7 @@ export default () => {
                       </div>
                     </Panel>
                   ) : (
-                    <div style={{ height: '100%', minHeight: '33px' }}></div>
+                    <div style={{ height: '100%', minHeight: '33px' }} />
                   )}
                 </Collapse>
               </Card>
@@ -266,7 +266,7 @@ export default () => {
             onChange={(e) => {
               setBuildingCode(e);
             }}
-          ></Select>
+          />
           <Button
             type="primary"
             className={styles.search}
