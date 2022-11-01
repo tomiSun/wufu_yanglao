@@ -784,7 +784,7 @@ export default () => {
             value={text}
             onChange={(e) => {
               record.defecatePattern = e.target.value;
-              setYTable({ ...yTable });
+              setYTableDrawer({ ...yTableDrawer });
             }}
           />
         );

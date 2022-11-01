@@ -84,7 +84,7 @@ const DrugManage = (props) => {
   //刷新操作
   const refushList = (pageParam = {}) => {
     let search = SForm.getFieldsValue();
-    let pageInfoCopy = { ...pageInfo, ...pageParam };
+    let pageInfoCopy = { ...pageInfo, ...pageParam, isTaken: 1 };
     // let startTime = search?.['startTime'] && moment(search?.['startTime']).startOf('day').format('YYYY-MM-DD HH:mm:ss');
     // let endTime = search?.['endTime'] && moment(search?.['endTime']).endOf('day').format('YYYY-MM-DD HH:mm:ss');
     let param = { ...search, ...pageInfoCopy };
@@ -314,7 +314,7 @@ const DrugManage = (props) => {
                 filterOption={(inputValue, option) => {
                   return option.label.indexOf(inputValue) > -1;
                 }}
-              ></Select>
+              />
             </Form.Item>
             <Form.Item label="诊断:" name={'hospitalDiagnosis'}>
               {/* <Select mode="multiple" style={{ width: 200 }}>
@@ -353,7 +353,7 @@ const DrugManage = (props) => {
                   { label: '是', value: 0 },
                   { label: '否', value: 1 },
                 ]}
-              ></Select>
+              />
             </Form.Item>
             <Form.Item label="护士签名" name={'nursingSign'}>
               <Input size="small" style={{ width: 200 }} />
@@ -418,8 +418,8 @@ const DrugManage = (props) => {
   };
 
   return (
-    <div class="archives">
-      <div class="content">
+    <div className="archives">
+      <div className="content">
         {renderSearch()}
         {renderForm()}
         {renderMoadl()}

@@ -344,13 +344,13 @@ const DrugRecord = (props) => {
                 }}
               ></Select>
             </Form.Item>
-            <Form.Item label="用药时间" name={'medicationTime'}>
+            {/* <Form.Item label="用药时间" name={'medicationTime'}>
               <Select style={{ width: 200 }}>
                 {dictionaryMap?.['0019'].map((item) => {
                   return <Option value={item.dictCode}>{item.dictName}</Option>;
                 })}
               </Select>
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label="用药日期" name={'medicationDate'} initialValue={moment(new Date())}>
               <DatePicker style={{ width: 200 }} />
             </Form.Item>

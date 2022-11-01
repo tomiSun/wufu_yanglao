@@ -86,7 +86,7 @@ const DrugManage = (props) => {
   //刷新操作
   const refushList = (pageParam = {}) => {
     let search = SForm.getFieldsValue();
-    let pageInfoCopy = { ...pageInfo, ...pageParam };
+    let pageInfoCopy = { ...pageInfo, ...pageParam, isTaken: 0 };
     // let startTime = search?.['startTime'] && moment(search?.['startTime']).startOf('day').format('YYYY-MM-DD HH:mm:ss');
     // let endTime = search?.['endTime'] && moment(search?.['endTime']).endOf('day').format('YYYY-MM-DD HH:mm:ss');
     let param = { ...search, ...pageInfoCopy };
@@ -227,7 +227,7 @@ const DrugManage = (props) => {
                 setSelectData(record);
                 let data = {
                   ...record,
-                  expiryDate: moment(record['expiryDate']),
+                  expiryDate: (record['expiryDate'] && moment(record['expiryDate'])) || '',
                   takeMedicineDate: moment(record['takeMedicineDate']),
                 };
                 TForm.setFieldsValue(data);
@@ -317,7 +317,7 @@ const DrugManage = (props) => {
                 filterOption={(inputValue, option) => {
                   return option.label.indexOf(inputValue) > -1;
                 }}
-              ></Select>
+              />
             </Form.Item>
             <Form.Item label="诊断:" name={'hospitalDiagnosis'}>
               {/* <Select mode="multiple" style={{ width: 200 }}>
@@ -352,7 +352,7 @@ const DrugManage = (props) => {
                   { label: '是', value: 0 },
                   { label: '否', value: 1 },
                 ]}
-              ></Select>
+              />
             </Form.Item>
             <Form.Item label="护士签名" name={'nursingSign'}>
               <Input size="small" style={{ width: 200 }} />
@@ -366,7 +366,7 @@ const DrugManage = (props) => {
             <Form.Item label="家属签名" name={'familySign'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="过期日期" name={'expiryDate'}>
+            <Form.Item label="过期日期" name={'expiryDate'} initialValue={moment(new Date())}>
               <DatePicker style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="备注" name={'remark'}>
@@ -417,8 +417,8 @@ const DrugManage = (props) => {
   };
 
   return (
-    <div class="archives">
-      <div class="content">
+    <div className="archives">
+      <div className="content">
         {renderSearch()}
         {renderForm()}
         {renderMoadl()}
