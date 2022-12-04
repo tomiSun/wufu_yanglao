@@ -5,24 +5,24 @@
 import React, { Component } from 'react';
 import qs from 'qs';
 import { TemperatureChart } from './temperatureChart';
-
+import { Empty } from 'antd';
 export class Temperature extends Component {
-  constructor(props){
-    super(props)
+  constructor(props) {
+    super(props);
   }
   componentWillMount() {
     this.state = {
-      beginDate: this.props.data.beginDate, //开始时间
-      hospital: this.props.data.hospital, //医院
-      patientInfoList: this.props.data.patientInfoList, //患者信息
-      dayOps: this.props.data.dayOps, //术后/产后天数
-      breathingList: this.props.data.breathingList, //呼吸次数
-      xyList: this.props.data.xyList, //血压数据
-      dayList: this.props.data.dayList, //住院天数
-      dayMap: this.props.data.dayMap, //每日录入信息
-      pointTime: this.props.data.pointTime, // 时间段录入信息
-      loading: this.props.data.loading,
-      hspName:''
+      beginDate: this.props.data?.beginDate, //开始时间
+      hospital: this.props.data?.hospital, //医院
+      patientInfoList: this.props.data?.patientInfoList, //患者信息
+      dayOps: this.props.data?.dayOps, //术后/产后天数
+      breathingList: this.props.data?.breathingList, //呼吸次数
+      xyList: this.props.data?.xyList, //血压数据
+      dayList: this.props.data?.dayList, //住院天数
+      dayMap: this.props.data?.dayMap, //每日录入信息
+      pointTime: this.props.data?.pointTime, // 时间段录入信息
+      loading: this.props.data?.loading,
+      hspName: '',
     };
   }
 
@@ -32,16 +32,16 @@ export class Temperature extends Component {
      */
     if (nextProps.patientList !== nextState.patientList) {
       this.setState({
-        beginDate: nextProps.data.beginDate,
-        hospital: nextProps.data.hospital,
-        patientList: nextProps.data.patientList,
-        dayOps: nextProps.data.dayOps,
-        breathingList: nextProps.data.breathingList,
-        dayList: nextProps.data.dayList,
-        dayMap: nextProps.data.dayMap,
-        pointTime: nextProps.data.pointTime,
-        loading: nextProps.data.loading,
-        hspName:''
+        beginDate: nextProps.data?.beginDate,
+        hospital: nextProps.data?.hospital,
+        patientList: nextProps.data?.patientList,
+        dayOps: nextProps.data?.dayOps,
+        breathingList: nextProps.data?.breathingList,
+        dayList: nextProps.data?.dayList,
+        dayMap: nextProps.data?.dayMap,
+        pointTime: nextProps.data?.pointTime,
+        loading: nextProps.data?.loading,
+        hspName: '',
       });
     }
   }
@@ -460,7 +460,7 @@ export class Temperature extends Component {
   // };
 
   render() {
-    console.log(this.props)
+    console.log(this.props);
     // let {
     //   data,
     //   beginDate,
@@ -473,31 +473,33 @@ export class Temperature extends Component {
     //   pointTime,
     // } = this.props.data;
     const {
-    beginDate,
-    patientInfoList,
-    dayOps,
-    breathingList,
-    xyList,
-    dayList,
-    dayMap,
-    pointTime,
-    hspName
-  } = this.state;
-  console.log()
-    return (
+      beginDate,
+      patientInfoList,
+      dayOps,
+      breathingList,
+      xyList,
+      dayList,
+      dayMap,
+      pointTime,
+      hspName,
+    } = this.state;
+    console.log();
+    return beginDate ? (
       <TemperatureChart
-      beginDate={beginDate}
-      hospital={hspName}
-      patientList={patientInfoList}
-      dayOps={dayOps}
-      breathingList={breathingList}
-      xyList={xyList}
-      dayList={dayList}
-      dayMap={dayMap}
-      pointTime={pointTime}
-      // changeBeginDay={this.changeBeginDay}
-      loading={false}
-    />
+        beginDate={beginDate}
+        hospital={hspName}
+        patientList={patientInfoList}
+        dayOps={dayOps}
+        breathingList={breathingList}
+        xyList={xyList}
+        dayList={dayList}
+        dayMap={dayMap}
+        pointTime={pointTime}
+        // changeBeginDay={this.changeBeginDay}
+        loading={false}
+      />
+    ) : (
+      <Empty />
     );
   }
 }

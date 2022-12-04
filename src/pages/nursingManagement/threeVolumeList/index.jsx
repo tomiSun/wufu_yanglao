@@ -16,6 +16,7 @@ import {
   Tabs,
   Drawer,
   Divider,
+  Button,
 } from 'antd';
 import { dictTypeSelectPullDown } from '@/services/basicSetting/dictionary';
 import { patientQuery } from '@/services/inHospitalRegister';
@@ -35,7 +36,7 @@ import { printStyle } from './printStyle';
 import { useReactToPrint } from 'react-to-print';
 import { excelExport } from '@/utils/ExcelExport';
 import { isOnePeople } from '@/utils/common';
-
+// import { data, tableData, chartData, chartData2 } from './api.js';
 const { pageSize } = config;
 const { TabPane } = Tabs;
 export default () => {
@@ -957,6 +958,7 @@ export default () => {
           console.log('changePage----', page, pageSize);
           yTableDrawer.table.pagination.current = page;
           yTableDrawer.table.pagination.pageSize = pageSize;
+          setYTableDrawer({ ...yTableDrawer });
           // queryTypeDetailsListServices();
         },
       },
@@ -1034,6 +1036,7 @@ export default () => {
 
     yTable.table.loading = true;
     yTable.table.dataSource = [];
+    // yTable.table.dataSource = tableData.data;
     setYTable({ ...yTable });
     batchQueryVitalSignRecord(params)
       .then((res) => {
@@ -1179,6 +1182,7 @@ export default () => {
     loading: false,
     visible: false,
     data: {},
+    startDate: '',
   });
   const openTemperatureModal = async (record) => {
     const { recordTime } = topFrom.getFieldsValue();
@@ -1188,8 +1192,11 @@ export default () => {
       endTime: (recordTime && moment(recordTime)?.add(6, 'd')?.format('YYYY-MM-DD')) || undefined,
       startTime: (recordTime && moment(recordTime)?.format('YYYY-MM-DD')) || undefined,
     });
+    // const res = chartData;
     console.log('res: ', res);
     temperatureModal.data = res?.data || {};
+    temperatureModal.startDate = recordTime;
+    temperatureModal.record = record;
     temperatureModal.visible = true;
 
     setTemperatureModal({ ...temperatureModal });
@@ -1207,6 +1214,7 @@ export default () => {
       businessNo: yTable.table.dataRow.businessNo,
       startTime: moment(),
       endTime: moment(),
+      // endTime: moment()?.add(6, 'd')?.format('YYYY-MM-DD'),
     });
     drawerConfig.visible = true;
     setDrawerConfig({ ...drawerConfig });
@@ -1385,18 +1393,111 @@ export default () => {
         visible={temperatureModal.visible}
         confirmLoading={temperatureModal.loading}
         destroyOnClose={true}
-        okText="打印"
-        onOk={() => {
-          print();
-        }}
+        // okText="打印"
+        // onOk={() => {
+        //   print();
+        // }}
         onCancel={() => {
           temperatureModal.visible = false;
           setTemperatureModal({ ...temperatureModal });
         }}
+        footer={
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              style={{ marginRight: 8 }}
+              onClick={() => {
+                const recordTime = moment(temperatureModal.startDate)
+                  ?.subtract(7, 'd')
+                  ?.format('YYYY-MM-DD');
+                console.log('recordTime: ', recordTime);
+                const record = temperatureModal.record;
+                queryThreeVolume({
+                  businessNo: record?.businessNo || '',
+                  endTime:
+                    (recordTime && moment(recordTime)?.add(6, 'd')?.format('YYYY-MM-DD')) ||
+                    undefined,
+                  startTime: (recordTime && moment(recordTime)?.format('YYYY-MM-DD')) || undefined,
+                })
+                  .then((res) => {
+                    console.log('res: ', res);
+                    temperatureModal.data = res?.data || {};
+                    temperatureModal.startDate = recordTime;
+                    temperatureModal.visible = true;
+                    temperatureModal.record = record;
+                    setTemperatureModal({ ...temperatureModal });
+                  })
+                  .catch((e) => {
+                    temperatureModal.data = {};
+                    temperatureModal.startDate = temperatureModal.startDate;
+                    temperatureModal.visible = true;
+                    temperatureModal.record = record;
+                    setTemperatureModal({ ...temperatureModal });
+                  });
+                // const res = chartData;
+                // console.log('res: ', res);
+                // temperatureModal.data = res?.data || {};
+                // temperatureModal.startDate = recordTime;
+                // temperatureModal.visible = true;
+                // setTemperatureModal({ ...temperatureModal });
+              }}
+            >
+              上一页
+            </Button>
+            <Button
+              style={{ marginRight: 8 }}
+              onClick={() => {
+                const recordTime = moment(temperatureModal.startDate)
+                  ?.add(7, 'd')
+                  ?.format('YYYY-MM-DD');
+                console.log('recordTime: ', recordTime);
+                const record = temperatureModal.record;
+                queryThreeVolume({
+                  businessNo: record?.businessNo || '',
+                  endTime:
+                    (recordTime && moment(recordTime)?.add(6, 'd')?.format('YYYY-MM-DD')) ||
+                    undefined,
+                  startTime: (recordTime && moment(recordTime)?.format('YYYY-MM-DD')) || undefined,
+                })
+                  .then((res) => {
+                    // const res = chartData;
+                    console.log('res: ', res);
+                    temperatureModal.data = res?.data || {};
+                    temperatureModal.startDate = recordTime;
+                    temperatureModal.record = record;
+                    temperatureModal.visible = true;
+                    setTemperatureModal({ ...temperatureModal });
+                  })
+                  .catch((e) => {
+                    temperatureModal.data = {};
+                    temperatureModal.startDate = temperatureModal.startDate;
+                    temperatureModal.record = record;
+                    temperatureModal.visible = true;
+                    setTemperatureModal({ ...temperatureModal });
+                  });
+                // const res = chartData2;
+                // console.log('res: ', res);
+                // temperatureModal.data = res?.data || {};
+                // temperatureModal.startDate = recordTime;
+                // temperatureModal.visible = true;
+                // setTemperatureModal({ ...temperatureModal });
+              }}
+            >
+              下一页
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                print();
+              }}
+            >
+              打印
+            </Button>
+          </div>
+        }
       >
         <style>{printStyle}</style>
         <div className="temperature">
-          <Temperature data={temperatureModal?.data} ref={TemperatureRef} />
+          <Temperature data={temperatureModal?.data} ref={TemperatureRef} key={Math.random()} />
         </div>
       </Modal>
       <Drawer
