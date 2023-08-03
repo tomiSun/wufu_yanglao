@@ -193,7 +193,15 @@ const DrugManage = (props) => {
             size={'small'}
             style={{ marginTop: 4 }}
             onClick={() => {
+              if (!selectData?.length) {
+                message.warn('请勾选要打印的记录');
+                return;
+              }
+              const businessNos = selectData.map((it) => {
+                return it.businessNo;
+              });
               openModal({
+                businessNo: businessNos?.join(',') || '',
                 url: '/jmreport/view/653851718767546368',
               });
               // excelExport({
@@ -358,15 +366,15 @@ const DrugManage = (props) => {
             <Form.Item label="护士签名" name={'nursingSign'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="家属签名" name={'familySign'}>
+            <Form.Item label="家属签名1" name={'familySign'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="病区" name={'ward'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="家属签名" name={'familySign'}>
+            {/* <Form.Item label="家属签名1" name={'familySign'}>
               <Input size="small" style={{ width: 200 }} />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label="过期日期" name={'expiryDate'}>
               <DatePicker style={{ width: 200 }} />
             </Form.Item>

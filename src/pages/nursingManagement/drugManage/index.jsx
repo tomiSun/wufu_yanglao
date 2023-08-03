@@ -367,15 +367,15 @@ const DrugManage = (props) => {
             <Form.Item label="护士签名" name={'nursingSign'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="家属签名" name={'familySign'}>
+            <Form.Item label="家属签名1" name={'familySign'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="病区" name={'ward'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="家属签名" name={'familySign'}>
+            {/* <Form.Item label="家属签名1" name={'familySign'}>
               <Input size="small" style={{ width: 200 }} />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label="过期日期" name={'expiryDate'}>
               <DatePicker style={{ width: 200 }} />
             </Form.Item>

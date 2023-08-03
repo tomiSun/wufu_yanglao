@@ -179,12 +179,20 @@ const DrugManage = (props) => {
             size={'small'}
             style={{ marginTop: 4 }}
             onClick={() => {
+              if (!selectData?.length) {
+                message.warn('请勾选要打印的记录');
+                return;
+              }
+              const businessNos = selectData.map((it) => {
+                return it.businessNo;
+              });
               // excelExport({
               //   api: '/medicine/exportTakeMedicine', //导出接口路径
               //   ids: selectedRowKeys.join(','), //勾选的行id数组集合
               //   fileName: '服药管理记录', //导出文件名称
               // });
               openModal({
+                businessNo: businessNos?.join(',') || '',
                 url: '/jmreport/view/653446043054952448',
               });
             }}
@@ -330,7 +338,7 @@ const DrugManage = (props) => {
             <Form.Item label="带药日期" name={'takeMedicineDate'} initialValue={moment(new Date())}>
               <DatePicker style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="药品名称" name={'drugName'}>
+            <Form.Item label="药品名称及规格" name={'drugName'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="用法" name={'useWay'}>
@@ -339,9 +347,9 @@ const DrugManage = (props) => {
             <Form.Item label="用量" name={'dosage'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="剂量" name={'measure'}>
+            {/* <Form.Item label="剂量" name={'measure'}>
               <Input size="small" style={{ width: 200 }} />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label="带药量" name={'acount'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
@@ -363,7 +371,7 @@ const DrugManage = (props) => {
             <Form.Item label="病区" name={'ward'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="家属签名" name={'familySign'}>
+            <Form.Item label="家属签名1" name={'familySign'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="过期日期" name={'expiryDate'} initialValue={moment(new Date())}>
