@@ -201,6 +201,7 @@ const DrugManage = (props) => {
               const businessNos = selectedRowData.map((it) => {
                 return it.businessNo;
               });
+              console.log('drugManage---' + businessNos?.join(','));
               openModal({
                 businessNo: businessNos?.join(',') || '',
                 url: '/jmreport/view/653851718767546368',

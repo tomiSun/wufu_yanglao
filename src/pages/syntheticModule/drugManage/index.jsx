@@ -192,6 +192,7 @@ const DrugManage = (props) => {
               //   ids: selectedRowKeys.join(','), //勾选的行id数组集合
               //   fileName: '服药管理记录', //导出文件名称
               // });
+              console.log('drugManage---' + businessNos?.join(','));
               openModal({
                 businessNo: businessNos?.join(',') || '',
                 url: '/jmreport/view/653446043054952448',
