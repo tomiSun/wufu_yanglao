@@ -55,6 +55,7 @@ const DrugManage = (props) => {
   const [nameSelectList, setNameSelectList] = useState([]); //复合搜索的人的集合
   //列表选中
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRowData, setSelectedRowData] = useState([]);
   //字典
   const [dictionaryMap, setDictionaryMap] = useState(DICT_LSIT);
   const [pageInfo, setPageInfo] = useState({
@@ -193,11 +194,11 @@ const DrugManage = (props) => {
             size={'small'}
             style={{ marginTop: 4 }}
             onClick={() => {
-              if (!selectData?.length) {
+              if (!selectedRowData?.length) {
                 message.warn('请勾选要打印的记录');
                 return;
               }
-              const businessNos = selectData.map((it) => {
+              const businessNos = selectedRowData.map((it) => {
                 return it.businessNo;
               });
               openModal({
@@ -260,6 +261,7 @@ const DrugManage = (props) => {
   //选中操作
   const onSelectChange = (selectedRowKeys, record) => {
     setSelectedRowKeys(selectedRowKeys);
+    setSelectedRowData(record);
   };
   const rowSelection = {
     selectedRowKeys: selectedRowKeys,
@@ -366,13 +368,13 @@ const DrugManage = (props) => {
             <Form.Item label="护士签名" name={'nursingSign'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="家属签名1" name={'familySign'}>
+            <Form.Item label="家属签名" name={'familySign'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="病区" name={'ward'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item>
-            {/* <Form.Item label="家属签名1" name={'familySign'}>
+            {/* <Form.Item label="家属签名" name={'familySign'}>
               <Input size="small" style={{ width: 200 }} />
             </Form.Item> */}
             <Form.Item label="过期日期" name={'expiryDate'}>

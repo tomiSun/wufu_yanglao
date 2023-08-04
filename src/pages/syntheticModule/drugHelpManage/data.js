@@ -19,8 +19,8 @@ const columns = (edit, dictionaryMap) => {
 
         {
             title: '年龄',
-            dataIndex: 'sex',
-            key: 'sex',
+            dataIndex: 'age',
+            key: 'age',
         },
         {
             title: '诊断',
@@ -52,8 +52,8 @@ const columns = (edit, dictionaryMap) => {
         },
         {
             title: '代配药量',
-            dataIndex: 'measure',
-            key: 'measure',
+            dataIndex: 'acount',
+            key: 'acount',
         },
         {
             title: '代配药',
@@ -69,7 +69,7 @@ const columns = (edit, dictionaryMap) => {
             key: 'nursingSign',
         },
         {
-            title: '家属签名1',
+            title: '家属签名',
             dataIndex: 'familySign',
             key: 'familySign',
         },

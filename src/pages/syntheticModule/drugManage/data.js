@@ -69,7 +69,7 @@ const columns = (edit, dictionaryMap) => {
             key: 'nursingSign',
         },
         {
-            title: '家属签名1',
+            title: '家属签名',
             dataIndex: 'familySign',
             key: 'familySign',
         },
