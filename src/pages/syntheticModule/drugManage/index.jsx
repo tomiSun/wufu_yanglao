@@ -194,8 +194,10 @@ const DrugManage = (props) => {
               // });
               console.log('drugManage---' + businessNos?.join(','));
               openModal({
-                businessNo: businessNos?.join(',') || '',
                 url: '/jmreport/view/653446043054952448',
+                params: {
+                  businessNo: businessNos?.join(',') || '',
+                },
               });
             }}
           >

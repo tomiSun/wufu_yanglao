@@ -203,8 +203,10 @@ const DrugManage = (props) => {
               });
               console.log('drugManage---' + businessNos?.join(','));
               openModal({
-                businessNo: businessNos?.join(',') || '',
                 url: '/jmreport/view/653851718767546368',
+                params: {
+                  businessNo: businessNos?.join(',') || '',
+                },
               });
               // excelExport({
               //   api: '/medicine/exportDispensing', //导出接口路径

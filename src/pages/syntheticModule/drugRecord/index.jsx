@@ -219,6 +219,7 @@ const DrugRecord = (props) => {
               const businessNos = selectedRowData.map((it) => {
                 return it.businessNo;
               });
+
               openModal({
                 url: '/jmreport/view/655287228417380352',
                 params: {
